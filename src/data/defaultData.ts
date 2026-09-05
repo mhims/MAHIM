@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   heroTitle: 'Mahim Ibne Khudi',
   heroSubtitle: 'Professional Graphic Designer & Brand Specialist',
   heroBio: 'হ্যালো! আমি মাহিম ইবনে খুদি। ক্রিয়েটিভ ডিজাইন ও ভিজ্যুয়াল ব্র্যান্ডিং এর মাধ্যমে যেকোনো আইডিয়াকে আকর্ষণীয় রূপে ফুটিয়ে তুলতে ভালোবাসি। ক্লায়েন্টের লক্ষ্য অনুযায়ী অর্থপূর্ণ ও প্রিমিয়াম ডিজাইন তৈরি করাই আমার প্রধান উদ্দেশ্য।',
-  heroImage: '/mahim.jpg?v=20260905',
+  heroImage: './mahim.jpg?v=20260905',
   heroImageAlt: 'Mahim Ibne Khudi - গ্রাফিক ডিজাইনার',
   resumeDownloadUrl: '#',
 

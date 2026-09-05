@@ -1,0 +1,1437 @@
+import React, { useState } from 'react';
+import { useSite } from '../context/SiteContext';
+import { BlogPost, EducationItem, ExperienceItem, PostVisibility, SkillItem, UserAccount } from '../types';
+import { generateRobotsTxt, generateSitemapXml } from '../utils/sitemap';
+import { GOOGLE_APPS_SCRIPT_TEMPLATE } from '../utils/googleSheets';
+import { 
+  X, 
+  Lock, 
+  Key, 
+  Sliders, 
+  BookOpen, 
+  Users, 
+  Briefcase, 
+  GraduationCap, 
+  Wrench, 
+  FileSpreadsheet, 
+  Search, 
+  Database, 
+  Plus, 
+  Trash2, 
+  Edit3, 
+  Check, 
+  Upload, 
+  Link as LinkIcon, 
+  Image as ImageIcon, 
+  Copy, 
+  Download, 
+  RefreshCw, 
+  Sparkles, 
+  Eye, 
+  ShieldCheck, 
+  LogOut,
+  AlertCircle
+} from 'lucide-react';
+
+export const AdminModal: React.FC = () => {
+  const {
+    settings,
+    updateSettings,
+    experiences,
+    addExperience,
+    updateExperience,
+    deleteExperience,
+    education,
+    addEducation,
+    updateEducation,
+    deleteEducation,
+    skills,
+    addSkill,
+    updateSkill,
+    deleteSkill,
+    certifications,
+    addCertification,
+    updateCertification,
+    deleteCertification,
+    posts,
+    addPost,
+    updatePost,
+    deletePost,
+    users,
+    updateUserStatus,
+    deleteUser,
+    contactMessages,
+    markMessageRead,
+    deleteMessage,
+    isAdminAuthenticated,
+    loginAdmin,
+    logoutAdmin,
+    updateAdminPassword,
+    isAdminModalOpen,
+    closeAdminModal,
+    exportBackupJson,
+    importBackupJson,
+  } = useSite();
+
+  // Password state for login
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // Active Admin Tab
+  const [activeTab, setActiveTab] = useState<
+    'general' | 'blog' | 'users' | 'experience' | 'skills' | 'sheets' | 'seo' | 'messages' | 'backup'
+  >('general');
+
+  // Blog Post form state (for creating or editing)
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [postForm, setPostForm] = useState<Omit<BlogPost, 'id'>>({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    coverImage: '',
+    altText: '',
+    category: 'ডিজাইন টিপস',
+    visibility: 'public',
+    author: 'Mahim Ibne Khudi',
+    date: new Date().toISOString().split('T')[0],
+    readTime: '৪ মিনিট',
+  });
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
+
+  // Copy feedback
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedSitemap, setCopiedSitemap] = useState(false);
+  const [copiedRobots, setCopiedRobots] = useState(false);
+  const [adminNotification, setAdminNotification] = useState('');
+
+  // Password change state
+  const [newAdminPass, setNewAdminPass] = useState('');
+  const [passChangeSuccess, setPassChangeSuccess] = useState('');
+
+  if (!isAdminModalOpen) return null;
+
+  const showNotification = (msg: string) => {
+    setAdminNotification(msg);
+    setTimeout(() => setAdminNotification(''), 3500);
+  };
+
+  // Admin password login
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsVerifying(true);
+    setPasswordError('');
+    const success = await loginAdmin(passwordInput);
+    setIsVerifying(false);
+    if (!success) {
+      setPasswordError('ভুল পাসওয়ার্ড! সঠিক এডমিন পাসওয়ার্ড প্রদান করুন।');
+    } else {
+      setPasswordInput('');
+    }
+  };
+
+  // Helper for image upload -> Data URI (to avoid server load while supporting offline/GitHub)
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size limit (cap at 3MB to avoid localStorage limits)
+    if (file.size > 3 * 1024 * 1024) {
+      alert('ছবির সাইজ ৩ মেগাবাইটের বেশি! অনুগ্রহ করে ক্লাউডিফাই বা ইমেজ লিঙ্কের মাধ্যমে যুক্ত করুন অথবা ছোট ছবি ব্যবহার করুন।');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (typeof event.target?.result === 'string') {
+        callback(event.target.result);
+        showNotification('ছবি সফলভাবে আপলোড হয়েছে!');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Blog post submit
+  const handleSavePost = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!postForm.title || !postForm.content) {
+      alert('পোস্টের শিরোনাম এবং বিস্তারিত কনটেন্ট প্রদান করুন।');
+      return;
+    }
+
+    if (editingPostId) {
+      updatePost(editingPostId, postForm);
+      showNotification('পোস্ট সফলভাবে আপডেট করা হয়েছে!');
+    } else {
+      addPost(postForm);
+      showNotification('নতুন পোস্ট সফলভাবে প্রকাশিত হয়েছে!');
+    }
+
+    setIsCreatingPost(false);
+    setEditingPostId(null);
+    setPostForm({
+      title: '',
+      slug: '',
+      excerpt: '',
+      content: '',
+      coverImage: '',
+      altText: '',
+      category: 'ডিজাইন টিপs',
+      visibility: 'public',
+      author: 'Mahim Ibne Khudi',
+      date: new Date().toISOString().split('T')[0],
+      readTime: '৪ মিনিট',
+    });
+  };
+
+  const startEditPost = (post: BlogPost) => {
+    setEditingPostId(post.id);
+    setPostForm({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      coverImage: post.coverImage,
+      altText: post.altText,
+      category: post.category,
+      visibility: post.visibility,
+      author: post.author,
+      date: post.date,
+      readTime: post.readTime,
+    });
+    setIsCreatingPost(true);
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newAdminPass.length < 6) {
+      alert('পাসওয়ার্ড ন্যূনতম ৬ অক্ষরের হতে হবে।');
+      return;
+    }
+    const updated = await updateAdminPassword(newAdminPass);
+    if (updated) {
+      setPassChangeSuccess('এডমিন পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!');
+      setNewAdminPass('');
+      setTimeout(() => setPassChangeSuccess(''), 4000);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto">
+      
+      {/* If not authenticated: Password Prompt */}
+      {!isAdminAuthenticated ? (
+        <div className="relative w-full max-w-md bg-white border-2 border-black rounded-3xl shadow-2xl p-8 text-center animate-in zoom-in-95">
+          <div className="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mx-auto mb-4 shadow-md">
+            <Lock className="w-7 h-7" />
+          </div>
+
+          <h3 className="text-xl font-black text-[#1a1a1a] mb-1 tracking-tight">
+            মাহিম'স এডমিন প্যানেল
+          </h3>
+          <p className="text-xs text-zinc-600 mb-6 font-normal">
+            mahims.com ওয়েবসাইটের সমস্ত লেখা, ছবি ও সেটিংস এডিটের জন্য সুরক্ষিত প্রবেশদ্বার
+          </p>
+
+          <form onSubmit={handlePasswordSubmit} className="space-y-4 text-left">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                এডমিন পাসওয়ার্ড প্রদান করুন
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  value={passwordInput}
+                  onChange={e => setPasswordInput(e.target.value)}
+                  placeholder="পাসওয়ার্ড লিখুন..."
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-50 border border-black/10 text-black text-sm focus:outline-none focus:border-black focus:bg-white transition-colors"
+                />
+                <Key className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" />
+              </div>
+            </div>
+
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-300 text-rose-800 text-xs font-medium">
+                {passwordError}
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="submit"
+                disabled={isVerifying}
+                className="flex-1 py-3 rounded-xl bg-black hover:bg-zinc-800 text-white font-black text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isVerifying ? 'যাচাই হচ্ছে...' : 'লগইন করুন'}
+              </button>
+              <button
+                type="button"
+                onClick={closeAdminModal}
+                className="px-4 py-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-black/10 text-sm font-bold transition-colors cursor-pointer"
+              >
+                বন্ধ
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 pt-4 border-t border-black/10 text-[11px] text-zinc-500 font-medium">
+            নিরাপত্তা নির্দেশিকা: ভিউ-সোর্সে কোনো পাসওয়ার্ড দৃশ্যমান নয় (SHA-256 এনক্রিপ্টেড)।
+          </div>
+        </div>
+      ) : (
+        /* Authenticated Admin Dashboard */
+        <div className="relative w-full max-w-6xl my-4 bg-slate-900 border border-white/15 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+          
+          {/* Top Admin Header Bar */}
+          <div className="px-6 py-4 bg-slate-950/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-4 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center font-black text-amber-400">
+                M
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <span>mahims.com মাস্টার কন্ট্রোল প্যানেল</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Live
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  যেকোনো তথ্য এডিট করুন, তাৎক্ষণিকভাবে সাইটে আপডেট হবে
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {adminNotification && (
+                <div className="text-xs font-semibold px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                  {adminNotification}
+                </div>
+              )}
+              <button
+                onClick={logoutAdmin}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+                title="লগআউট"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>লগআউট</span>
+              </button>
+              <button
+                onClick={closeAdminModal}
+                className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+                title="এডমিন প্যানেল বন্ধ করুন"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Admin Navigation Tabs */}
+          <div className="flex items-center gap-1 px-6 py-2 bg-slate-950/50 border-b border-white/5 overflow-x-auto shrink-0 scrollbar-thin">
+            {[
+              { id: 'general', label: 'হোম ও প্রোফাইল', icon: Sliders },
+              { id: 'blog', label: 'ব্লগ পোস্ট ম্যানেজার', icon: BookOpen },
+              { id: 'users', label: 'ইউজার ও মেম্বারস', icon: Users },
+              { id: 'experience', label: 'অভিজ্ঞতা ও শিক্ষা', icon: Briefcase },
+              { id: 'skills', label: 'স্কিল ও সার্টিফিকেট', icon: Wrench },
+              { id: 'sheets', label: 'গুগল শিট ডাটাবেজ', icon: FileSpreadsheet },
+              { id: 'seo', label: 'এসইও ও সাইটম্যাপ', icon: Search },
+              { id: 'messages', label: `ইনবক্স (${contactMessages.length})`, icon: Sparkles },
+              { id: 'backup', label: 'ব্যাকআপ ও নিরাপত্তা', icon: Database },
+            ].map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id as any);
+                    setIsCreatingPost(false);
+                  }}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Admin Tab Content Scrollable Container */}
+          <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-8 text-left">
+            
+            {/* TAB 1: General & Profile */}
+            {activeTab === 'general' && (
+              <div className="space-y-6 max-w-4xl">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">প্রোফাইল, হিরো ও যোগাযোগ এডিট</h3>
+                  <p className="text-xs text-slate-400">
+                    এখানে যে পরিবর্তন করবেন তা হোমপেজে তাৎক্ষণিকভাবে প্রদর্শিত হবে।
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      ওয়েবসাইট নাম / ব্র্যান্ড
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.siteName}
+                      onChange={e => updateSettings({ siteName: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      ডোমেইন নেম
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.domain}
+                      onChange={e => updateSettings({ domain: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm font-mono focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      হিরো টাইটেল / নাম
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.heroTitle}
+                      onChange={e => updateSettings({ heroTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      সাবটাইটেল / রোল
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.heroSubtitle}
+                      onChange={e => updateSettings({ heroSubtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+                </div>
+
+                {/* Profile Photo: Direct URL + Direct Upload */}
+                <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-amber-400" />
+                        <span>প্রোফাইল ছবি (ক্লাউডিফাই লিঙ্ক অথবা সরাসরি আপলোড)</span>
+                      </h4>
+                      <p className="text-xs text-slate-400">
+                        কোডের ওপর চাপ কমাতে ক্লাউডিফাই বা অন্য লিঙ্কের মাধ্যমে ছবি যুক্ত করতে পারেন, অথবা সরাসরি ফাইল আপলোড করুন।
+                      </p>
+                    </div>
+                    {settings.heroImage && (
+                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-amber-400 shrink-0">
+                        <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        ইমেজ লিঙ্ক (URL)
+                      </label>
+                      <input
+                        type="url"
+                        value={settings.heroImage}
+                        onChange={e => updateSettings({ heroImage: e.target.value })}
+                        placeholder="https://res.cloudinary.com/... or https://i.imgur.com/..."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        অথবা সরাসরি ডিভাইস থেকে আপলোড করুন
+                      </label>
+                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white text-xs cursor-pointer transition-colors">
+                        <Upload className="w-4 h-4 text-amber-400" />
+                        <span>কম্পিউটার/মোবাইল থেকে ছবি বেছে নিন</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={e => handleImageFileUpload(e, url => updateSettings({ heroImage: url }))}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    সংক্ষিপ্ত বায়ো (হিরো ডেসক্রিপশন)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.heroBio}
+                    onChange={e => updateSettings({ heroBio: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                {/* Contact Coordinates */}
+                <div className="pt-4 border-t border-white/10">
+                  <h4 className="text-sm font-bold text-white mb-3">যোগাযোগের লিংক ও ফোন নম্বর</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">মোবাইল ফোন</label>
+                      <input
+                        type="text"
+                        value={settings.phone}
+                        onChange={e => updateSettings({ phone: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">ইমেইল</label>
+                      <input
+                        type="email"
+                        value={settings.email}
+                        onChange={e => updateSettings({ email: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">ঠিকানা</label>
+                      <input
+                        type="text"
+                        value={settings.address}
+                        onChange={e => updateSettings({ address: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">LinkedIn লিংক</label>
+                      <input
+                        type="text"
+                        value={settings.linkedinUrl}
+                        onChange={e => updateSettings({ linkedinUrl: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">Behance লিংক</label>
+                      <input
+                        type="text"
+                        value={settings.behanceUrl}
+                        onChange={e => updateSettings({ behanceUrl: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">WhatsApp লিংক (wa.me/@mahim.wp)</label>
+                      <input
+                        type="text"
+                        value={settings.whatsappLink}
+                        onChange={e => updateSettings({ whatsappLink: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => showNotification('সেটিংস সফলভাবে সংরক্ষিত হয়েছে!')}
+                    className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    পরিবর্তন সেভ করুন
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: Blog Post Manager (WordPress Style) */}
+            {activeTab === 'blog' && (
+              <div className="space-y-6">
+                
+                {/* Header & Create Post Toggle */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">ওয়ার্ডপ্রেস স্টাইল ব্লগ পোস্ট ম্যানেজার</h3>
+                    <p className="text-xs text-slate-400">
+                      পাবলিক, মেম্বার অনলি এবং ভিআইপি অনুমোদিত পোস্ট তৈরি ও পরিচালনা করুন।
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsCreatingPost(!isCreatingPost);
+                      setEditingPostId(null);
+                      setPostForm({
+                        title: '',
+                        slug: '',
+                        excerpt: '',
+                        content: '',
+                        coverImage: '',
+                        altText: '',
+                        category: 'ডিজাইন টিপস',
+                        visibility: 'public',
+                        author: 'Mahim Ibne Khudi',
+                        date: new Date().toISOString().split('T')[0],
+                        readTime: '৪ মিনিট',
+                      });
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>{isCreatingPost ? 'পোস্ট তালিকা দেখুন' : 'নতুন পোস্ট তৈরি করুন'}</span>
+                  </button>
+                </div>
+
+                {/* Create/Edit Form */}
+                {isCreatingPost ? (
+                  <form onSubmit={handleSavePost} className="p-6 rounded-3xl bg-slate-950 border border-amber-500/20 space-y-5">
+                    <h4 className="text-base font-bold text-amber-400 flex items-center gap-2">
+                      <Edit3 className="w-4 h-4" />
+                      <span>{editingPostId ? 'পোস্ট এডিট করুন' : 'নতুন ব্লগ পোস্ট লিখুন'}</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-medium text-slate-300 mb-1">
+                          পোস্ট শিরোনাম (Title) <span className="text-amber-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={postForm.title}
+                          onChange={e => setPostForm({ ...postForm, title: e.target.value })}
+                          placeholder="উদাঃ ২০২৬ সালে গ্রাফিক ডিজাইনের নতুন কৌশল"
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-slate-300 mb-1">
+                          অ্যাক্সেস টাইপ (Visibility) <span className="text-amber-400">*</span>
+                        </label>
+                        <select
+                          value={postForm.visibility}
+                          onChange={e => setPostForm({ ...postForm, visibility: e.target.value as PostVisibility })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                        >
+                          <option value="public">১. পাবলিক পোস্ট (সবার জন্য উন্মুক্ত)</option>
+                          <option value="members">২. মেম্বারস অনলি (রেজিস্টার্ড পাঠকদের জন্য)</option>
+                          <option value="vip">৩. অনুমোদিত ভিআইপি (মাহিম অনুমোদিত পাঠকদের জন্য)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-300 mb-1">ক্যাটাগরি</label>
+                        <input
+                          type="text"
+                          value={postForm.category}
+                          onChange={e => setPostForm({ ...postForm, category: e.target.value })}
+                          placeholder="উদাঃ ব্র্যান্ডিং / টিপস"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-300 mb-1">পড়ার সময়</label>
+                        <input
+                          type="text"
+                          value={postForm.readTime}
+                          onChange={e => setPostForm({ ...postForm, readTime: e.target.value })}
+                          placeholder="উদাঃ ৪ মিনিট"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-300 mb-1">তারিখ</label>
+                        <input
+                          type="date"
+                          value={postForm.date}
+                          onChange={e => setPostForm({ ...postForm, date: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Image URL + Upload for Post */}
+                    <div className="p-4 rounded-2xl bg-slate-900 border border-white/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-xs font-bold text-white flex items-center gap-2">
+                          <ImageIcon className="w-4 h-4 text-amber-400" />
+                          <span>পোস্টের ফিচার্ড ছবি (Featured Image URL বা আপলোড)</span>
+                        </label>
+                        {postForm.coverImage && (
+                          <div className="w-16 h-10 rounded-lg overflow-hidden border border-white/20">
+                            <img src={postForm.coverImage} alt="Cover Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input
+                          type="url"
+                          value={postForm.coverImage}
+                          onChange={e => setPostForm({ ...postForm, coverImage: e.target.value })}
+                          placeholder="https://images.unsplash.com/... or Cloudinary URL"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                        />
+                        <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-white/10 text-slate-300 text-xs cursor-pointer">
+                          <Upload className="w-3.5 h-3.5 text-amber-400" />
+                          <span>ডিভাইস থেকে ছবি আপলোড</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={e => handleImageFileUpload(e, url => setPostForm({ ...postForm, coverImage: url }))}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        সংক্ষিপ্ত সারাংশ (Excerpt)
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={postForm.excerpt}
+                        onChange={e => setPostForm({ ...postForm, excerpt: e.target.value })}
+                        placeholder="পোস্টের মূল বিষয়বস্তু এক বা দুই লাইনে..."
+                        className="w-full px-4 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        সম্পূর্ণ পোস্ট কনটেন্ট (Article Content & Embeds) <span className="text-amber-400">*</span>
+                      </label>
+                      <textarea
+                        rows={8}
+                        required
+                        value={postForm.content}
+                        onChange={e => setPostForm({ ...postForm, content: e.target.value })}
+                        placeholder="এখানে পোস্টের বিস্তারিত লিখুন। প্যারাগ্রাফ, হেডলাইন, লিংক ইত্যাদি সাপোর্ট করে..."
+                        className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all cursor-pointer"
+                      >
+                        {editingPostId ? 'পোস্ট আপডেট করুন' : 'পোস্ট পাবলিশ করুন'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreatingPost(false);
+                          setEditingPostId(null);
+                        }}
+                        className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
+                      >
+                        বাতিল
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  /* Post Listing Table */
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4">
+                      {posts.map(post => (
+                        <div
+                          key={post.id}
+                          className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-white/10 hover:border-amber-500/30 transition-all"
+                        >
+                          <div className="flex items-center gap-4 min-w-0">
+                            {post.coverImage && (
+                              <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-900 shrink-0 border border-white/10">
+                                <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span
+                                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                    post.visibility === 'public'
+                                      ? 'bg-emerald-500/20 text-emerald-400'
+                                      : post.visibility === 'members'
+                                      ? 'bg-blue-500/20 text-blue-400'
+                                      : 'bg-amber-500/20 text-amber-300'
+                                  }`}
+                                >
+                                  {post.visibility === 'public'
+                                    ? 'পাবলিক'
+                                    : post.visibility === 'members'
+                                    ? 'মেম্বার অনলি'
+                                    : 'ভিআইপি স্পেশাল'}
+                                </span>
+                                <span className="text-[11px] text-slate-400 font-mono">
+                                  {post.date}
+                                </span>
+                              </div>
+                              <h4 className="text-sm font-bold text-white truncate max-w-lg">
+                                {post.title}
+                              </h4>
+                              <p className="text-xs text-slate-400 line-clamp-1">
+                                {post.excerpt}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                            <button
+                              onClick={() => startEditPost(post)}
+                              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 transition-colors"
+                              title="এডিট"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`"${post.title}" পোস্টটি ডিলিট করতে চান?`)) {
+                                  deletePost(post.id);
+                                  showNotification('পোস্ট ডিলিট করা হয়েছে');
+                                }
+                              }}
+                              className="p-2 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 transition-colors"
+                              title="ডিলিট"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {/* TAB 3: Users & Permission Control */}
+            {activeTab === 'users' && (
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">ইউজার ও মেম্বারস পারমিশন কন্ট্রোল</h3>
+                  <p className="text-xs text-slate-400">
+                    এখানে রেজিস্টার্ড পাঠকদের তালিকা দেখতে পারবেন এবং যাদের ইচ্ছা ১-ক্লিকে ভিআইপি (VIP) অনুমোদন দিতে পারবেন।
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {users.map(u => (
+                    <div
+                      key={u.id}
+                      className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-white/10"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center font-bold text-amber-400">
+                          {u.name[0]}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-bold text-white">{u.name}</h4>
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                u.role === 'vip'
+                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                  : 'bg-slate-800 text-slate-400'
+                              }`}
+                            >
+                              {u.role === 'vip' ? '★ VIP Approved' : 'Regular Member'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-400 font-mono">{u.email}</p>
+                          <p className="text-[11px] text-slate-500">
+                            {u.occupation || 'পাঠক'} • যোগদান: {u.joinedDate}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        {u.role === 'vip' ? (
+                          <button
+                            onClick={() => {
+                              updateUserStatus(u.id, 'approved', 'user');
+                              showNotification('ভিআইপি পারমিশন প্রত্যাহার করা হয়েছে');
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold"
+                          >
+                            ভিআইপি বাতিল করুন
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              updateUserStatus(u.id, 'approved', 'vip');
+                              showNotification(`"${u.name}" কে ভিআইপি এক্সেস দেওয়া হয়েছে!`);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20"
+                          >
+                            ✓ ভিআইপি এলাউ (Approve VIP)
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => {
+                            if (confirm(`"${u.name}" ইউজার মুছে ফেলতে চান?`)) {
+                              deleteUser(u.id);
+                              showNotification('ইউজার ডিলিট করা হয়েছে');
+                            }
+                          }}
+                          className="p-2 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
+                          title="ইউজার মুছুন"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB 4: Experience & Education */}
+            {activeTab === 'experience' && (
+              <div className="space-y-8">
+                
+                {/* Experiences */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-white">কাজের অভিজ্ঞতা (Work Experience)</h3>
+                      <p className="text-xs text-slate-400">DESHI VOJ, FIVERR, ইত্যাদি কাজের বিবরণ</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const role = prompt('রোল / পদবী লিখুন:');
+                        const company = prompt('প্রতিষ্ঠানের নাম:');
+                        if (role && company) {
+                          addExperience({
+                            role,
+                            company,
+                            period: '২০২৬ – বর্তমান',
+                            description: 'দায়িত্ব ও অর্জনের বিবরণ...',
+                            skillsUsed: ['Photoshop', 'Illustrator'],
+                            isCurrent: true,
+                          });
+                          showNotification('অভিজ্ঞতা যোগ করা হয়েছে');
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>অভিজ্ঞতা যোগ</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {experiences.map(exp => (
+                      <div key={exp.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start justify-between gap-4">
+                        <div>
+                          <h4 className="text-sm font-bold text-white">{exp.role} — <span className="text-amber-400">{exp.company}</span></h4>
+                          <p className="text-xs text-slate-400 font-mono mb-1">{exp.period}</p>
+                          <p className="text-xs text-slate-300">{exp.description}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (confirm('এই অভিজ্ঞতা ডিলিট করতে চান?')) deleteExperience(exp.id);
+                          }}
+                          className="p-1.5 text-slate-500 hover:text-rose-400"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-white">শিক্ষা ও একাডেমি (Education)</h3>
+                      <p className="text-xs text-slate-400">ঢাকা সেন্ট্রাল ইউনিভার্সিটি (পলিটিক্যাল সাইন্স), HSC, SSC</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {education.map(edu => (
+                      <div key={edu.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start justify-between gap-4">
+                        <div>
+                          <h4 className="text-sm font-bold text-white">{edu.degree} — <span className="text-amber-400">{edu.institution}</span></h4>
+                          {edu.department && <p className="text-xs text-amber-300/80">{edu.department}</p>}
+                          <p className="text-xs text-slate-400 font-mono">{edu.period} | ফলাফল: {edu.result}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (confirm('এই শিক্ষা তথ্য ডিলিট করতে চান?')) deleteEducation(edu.id);
+                          }}
+                          className="p-1.5 text-slate-500 hover:text-rose-400"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB 5: Skills & Certifications */}
+            {activeTab === 'skills' && (
+              <div className="space-y-8">
+                
+                {/* Skills Manager */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-base font-bold text-white">স্কিল ও সফটওয়্যার পারদর্শিতা</h3>
+                      <p className="text-xs text-slate-400">পার্সেন্টেজ (%) পরিবর্তন বা নতুন স্কিল যোগ করুন</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const name = prompt('স্কিলের নাম লিখুন:');
+                        const prof = prompt('পার্সেন্টেজ (০-১০০):', '90');
+                        if (name) {
+                          addSkill({
+                            name,
+                            category: 'design',
+                            proficiency: parseInt(prof || '90', 10),
+                            highlight: true,
+                          });
+                          showNotification('স্কিল যোগ করা হয়েছে');
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>স্কিল যোগ করুন</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {skills.map(sk => (
+                      <div key={sk.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-center justify-between gap-3">
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-white">{sk.name}</p>
+                          <div className="flex items-center gap-3 mt-1">
+                            <input
+                              type="range"
+                              min="50"
+                              max="100"
+                              value={sk.proficiency}
+                              onChange={e => updateSkill(sk.id, { proficiency: parseInt(e.target.value, 10) })}
+                              className="flex-1 accent-amber-400"
+                            />
+                            <span className="text-xs font-mono font-bold text-amber-400">{sk.proficiency}%</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => deleteSkill(sk.id)}
+                          className="p-1.5 text-slate-500 hover:text-rose-400"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Certifications Manager */}
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <h3 className="text-base font-bold text-white">NSDA ও প্রফেশনাল সার্টিফিকেশন</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {certifications.map(c => (
+                      <div key={c.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex flex-col justify-between">
+                        <div>
+                          <p className="text-xs text-amber-400 font-bold">{c.year}</p>
+                          <h4 className="text-sm font-bold text-white">{c.title}</h4>
+                          <p className="text-xs text-slate-400">{c.issuer}</p>
+                        </div>
+                        <div className="flex justify-between items-center pt-3 mt-2 border-t border-white/5">
+                          <span className="text-[10px] font-mono text-slate-500">{c.credentialId}</span>
+                          <button onClick={() => deleteCertification(c.id)} className="text-slate-500 hover:text-rose-400">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB 6: Google Sheets Database Integration */}
+            {activeTab === 'sheets' && (
+              <div className="space-y-6 max-w-4xl">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">গুগল শিট (Google Sheets) লাইভ ডাটাবেজ ইন্টিগ্রেশন</h3>
+                  <p className="text-xs text-slate-400">
+                    ওয়েবসাইটের সকল ইউজার রেজিস্ট্রেশন ও যোগাযোগের মেসেজ সরাসরি আপনার গুগল শিটে সংরক্ষণ করতে এই ফিচারটি ব্যবহার করুন।
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-3xl bg-slate-950 border border-emerald-500/30 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                      <FileSpreadsheet className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Google Apps Script Webhook URL</h4>
+                      <p className="text-xs text-slate-400">আপনার তৈরি করা Google Sheet Web App লিঙ্কটি এখানে পেস্ট করুন</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <input
+                      type="url"
+                      value={settings.googleSheetWebhookUrl || ''}
+                      onChange={e => updateSettings({ googleSheetWebhookUrl: e.target.value })}
+                      placeholder="https://script.google.com/macros/s/AKfycbx.../exec"
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-xs text-slate-400">
+                      স্ট্যাটাস: {settings.googleSheetWebhookUrl ? (
+                        <span className="text-emerald-400 font-bold">✓ কানেক্টেড</span>
+                      ) : (
+                        <span className="text-amber-400">অপেক্ষমাণ (লিংক দিন)</span>
+                      )}
+                    </span>
+                    <button
+                      onClick={() => showNotification('গুগল শিট সেভ হয়েছে!')}
+                      className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400"
+                    >
+                      সংরক্ষণ করুন
+                    </button>
+                  </div>
+                </div>
+
+                {/* Setup Instructions & Code Copy */}
+                <div className="p-5 rounded-3xl bg-slate-950 border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-400" />
+                      <span>গুগল শিটে সেটআপের জন্য স্ক্রিপ্ট কোড (১-ক্লিক কপি)</span>
+                    </h4>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_TEMPLATE);
+                        setCopiedCode(true);
+                        setTimeout(() => setCopiedCode(false), 2500);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{copiedCode ? 'কপি সম্পন্ন!' : 'কোড কপি করুন'}</span>
+                    </button>
+                  </div>
+
+                  <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed">
+                    <li>আপনার Google Drive-এ গিয়ে একটি নতুন <strong>Google Sheet</strong> তৈরি করুন।</li>
+                    <li>শীটের মেনু থেকে <strong>Extensions &gt; Apps Script</strong>-এ যান।</li>
+                    <li>উপরের <strong>কোড কপি করুন</strong> বাটনে ক্লিক করে পুরো কোডটি Apps Script-এ পেস্ট করে Save দিন।</li>
+                    <li>উপরে ডানে <strong>Deploy &gt; New deployment</strong> এ ক্লিক করুন (Type: Web app, Access: Anyone)।</li>
+                    <li>প্রাপ্ত Web App URL টি কপি করে উপরের বক্সে বসিয়ে দিন। ব্যাস! স্বয়ংক্রিয়ভাবে ডাটা সেভ হতে থাকবে।</li>
+                  </ol>
+
+                  <pre className="p-4 rounded-xl bg-slate-900 border border-white/5 text-[11px] font-mono text-slate-400 overflow-x-auto max-h-48">
+                    {GOOGLE_APPS_SCRIPT_TEMPLATE}
+                  </pre>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB 7: SEO & Sitemap */}
+            {activeTab === 'seo' && (
+              <div className="space-y-6 max-w-4xl">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-1">সার্চ ইঞ্জিন ও এআই ডিসকভারি এসইও (SEO)</h3>
+                  <p className="text-xs text-slate-400">
+                    গুগলে মাহিম, Mahim Ibne Khudi ও সম্পর্কিত কীওয়ার্ডে র‍্যাংক করার অপ্টিমাইজেশন
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      এসইও টাইটেল (Title Tag)
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.seoTitle}
+                      onChange={e => updateSettings({ seoTitle: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      মেটা ডেসক্রিপশন (Meta Description)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={settings.seoDescription}
+                      onChange={e => updateSettings({ seoDescription: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                      টার্গেট কীওয়ার্ডস (কমা দিয়ে আলাদা করুন)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={settings.seoKeywords.join(', ')}
+                      onChange={e =>
+                        updateSettings({
+                          seoKeywords: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
+                        })
+                      }
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Dynamic Sitemap & Robots.txt generators */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/10">
+                  
+                  {/* Sitemap Card */}
+                  <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white">ডায়নামিক সাইটম্যাপ (sitemap.xml)</h4>
+                      <button
+                        onClick={() => {
+                          const xml = generateSitemapXml(settings, posts);
+                          navigator.clipboard.writeText(xml);
+                          setCopiedSitemap(true);
+                          setTimeout(() => setCopiedSitemap(false), 2000);
+                        }}
+                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-mono"
+                      >
+                        {copiedSitemap ? 'কপি হয়েছে!' : 'XML কপি'}
+                      </button>
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      গুগল সার্চ কনসোলে সাবমিটের জন্য প্রস্তুত XML সাইটম্যাপ।
+                    </p>
+                    <pre className="p-3 rounded-xl bg-slate-900 text-[10px] font-mono text-slate-400 max-h-32 overflow-y-auto">
+                      {generateSitemapXml(settings, posts)}
+                    </pre>
+                  </div>
+
+                  {/* Robots.txt Card */}
+                  <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white">এআই ও সার্চ রোবটস (robots.txt)</h4>
+                      <button
+                        onClick={() => {
+                          const rob = generateRobotsTxt(settings.domain);
+                          navigator.clipboard.writeText(rob);
+                          setCopiedRobots(true);
+                          setTimeout(() => setCopiedRobots(false), 2000);
+                        }}
+                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-mono"
+                      >
+                        {copiedRobots ? 'কপি হয়েছে!' : 'Robots কপি'}
+                      </button>
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      GPTBot, Perplexity, Claude ও Google Crawlers যাতে সহজে ইনডেক্স করতে পারে।
+                    </p>
+                    <pre className="p-3 rounded-xl bg-slate-900 text-[10px] font-mono text-slate-400 max-h-32 overflow-y-auto">
+                      {generateRobotsTxt(settings.domain)}
+                    </pre>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB 8: Contact Messages Inbox */}
+            {activeTab === 'messages' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">ওয়েবসাইট ইনবক্স ({contactMessages.length} টি বার্তা)</h3>
+                    <p className="text-xs text-slate-400">ভিজিটরদের পাঠানো সরাসরি মেসেজ</p>
+                  </div>
+                </div>
+
+                {contactMessages.length === 0 ? (
+                  <div className="p-8 text-center bg-slate-950 rounded-2xl text-slate-500 text-sm">
+                    কোনো নতুন মেসেজ নেই।
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {contactMessages.map(m => (
+                      <div
+                        key={m.id}
+                        className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-2 relative"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-sm font-bold text-white">{m.name}</h4>
+                            <p className="text-xs text-amber-400 font-mono">{m.email}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] text-slate-500">{m.date}</span>
+                            <button
+                              onClick={() => deleteMessage(m.id)}
+                              className="p-1.5 text-slate-500 hover:text-rose-400"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {m.subject && (
+                          <p className="text-xs font-semibold text-slate-300">বিষয়: {m.subject}</p>
+                        )}
+
+                        <p className="text-xs sm:text-sm text-slate-200 bg-slate-900 p-3 rounded-xl whitespace-pre-wrap">
+                          {m.message}
+                        </p>
+
+                        <a
+                          href={`mailto:${m.email}?subject=Reply:%20${encodeURIComponent(m.subject || 'mahims.com')}`}
+                          className="inline-flex items-center gap-1 text-xs text-amber-400 hover:underline pt-1"
+                        >
+                          <span>ইমেইলে উত্তর দিন →</span>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 9: Backup & Security */}
+            {activeTab === 'backup' && (
+              <div className="space-y-8 max-w-3xl">
+                
+                {/* Database Backup Download & Restore */}
+                <div className="p-6 rounded-3xl bg-slate-950 border border-white/10 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                      <Database className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white">সম্পূর্ণ ডাটাবেজ ব্যাকআপ (JSON Export / Import)</h4>
+                      <p className="text-xs text-slate-400">
+                        আপনার সমস্ত পোস্ট, ইউজার, সেটিংস ও বার্তা এক ফাইলে ডাউনলোড করুন অথবা রিস্টোর করুন।
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <button
+                      onClick={() => {
+                        const jsonStr = exportBackupJson();
+                        const blob = new Blob([jsonStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `mahims-backup-${new Date().toISOString().split('T')[0]}.json`;
+                        a.click();
+                        showNotification('ব্যাকআপ ফাইল ডাউনলোড হয়েছে!');
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-all cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>ব্যাকআপ ডাউনলোড করুন (JSON)</span>
+                    </button>
+
+                    <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs cursor-pointer transition-all">
+                      <Upload className="w-4 h-4 text-amber-400" />
+                      <span>ব্যাকআপ ফাইল থেকে রিস্টোর করুন</span>
+                      <input
+                        type="file"
+                        accept=".json"
+                        className="hidden"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = evt => {
+                            const content = evt.target?.result as string;
+                            if (content && importBackupJson(content)) {
+                              showNotification('ডাটাবেজ সফলভাবে রিস্টোর হয়েছে!');
+                            } else {
+                              alert('ব্যাকআপ ফাইলটি সঠিক নয়।');
+                            }
+                          };
+                          reader.readAsText(file);
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Change Admin Password */}
+                <div className="p-6 rounded-3xl bg-slate-950 border border-white/10 space-y-4">
+                  <h4 className="text-base font-bold text-white flex items-center gap-2">
+                    <Key className="w-4 h-4 text-amber-400" />
+                    <span>এডমিন পাসওয়ার্ড পরিবর্তন</span>
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    বর্তমান পাসওয়ার্ড: <code>@@MahimsdotcomAdmin11223300@@</code>। আপনি চাইলে নতুন পাসওয়ার্ড সেট করতে পারেন।
+                  </p>
+
+                  <form onSubmit={handlePasswordChange} className="space-y-3 max-w-md">
+                    <div>
+                      <input
+                        type="password"
+                        required
+                        value={newAdminPass}
+                        onChange={e => setNewAdminPass(e.target.value)}
+                        placeholder="নতুন পাসওয়ার্ড লিখুন..."
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs"
+                      />
+                    </div>
+                    {passChangeSuccess && (
+                      <p className="text-xs text-emerald-400 font-semibold">{passChangeSuccess}</p>
+                    )}
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs"
+                    >
+                      পাসওয়ার্ড পরিবর্তন করুন
+                    </button>
+                  </form>
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  );
+};

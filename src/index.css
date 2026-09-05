@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+  }
+}
+
+/* Custom 3D perspective & effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* 3D Glass & Card Depth Styles */
+.card-3d {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.08),
+    0 4px 12px -2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-3d:hover {
+  transform: translateY(-6px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.14),
+    0 8px 18px -4px rgba(0, 0, 0, 0.06),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+}
+
+.card-3d-dark {
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.95) 0%, rgba(9, 9, 11, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 16px 40px -10px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 3D Push Button Effect */
+.btn-3d-green {
+  background: linear-gradient(180deg, #34d399 0%, #10b981 60%, #059669 100%);
+  box-shadow: 
+    0 8px 20px -4px rgba(16, 185, 129, 0.45),
+    0 4px 0 0 #047857,
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease-out;
+}
+
+.btn-3d-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 24px -4px rgba(16, 185, 129, 0.6),
+    0 5px 0 0 #047857,
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.8);
+}
+
+.btn-3d-green:active {
+  transform: translateY(3px);
+  box-shadow: 
+    0 2px 8px -2px rgba(16, 185, 129, 0.4),
+    0 1px 0 0 #047857,
+    inset 0 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* 3D Floating Animations */
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes float3dReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+.animate-float-3d {
+  animation: float3d 6s ease-in-out infinite;
+}
+
+.animate-float-3d-reverse {
+  animation: float3dReverse 7s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* 3D Monogram Logo Styling */
+.logo-3d-box {
+  background: linear-gradient(135deg, #18181b 0%, #000000 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 6px 16px -2px rgba(0, 0, 0, 0.3),
+    0 2px 4px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Bold Typography Theme Styles */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px -6px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.05);
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
+}
+
+/* Custom light scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f5f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4cd;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a398;
+}

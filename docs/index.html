@@ -93,11 +93,33 @@
       }
     }
     </script>
-    <script type="module" crossorigin src="./assets/index-CMTs4dAs.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Dy6I4xvu.css">
+    <script type="module" crossorigin src="./assets/app.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/app.css">
   </head>
   <body class="bg-[#fdfdfb] text-[#1a1a1a] antialiased selection:bg-black selection:text-white">
     <div id="root"></div>
+    <script>
+      (function() {
+        var isDev = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.port === '3000' ||
+                    window.location.hostname.includes('run.app');
+        if (!isDev) {
+          if (document.querySelector('script[src*="app.js"]')) return;
+          var head = document.head;
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './assets/app.css';
+          head.appendChild(link);
+
+          var script = document.createElement('script');
+          script.type = 'module';
+          script.crossOrigin = 'anonymous';
+          script.src = './assets/app.js';
+          document.body.appendChild(script);
+        }
+      })();
+    </script>
   </body>
 </html>
 

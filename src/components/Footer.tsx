@@ -54,20 +54,20 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-white border-t border-black/10 pt-16 pb-12 overflow-hidden text-zinc-600">
+    <footer className="relative bg-white dark:bg-[#090807] border-t border-black/10 dark:border-white/10 pt-16 pb-12 overflow-hidden text-zinc-600 dark:text-zinc-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-black/10 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-black/10 dark:border-white/10 items-center">
           
           {/* Brand info */}
           <div className="md:col-span-6 space-y-3 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3">
               <Logo3D size="sm" />
-              <span className="text-xl font-black text-[#1a1a1a] tracking-tight">
+              <span className="text-xl font-black text-[#1a1a1a] dark:text-white tracking-tight">
                 {settings.heroTitle}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-md font-normal leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md font-normal leading-relaxed">
               {settings.seoDescription}
             </p>
 
@@ -79,7 +79,7 @@ export const Footer: React.FC = () => {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 border border-black/10 text-xs font-bold text-zinc-800 transition-all duration-200 shadow-2xs group ${item.style}`}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-black/10 dark:border-white/10 text-xs font-bold text-zinc-800 dark:text-zinc-200 transition-all duration-200 shadow-2xs group ${item.style}`}
                 >
                   {item.icon ? <item.icon className={`w-3.5 h-3.5 ${item.color} group-hover:text-white transition-colors`} /> : null}
                   <span>{item.customText || item.name}</span>
@@ -90,28 +90,28 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Quick links & socials */}
-          <div className="md:col-span-6 flex flex-wrap items-center justify-center md:justify-end gap-6 text-xs sm:text-sm font-bold text-zinc-600">
-            <a href="#home" className="hover:text-black transition-colors">হোম</a>
-            <a href="#about" className="hover:text-black transition-colors">আমার সম্পর্কে</a>
-            <a href="#skills" className="hover:text-black transition-colors">দক্ষতা</a>
-            <a href="#experience" className="hover:text-black transition-colors">অভিজ্ঞতা</a>
-            <a href="#education" className="hover:text-black transition-colors">শিক্ষা</a>
-            <a href="#blog" className="hover:text-black transition-colors">ব্লগ</a>
-            <a href="#contact" className="hover:text-black transition-colors">যোগাযোগ</a>
+          <div className="md:col-span-6 flex flex-wrap items-center justify-center md:justify-end gap-6 text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400">
+            <a href="#home" className="hover:text-black dark:hover:text-white transition-colors">হোম</a>
+            <a href="#about" className="hover:text-black dark:hover:text-white transition-colors">আমার সম্পর্কে</a>
+            <a href="#skills" className="hover:text-black dark:hover:text-white transition-colors">দক্ষতা</a>
+            <a href="#experience" className="hover:text-black dark:hover:text-white transition-colors">অভিজ্ঞতা</a>
+            <a href="#education" className="hover:text-black dark:hover:text-white transition-colors">শিক্ষা</a>
+            <a href="#blog" className="hover:text-black dark:hover:text-white transition-colors">ব্লগ</a>
+            <a href="#contact" className="hover:text-black dark:hover:text-white transition-colors">যোগাযোগ</a>
           </div>
 
         </div>
 
         {/* SEO Keywords Cloud */}
-        <div className="py-6 border-b border-black/10 text-[11px] text-zinc-500">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
+        <div className="py-6 border-b border-black/10 dark:border-white/10 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
             অনুসন্ধান কীওয়ার্ড (SEO Index Tags):
           </p>
           <div className="flex flex-wrap gap-2">
             {settings.seoKeywords.map((kw, i) => (
               <span
                 key={i}
-                className="px-2.5 py-0.5 rounded-md bg-zinc-100 border border-black/10 text-zinc-700 hover:text-black hover:border-black/30 transition-colors font-medium text-xs"
+                className="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:border-black/30 dark:hover:border-white/30 transition-colors font-medium text-xs"
               >
                 #{kw}
               </span>
@@ -120,13 +120,13 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar with Secret Dot for Admin Panel */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
           <p className="text-center sm:text-left font-normal">
-            © {currentYear} <strong className="text-black font-bold">{settings.siteName}</strong> (mahims.com). সর্বস্বত্ব সংরক্ষিত।
+            © {currentYear} <strong className="text-black dark:text-white font-bold">{settings.siteName}</strong> (mahims.com). সর্বস্বত্ব সংরক্ষিত।
           </p>
 
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-zinc-500 font-mono font-medium">
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono font-medium">
               Designed for Mahim Ibne Khudi
             </span>
 
@@ -136,7 +136,7 @@ export const Footer: React.FC = () => {
               onClick={openAdminModal}
               title="Admin Portal"
               aria-label="Admin Portal"
-              className="w-2.5 h-2.5 rounded-full bg-zinc-300 hover:bg-black transition-all duration-300 cursor-pointer opacity-50 hover:opacity-100 shadow-xs"
+              className="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700 hover:bg-black dark:hover:bg-amber-400 transition-all duration-300 cursor-pointer opacity-50 hover:opacity-100 shadow-xs"
             ></button>
           </div>
         </div>

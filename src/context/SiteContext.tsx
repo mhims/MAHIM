@@ -79,6 +79,10 @@ interface SiteContextType {
   selectedPostForView: BlogPost | null;
   viewPost: (post: BlogPost | null) => void;
   
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+  setTheme: (theme: 'light' | 'dark') => void;
+
   exportBackupJson: () => string;
   importBackupJson: (jsonString: string) => boolean;
   resetToDefaults: () => void;
@@ -88,6 +92,7 @@ const SiteContext = createContext<SiteContextType | null>(null);
 
 const STORAGE_KEYS = {
   SETTINGS: 'mahims_site_settings_v1',
+  THEME: 'mahims_site_theme_v1',
   EXPERIENCES: 'mahims_experiences_v1',
   EDUCATION: 'mahims_education_v1',
   SKILLS: 'mahims_skills_v1',
@@ -105,20 +110,20 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       if (saved) {
         const parsed = JSON.parse(saved);
+        // If parsed heroImage is an old local file (mahim.jpg) or empty, upgrade to default Cloudinary link.
+        // Otherwise, keep the user's custom URL or uploaded image!
+        const heroImageVal =
+          parsed.heroImage &&
+          typeof parsed.heroImage === 'string' &&
+          !parsed.heroImage.includes('mahim.jpg')
+            ? parsed.heroImage
+            : DEFAULT_SETTINGS.heroImage;
+
         return {
           ...DEFAULT_SETTINGS,
           ...parsed,
-          heroImage: (parsed.heroImage && typeof parsed.heroImage === 'string' && parsed.heroImage.startsWith('data:image'))
-            ? parsed.heroImage
-            : DEFAULT_SETTINGS.heroImage,
-          phone: '',
-          address: '',
-          facebookUrl: parsed.facebookUrl || DEFAULT_SETTINGS.facebookUrl,
-          instagramUrl: parsed.instagramUrl || DEFAULT_SETTINGS.instagramUrl,
-          fiverrUrl: parsed.fiverrUrl || DEFAULT_SETTINGS.fiverrUrl,
-          behanceUrl: parsed.behanceUrl || DEFAULT_SETTINGS.behanceUrl,
-          linkedinUrl: parsed.linkedinUrl || DEFAULT_SETTINGS.linkedinUrl,
-          whatsappLink: parsed.whatsappLink || DEFAULT_SETTINGS.whatsappLink,
+          whatsappLink: 'https://wa.me/@mahim.wp',
+          heroImage: heroImageVal,
         };
       }
       return DEFAULT_SETTINGS;
@@ -130,7 +135,23 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [experiences, setExperiences] = useState<ExperienceItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.EXPERIENCES);
-      return saved ? JSON.parse(saved) : DEFAULT_EXPERIENCES;
+      const list: ExperienceItem[] = saved ? JSON.parse(saved) : DEFAULT_EXPERIENCES;
+      return list.map(item => {
+        if (item.company.includes('দেশী ভোজ') || item.company.includes('দেশি ভোজ') || item.company.includes('DESHI VOJ')) {
+          return {
+            ...item,
+            company: 'আলোকিত গাইবান্ধা (ALOKITO GAIBANDHA)',
+          };
+        }
+        if (item.company.includes('চলমান চিটটারা') || item.company.includes('CHALAMAN CHITTARA')) {
+          return {
+            ...item,
+            company: 'চলমান চিত্র (CHALAMAN CHITRA)',
+            period: '২০২৪ – ২০২৫',
+          };
+        }
+        return item;
+      });
     } catch {
       return DEFAULT_EXPERIENCES;
     }
@@ -161,7 +182,16 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [skills, setSkills] = useState<SkillItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SKILLS);
-      return saved ? JSON.parse(saved) : DEFAULT_SKILLS;
+      const list: SkillItem[] = saved ? JSON.parse(saved) : [...DEFAULT_SKILLS];
+      const hasMinecraft = list.some(s => s.name.includes('মাইনক্রাফট'));
+      const hasN8n = list.some(s => s.name.toLowerCase().includes('n8n'));
+      if (!hasMinecraft) {
+        list.push({ id: 'sk-9', name: 'কাস্টম মাইনক্রাফট স্কিন ডিজাইন', category: 'design', proficiency: 96, highlight: true });
+      }
+      if (!hasN8n) {
+        list.push({ id: 'sk-10', name: 'n8n অটোমেশন এক্সপার্ট', category: 'tools', proficiency: 90, highlight: true });
+      }
+      return list;
     } catch {
       return DEFAULT_SKILLS;
     }
@@ -170,7 +200,8 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [certifications, setCertifications] = useState<CertificationItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CERTS);
-      return saved ? JSON.parse(saved) : DEFAULT_CERTIFICATIONS;
+      const list: CertificationItem[] = saved ? JSON.parse(saved) : DEFAULT_CERTIFICATIONS;
+      return list.map(({ credentialId, ...rest }) => rest);
     } catch {
       return DEFAULT_CERTIFICATIONS;
     }
@@ -265,6 +296,39 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(contactMessages));
   }, [contactMessages]);
 
+  // Theme management: defaults to dark as requested, allows toggling to light
+  const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved === 'dark' || saved === 'light') return saved;
+      return 'dark'; // Default is Dark Mode as requested
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
+    } catch (e) {
+      console.error('Failed to save theme', e);
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setThemeState(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const setTheme = (newTheme: 'light' | 'dark') => {
+    setThemeState(newTheme);
+  };
+
   // Global hotkey listener: ctrl + alt + shift + windows + a OR ctrl + alt + shift + a
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -280,55 +344,159 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const updateSettings = (newSettings: Partial<SiteSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings(prev => {
+      const updated = { ...prev, ...newSettings };
+      try {
+        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync settings to storage', e);
+      }
+      return updated;
+    });
   };
 
   // Experiences
   const addExperience = (item: Omit<ExperienceItem, 'id'>) => {
     const newItem: ExperienceItem = { ...item, id: `exp-${Date.now()}` };
-    setExperiences(prev => [newItem, ...prev]);
+    setExperiences(prev => {
+      const updated = [newItem, ...prev];
+      try {
+        localStorage.setItem(STORAGE_KEYS.EXPERIENCES, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync experiences to storage', e);
+      }
+      return updated;
+    });
   };
   const updateExperience = (id: string, item: Partial<ExperienceItem>) => {
-    setExperiences(prev => prev.map(e => (e.id === id ? { ...e, ...item } : e)));
+    setExperiences(prev => {
+      const updated = prev.map(e => (e.id === id ? { ...e, ...item } : e));
+      try {
+        localStorage.setItem(STORAGE_KEYS.EXPERIENCES, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync experiences to storage', e);
+      }
+      return updated;
+    });
   };
   const deleteExperience = (id: string) => {
-    setExperiences(prev => prev.filter(e => e.id !== id));
+    setExperiences(prev => {
+      const updated = prev.filter(e => e.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEYS.EXPERIENCES, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync experiences to storage', e);
+      }
+      return updated;
+    });
   };
 
   // Education
   const addEducation = (item: Omit<EducationItem, 'id'>) => {
     const newItem: EducationItem = { ...item, id: `edu-${Date.now()}` };
-    setEducation(prev => [newItem, ...prev]);
+    setEducation(prev => {
+      const updated = [newItem, ...prev];
+      try {
+        localStorage.setItem(STORAGE_KEYS.EDUCATION, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync education to storage', e);
+      }
+      return updated;
+    });
   };
   const updateEducation = (id: string, item: Partial<EducationItem>) => {
-    setEducation(prev => prev.map(e => (e.id === id ? { ...e, ...item } : e)));
+    setEducation(prev => {
+      const updated = prev.map(e => (e.id === id ? { ...e, ...item } : e));
+      try {
+        localStorage.setItem(STORAGE_KEYS.EDUCATION, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync education to storage', e);
+      }
+      return updated;
+    });
   };
   const deleteEducation = (id: string) => {
-    setEducation(prev => prev.filter(e => e.id !== id));
+    setEducation(prev => {
+      const updated = prev.filter(e => e.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEYS.EDUCATION, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync education to storage', e);
+      }
+      return updated;
+    });
   };
 
   // Skills
   const addSkill = (item: Omit<SkillItem, 'id'>) => {
     const newItem: SkillItem = { ...item, id: `sk-${Date.now()}` };
-    setSkills(prev => [...prev, newItem]);
+    setSkills(prev => {
+      const updated = [...prev, newItem];
+      try {
+        localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync skills to storage', e);
+      }
+      return updated;
+    });
   };
   const updateSkill = (id: string, item: Partial<SkillItem>) => {
-    setSkills(prev => prev.map(s => (s.id === id ? { ...s, ...item } : s)));
+    setSkills(prev => {
+      const updated = prev.map(s => (s.id === id ? { ...s, ...item } : s));
+      try {
+        localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync skills to storage', e);
+      }
+      return updated;
+    });
   };
   const deleteSkill = (id: string) => {
-    setSkills(prev => prev.filter(s => s.id !== id));
+    setSkills(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync skills to storage', e);
+      }
+      return updated;
+    });
   };
 
   // Certifications
   const addCertification = (item: Omit<CertificationItem, 'id'>) => {
     const newItem: CertificationItem = { ...item, id: `cert-${Date.now()}` };
-    setCertifications(prev => [...prev, newItem]);
+    setCertifications(prev => {
+      const updated = [...prev, newItem];
+      try {
+        localStorage.setItem(STORAGE_KEYS.CERTS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync certs to storage', e);
+      }
+      return updated;
+    });
   };
   const updateCertification = (id: string, item: Partial<CertificationItem>) => {
-    setCertifications(prev => prev.map(c => (c.id === id ? { ...c, ...item } : c)));
+    setCertifications(prev => {
+      const updated = prev.map(c => (c.id === id ? { ...c, ...item } : c));
+      try {
+        localStorage.setItem(STORAGE_KEYS.CERTS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync certs to storage', e);
+      }
+      return updated;
+    });
   };
   const deleteCertification = (id: string) => {
-    setCertifications(prev => prev.filter(c => c.id !== id));
+    setCertifications(prev => {
+      const updated = prev.filter(c => c.id !== id);
+      try {
+        localStorage.setItem(STORAGE_KEYS.CERTS, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to sync certs to storage', e);
+      }
+      return updated;
+    });
   };
 
   // Posts
@@ -567,6 +735,9 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeAuthModal: () => setIsAuthModalOpen(false),
         selectedPostForView,
         viewPost: setSelectedPostForView,
+        theme,
+        toggleTheme,
+        setTheme,
         exportBackupJson,
         importBackupJson,
         resetToDefaults,

@@ -47,6 +47,7 @@ export interface EducationItem {
   period: string;
   result?: string;
   details?: string;
+  description?: string;
 }
 
 export interface SkillItem {
@@ -65,6 +66,7 @@ export interface CertificationItem {
   year?: string;
   credentialId?: string;
   link?: string;
+  badge?: string;
 }
 
 export interface SiteSettings {

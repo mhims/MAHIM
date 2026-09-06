@@ -22,7 +22,7 @@ import { AuthModal } from './components/AuthModal';
 export default function App() {
   return (
     <SiteProvider>
-      <div className="min-h-screen bg-[#fdfdfb] text-[#1a1a1a] flex flex-col selection:bg-black selection:text-white font-sans">
+      <div className="min-h-screen bg-[#fdfdfb] dark:bg-[#0c0a09] text-[#1a1a1a] dark:text-zinc-100 flex flex-col selection:bg-amber-500 selection:text-black font-sans transition-colors duration-200">
         <Navbar />
         <main className="flex-grow pb-16 lg:pb-0">
           <Hero />

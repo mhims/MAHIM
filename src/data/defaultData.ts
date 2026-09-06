@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   heroTitle: 'Mahim Ibne Khudi',
   heroSubtitle: 'Professional Graphic Designer & Brand Specialist',
   heroBio: 'হ্যালো! আমি মাহিম ইবনে খুদি। ক্রিয়েটিভ ডিজাইন ও ভিজ্যুয়াল ব্র্যান্ডিং এর মাধ্যমে যেকোনো আইডিয়াকে আকর্ষণীয় রূপে ফুটিয়ে তুলতে ভালোবাসি। ক্লায়েন্টের লক্ষ্য অনুযায়ী অর্থপূর্ণ ও প্রিমিয়াম ডিজাইন তৈরি করাই আমার প্রধান উদ্দেশ্য।',
-  heroImage: './mahim.jpg?v=20260905',
+  heroImage: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1788629825/MAHIMIBNEKHUDI_wafylv.png',
   heroImageAlt: 'Mahim Ibne Khudi - গ্রাফিক ডিজাইনার',
   resumeDownloadUrl: '#',
 
@@ -66,7 +66,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
   {
     id: 'exp-1',
-    company: 'দেশী ভোজ (DESHI VOJ)',
+    company: 'আলোকিত গাইবান্ধা (ALOKITO GAIBANDHA)',
     role: 'সোশ্যাল মিডিয়া ম্যানেজার ও গ্রাফিক ডিজাইনার',
     period: '২০২৫ – বর্তমান',
     description: 'সোশ্যাল মিডিয়া প্ল্যাটফর্ম ম্যানেজমেন্ট, আকর্ষণীয় প্রমোশনাল ডিজাইন ও পোস্টার তৈরি এবং অ্যাডোবি ফটোশপ ও ইলাস্ট্রেটরের মাধ্যমে নিয়মিত ব্র্যান্ডের উপস্থিতি নিশ্চিতকরণ।',
@@ -84,7 +84,7 @@ export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
   },
   {
     id: 'exp-3',
-    company: 'চলমান চিটটারা (CHALAMAN CHITTARA)',
+    company: 'চলমান চিত্র (CHALAMAN CHITRA)',
     role: 'গ্রাফিক ডিজাইনার',
     period: '২০২৪ – ২০২৫',
     description: 'সংবাদপত্র ও প্রকাশনার জন্য প্রয়োজনীয় গ্রাফিক্স ও লেআউট ডিজাইন সফলতার সাথে প্রস্তুতকরণ।',
@@ -151,6 +151,8 @@ export const DEFAULT_SKILLS: SkillItem[] = [
   { id: 'sk-6', name: 'Brand Identity & Logo Design', category: 'design', proficiency: 88 },
   { id: 'sk-7', name: 'Digital Marketing & Strategy', category: 'marketing', proficiency: 82 },
   { id: 'sk-8', name: 'Print & Publication Design', category: 'design', proficiency: 86 },
+  { id: 'sk-9', name: 'কাস্টম মাইনক্রাফট স্কিন ডিজাইন', category: 'design', proficiency: 96, highlight: true },
+  { id: 'sk-10', name: 'n8n অটোমেশন এক্সপার্ট', category: 'tools', proficiency: 90, highlight: true },
 ];
 
 export const DEFAULT_CERTIFICATIONS: CertificationItem[] = [
@@ -159,21 +161,18 @@ export const DEFAULT_CERTIFICATIONS: CertificationItem[] = [
     title: 'Graphic Design | Level 3',
     issuer: 'জাতীয় দক্ষতা উন্নয়ন কর্তৃপক্ষ (NSDA) - বাংলাদেশ সরকার',
     year: '২০২৪',
-    credentialId: 'NSDA-GD-L3-2024',
   },
   {
     id: 'cert-2',
     title: 'Graphic Design & Digital Marketing',
     issuer: 'ই-লার্নিং অ্যান্ড আর্নিং লিমিটেড (E-Learning & Earning Ltd.)',
     year: '২০২৩',
-    credentialId: 'ELEDM-GD-8841',
   },
   {
     id: 'cert-3',
     title: 'Computer Operation | Level 1',
     issuer: 'জাতীয় দক্ষতা উন্নয়ন কর্তৃপক্ষ (NSDA) - বাংলাদেশ সরকার',
     year: '২০২২',
-    credentialId: 'NSDA-CO-L1-2022',
   },
 ];
 

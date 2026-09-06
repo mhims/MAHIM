@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSite } from '../context/SiteContext';
-import { BlogPost, EducationItem, ExperienceItem, PostVisibility, SkillItem, UserAccount } from '../types';
+import { BlogPost, CertificationItem, EducationItem, ExperienceItem, PostVisibility, SkillItem, UserAccount } from '../types';
 import { generateRobotsTxt, generateSitemapXml } from '../utils/sitemap';
 import { GOOGLE_APPS_SCRIPT_TEMPLATE } from '../utils/googleSheets';
 import { 
@@ -99,6 +99,51 @@ export const AdminModal: React.FC = () => {
     readTime: '৪ মিনিট',
   });
   const [isCreatingPost, setIsCreatingPost] = useState(false);
+
+  // Experience Form State
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [isExpFormOpen, setIsExpFormOpen] = useState(false);
+  const [expForm, setExpForm] = useState<Omit<ExperienceItem, 'id'>>({
+    role: '',
+    company: '',
+    period: '',
+    description: '',
+    skillsUsed: [],
+    isCurrent: false,
+  });
+
+  // Education Form State
+  const [editingEduId, setEditingEduId] = useState<string | null>(null);
+  const [isEduFormOpen, setIsEduFormOpen] = useState(false);
+  const [eduForm, setEduForm] = useState<Omit<EducationItem, 'id'>>({
+    degree: '',
+    institution: '',
+    department: '',
+    period: '',
+    result: '',
+    description: '',
+  });
+
+  // Skill Form State
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
+  const [isSkillFormOpen, setIsSkillFormOpen] = useState(false);
+  const [skillForm, setSkillForm] = useState<Omit<SkillItem, 'id'>>({
+    name: '',
+    category: 'design',
+    proficiency: 90,
+    highlight: true,
+  });
+
+  // Certification Form State
+  const [editingCertId, setEditingCertId] = useState<string | null>(null);
+  const [isCertFormOpen, setIsCertFormOpen] = useState(false);
+  const [certForm, setCertForm] = useState<Omit<CertificationItem, 'id'>>({
+    title: '',
+    issuer: '',
+    year: '২০২৪',
+    credentialId: '',
+    badge: 'গভর্নমেন্ট সার্টিফাইড',
+  });
 
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState(false);
@@ -201,6 +246,176 @@ export const AdminModal: React.FC = () => {
       readTime: post.readTime,
     });
     setIsCreatingPost(true);
+  };
+
+  // Experience handlers
+  const startCreateExp = () => {
+    setEditingExpId(null);
+    setExpForm({
+      role: '',
+      company: '',
+      period: '২০২৪ – বর্তমান',
+      description: '',
+      skillsUsed: ['Photoshop', 'Illustrator'],
+      isCurrent: true,
+    });
+    setIsExpFormOpen(true);
+  };
+
+  const startEditExp = (exp: ExperienceItem) => {
+    setEditingExpId(exp.id);
+    setExpForm({
+      role: exp.role,
+      company: exp.company,
+      period: exp.period,
+      description: exp.description,
+      skillsUsed: exp.skillsUsed || [],
+      isCurrent: exp.isCurrent ?? false,
+    });
+    setIsExpFormOpen(true);
+  };
+
+  const handleSaveExp = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!expForm.role.trim() || !expForm.company.trim()) {
+      alert('পদবী এবং প্রতিষ্ঠানের নাম আবশ্যক!');
+      return;
+    }
+    if (editingExpId) {
+      updateExperience(editingExpId, expForm);
+      showNotification('অভিজ্ঞতা সফলভাবে আপডেট করা হয়েছে');
+    } else {
+      addExperience(expForm);
+      showNotification('নতুন অভিজ্ঞতা যুক্ত করা হয়েছে');
+    }
+    setIsExpFormOpen(false);
+    setEditingExpId(null);
+  };
+
+  // Education handlers
+  const startCreateEdu = () => {
+    setEditingEduId(null);
+    setEduForm({
+      degree: '',
+      institution: '',
+      department: '',
+      period: '২০২৪ – চলমান',
+      result: 'অধ্যয়নরত',
+      description: '',
+    });
+    setIsEduFormOpen(true);
+  };
+
+  const startEditEdu = (edu: EducationItem) => {
+    setEditingEduId(edu.id);
+    setEduForm({
+      degree: edu.degree,
+      institution: edu.institution,
+      department: edu.department || '',
+      period: edu.period,
+      result: edu.result,
+      description: edu.description || '',
+    });
+    setIsEduFormOpen(true);
+  };
+
+  const handleSaveEdu = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!eduForm.degree.trim() || !eduForm.institution.trim()) {
+      alert('ডিগ্রি এবং শিক্ষা প্রতিষ্ঠানের নাম আবশ্যক!');
+      return;
+    }
+    if (editingEduId) {
+      updateEducation(editingEduId, eduForm);
+      showNotification('শিক্ষা তথ্য সফলভাবে আপডেট করা হয়েছে');
+    } else {
+      addEducation(eduForm);
+      showNotification('নতুন শিক্ষা তথ্য যুক্ত করা হয়েছে');
+    }
+    setIsEduFormOpen(false);
+    setEditingEduId(null);
+  };
+
+  // Skill handlers
+  const startCreateSkill = () => {
+    setEditingSkillId(null);
+    setSkillForm({
+      name: '',
+      category: 'design',
+      proficiency: 90,
+      highlight: true,
+    });
+    setIsSkillFormOpen(true);
+  };
+
+  const startEditSkill = (sk: SkillItem) => {
+    setEditingSkillId(sk.id);
+    setSkillForm({
+      name: sk.name,
+      category: sk.category,
+      proficiency: sk.proficiency,
+      highlight: sk.highlight ?? true,
+    });
+    setIsSkillFormOpen(true);
+  };
+
+  const handleSaveSkill = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!skillForm.name.trim()) {
+      alert('স্কিলের নাম আবশ্যক!');
+      return;
+    }
+    if (editingSkillId) {
+      updateSkill(editingSkillId, skillForm);
+      showNotification('স্কিল সফলভাবে আপডেট করা হয়েছে');
+    } else {
+      addSkill(skillForm);
+      showNotification('নতুন স্কিল যুক্ত করা হয়েছে');
+    }
+    setIsSkillFormOpen(false);
+    setEditingSkillId(null);
+  };
+
+  // Certification handlers
+  const startCreateCert = () => {
+    setEditingCertId(null);
+    setCertForm({
+      title: '',
+      issuer: '',
+      year: '২০২৪',
+      credentialId: '',
+      badge: 'গভর্নমেন্ট সার্টিফাইড',
+    });
+    setIsCertFormOpen(true);
+  };
+
+  const startEditCert = (c: CertificationItem) => {
+    setEditingCertId(c.id);
+    setCertForm({
+      title: c.title,
+      issuer: c.issuer,
+      year: c.year,
+      credentialId: c.credentialId || '',
+      badge: c.badge || 'সার্টিফাইড',
+    });
+    setIsCertFormOpen(true);
+  };
+
+  const handleSaveCert = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!certForm.title.trim() || !certForm.issuer.trim()) {
+      alert('সার্টিফিকেটের নাম এবং প্রদানকারী প্রতিষ্ঠান আবশ্যক!');
+      return;
+    }
+    if (editingCertId) {
+      updateCertification(editingCertId, certForm);
+      showNotification('সার্টিফিকেশন সফলভাবে আপডেট করা হয়েছে');
+    } else {
+      addCertification(certForm);
+      showNotification('নতুন সার্টিফিকেশন যুক্ত করা হয়েছে');
+    }
+    setIsCertFormOpen(false);
+    setEditingCertId(null);
   };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -908,84 +1123,401 @@ export const AdminModal: React.FC = () => {
 
             {/* TAB 4: Experience & Education */}
             {activeTab === 'experience' && (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 
-                {/* Experiences */}
+                {/* Experiences Section */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div>
-                      <h3 className="text-base font-bold text-white">কাজের অভিজ্ঞতা (Work Experience)</h3>
-                      <p className="text-xs text-slate-400">DESHI VOJ, FIVERR, ইত্যাদি কাজের বিবরণ</p>
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Briefcase className="w-5 h-5 text-amber-400" />
+                        <span>কাজের অভিজ্ঞতা (Work Experience)</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">DESHI VOJ, Fiverr ও অন্যান্য কর্মক্ষেত্রের বিবরণ এডিট ও ডিলিট করুন</p>
                     </div>
-                    <button
-                      onClick={() => {
-                        const role = prompt('রোল / পদবী লিখুন:');
-                        const company = prompt('প্রতিষ্ঠানের নাম:');
-                        if (role && company) {
-                          addExperience({
-                            role,
-                            company,
-                            period: '২০২৬ – বর্তমান',
-                            description: 'দায়িত্ব ও অর্জনের বিবরণ...',
-                            skillsUsed: ['Photoshop', 'Illustrator'],
-                            isCurrent: true,
-                          });
-                          showNotification('অভিজ্ঞতা যোগ করা হয়েছে');
-                        }
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>অভিজ্ঞতা যোগ</span>
-                    </button>
+                    {!isExpFormOpen && (
+                      <button
+                        onClick={startCreateExp}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-md shadow-amber-500/20"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>নতুন অভিজ্ঞতা যোগ করুন</span>
+                      </button>
+                    )}
                   </div>
 
+                  {/* Experience Form (Create / Edit) */}
+                  {isExpFormOpen && (
+                    <form onSubmit={handleSaveExp} className="p-5 rounded-2xl bg-slate-900 border-2 border-amber-500/50 space-y-4 shadow-xl">
+                      <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                        <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          <span>{editingExpId ? 'কাজের অভিজ্ঞতা এডিট করুন' : 'নতুন কাজের অভিজ্ঞতা যোগ করুন'}</span>
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setIsExpFormOpen(false)}
+                          className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg bg-slate-800"
+                        >
+                          বন্ধ করুন
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            পদবী / রোল <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={expForm.role}
+                            onChange={e => setExpForm({ ...expForm, role: e.target.value })}
+                            placeholder="যেমন: সিনিয়র গ্রাফিক ডিজাইনার"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            প্রতিষ্ঠান / প্ল্যাটফর্ম <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={expForm.company}
+                            onChange={e => setExpForm({ ...expForm, company: e.target.value })}
+                            placeholder="যেমন: Deshi Voj / Fiverr"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            সময়কাল
+                          </label>
+                          <input
+                            type="text"
+                            value={expForm.period}
+                            onChange={e => setExpForm({ ...expForm, period: e.target.value })}
+                            placeholder="যেমন: ২০২৪ – বর্তমান"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ব্যবহৃত স্কিলসমূহ (কমা দিয়ে আলাদা)
+                          </label>
+                          <input
+                            type="text"
+                            value={expForm.skillsUsed.join(', ')}
+                            onChange={e =>
+                              setExpForm({
+                                ...expForm,
+                                skillsUsed: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
+                              })
+                            }
+                            placeholder="যেমন: Photoshop, Illustrator, Brand Design"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-300 mb-1">
+                          দায়িত্ব ও অর্জনের বিবরণ
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={expForm.description}
+                          onChange={e => setExpForm({ ...expForm, description: e.target.value })}
+                          placeholder="কাজের বিস্তারিত বিবরণ লিখুন..."
+                          className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="isCurrentExp"
+                          checked={expForm.isCurrent || false}
+                          onChange={e => setExpForm({ ...expForm, isCurrent: e.target.checked })}
+                          className="rounded accent-amber-400"
+                        />
+                        <label htmlFor="isCurrentExp" className="text-xs text-slate-300 cursor-pointer">
+                          বর্তমানে এই পদে কর্মরত আছি
+                        </label>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2">
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>{editingExpId ? 'পরিবর্তন সংরক্ষণ করুন' : 'অভিজ্ঞতা যুক্ত করুন'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsExpFormOpen(false);
+                            setEditingExpId(null);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Experiences List */}
                   <div className="space-y-3">
                     {experiences.map(exp => (
-                      <div key={exp.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start justify-between gap-4">
-                        <div>
-                          <h4 className="text-sm font-bold text-white">{exp.role} — <span className="text-amber-400">{exp.company}</span></h4>
-                          <p className="text-xs text-slate-400 font-mono mb-1">{exp.period}</p>
-                          <p className="text-xs text-slate-300">{exp.description}</p>
+                      <div
+                        key={exp.id}
+                        className="p-4 rounded-2xl bg-slate-950 border border-white/10 hover:border-white/20 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                      >
+                        <div className="space-y-1.5 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-bold text-white">
+                              {exp.role} <span className="text-slate-500">|</span> <span className="text-amber-400">{exp.company}</span>
+                            </h4>
+                            {exp.isCurrent && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                বর্তমান
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-400 font-mono">{exp.period}</p>
+                          <p className="text-xs text-slate-300 leading-relaxed">{exp.description}</p>
+                          {exp.skillsUsed && exp.skillsUsed.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                              {exp.skillsUsed.map((sk, idx) => (
+                                <span key={idx} className="px-2 py-0.5 rounded-md text-[10px] bg-slate-900 border border-white/10 text-slate-300">
+                                  {sk}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                        <button
-                          onClick={() => {
-                            if (confirm('এই অভিজ্ঞতা ডিলিট করতে চান?')) deleteExperience(exp.id);
-                          }}
-                          className="p-1.5 text-slate-500 hover:text-rose-400"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+
+                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
+                          <button
+                            onClick={() => startEditExp(exp)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 hover:text-amber-300 text-xs font-semibold border border-white/10"
+                            title="এডিট করুন"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>এডিট</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${exp.role} — ${exp.company}" অভিজ্ঞতা কি মুছে ফেলতে চান?`)) {
+                                deleteExperience(exp.id);
+                                showNotification('অভিজ্ঞতা মুছে ফেলা হয়েছে');
+                              }
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 text-xs font-semibold border border-white/10"
+                            title="মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>ডিলিট</span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Education */}
+                {/* Education Section */}
                 <div className="space-y-4 pt-6 border-t border-white/10">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div>
-                      <h3 className="text-base font-bold text-white">শিক্ষা ও একাডেমি (Education)</h3>
-                      <p className="text-xs text-slate-400">ঢাকা সেন্ট্রাল ইউনিভার্সিটি (পলিটিক্যাল সাইন্স), HSC, SSC</p>
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <GraduationCap className="w-5 h-5 text-amber-400" />
+                        <span>শিক্ষা ও একাডেমি (Education)</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">ঢাকা সেন্ট্রাল ইউনিভার্সিটি, HSC, SSC সহ শিক্ষাগত যোগ্যতার বিবরণ</p>
                     </div>
+                    {!isEduFormOpen && (
+                      <button
+                        onClick={startCreateEdu}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-md shadow-amber-500/20"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>নতুন শিক্ষা তথ্য যোগ</span>
+                      </button>
+                    )}
                   </div>
 
+                  {/* Education Form (Create / Edit) */}
+                  {isEduFormOpen && (
+                    <form onSubmit={handleSaveEdu} className="p-5 rounded-2xl bg-slate-900 border-2 border-amber-500/50 space-y-4 shadow-xl">
+                      <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                        <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          <span>{editingEduId ? 'শিক্ষা তথ্য এডিট করুন' : 'নতুন শিক্ষা তথ্য যোগ করুন'}</span>
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setIsEduFormOpen(false)}
+                          className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg bg-slate-800"
+                        >
+                          বন্ধ করুন
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ডিগ্রি / সনদ <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={eduForm.degree}
+                            onChange={e => setEduForm({ ...eduForm, degree: e.target.value })}
+                            placeholder="যেমন: স্নাতক (Bachelor of Arts)"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            শিক্ষা প্রতিষ্ঠান <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={eduForm.institution}
+                            onChange={e => setEduForm({ ...eduForm, institution: e.target.value })}
+                            placeholder="যেমন: ঢাকা সেন্ট্রাল ইউনিভার্সিটি"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            বিভাগ / ডিপার্টমেন্ট
+                          </label>
+                          <input
+                            type="text"
+                            value={eduForm.department || ''}
+                            onChange={e => setEduForm({ ...eduForm, department: e.target.value })}
+                            placeholder="যেমন: পলিটিক্যাল সাইন্স (Political Science)"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            শিক্ষাবর্ষ / সময়কাল
+                          </label>
+                          <input
+                            type="text"
+                            value={eduForm.period}
+                            onChange={e => setEduForm({ ...eduForm, period: e.target.value })}
+                            placeholder="যেমন: ২০২৪ – চলমান"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ফলাফল / জিপিএ
+                          </label>
+                          <input
+                            type="text"
+                            value={eduForm.result}
+                            onChange={e => setEduForm({ ...eduForm, result: e.target.value })}
+                            placeholder="যেমন: অধ্যয়নরত / GPA: 5.00"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            বিবরণ (ঐচ্ছিক)
+                          </label>
+                          <input
+                            type="text"
+                            value={eduForm.description || ''}
+                            onChange={e => setEduForm({ ...eduForm, description: e.target.value })}
+                            placeholder="অতিরিক্ত তথ্য..."
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2">
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>{editingEduId ? 'পরিবর্তন সংরক্ষণ করুন' : 'শিক্ষা তথ্য যুক্ত করুন'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEduFormOpen(false);
+                            setEditingEduId(null);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Education List */}
                   <div className="space-y-3">
                     {education.map(edu => (
-                      <div key={edu.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start justify-between gap-4">
-                        <div>
-                          <h4 className="text-sm font-bold text-white">{edu.degree} — <span className="text-amber-400">{edu.institution}</span></h4>
-                          {edu.department && <p className="text-xs text-amber-300/80">{edu.department}</p>}
-                          <p className="text-xs text-slate-400 font-mono">{edu.period} | ফলাফল: {edu.result}</p>
+                      <div
+                        key={edu.id}
+                        className="p-4 rounded-2xl bg-slate-950 border border-white/10 hover:border-white/20 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                      >
+                        <div className="space-y-1 flex-1">
+                          <h4 className="text-sm font-bold text-white">
+                            {edu.degree} <span className="text-slate-500">|</span> <span className="text-amber-400">{edu.institution}</span>
+                          </h4>
+                          {edu.department && (
+                            <p className="text-xs text-amber-300/90 font-medium">{edu.department}</p>
+                          )}
+                          <p className="text-xs text-slate-400 font-mono">
+                            {edu.period} • ফলাফল: <span className="text-slate-300">{edu.result}</span>
+                          </p>
+                          {edu.description && (
+                            <p className="text-xs text-slate-400 pt-0.5">{edu.description}</p>
+                          )}
                         </div>
-                        <button
-                          onClick={() => {
-                            if (confirm('এই শিক্ষা তথ্য ডিলিট করতে চান?')) deleteEducation(edu.id);
-                          }}
-                          className="p-1.5 text-slate-500 hover:text-rose-400"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+
+                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
+                          <button
+                            onClick={() => startEditEdu(edu)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 hover:text-amber-300 text-xs font-semibold border border-white/10"
+                            title="এডিট করুন"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>এডিট</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${edu.degree} — ${edu.institution}" শিক্ষা তথ্য কি মুছে ফেলতে চান?`)) {
+                                deleteEducation(edu.id);
+                                showNotification('শিক্ষা তথ্য মুছে ফেলা হয়েছে');
+                              }
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 text-xs font-semibold border border-white/10"
+                            title="মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>ডিলিট</span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -996,59 +1528,170 @@ export const AdminModal: React.FC = () => {
 
             {/* TAB 5: Skills & Certifications */}
             {activeTab === 'skills' && (
-              <div className="space-y-8">
+              <div className="space-y-10">
                 
                 {/* Skills Manager */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div>
-                      <h3 className="text-base font-bold text-white">স্কিল ও সফটওয়্যার পারদর্শিতা</h3>
-                      <p className="text-xs text-slate-400">পার্সেন্টেজ (%) পরিবর্তন বা নতুন স্কিল যোগ করুন</p>
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Wrench className="w-5 h-5 text-amber-400" />
+                        <span>স্কিল ও সফটওয়্যার পারদর্শিতা</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">দক্ষতা পরিবর্তন, নতুন স্কিল যোগ অথবা অপ্রয়োজনীয় স্কিল মুছুন</p>
                     </div>
-                    <button
-                      onClick={() => {
-                        const name = prompt('স্কিলের নাম লিখুন:');
-                        const prof = prompt('পার্সেন্টেজ (০-১০০):', '90');
-                        if (name) {
-                          addSkill({
-                            name,
-                            category: 'design',
-                            proficiency: parseInt(prof || '90', 10),
-                            highlight: true,
-                          });
-                          showNotification('স্কিল যোগ করা হয়েছে');
-                        }
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>স্কিল যোগ করুন</span>
-                    </button>
+                    {!isSkillFormOpen && (
+                      <button
+                        onClick={startCreateSkill}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-md shadow-amber-500/20"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>নতুন স্কিল যোগ করুন</span>
+                      </button>
+                    )}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {skills.map(sk => (
-                      <div key={sk.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-center justify-between gap-3">
-                        <div className="flex-1">
-                          <p className="text-sm font-bold text-white">{sk.name}</p>
-                          <div className="flex items-center gap-3 mt-1">
-                            <input
-                              type="range"
-                              min="50"
-                              max="100"
-                              value={sk.proficiency}
-                              onChange={e => updateSkill(sk.id, { proficiency: parseInt(e.target.value, 10) })}
-                              className="flex-1 accent-amber-400"
-                            />
-                            <span className="text-xs font-mono font-bold text-amber-400">{sk.proficiency}%</span>
-                          </div>
-                        </div>
+                  {/* Skill Form (Create / Edit) */}
+                  {isSkillFormOpen && (
+                    <form onSubmit={handleSaveSkill} className="p-5 rounded-2xl bg-slate-900 border-2 border-amber-500/50 space-y-4 shadow-xl">
+                      <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                        <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          <span>{editingSkillId ? 'স্কিল এডিট করুন' : 'নতুন স্কিল যোগ করুন'}</span>
+                        </h4>
                         <button
-                          onClick={() => deleteSkill(sk.id)}
-                          className="p-1.5 text-slate-500 hover:text-rose-400"
+                          type="button"
+                          onClick={() => setIsSkillFormOpen(false)}
+                          className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg bg-slate-800"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          বন্ধ করুন
                         </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            স্কিলের নাম <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={skillForm.name}
+                            onChange={e => setSkillForm({ ...skillForm, name: e.target.value })}
+                            placeholder="যেমন: Adobe Illustrator"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            পার্সেন্টেজ / দক্ষতা ({skillForm.proficiency}%)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={skillForm.proficiency}
+                            onChange={e => setSkillForm({ ...skillForm, proficiency: parseInt(e.target.value, 10) || 50 })}
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ক্যাটাগরি
+                          </label>
+                          <select
+                            value={skillForm.category}
+                            onChange={e => setSkillForm({ ...skillForm, category: e.target.value as any })}
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          >
+                            <option value="design">ডিজাইন (Design)</option>
+                            <option value="marketing">মার্কেটিং (Marketing)</option>
+                            <option value="tech">টেক ও টুলস (Tech & Tools)</option>
+                            <option value="other">অন্যান্য (Other)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="highlightSkill"
+                          checked={skillForm.highlight ?? true}
+                          onChange={e => setSkillForm({ ...skillForm, highlight: e.target.checked })}
+                          className="rounded accent-amber-400"
+                        />
+                        <label htmlFor="highlightSkill" className="text-xs text-slate-300 cursor-pointer">
+                          টপ স্কিল হিসেবে হাইলাইট করুন
+                        </label>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2">
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>{editingSkillId ? 'পরিবর্তন সংরক্ষণ করুন' : 'স্কিল যুক্ত করুন'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsSkillFormOpen(false);
+                            setEditingSkillId(null);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Skills Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {skills.map(sk => (
+                      <div
+                        key={sk.id}
+                        className="p-4 rounded-2xl bg-slate-950 border border-white/10 hover:border-white/20 transition-all flex items-center justify-between gap-3"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <p className="text-sm font-bold text-white truncate">{sk.name}</p>
+                            <span className="text-xs font-mono font-bold text-amber-400 shrink-0">{sk.proficiency}%</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="20"
+                            max="100"
+                            value={sk.proficiency}
+                            onChange={e => updateSkill(sk.id, { proficiency: parseInt(e.target.value, 10) })}
+                            className="w-full accent-amber-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0 ml-2">
+                          <button
+                            onClick={() => startEditSkill(sk)}
+                            className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 hover:text-amber-300 transition-colors"
+                            title="এডিট"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${sk.name}" স্কিল মুছে ফেলতে চান?`)) {
+                                deleteSkill(sk.id);
+                                showNotification('স্কিল মুছে ফেলা হয়েছে');
+                              }
+                            }}
+                            className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
+                            title="মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1056,19 +1699,179 @@ export const AdminModal: React.FC = () => {
 
                 {/* Certifications Manager */}
                 <div className="space-y-4 pt-6 border-t border-white/10">
-                  <h3 className="text-base font-bold text-white">NSDA ও প্রফেশনাল সার্টিফিকেশন</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {certifications.map(c => (
-                      <div key={c.id} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex flex-col justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+                    <div>
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <ShieldCheck className="w-5 h-5 text-amber-400" />
+                        <span>NSDA ও প্রফেশনাল সার্টিফিকেশন</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">জাতীয় দক্ষতা উন্নয়ন কর্তৃপক্ষ ও অন্যান্য সনদ বিবরণ</p>
+                    </div>
+                    {!isCertFormOpen && (
+                      <button
+                        onClick={startCreateCert}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shadow-md shadow-amber-500/20"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>সার্টিফিকেশন যোগ করুন</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Cert Form (Create / Edit) */}
+                  {isCertFormOpen && (
+                    <form onSubmit={handleSaveCert} className="p-5 rounded-2xl bg-slate-900 border-2 border-amber-500/50 space-y-4 shadow-xl">
+                      <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                        <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          <span>{editingCertId ? 'সার্টিফিকেশন এডিট করুন' : 'নতুন সার্টিফিকেশন যোগ করুন'}</span>
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setIsCertFormOpen(false)}
+                          className="text-xs text-slate-400 hover:text-white px-2 py-1 rounded-lg bg-slate-800"
+                        >
+                          বন্ধ করুন
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-amber-400 font-bold">{c.year}</p>
-                          <h4 className="text-sm font-bold text-white">{c.title}</h4>
-                          <p className="text-xs text-slate-400">{c.issuer}</p>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            সনদ / সার্টিফিকেটের নাম <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={certForm.title}
+                            onChange={e => setCertForm({ ...certForm, title: e.target.value })}
+                            placeholder="যেমন: গ্রাফিক ডিজাইন এনএসডিএ লেভেল-৪"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
                         </div>
-                        <div className="flex justify-between items-center pt-3 mt-2 border-t border-white/5">
-                          <span className="text-[10px] font-mono text-slate-500">{c.credentialId}</span>
-                          <button onClick={() => deleteCertification(c.id)} className="text-slate-500 hover:text-rose-400">
-                            <Trash2 className="w-3.5 h-3.5" />
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            প্রদানকারী প্রতিষ্ঠান <span className="text-rose-400">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={certForm.issuer}
+                            onChange={e => setCertForm({ ...certForm, issuer: e.target.value })}
+                            placeholder="যেমন: জাতীয় দক্ষতা উন্নয়ন কর্তৃপক্ষ (NSDA)"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            অর্জনের বছর
+                          </label>
+                          <input
+                            type="text"
+                            value={certForm.year}
+                            onChange={e => setCertForm({ ...certForm, year: e.target.value })}
+                            placeholder="যেমন: ২০২৪"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ক্রেডেনশিয়াল / রেজিস্ট্রেশন আইডি
+                          </label>
+                          <input
+                            type="text"
+                            value={certForm.credentialId || ''}
+                            onChange={e => setCertForm({ ...certForm, credentialId: e.target.value })}
+                            placeholder="যেমন: NSDA-GDO-2024-8891"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-xs font-semibold text-slate-300 mb-1">
+                            ব্যাজ / লেবেল
+                          </label>
+                          <input
+                            type="text"
+                            value={certForm.badge || ''}
+                            onChange={e => setCertForm({ ...certForm, badge: e.target.value })}
+                            placeholder="যেমন: গভর্নমেন্ট সার্টিফাইড"
+                            className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-amber-400"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2">
+                        <button
+                          type="submit"
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+                        >
+                          <Check className="w-4 h-4" />
+                          <span>{editingCertId ? 'পরিবর্তন সংরক্ষণ করুন' : 'সার্টিফিকেশন যুক্ত করুন'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCertFormOpen(false);
+                            setEditingCertId(null);
+                          }}
+                          className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* Certifications Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {certifications.map(c => (
+                      <div
+                        key={c.id}
+                        className="p-4 rounded-2xl bg-slate-950 border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full">
+                              {c.year}
+                            </span>
+                            {c.badge && (
+                              <span className="text-[9px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">
+                                {c.badge}
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="text-sm font-bold text-white pt-1 line-clamp-2">{c.title}</h4>
+                          <p className="text-xs text-slate-400">{c.issuer}</p>
+                          {c.credentialId && (
+                            <p className="text-[10px] font-mono text-slate-500 truncate pt-1">ID: {c.credentialId}</p>
+                          )}
+                        </div>
+
+                        <div className="flex justify-end items-center gap-2 pt-3 mt-2 border-t border-white/5">
+                          <button
+                            onClick={() => startEditCert(c)}
+                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-400 text-[11px] font-medium"
+                            title="এডিট করুন"
+                          >
+                            <Edit3 className="w-3 h-3" />
+                            <span>এডিট</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${c.title}" সার্টিফিকেশন মুছে ফেলতে চান?`)) {
+                                deleteCertification(c.id);
+                                showNotification('সার্টিফিকেশন মুছে ফেলা হয়েছে');
+                              }
+                            }}
+                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 text-[11px] font-medium"
+                            title="মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>ডিলিট</span>
                           </button>
                         </div>
                       </div>

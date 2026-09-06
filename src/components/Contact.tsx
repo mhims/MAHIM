@@ -70,22 +70,28 @@ export const Contact: React.FC = () => {
       customText: 'Bē',
       style: 'bg-[#0057ff] text-white hover:brightness-110',
     },
+    {
+      name: 'WhatsApp',
+      url: settings.whatsappLink || 'https://wa.me/@mahim.wp',
+      icon: MessageCircle,
+      style: 'bg-[#25D366] text-white hover:brightness-110',
+    },
   ];
 
   return (
-    <section id="contact" className="py-24 relative overflow-hidden bg-zinc-50/70">
+    <section id="contact" className="py-24 relative overflow-hidden bg-zinc-50/70 dark:bg-[#0c0a09]/70">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-zinc-100 border border-black/10 text-zinc-800 text-xs font-bold uppercase tracking-wider">
-            <Mail className="w-3.5 h-3.5 text-black" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/10 text-zinc-800 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider">
+            <Mail className="w-3.5 h-3.5 text-amber-500" />
             <span>সরাসরি যোগাযোগ</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1a1a1a] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1a1a1a] dark:text-white tracking-tight">
             আসুন আপনার নতুন প্রজেক্ট নিয়ে কথা বলি
           </h2>
-          <p className="text-zinc-600 text-sm sm:text-base leading-relaxed font-normal">
+          <p className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base leading-relaxed font-normal">
             ডিজাইন, সোশ্যাল মিডিয়া ব্র্যান্ডিং কিংবা যে কোনো আলোচনার জন্য সরাসরি হোয়াটসঅ্যাপ বা মেসেজ পাঠাতে পারেন
           </p>
         </div>
@@ -134,23 +140,23 @@ export const Contact: React.FC = () => {
             {/* Email Card */}
             <a
               href={`mailto:${settings.email}`}
-              className="bg-white border border-black/10 shadow-sm rounded-2xl p-5 flex items-center gap-4 group hover:border-black/30 hover:shadow-lg transition-all"
+              className="bg-white dark:bg-zinc-900 border border-black/10 dark:border-white/10 shadow-sm rounded-2xl p-5 flex items-center gap-4 group hover:border-black/30 dark:hover:border-white/30 hover:shadow-lg transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-zinc-100 border border-black/10 flex items-center justify-center text-black group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-black/10 dark:border-white/10 flex items-center justify-center text-black dark:text-amber-400 group-hover:scale-105 transition-transform">
                 <Mail className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-zinc-500 font-medium">অফিশিয়াল ইমেইল</p>
-                <p className="text-sm sm:text-base font-black text-[#1a1a1a] group-hover:text-black transition-colors truncate">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">অফিশিয়াল ইমেইল</p>
+                <p className="text-sm sm:text-base font-black text-[#1a1a1a] dark:text-white group-hover:text-amber-500 transition-colors truncate">
                   {settings.email}
                 </p>
               </div>
-              <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-black transition-colors shrink-0" />
+              <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-black dark:group-hover:text-white transition-colors shrink-0" />
             </a>
 
             {/* Colorful Social Media Connect Grid */}
-            <div className="bg-white border border-black/10 rounded-2xl p-5 shadow-sm space-y-3">
-              <p className="text-xs font-black uppercase tracking-wider text-zinc-500">
+            <div className="bg-white dark:bg-zinc-900 border border-black/10 dark:border-white/10 rounded-2xl p-5 shadow-sm space-y-3">
+              <p className="text-xs font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 সোশ্যাল নেটওয়ার্ক ও পোর্টফোলিও:
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -177,18 +183,18 @@ export const Contact: React.FC = () => {
 
           {/* Right Column: Working Contact Form */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-black/10 shadow-sm relative">
-              <h3 className="text-xl font-black text-[#1a1a1a] mb-2 flex items-center gap-2">
-                <Send className="w-5 h-5 text-black" />
+            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-sm relative">
+              <h3 className="text-xl font-black text-[#1a1a1a] dark:text-white mb-2 flex items-center gap-2">
+                <Send className="w-5 h-5 text-amber-500" />
                 <span>মেসেজ পাঠান</span>
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 mb-6 font-normal">
-                আপনার বার্তাটি সরাসরি মাহিমের কাছে পৌঁছাবে এবং গুগল শিটে সংরক্ষিত থাকবে।
+              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-6 font-normal">
+                আপনার বার্তাটি সরাসরি মাহিমের কাছে পৌঁছাবে এবং সুরক্ষিত থাকবে।
               </p>
 
               {submittedMessage && (
-                <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-sm flex items-center gap-3 animate-fade-in font-medium">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
+                <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-sm flex items-center gap-3 animate-fade-in font-medium">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                   <span>{submittedMessage}</span>
                 </div>
               )}
@@ -196,7 +202,7 @@ export const Contact: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                       আপনার নাম <span className="text-rose-600">*</span>
                     </label>
                     <input
@@ -205,12 +211,12 @@ export const Contact: React.FC = () => {
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
                       placeholder="উদাঃ সাকিব আহমেদ"
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-black/10 text-black placeholder-zinc-400 text-sm focus:outline-none focus:border-black focus:bg-white transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-black dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-800 transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                       ইমেইল এড্রেস <span className="text-rose-600">*</span>
                     </label>
                     <input
@@ -219,13 +225,13 @@ export const Contact: React.FC = () => {
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
                       placeholder="your.email@example.com"
-                      className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-black/10 text-black placeholder-zinc-400 text-sm focus:outline-none focus:border-black focus:bg-white transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-black dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-800 transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     বিষয় / সার্ভিস টাইপ
                   </label>
                   <input
@@ -233,12 +239,12 @@ export const Contact: React.FC = () => {
                     value={formData.subject}
                     onChange={e => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="উদাঃ সোশ্যাল মিডিয়া ব্যানার ডিজাইন / লোগো ব্র্যান্ডিং"
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-black/10 text-black placeholder-zinc-400 text-sm focus:outline-none focus:border-black focus:bg-white transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-black dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-800 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
                     আপনার বিস্তারিত মেসেজ <span className="text-rose-600">*</span>
                   </label>
                   <textarea
@@ -247,14 +253,14 @@ export const Contact: React.FC = () => {
                     value={formData.message}
                     onChange={e => setFormData({ ...formData, message: e.target.value })}
                     placeholder="আপনার প্রজেক্টের বিস্তারিত এবং কীভাবে সাহায্য করতে পারি লিখুন..."
-                    className="w-full px-4 py-3 rounded-xl bg-zinc-50 border border-black/10 text-black placeholder-zinc-400 text-sm focus:outline-none focus:border-black focus:bg-white transition-colors resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-black dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:border-black dark:focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-800 transition-colors resize-none"
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-xl bg-black hover:bg-zinc-800 text-white font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 rounded-xl bg-black dark:bg-amber-500 hover:bg-zinc-800 dark:hover:bg-amber-400 text-white dark:text-zinc-950 font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <span>পাঠানো হচ্ছে...</span>

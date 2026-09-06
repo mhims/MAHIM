@@ -80,10 +80,10 @@ export const MobileAppDock: React.FC = () => {
       className="fixed bottom-3.5 inset-x-3 z-40 lg:hidden pointer-events-none"
     >
       {/* Floating 3D App Dock container with modern frosted glass & colorful micro-lighting */}
-      <nav className="pointer-events-auto max-w-md mx-auto relative bg-white/95 backdrop-blur-2xl border-2 border-black/10 rounded-[28px] px-2 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.16)] flex items-center justify-between">
+      <nav className="pointer-events-auto max-w-md mx-auto relative bg-white/95 dark:bg-[#12100e]/95 backdrop-blur-2xl border-2 border-black/10 dark:border-white/15 rounded-[28px] px-2 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.16)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.6)] flex items-center justify-between">
         
         {/* Subtle top gloss reflection line */}
-        <div className="absolute top-1 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-black/10 to-transparent pointer-events-none" />
+        <div className="absolute top-1 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-black/10 dark:via-white/15 to-transparent pointer-events-none" />
 
         {/* Regular navigation tabs */}
         <div className="flex items-center justify-around flex-1">
@@ -99,22 +99,22 @@ export const MobileAppDock: React.FC = () => {
                 className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-300 active:scale-90 ${
                   isActive 
                     ? '-translate-y-0.5' 
-                    : 'text-zinc-600 hover:text-zinc-900'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                 }`}
               >
                 {/* Active Pill backdrop */}
                 {isActive && (
-                  <span className={`absolute inset-0 rounded-2xl border ${item.bgGlow} shadow-xs -z-10 animate-in zoom-in-90 duration-200`} />
+                  <span className={`absolute inset-0 rounded-2xl border ${item.bgGlow} dark:bg-zinc-800 dark:border-zinc-700 shadow-xs -z-10 animate-in zoom-in-90 duration-200`} />
                 )}
                 
                 <div className="relative">
-                  <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? `scale-110 ${item.activeColor}` : 'text-zinc-600'}`} />
+                  <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? `scale-110 ${item.activeColor}` : 'text-zinc-600 dark:text-zinc-400'}`} />
                   {isActive && (
                     <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 ${item.indicator} rounded-full shadow-xs`} />
                   )}
                 </div>
                 
-                <span className={`text-[10px] font-bold mt-1 tracking-tight transition-colors ${isActive ? 'text-zinc-950 font-black' : 'text-zinc-600'}`}>
+                <span className={`text-[10px] font-bold mt-1 tracking-tight transition-colors ${isActive ? 'text-zinc-950 dark:text-white font-black' : 'text-zinc-600 dark:text-zinc-400'}`}>
                   {item.label}
                 </span>
               </a>
@@ -123,7 +123,7 @@ export const MobileAppDock: React.FC = () => {
         </div>
 
         {/* Vertical divider */}
-        <div className="h-7 w-[1px] bg-black/10 mx-1" />
+        <div className="h-7 w-[1px] bg-black/10 dark:bg-white/10 mx-1" />
 
         {/* Standout 3D WhatsApp Button in Dock */}
         <a

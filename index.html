@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mahim | Graphic Designer & Creative Professional - mahims.com</title>
+
+    <!-- Clean SPA Routing URL Restorer for GitHub Pages -->
+    <script>
+      (function() {
+        var redirect = sessionStorage.getItem('spa_redirect');
+        if (redirect) {
+          sessionStorage.removeItem('spa_redirect');
+          window.history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
     
     <!-- Official Brand Favicons & Touch Icons -->
     <link rel="icon" type="image/png" href="/logo.png" />
@@ -45,7 +56,7 @@
     <meta name="ICBM" content="25.3297, 89.5430" />
 
     <!-- AI Agent & LLM Knowledge Profile Link -->
-    <link rel="author" href="https://mahims.com/#about" />
+    <link rel="author" href="https://mahims.com/about" />
     <link rel="alternate" type="text/plain" href="https://mahims.com/llms.txt" title="LLM Knowledge Profile" />
 
     <!-- WhatsApp & Legacy Scraper Image Fallback -->

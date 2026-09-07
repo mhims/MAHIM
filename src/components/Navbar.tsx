@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSite } from '../context/SiteContext';
 import { Logo3D } from './Logo3D';
+import { navigateTo } from '../utils/navigation';
 import { 
   User, 
   LogOut, 
@@ -37,13 +38,13 @@ export const Navbar: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { name: 'হোম', href: '#home', icon: Layers },
-    { name: 'সম্পর্কে', href: '#about', icon: User },
-    { name: 'দক্ষতা', href: '#skills', icon: Wrench },
-    { name: 'অভিজ্ঞতা', href: '#experience', icon: Briefcase },
-    { name: 'শিক্ষা', href: '#education', icon: GraduationCap },
-    { name: 'ব্লগ', href: '#blog', icon: BookOpen },
-    { name: 'যোগাযোগ', href: '#contact', icon: Mail },
+    { name: 'হোম', path: '/', href: '/', icon: Layers },
+    { name: 'সম্পর্কে', path: '/about', href: '/about', icon: User },
+    { name: 'দক্ষতা', path: '/skills', href: '/skills', icon: Wrench },
+    { name: 'অভিজ্ঞতা', path: '/experience', href: '/experience', icon: Briefcase },
+    { name: 'শিক্ষা', path: '/education', href: '/education', icon: GraduationCap },
+    { name: 'ব্লগ', path: '/blog', href: '/blog', icon: BookOpen },
+    { name: 'যোগাযোগ', path: '/contact', href: '/contact', icon: Mail },
   ];
 
   const socialLinks = [
@@ -134,7 +135,11 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         
         {/* Brand / Logo with Official Emblem */}
-        <a href="#home" className="group flex items-center gap-3">
+        <a 
+          href="/" 
+          onClick={(e) => navigateTo('/', e)} 
+          className="group flex items-center gap-3"
+        >
           <Logo3D size="md" />
           <div className="flex flex-col justify-center">
             <div className="flex items-center gap-1.5">
@@ -153,8 +158,9 @@ export const Navbar: React.FC = () => {
         <nav className="hidden lg:flex items-center gap-1 bg-zinc-100/95 dark:bg-zinc-900/95 p-1 rounded-full border border-black/10 dark:border-white/10 backdrop-blur-md shadow-inner">
           {navLinks.map(link => (
             <a
-              key={link.href}
+              key={link.path}
               href={link.href}
+              onClick={(e) => navigateTo(link.path, e)}
               className="px-3.5 py-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800 rounded-full transition-all duration-200 shadow-xs"
             >
               {link.name}
@@ -282,9 +288,12 @@ export const Navbar: React.FC = () => {
               const Icon = link.icon;
               return (
                 <a
-                  key={link.href}
+                  key={link.path}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    navigateTo(link.path, e);
+                  }}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-800 dark:text-zinc-200 hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-xl transition-colors"
                 >
                   <Icon className="w-4 h-4 text-amber-500" />

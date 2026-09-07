@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSite } from '../context/SiteContext';
+import { navigateTo } from '../utils/navigation';
 import { 
   Home, 
   User, 
@@ -40,7 +41,8 @@ export const MobileAppDock: React.FC = () => {
       id: 'home', 
       label: 'হোম', 
       icon: Home, 
-      href: '#home',
+      path: '/',
+      href: '/',
       activeColor: 'text-[#2563eb]',
       bgGlow: 'bg-blue-50 text-blue-600 border-blue-200',
       indicator: 'bg-[#2563eb]'
@@ -49,7 +51,8 @@ export const MobileAppDock: React.FC = () => {
       id: 'about', 
       label: 'প্রোফাইল', 
       icon: User, 
-      href: '#about',
+      path: '/about',
+      href: '/about',
       activeColor: 'text-[#7c3aed]',
       bgGlow: 'bg-purple-50 text-purple-600 border-purple-200',
       indicator: 'bg-[#7c3aed]'
@@ -58,7 +61,8 @@ export const MobileAppDock: React.FC = () => {
       id: 'skills', 
       label: 'দক্ষতা', 
       icon: Layers, 
-      href: '#skills',
+      path: '/skills',
+      href: '/skills',
       activeColor: 'text-[#ea580c]',
       bgGlow: 'bg-amber-50 text-amber-600 border-amber-200',
       indicator: 'bg-[#ea580c]'
@@ -67,7 +71,8 @@ export const MobileAppDock: React.FC = () => {
       id: 'blog', 
       label: 'ব্লগ', 
       icon: BookOpen, 
-      href: '#blog',
+      path: '/blog',
+      href: '/blog',
       activeColor: 'text-[#059669]',
       bgGlow: 'bg-emerald-50 text-emerald-600 border-emerald-200',
       indicator: 'bg-[#059669]'
@@ -95,7 +100,10 @@ export const MobileAppDock: React.FC = () => {
               <a
                 key={item.id}
                 href={item.href}
-                onClick={() => setActiveTab(item.id)}
+                onClick={(e) => {
+                  setActiveTab(item.id);
+                  navigateTo(item.path, e);
+                }}
                 className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-300 active:scale-90 ${
                   isActive 
                     ? '-translate-y-0.5' 

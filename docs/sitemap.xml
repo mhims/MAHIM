@@ -12,37 +12,37 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/#about</loc>
+    <loc>https://mahims.com/about</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://mahims.com/#skills</loc>
+    <loc>https://mahims.com/skills</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mahims.com/#experience</loc>
+    <loc>https://mahims.com/experience</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mahims.com/#education</loc>
+    <loc>https://mahims.com/education</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mahims.com/#blog</loc>
+    <loc>https://mahims.com/blog</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://mahims.com/#contact</loc>
+    <loc>https://mahims.com/contact</loc>
     <lastmod>2026-09-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

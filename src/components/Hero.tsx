@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSite } from '../context/SiteContext';
 import { motion, useInView } from 'motion/react';
+import { navigateTo } from '../utils/navigation';
 import { 
   ArrowUpRight, 
   MessageCircle, 
@@ -259,7 +260,8 @@ export const Hero: React.FC = () => {
             {/* Two Action Buttons matching previous site (যোগাযোগ করুন & আমার সম্পর্কে) + WhatsApp */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
-                href="#contact"
+                href="/contact"
+                onClick={(e) => navigateTo('/contact', e)}
                 className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-black text-sm bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Mail className="w-4 h-4" />
@@ -267,7 +269,8 @@ export const Hero: React.FC = () => {
               </a>
 
               <a
-                href="#about"
+                href="/about"
+                onClick={(e) => navigateTo('/about', e)}
                 className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full font-bold text-sm bg-white/60 dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 <User className="w-4 h-4" />

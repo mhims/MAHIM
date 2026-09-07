@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSite } from '../context/SiteContext';
 import { Logo3D } from './Logo3D';
+import { navigateTo } from '../utils/navigation';
 import { Sparkles, Heart, Lock, Shield, Facebook, Instagram, Linkedin, MessageCircle, ArrowUpRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -91,13 +92,13 @@ export const Footer: React.FC = () => {
 
           {/* Quick links & socials */}
           <div className="md:col-span-6 flex flex-wrap items-center justify-center md:justify-end gap-6 text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400">
-            <a href="#home" className="hover:text-black dark:hover:text-white transition-colors">হোম</a>
-            <a href="#about" className="hover:text-black dark:hover:text-white transition-colors">আমার সম্পর্কে</a>
-            <a href="#skills" className="hover:text-black dark:hover:text-white transition-colors">দক্ষতা</a>
-            <a href="#experience" className="hover:text-black dark:hover:text-white transition-colors">অভিজ্ঞতা</a>
-            <a href="#education" className="hover:text-black dark:hover:text-white transition-colors">শিক্ষা</a>
-            <a href="#blog" className="hover:text-black dark:hover:text-white transition-colors">ব্লগ</a>
-            <a href="#contact" className="hover:text-black dark:hover:text-white transition-colors">যোগাযোগ</a>
+            <a href="/" onClick={(e) => navigateTo('/', e)} className="hover:text-black dark:hover:text-white transition-colors">হোম</a>
+            <a href="/about" onClick={(e) => navigateTo('/about', e)} className="hover:text-black dark:hover:text-white transition-colors">আমার সম্পর্কে</a>
+            <a href="/skills" onClick={(e) => navigateTo('/skills', e)} className="hover:text-black dark:hover:text-white transition-colors">দক্ষতা</a>
+            <a href="/experience" onClick={(e) => navigateTo('/experience', e)} className="hover:text-black dark:hover:text-white transition-colors">অভিজ্ঞতা</a>
+            <a href="/education" onClick={(e) => navigateTo('/education', e)} className="hover:text-black dark:hover:text-white transition-colors">শিক্ষা</a>
+            <a href="/blog" onClick={(e) => navigateTo('/blog', e)} className="hover:text-black dark:hover:text-white transition-colors">ব্লগ</a>
+            <a href="/contact" onClick={(e) => navigateTo('/contact', e)} className="hover:text-black dark:hover:text-white transition-colors">যোগাযোগ</a>
           </div>
 
         </div>

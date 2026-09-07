@@ -2,15 +2,20 @@
 <html lang="bn">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mahim | mahims.com</title>
     <script>
-      // Single Page Apps for GitHub Pages
-      // Redirects 404s back to root index
-      sessionStorage.redirect = location.href;
-      window.location.replace('./');
+      // Single Page Apps for GitHub Pages: cleanly preserves paths without '#'
+      var path = window.location.pathname;
+      var search = window.location.search || '';
+      var hash = window.location.hash || '';
+      sessionStorage.setItem('spa_redirect', path + search + hash);
+      window.location.replace('/');
     </script>
   </head>
-  <body style="background-color: #020617; color: #f8fafc; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-    <p>লোড হচ্ছে mahims.com...</p>
+  <body style="background-color: #0c0a09; color: #f59e0b; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <div style="text-align: center;">
+      <p style="font-size: 1.1rem; font-weight: 600;">লোড হচ্ছে mahims.com...</p>
+    </div>
   </body>
 </html>

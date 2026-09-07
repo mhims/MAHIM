@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSite } from '../context/SiteContext';
 import { BlogPost, PostVisibility } from '../types';
 import { motion } from 'motion/react';
+import { navigateTo } from '../utils/navigation';
 import { 
   BookOpen, 
   Lock, 
@@ -337,8 +338,11 @@ export const BlogSection: React.FC = () => {
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">গ্রাফিক ডিজাইনার ও কনটেন্ট ক্রিয়েটর (mahims.com)</p>
                 </div>
                 <a
-                  href="#contact"
-                  onClick={() => viewPost(null)}
+                  href="/contact"
+                  onClick={(e) => {
+                    viewPost(null);
+                    navigateTo('/contact', e);
+                  }}
                   className="px-4 py-2 rounded-xl bg-black dark:bg-amber-500 text-white dark:text-zinc-950 font-bold text-xs hover:bg-zinc-800 dark:hover:bg-amber-400 transition-colors shadow-sm"
                 >
                   মাহিমের সাথে যোগাযোগ

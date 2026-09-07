@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSite } from '../context/SiteContext';
 import { BlogPost, CertificationItem, EducationItem, ExperienceItem, PostVisibility, SkillItem, UserAccount } from '../types';
-import { generateRobotsTxt, generateSitemapXml } from '../utils/sitemap';
+import { downloadTextFile, generateLlmsTxt, generateRobotsTxt, generateSitemapXml } from '../utils/sitemap';
 import { GOOGLE_APPS_SCRIPT_TEMPLATE } from '../utils/googleSheets';
 import { 
   X, 
@@ -149,6 +149,7 @@ export const AdminModal: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedSitemap, setCopiedSitemap] = useState(false);
   const [copiedRobots, setCopiedRobots] = useState(false);
+  const [copiedLlms, setCopiedLlms] = useState(false);
   const [adminNotification, setAdminNotification] = useState('');
 
   // Password change state
@@ -2046,10 +2047,28 @@ export const AdminModal: React.FC = () => {
             {activeTab === 'seo' && (
               <div className="space-y-6 max-w-4xl">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-1">সার্চ ইঞ্জিন ও এআই ডিসকভারি এসইও (SEO)</h3>
-                  <p className="text-xs text-slate-400">
-                    গুগলে মাহিম, Mahim Ibne Khudi ও সম্পর্কিত কীওয়ার্ডে র‍্যাংক করার অপ্টিমাইজেশন
-                  </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                        <span>সার্চ ইঞ্জিন ও এআই ডিসকভারি এসইও (SEO & Sitemap)</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span>লাইভ ডায়নামিক সিঙ্ক সক্রিয়</span>
+                        </span>
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        গুগলে মাহিম, Mahim Ibne Khudi ও সম্পর্কিত কীওয়ার্ডে র‍্যাংক করার অপ্টিমাইজেশন
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900 px-3 py-1.5 rounded-xl border border-white/10">
+                      <span>মোট লিংক:</span>
+                      <strong className="text-amber-400 font-mono">{7 + posts.filter(p => p.visibility === 'public').length} টি</strong>
+                      <span className="text-slate-500">|</span>
+                      <span>পাবলিক ব্লগ:</span>
+                      <strong className="text-emerald-400 font-mono">{posts.filter(p => p.visibility === 'public').length} টি</strong>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -2094,13 +2113,27 @@ export const AdminModal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Dynamic Sitemap & Robots.txt generators */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-white/10">
+                {/* Dynamic Sitemap, LLM Profile & Robots.txt generators */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-white/10">
                   
                   {/* Sitemap Card */}
-                  <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-white">ডায়নামিক সাইটম্যাপ (sitemap.xml)</h4>
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                          <Search className="w-4 h-4 text-emerald-400" />
+                          <span>সাইটম্যাপ (sitemap.xml)</span>
+                        </h4>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        নতুন ব্লগ ও পেজ পরিবর্তনের সাথে সাথে স্বয়ংক্রিয়ভাবে আপডেট হয়।
+                      </p>
+                      <pre className="p-2.5 rounded-xl bg-slate-900 text-[9.5px] font-mono text-slate-400 max-h-28 overflow-y-auto">
+                        {generateSitemapXml(settings, posts)}
+                      </pre>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                       <button
                         onClick={() => {
                           const xml = generateSitemapXml(settings, posts);
@@ -2108,23 +2141,87 @@ export const AdminModal: React.FC = () => {
                           setCopiedSitemap(true);
                           setTimeout(() => setCopiedSitemap(false), 2000);
                         }}
-                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-mono"
+                        className="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold text-center transition-colors"
                       >
                         {copiedSitemap ? 'কপি হয়েছে!' : 'XML কপি'}
                       </button>
+                      <button
+                        onClick={() => {
+                          const xml = generateSitemapXml(settings, posts);
+                          downloadTextFile('sitemap.xml', xml, 'application/xml');
+                          showNotification('sitemap.xml ডাউনলোড সম্পন্ন হয়েছে');
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1"
+                        title="ফাইল ডাউনলোড করুন"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>ডাউনলোড</span>
+                      </button>
                     </div>
-                    <p className="text-xs text-slate-400">
-                      গুগল সার্চ কনসোলে সাবমিটের জন্য প্রস্তুত XML সাইটম্যাপ।
-                    </p>
-                    <pre className="p-3 rounded-xl bg-slate-900 text-[10px] font-mono text-slate-400 max-h-32 overflow-y-auto">
-                      {generateSitemapXml(settings, posts)}
-                    </pre>
+                  </div>
+
+                  {/* LLM Knowledge Base Profile (llms.txt) Card */}
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                          <Sparkles className="w-4 h-4 text-amber-400" />
+                          <span>এআই প্রোফাইল (llms.txt)</span>
+                        </h4>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        ChatGPT, Perplexity ও Gemini যাতে আপনার বায়ো ও ব্লগ সরাসরি জানতে পারে।
+                      </p>
+                      <pre className="p-2.5 rounded-xl bg-slate-900 text-[9.5px] font-mono text-slate-400 max-h-28 overflow-y-auto">
+                        {generateLlmsTxt(settings, posts, skills, experiences, education)}
+                      </pre>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                      <button
+                        onClick={() => {
+                          const txt = generateLlmsTxt(settings, posts, skills, experiences, education);
+                          navigator.clipboard.writeText(txt);
+                          setCopiedLlms(true);
+                          setTimeout(() => setCopiedLlms(false), 2000);
+                        }}
+                        className="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold text-center transition-colors"
+                      >
+                        {copiedLlms ? 'কপি হয়েছে!' : 'LLM কপি'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const txt = generateLlmsTxt(settings, posts, skills, experiences, education);
+                          downloadTextFile('llms.txt', txt, 'text/plain');
+                          showNotification('llms.txt ডাউনলোড সম্পন্ন হয়েছে');
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1"
+                        title="ফাইল ডাউনলোড করুন"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>ডাউনলোড</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Robots.txt Card */}
-                  <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-white">এআই ও সার্চ রোবটস (robots.txt)</h4>
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-white/10 space-y-3 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                          <ShieldCheck className="w-4 h-4 text-sky-400" />
+                          <span>রোবটস (robots.txt)</span>
+                        </h4>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">
+                        গুগল ও আধুনিক সব এআই ক্রলার বটদের সাইট ক্রল করার অনুমতি দেয়।
+                      </p>
+                      <pre className="p-2.5 rounded-xl bg-slate-900 text-[9.5px] font-mono text-slate-400 max-h-28 overflow-y-auto">
+                        {generateRobotsTxt(settings.domain)}
+                      </pre>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                       <button
                         onClick={() => {
                           const rob = generateRobotsTxt(settings.domain);
@@ -2132,19 +2229,39 @@ export const AdminModal: React.FC = () => {
                           setCopiedRobots(true);
                           setTimeout(() => setCopiedRobots(false), 2000);
                         }}
-                        className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-mono"
+                        className="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold text-center transition-colors"
                       >
                         {copiedRobots ? 'কপি হয়েছে!' : 'Robots কপি'}
                       </button>
+                      <button
+                        onClick={() => {
+                          const rob = generateRobotsTxt(settings.domain);
+                          downloadTextFile('robots.txt', rob, 'text/plain');
+                          showNotification('robots.txt ডাউনলোড সম্পন্ন হয়েছে');
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 text-xs font-semibold flex items-center gap-1"
+                        title="ফাইল ডাউনলোড করুন"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>ডাউনলোড</span>
+                      </button>
                     </div>
-                    <p className="text-xs text-slate-400">
-                      GPTBot, Perplexity, Claude ও Google Crawlers যাতে সহজে ইনডেক্স করতে পারে।
-                    </p>
-                    <pre className="p-3 rounded-xl bg-slate-900 text-[10px] font-mono text-slate-400 max-h-32 overflow-y-auto">
-                      {generateRobotsTxt(settings.domain)}
-                    </pre>
                   </div>
 
+                </div>
+
+                {/* Explanation Box on Dynamic Sync */}
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-slate-300 space-y-1.5">
+                  <h5 className="font-bold text-amber-400 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4" />
+                    <span>ডায়নামিক সিঙ্ক কীভাবে কাজ করে?</span>
+                  </h5>
+                  <p className="text-slate-300 leading-relaxed">
+                    ১. আপনি ওয়েবসাইট বা এডমিন প্যানেলে যখনই কোনো তথ্য আপডেট করবেন (যেমন: নতুন ব্লগ পোস্ট, বায়ো বা স্কিল), ব্রাউজারে থাকা <strong>Google & AI JSON-LD Schema</strong> তাৎক্ষণিকভাবে রিয়েলটাইমে নতুন ডেটা গ্রহণ করে।
+                  </p>
+                  <p className="text-slate-300 leading-relaxed">
+                    ২. গুগল সার্চ কনসোলে সাইটম্যাপ একবার সাবমিট করার পর, গুগল নিয়মিত স্বয়ংক্রিয়ভাবে পেজগুলো রি-ক্রল (Re-crawl) করে।
+                  </p>
                 </div>
 
               </div>

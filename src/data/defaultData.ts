@@ -56,7 +56,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     'Social Media Graphic Designer',
     'mahims.com'
   ],
-  googleSiteVerification: '',
+  googleSiteVerification: 't4ejgDcENe8vJ4Q97NJwtR6odLfYib__3hEpQhVwuIQ',
 
   googleSheetWebhookUrl: '',
   googleSheetSyncEnabled: false,

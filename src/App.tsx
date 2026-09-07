@@ -18,10 +18,12 @@ import { WhatsAppButton } from './components/WhatsAppButton';
 import { MobileAppDock } from './components/MobileAppDock';
 import { AdminModal } from './components/AdminModal';
 import { AuthModal } from './components/AuthModal';
+import { DynamicSEO } from './components/DynamicSEO';
 
 export default function App() {
   return (
     <SiteProvider>
+      <DynamicSEO />
       <div className="min-h-screen bg-[#fdfdfb] dark:bg-[#0c0a09] text-[#1a1a1a] dark:text-zinc-100 flex flex-col selection:bg-amber-500 selection:text-black font-sans transition-colors duration-200">
         <Navbar />
         <main className="flex-grow pb-16 lg:pb-0">

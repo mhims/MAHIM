@@ -690,6 +690,60 @@ export const AdminModal: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Logo & Navigation Branding: URL or Direct Upload */}
+                <div className="p-5 rounded-2xl bg-slate-950 border border-white/10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-400" />
+                        <span>অফিশিয়াল লোগো (নেভিগেশন বার ও সোশ্যাল মিডিয়া প্রিভিউ)</span>
+                      </h4>
+                      <p className="text-xs text-slate-400">
+                        নেভিগেশন বার এবং সোশ্যাল মিডিয়া (WhatsApp, Facebook) প্রিভিউ কার্ডে প্রদর্শনের জন্য লোগো।
+                      </p>
+                    </div>
+                    <div className="w-12 h-12 rounded-xl overflow-hidden border border-amber-400/80 bg-zinc-900 shrink-0 p-1 flex items-center justify-center">
+                      <img 
+                        src={settings.logoUrl || '/logo.png'} 
+                        alt="Logo Preview" 
+                        className="w-full h-full object-cover rounded-lg"
+                        onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        লোগো লিঙ্ক (URL)
+                      </label>
+                      <input
+                        type="text"
+                        value={settings.logoUrl || '/logo.png'}
+                        onChange={e => updateSettings({ logoUrl: e.target.value })}
+                        placeholder="/logo.png অথবা https://res.cloudinary.com/.../logo.png"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-300 mb-1">
+                        অথবা সরাসরি লোগো ফাইল আপলোড করুন
+                      </label>
+                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-slate-300 hover:text-white text-xs cursor-pointer transition-colors">
+                        <Upload className="w-4 h-4 text-amber-400" />
+                        <span>কম্পিউটার/মোবাইল থেকে লোগো আপলোড</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={e => handleImageFileUpload(e, url => updateSettings({ logoUrl: url }))}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                     সংক্ষিপ্ত বায়ো (হিরো ডেসক্রিপশন)
@@ -759,6 +813,28 @@ export const AdminModal: React.FC = () => {
                         onChange={e => updateSettings({ whatsappLink: e.target.value })}
                         className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
                       />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs text-slate-300 mb-1">হোয়াটসঅ্যাপ প্রোফাইল ছবি (URL)</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={settings.whatsappAvatarUrl || ''}
+                          onChange={e => updateSettings({ whatsappAvatarUrl: e.target.value })}
+                          placeholder="https://res.cloudinary.com/.../behance_pp_spfumh.jpg"
+                          className="flex-1 px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs font-mono"
+                        />
+                        <label className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-white cursor-pointer flex items-center gap-1.5 shrink-0">
+                          <Upload className="w-3.5 h-3.5 text-amber-400" />
+                          <span>ছবি আপলোড</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={e => handleImageFileUpload(e, url => updateSettings({ whatsappAvatarUrl: url }))}
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>

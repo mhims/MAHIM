@@ -5,6 +5,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   tagline: 'গ্রাফিক ডিজাইনার ও ভিজ্যুয়াল স্টোরিটেলার',
   domain: 'mahims.com',
   primaryLang: 'bn',
+  logoUrl: '/logo.png',
 
   heroTitle: 'Mahim Ibne Khudi',
   heroSubtitle: 'Professional Graphic Designer & Brand Specialist',
@@ -24,6 +25,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   whatsappNumber: 'wa.me/@mahim.wp',
   whatsappLink: 'https://wa.me/@mahim.wp',
   whatsappMessage: 'হ্যালো মাহিম! mahims.com দেখে যোগাযোগ করছি।',
+  whatsappAvatarUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg',
 
   aboutHeadline: 'ক্রিয়েটিভিটি ও পারফেকশনের সমন্বয়ে ভিজ্যুয়াল সলিউশন',
   aboutStory: [

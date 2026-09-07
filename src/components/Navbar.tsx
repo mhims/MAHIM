@@ -133,14 +133,15 @@ export const Navbar: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         
-        {/* Brand / Logo with Minimal Monogram */}
+        {/* Brand / Logo with Official Emblem */}
         <a href="#home" className="group flex items-center gap-3">
-          <Logo3D size="sm" />
-          <div>
+          <Logo3D size="md" />
+          <div className="flex flex-col justify-center">
             <div className="flex items-center gap-1.5">
-              <span className="text-xl font-black tracking-tight text-[#1a1a1a] dark:text-white group-hover:text-amber-500 transition-colors">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#1a1a1a] dark:text-white group-hover:text-amber-500 transition-colors">
                 {settings.siteName}
               </span>
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
             </div>
             <span className="block text-[11px] text-zinc-500 dark:text-zinc-400 font-mono tracking-wider font-semibold">
               {settings.domain}

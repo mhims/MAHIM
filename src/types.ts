@@ -74,6 +74,7 @@ export interface SiteSettings {
   tagline: string;
   domain: string;
   primaryLang: string;
+  logoUrl?: string;
   
   // Hero section
   heroTitle: string;
@@ -95,6 +96,7 @@ export interface SiteSettings {
   whatsappNumber: string;
   whatsappLink: string;
   whatsappMessage: string;
+  whatsappAvatarUrl?: string;
   
   // About section
   aboutHeadline: string;

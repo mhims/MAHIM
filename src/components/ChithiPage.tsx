@@ -375,30 +375,40 @@ export function ChithiPage() {
         </div>
       </div>
 
-      {/* Discreet Footer with Subtle Mobile Dot for Admin */}
-      <footer className="py-4 px-4 text-center text-xs text-zinc-400 space-y-1">
+      {/* Footer with Discreet Admin Access Button (Icon only) */}
+      <footer className="py-6 px-4 text-center text-xs text-zinc-500 space-y-2.5">
         <p className="flex items-center justify-center gap-1.5 text-zinc-500">
           <span>Mahim Chithi</span>
           <span>•</span>
           <span>{new Date().getFullYear()}</span>
         </p>
 
-        {/* 
-          CRITICAL REQUIREMENT:
-          "আর মোবাইল থেকে ঢুকতে চাইলে একদম নিচের দিকে ছোট্ট একটা ডট চিহ্ন থাকবে সেটাই ক্লিক করলে ওপেন হবে"
-        */}
+        {/* Discreet Icon-Only Button on Footer */}
         <div className="flex items-center justify-center pt-1">
           <button
+            id="chithi-admin-footer-button"
             type="button"
             onClick={() => setIsAdminOpen(true)}
-            aria-label="Admin Access Dot"
-            title="·"
-            className="w-8 h-8 flex items-center justify-center text-zinc-400/40 hover:text-zinc-600 active:text-amber-600 transition cursor-pointer select-none text-xl font-bold"
+            aria-label="Secret Access"
+            title="Secret Access"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-amber-500/15 hover:bg-amber-500/30 text-amber-800 border border-amber-600/25 hover:border-amber-600/50 transition-all shadow-xs active:scale-90 cursor-pointer"
           >
-            ·
+            <Lock className="w-3.5 h-3.5" />
           </button>
         </div>
       </footer>
+
+      {/* Floating Discreet Quick-Access Button at Bottom-Right (Icon only, no text) */}
+      <button
+        id="chithi-floating-admin-button"
+        type="button"
+        onClick={() => setIsAdminOpen(true)}
+        className="fixed bottom-5 right-5 z-40 w-10 h-10 bg-white/95 hover:bg-white text-amber-800 hover:text-amber-950 border border-amber-200/90 hover:border-amber-400 rounded-full shadow-md backdrop-blur transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+        title="Secret Access"
+        aria-label="Secret Access"
+      >
+        <Lock className="w-4 h-4" />
+      </button>
 
       {/* Secret Admin Modal */}
       <ChithiAdminModal

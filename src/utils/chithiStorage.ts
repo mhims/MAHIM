@@ -4,7 +4,49 @@ const LETTERS_STORAGE_KEY = 'mahims_chithi_letters_v1';
 const SETTINGS_STORAGE_KEY = 'mahims_chithi_settings_v1';
 const ADMIN_AUTH_KEY = 'mahim_chithi_admin_session';
 
-export const CHITHI_ADMIN_PASSWORD = '@@MahimChithidotme0';
+// Cryptographic SHA-256 Hash of admin password (Plaintext is never stored in source code)
+const DEFAULT_ADMIN_HASH = 'aa4cc2b739ce6f832f651fa4c90d0fd4b15e594b08316f9b68ed8eb4523687a8';
+const CUSTOM_PW_HASH_KEY = 'mahim_chithi_admin_hash_v1';
+
+export async function hashPassword(plain: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(plain);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+export async function verifyChithiAdminPassword(input: string): Promise<boolean> {
+  try {
+    const inputHash = await hashPassword(input.trim());
+    const customHash = typeof window !== 'undefined' ? localStorage.getItem(CUSTOM_PW_HASH_KEY) : null;
+    const targetHash = customHash || DEFAULT_ADMIN_HASH;
+    return inputHash === targetHash;
+  } catch (err) {
+    console.error('Password verification error:', err);
+    return false;
+  }
+}
+
+export async function changeChithiAdminPassword(newPassword: string): Promise<boolean> {
+  try {
+    if (!newPassword || newPassword.trim().length < 6) return false;
+    const newHash = await hashPassword(newPassword.trim());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(CUSTOM_PW_HASH_KEY, newHash);
+    }
+    return true;
+  } catch (err) {
+    console.error('Password update error:', err);
+    return false;
+  }
+}
+
+export async function resetChithiAdminPasswordToDefault(): Promise<void> {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(CUSTOM_PW_HASH_KEY);
+  }
+}
 
 // Initial sample letters for Mahim to test the preview & story cards immediately
 export const SAMPLE_LETTERS: ChithiLetter[] = [

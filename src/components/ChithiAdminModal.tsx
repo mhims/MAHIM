@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { 
   Lock, X, Mail, Star, Trash2, Eye, EyeOff, Download, RefreshCw, 
   MapPin, Smartphone, Calendar, CheckCircle2, Copy, FileSpreadsheet,
-  Settings, ShieldAlert, Sparkles, Send, PenTool, ShieldCheck
+  Settings, ShieldAlert, Sparkles, Send, PenTool, ShieldCheck, Key
 } from 'lucide-react';
 import { ChithiLetter, ChithiSettings } from '../types/chithi';
 import { 
   getStoredLetters, deleteLetter, toggleLetterRead, toggleLetterStar,
-  getChithiSettings, saveChithiSettings, CHITHI_ADMIN_PASSWORD,
+  getChithiSettings, saveChithiSettings,
+  verifyChithiAdminPassword, changeChithiAdminPassword, resetChithiAdminPasswordToDefault,
   isChithiAdminAuthenticated, setChithiAdminAuthenticated,
   sendLetterToGoogleSheet
 } from '../utils/chithiStorage';
@@ -21,6 +22,8 @@ interface ChithiAdminModalProps {
 export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
+  const [showPasswordText, setShowPasswordText] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [letters, setLetters] = useState<ChithiLetter[]>([]);
   const [selectedLetter, setSelectedLetter] = useState<ChithiLetter | null>(null);
@@ -35,6 +38,11 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
   const [replyInput, setReplyInput] = useState('');
   const [showReplyEditor, setShowReplyEditor] = useState(false);
   const [replyImagePreview, setReplyImagePreview] = useState<string | null>(null);
+
+  // Settings: Password change state
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState<string | null>(null);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -52,17 +60,58 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
     setLetters(list);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === CHITHI_ADMIN_PASSWORD) {
-      setChithiAdminAuthenticated(true);
-      setIsAuthenticated(true);
-      setPasswordError(false);
-      setPasswordInput('');
-      loadLetters();
-      setSettings(getChithiSettings());
-    } else {
+    if (!passwordInput.trim()) return;
+    setIsVerifying(true);
+    setPasswordError(false);
+    try {
+      const valid = await verifyChithiAdminPassword(passwordInput);
+      if (valid) {
+        setChithiAdminAuthenticated(true);
+        setIsAuthenticated(true);
+        setPasswordError(false);
+        setPasswordInput('');
+        loadLetters();
+        setSettings(getChithiSettings());
+      } else {
+        setPasswordError(true);
+      }
+    } catch {
       setPasswordError(true);
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleChangeAdminPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPasswordInput.trim().length < 6) {
+      setPasswordChangeStatus('পাসওয়ার্ডটি অবশ্যই কমপক্ষে ৬ অক্ষরের হতে হবে!');
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      const ok = await changeChithiAdminPassword(newPasswordInput.trim());
+      if (ok) {
+        setPasswordChangeStatus('পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!');
+        setNewPasswordInput('');
+        setTimeout(() => setPasswordChangeStatus(null), 4000);
+      } else {
+        setPasswordChangeStatus('পাসওয়ার্ড আপডেট ব্যর্থ হয়েছে।');
+      }
+    } catch {
+      setPasswordChangeStatus('সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleResetPasswordDefault = async () => {
+    if (confirm('আপনি কি পাসওয়ার্ডটি ডিফল্ট পাসওয়ার্ডে রিসেট করতে চান?')) {
+      await resetChithiAdminPasswordToDefault();
+      setPasswordChangeStatus('পাসওয়ার্ড ডিফল্টে রিসেট করা হয়েছে!');
+      setTimeout(() => setPasswordChangeStatus(null), 4000);
     }
   };
 
@@ -269,7 +318,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
             <form onSubmit={handleLogin} className="w-full space-y-4">
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPasswordText ? 'text' : 'password'}
                   placeholder="পাসওয়ার্ড লিখুন..."
                   value={passwordInput}
                   onChange={(e) => {
@@ -277,12 +326,21 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     setPasswordError(false);
                   }}
                   autoFocus
-                  className={`w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 transition ${
+                  autoComplete="current-password"
+                  className={`w-full pl-4 pr-11 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 transition ${
                     passwordError 
                       ? 'border-red-500/80 focus:ring-red-500/40 animate-shake' 
                       : 'border-zinc-700 focus:border-amber-500 focus:ring-amber-500/30'
                   }`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordText(!showPasswordText)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 transition p-1"
+                  title={showPasswordText ? 'পাসওয়ার্ড লুকান' : 'পাসওয়ার্ড দেখুন'}
+                >
+                  {showPasswordText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
 
               {passwordError && (
@@ -294,9 +352,17 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black font-bold rounded-xl transition shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2"
+                disabled={isVerifying || !passwordInput.trim()}
+                className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black font-bold rounded-xl transition shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                ইনবক্স আনলক করুন
+                {isVerifying ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>যাচাই করা হচ্ছে...</span>
+                  </>
+                ) : (
+                  <span>ইনবক্স আনলক করুন</span>
+                )}
               </button>
             </form>
           </div>
@@ -438,6 +504,52 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                       </button>
                     </div>
                   </div>
+
+                  {/* Admin Password Security Setting */}
+                  <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-xl space-y-3">
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                      <Key className="w-5 h-5 text-amber-400" />
+                      এডমিন পাসওয়ার্ড পরিবর্তন (Security)
+                    </h3>
+                    <p className="text-xs text-zinc-400">
+                      আপনার পাসওয়ার্ডটি ক্রিপ্টোগ্রাফিক SHA-256 হ্যাশ দিয়ে সুরক্ষিত। আপনি চাইলে এখান থেকে নতুন যেকোনো পাসওয়ার্ড সেট করতে পারেন:
+                    </p>
+
+                    <form onSubmit={handleChangeAdminPassword} className="space-y-3 pt-1">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="password"
+                          placeholder="নতুন গোপন পাসওয়ার্ড লিখুন..."
+                          value={newPasswordInput}
+                          onChange={(e) => setNewPasswordInput(e.target.value)}
+                          className="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
+                        />
+                        <button
+                          type="submit"
+                          disabled={isChangingPassword || !newPasswordInput.trim()}
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg transition disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                        >
+                          {isChangingPassword ? 'আপডেট হচ্ছে...' : 'পাসওয়ার্ড আপডেট করুন'}
+                        </button>
+                      </div>
+
+                      {passwordChangeStatus && (
+                        <p className={`text-xs font-semibold ${passwordChangeStatus.includes('সফল') ? 'text-emerald-400' : 'text-amber-400'}`}>
+                          {passwordChangeStatus}
+                        </p>
+                      )}
+
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={handleResetPasswordDefault}
+                          className="text-[11px] text-zinc-500 hover:text-zinc-300 underline cursor-pointer"
+                        >
+                          ডিফল্ট পাসওয়ার্ডে রিসেট করুন
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               ) : selectedLetter ? (
                 /* Selected Single Letter Detailed View */
@@ -518,7 +630,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                       {/* Reply Textarea */}
                       <div className="space-y-2">
                         <label className="block text-xs font-semibold text-zinc-300">
-                          আপনার উত্তর (Mahim's Reply):
+                          উত্তর / Reply:
                         </label>
                         <textarea
                           rows={4}
@@ -529,7 +641,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                           maxLength={350}
                         />
                         <div className="flex items-center justify-between text-[11px] text-zinc-500">
-                          <span>ইনস্টাগ্রাম/ফেসবুক স্টোরি কার্ডে আপনার এই উত্তরটি যুক্ত হবে</span>
+                          <span>ইনস্টাগ্রাম/ফেসবুক স্টোরি কার্ডে লাইট মোডে আপনার এই উত্তরটি যুক্ত হবে</span>
                           <span>{replyInput.length} / ৩৫০ অক্ষর</span>
                         </div>
                       </div>
@@ -568,25 +680,28 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                       {replyImagePreview && (
                         <div className="pt-4 border-t border-zinc-800 space-y-3 animate-in fade-in duration-150">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                              <CheckCircle2 className="w-4 h-4" />
-                              ছবি তৈরি সম্পন্ন হয়েছে!
-                            </span>
+                            <div>
+                              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                                <CheckCircle2 className="w-4 h-4" />
+                                ছবি তৈরি সম্পন্ন হয়েছে!
+                              </span>
+                              <p className="text-[10px] text-zinc-400">লেখা অনুযায়ী ছবির সাইজ স্বয়ংক্রিয়ভাবে মানানসই রাখা হয়েছে</p>
+                            </div>
                             <button
                               type="button"
                               onClick={() => downloadBase64Image(replyImagePreview, `mahim-reply-story-${selectedLetter.id}.png`)}
                               className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-md"
                             >
                               <Download className="w-3.5 h-3.5" />
-                              ছবি ডাউনলোড করুন (Download Story Image)
+                              ছবি ডাউনলোড করুন (Download Image)
                             </button>
                           </div>
 
-                          <div className="relative max-w-xs mx-auto rounded-xl overflow-hidden border-2 border-zinc-700 shadow-2xl bg-zinc-950 p-1">
+                          <div className="relative max-w-sm mx-auto rounded-xl overflow-hidden border border-zinc-700 shadow-2xl bg-zinc-950 p-2 flex justify-center">
                             <img
                               src={replyImagePreview}
                               alt="Generated Story Card"
-                              className="w-full h-auto rounded-lg"
+                              className="w-auto h-auto max-h-[480px] object-contain rounded-lg shadow-sm"
                             />
                           </div>
                         </div>

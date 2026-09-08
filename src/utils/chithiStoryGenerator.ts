@@ -1,18 +1,81 @@
 import { ChithiLetter } from '../types/chithi';
 
 /**
- * High-res 1080x1920 Canvas Story Card Generator
- * Perfect for Instagram Stories, Facebook Stories, and WhatsApp Status
+ * Helper to wrap text into distinct lines based on max pixel width and font.
  */
+function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  if (!text) return [];
+  const words = text.split(/\s+/);
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = currentLine ? currentLine + ' ' + words[i] : words[i];
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && i > 0) {
+      lines.push(currentLine);
+      currentLine = words[i];
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return lines;
+}
+
 /**
- * High-res 1080x1920 Canvas Story Card Generator
- * Perfect for Instagram Stories, Facebook Stories, and WhatsApp Status
- * Supports both blank reply template or direct reply written inside the app!
+ * Adaptive Canvas Story Card Generator
+ * Supports dynamic height:
+ * - Short messages produce a compact, well-proportioned aesthetic card
+ * - Long messages expand dynamically without cutting off
+ * - Reply box renders in clean, high-contrast LIGHT MODE
+ * - Simple header "উত্তর / Reply:" without unnecessary branding
  */
 export async function generateStoryImage(letter: ChithiLetter, customReplyText?: string): Promise<string> {
-  const canvas = document.createElement('canvas');
   const width = 1080;
-  const height = 1920;
+  const cardX = 90;
+  const cardW = width - 180; // 900px
+  const letterMaxTextW = cardW - 170; // ~730px
+  const replyMaxTextW = cardW - 80; // ~820px
+
+  // Temporary canvas to measure text lines accurately
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  if (!measureCtx) throw new Error('Could not get measurement context');
+
+  // Measure letter content lines
+  measureCtx.font = '34px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif';
+  const letterLines = wrapLines(measureCtx, (letter.content || '').trim(), letterMaxTextW);
+  const letterLineSpacing = 50;
+  const letterContentH = Math.max(1, letterLines.length) * letterLineSpacing;
+  // Dynamic paper card height (minimum 260px)
+  const cardH = Math.max(260, 130 + letterContentH + 85);
+
+  // Measure reply content lines (if reply provided)
+  const hasReply = Boolean(customReplyText && customReplyText.trim());
+  let replyLines: string[] = [];
+  let replyBoxH = 210; // Default height for blank template
+
+  if (hasReply) {
+    measureCtx.font = '30px "Hind Siliguri", sans-serif';
+    replyLines = wrapLines(measureCtx, customReplyText!.trim(), replyMaxTextW);
+    const replyLineSpacing = 46;
+    const replyContentH = Math.max(1, replyLines.length) * replyLineSpacing;
+    replyBoxH = Math.max(180, 100 + replyContentH + 45);
+  }
+
+  // Calculate dynamic canvas total height
+  const topHeaderH = 300;
+  const cardY = topHeaderH;
+  const gap = 34;
+  const replyBoxY = cardY + cardH + gap;
+  const bottomWatermarkH = 140;
+  const height = replyBoxY + replyBoxH + bottomWatermarkH;
+
+  // Create final canvas
+  const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
@@ -21,109 +84,104 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   // Background gradient: Vintage Warm Sand to Ivory
   const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
   bgGrad.addColorStop(0, '#fbf7ee');
-  bgGrad.addColorStop(0.5, '#f5efe0');
-  bgGrad.addColorStop(1, '#ebe1cc');
+  bgGrad.addColorStop(0.5, '#f6f0e2');
+  bgGrad.addColorStop(1, '#ece3ce');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
 
-  // Subtle Vintage Border
-  ctx.strokeStyle = '#d4c5a9';
+  // Subtle Vintage Outer Border
+  ctx.strokeStyle = '#d9ccb4';
   ctx.lineWidth = 4;
-  ctx.strokeRect(36, 36, width - 72, height - 72);
+  ctx.strokeRect(32, 32, width - 64, height - 64);
 
   // Top Airmail Stripes Banner
   const stripeH = 16;
   const stripeW = 40;
-  for (let x = 40; x < width - 40; x += stripeW * 2) {
+  for (let x = 36; x < width - 36; x += stripeW * 2) {
     ctx.fillStyle = '#dc2626'; // Red
     ctx.beginPath();
-    ctx.moveTo(x, 40);
-    ctx.lineTo(x + stripeW, 40);
-    ctx.lineTo(x + stripeW - 10, 40 + stripeH);
-    ctx.lineTo(x - 10, 40 + stripeH);
+    ctx.moveTo(x, 36);
+    ctx.lineTo(x + stripeW, 36);
+    ctx.lineTo(x + stripeW - 10, 36 + stripeH);
+    ctx.lineTo(x - 10, 36 + stripeH);
     ctx.closePath();
     ctx.fill();
 
     ctx.fillStyle = '#2563eb'; // Blue
     ctx.beginPath();
-    ctx.moveTo(x + stripeW, 40);
-    ctx.lineTo(x + stripeW * 2, 40);
-    ctx.lineTo(x + stripeW * 2 - 10, 40 + stripeH);
-    ctx.lineTo(x + stripeW - 10, 40 + stripeH);
+    ctx.moveTo(x + stripeW, 36);
+    ctx.lineTo(x + stripeW * 2, 36);
+    ctx.lineTo(x + stripeW * 2 - 10, 36 + stripeH);
+    ctx.lineTo(x + stripeW - 10, 36 + stripeH);
     ctx.closePath();
     ctx.fill();
   }
 
-  // Header Stamp: Mahim Chithi (Removed "চিঠি ডট মি")
+  // Header Stamp: MAHIM CHITHI
   ctx.fillStyle = '#78350f';
   ctx.font = 'bold 38px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('MAHIM CHITHI', width / 2, 140);
+  ctx.fillText('MAHIM CHITHI', width / 2, 135);
 
-  ctx.font = '24px "Hind Siliguri", sans-serif';
+  ctx.font = '22px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#92400e';
-  ctx.fillText('— গোপন চিঠি ও উত্তর / Anonymous Letter & Reply —', width / 2, 185);
+  ctx.fillText('— গোপন চিঠি ও উত্তর / Anonymous Letter & Reply —', width / 2, 178);
 
   // Vintage Postage Stamp on Top Right
-  const stampX = width - 240;
-  const stampY = 80;
+  const stampX = width - 235;
+  const stampY = 75;
   ctx.save();
   ctx.translate(stampX, stampY);
   ctx.rotate((4 * Math.PI) / 180);
   ctx.fillStyle = '#fef3c7';
-  ctx.fillRect(0, 0, 150, 180);
+  ctx.fillRect(0, 0, 145, 175);
   ctx.strokeStyle = '#b45309';
   ctx.lineWidth = 3;
   ctx.setLineDash([6, 4]);
-  ctx.strokeRect(4, 4, 142, 172);
+  ctx.strokeRect(4, 4, 137, 167);
   ctx.setLineDash([]);
 
   // Stamp inner artwork
   ctx.fillStyle = '#78350f';
-  ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+  ctx.font = 'bold 19px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('BANGLADESH', 75, 36);
-  ctx.font = 'bold 44px sans-serif';
-  ctx.fillText('🕊️', 75, 95);
-  ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
-  ctx.fillText('চিঠি ২০২৬', 75, 140);
-  ctx.font = '16px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('৳ ১.০০', 75, 165);
+  ctx.fillText('BANGLADESH', 72, 34);
+  ctx.font = 'bold 42px sans-serif';
+  ctx.fillText('🕊️', 72, 92);
+  ctx.font = 'bold 20px "Hind Siliguri", sans-serif';
+  ctx.fillText('চিঠি ২০২৬', 72, 136);
+  ctx.font = '15px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('৳ ১.০০', 72, 160);
   ctx.restore();
 
   // Postal Circular Ink Seal Stamp (Left)
   ctx.save();
-  ctx.translate(160, 180);
+  ctx.translate(155, 175);
   ctx.rotate((-12 * Math.PI) / 180);
   ctx.strokeStyle = 'rgba(180, 83, 9, 0.45)';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(0, 0, 60, 0, Math.PI * 2);
+  ctx.arc(0, 0, 58, 0, Math.PI * 2);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(0, 0, 48, 0, Math.PI * 2);
+  ctx.arc(0, 0, 46, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fillStyle = 'rgba(180, 83, 9, 0.55)';
-  ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+  ctx.font = 'bold 15px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('AIR MAIL', 0, -20);
-  ctx.fillText('DHAKA GPO', 0, 5);
-  ctx.fillText(new Date().toLocaleDateString('en-GB'), 0, 30);
+  ctx.fillText('DHAKA GPO', 0, 4);
+  ctx.fillText(new Date().toLocaleDateString('en-GB'), 0, 28);
   ctx.restore();
 
-  // Main Letter Paper Card (Center)
-  const cardX = 90;
-  const cardY = 320;
-  const cardW = width - 180;
-  const cardH = 880;
-
-  // Shadow for paper
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-  ctx.shadowBlur = 40;
-  ctx.shadowOffsetY = 20;
+  // ================= MAIN LETTER PAPER CARD =================
+  // Paper Shadow
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+  ctx.shadowBlur = 32;
+  ctx.shadowOffsetY = 16;
 
   // Paper base
-  ctx.fillStyle = '#fffdf9';
+  ctx.fillStyle = '#fffdfa';
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, [16, 16, 16, 16]);
   ctx.fill();
@@ -133,14 +191,18 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   ctx.shadowBlur = 0;
   ctx.shadowOffsetY = 0;
 
+  // Paper subtle border
+  ctx.strokeStyle = '#e8decb';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
   // Ruled Notebook Lines
-  ctx.strokeStyle = '#e2d9c8';
+  ctx.strokeStyle = '#e8dfd1';
   ctx.lineWidth = 1.5;
-  const lineSpacing = 48;
-  for (let y = cardY + 110; y < cardY + cardH - 100; y += lineSpacing) {
+  for (let y = cardY + 115; y < cardY + cardH - 60; y += letterLineSpacing) {
     ctx.beginPath();
-    ctx.moveTo(cardX + 40, y);
-    ctx.lineTo(cardX + cardW - 40, y);
+    ctx.moveTo(cardX + 36, y);
+    ctx.lineTo(cardX + cardW - 36, y);
     ctx.stroke();
   }
 
@@ -148,58 +210,39 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   ctx.strokeStyle = '#fca5a5';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(cardX + 90, cardY + 40);
-  ctx.lineTo(cardX + 90, cardY + cardH - 40);
+  ctx.moveTo(cardX + 85, cardY + 30);
+  ctx.lineTo(cardX + 85, cardY + cardH - 30);
   ctx.stroke();
 
   // Wax Seal Badge at top center of paper
   ctx.fillStyle = '#991b1b';
   ctx.beginPath();
-  ctx.arc(cardX + cardW / 2, cardY + 42, 28, 0, Math.PI * 2);
+  ctx.arc(cardX + cardW / 2, cardY + 40, 26, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = '#f59e0b';
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.fillStyle = '#fef3c7';
-  ctx.font = 'bold 22px sans-serif';
+  ctx.font = 'bold 20px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('✉️', cardX + cardW / 2, cardY + 50);
+  ctx.fillText('✉️', cardX + cardW / 2, cardY + 47);
 
-  // Letter Content with Word Wrap
-  const text = letter.content || '';
+  // Letter Content
   ctx.textAlign = 'left';
-  ctx.font = '36px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif';
-  ctx.fillStyle = letter.inkColor === 'maroon' ? '#831843' : letter.inkColor === 'black' ? '#18181b' : '#1e3a8a';
+  ctx.font = '34px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif';
+  ctx.fillStyle =
+    letter.inkColor === 'maroon' ? '#831843' : letter.inkColor === 'black' ? '#18181b' : '#1e3a8a';
 
-  const maxTextWidth = cardW - 160;
-  const startX = cardX + 110;
-  let currentY = cardY + 140;
-
-  // Wrap lines for letter
-  const words = text.split(/\s+/);
-  let currentLine = '';
-  for (let n = 0; n < words.length; n++) {
-    const testLine = currentLine ? currentLine + ' ' + words[n] : words[n];
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxTextWidth && n > 0) {
-      ctx.fillText(currentLine, startX, currentY);
-      currentLine = words[n];
-      currentY += lineSpacing;
-      if (currentY > cardY + cardH - 120) {
-        currentLine += '...';
-        break;
-      }
-    } else {
-      currentLine = testLine;
-    }
-  }
-  if (currentLine && currentY <= cardY + cardH - 120) {
-    ctx.fillText(currentLine, startX, currentY);
+  const startX = cardX + 105;
+  let textY = cardY + 130;
+  for (const line of letterLines) {
+    ctx.fillText(line, startX, textY);
+    textY += letterLineSpacing;
   }
 
-  // Footer inside Paper (Date & Device only, no location mentioned)
-  const metaY = cardY + cardH - 50;
-  ctx.font = '22px "Hind Siliguri", sans-serif';
+  // Footer inside Paper (Date & Anonymous status)
+  const metaY = cardY + cardH - 35;
+  ctx.font = '21px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#6b7280';
   ctx.fillText(`🔒 ১০০% বেনামী বার্তা`, startX, metaY);
 
@@ -209,108 +252,85 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
     year: 'numeric',
   });
   ctx.textAlign = 'right';
-  ctx.fillText(`🕒 ${dateStr}`, cardX + cardW - 60, metaY);
+  ctx.fillText(`🕒 ${dateStr}`, cardX + cardW - 45, metaY);
 
-  // Reply Box / Card Section Below Paper
-  const replyBoxY = 1250;
-  const replyBoxH = 460;
-  
-  if (customReplyText && customReplyText.trim()) {
-    // RENDER ACTUAL REPLY ON STORY CARD
-    // Card background
-    ctx.fillStyle = '#1e293b'; // Slate dark premium card for Mahim's answer
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 30;
-    ctx.shadowOffsetY = 15;
+  // ================= REPLY BOX (LIGHT MODE) =================
+  if (hasReply) {
+    // Crisp, elegant Light Mode card
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetY = 12;
+
+    ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [20, 20, 20, 20]);
+    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [18, 18, 18, 18]);
     ctx.fill();
 
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
 
-    // Header of Reply Box
-    ctx.fillStyle = '#f59e0b';
-    ctx.font = 'bold 30px "Hind Siliguri", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('💬 মাহিমের উত্তর (Mahim\'s Reply):', cardX + 40, replyBoxY + 60);
-
-    // Decorative divider line
-    ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cardX + 40, replyBoxY + 80);
-    ctx.lineTo(cardX + cardW - 40, replyBoxY + 80);
+    // Warm border
+    ctx.strokeStyle = '#e2d9c8';
+    ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Reply text wrap
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '32px "Hind Siliguri", sans-serif';
-    const replyStartX = cardX + 40;
-    let replyY = replyBoxY + 135;
-    const replyMaxWidth = cardW - 80;
-    const replyLineSpacing = 44;
+    // Header: "উত্তর / Reply:" (Clean and without personal branding)
+    ctx.fillStyle = '#78350f'; // Rich warm brown
+    ctx.font = 'bold 28px "Hind Siliguri", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('💬 উত্তর / Reply:', cardX + 40, replyBoxY + 52);
 
-    const replyWords = customReplyText.trim().split(/\s+/);
-    let rLine = '';
-    for (let r = 0; r < replyWords.length; r++) {
-      const testR = rLine ? rLine + ' ' + replyWords[r] : replyWords[r];
-      const metrics = ctx.measureText(testR);
-      if (metrics.width > replyMaxWidth && r > 0) {
-        ctx.fillText(rLine, replyStartX, replyY);
-        rLine = replyWords[r];
-        replyY += replyLineSpacing;
-        if (replyY > replyBoxY + replyBoxH - 60) {
-          rLine += '...';
-          break;
-        }
-      } else {
-        rLine = testR;
-      }
-    }
-    if (rLine && replyY <= replyBoxY + replyBoxH - 60) {
-      ctx.fillText(rLine, replyStartX, replyY);
-    }
-
-    // Mahim Signature in Reply Box
-    ctx.textAlign = 'right';
-    ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillText('— @mahim.wp', cardX + cardW - 40, replyBoxY + replyBoxH - 35);
-  } else {
-    // Blank Reply Box Placeholder for manual IG story reply
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.strokeStyle = '#cbd5e1';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([12, 8]);
+    // Subtle divider line
+    ctx.strokeStyle = '#f1ece1';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [20, 20, 20, 20]);
+    ctx.moveTo(cardX + 40, replyBoxY + 74);
+    ctx.lineTo(cardX + cardW - 40, replyBoxY + 74);
+    ctx.stroke();
+
+    // Reply Text (Dark high-contrast legible font)
+    ctx.fillStyle = '#18181b';
+    ctx.font = '30px "Hind Siliguri", sans-serif';
+    let rY = replyBoxY + 120;
+    for (const rLine of replyLines) {
+      ctx.fillText(rLine, cardX + 40, rY);
+      rY += 46;
+    }
+  } else {
+    // Blank Reply Box for manual Instagram/Facebook Story text overlay
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.strokeStyle = '#d4c5a9';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([10, 6]);
+    ctx.beginPath();
+    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [18, 18, 18, 18]);
     ctx.fill();
     ctx.stroke();
     ctx.setLineDash([]);
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 34px "Hind Siliguri", sans-serif';
-    ctx.fillText('মাহিমের উত্তর / Reply:', width / 2, replyBoxY + 100);
+    ctx.fillStyle = '#78350f';
+    ctx.font = 'bold 28px "Hind Siliguri", sans-serif';
+    ctx.fillText('উত্তর / Reply:', width / 2, replyBoxY + 65);
 
-    ctx.font = '26px "Hind Siliguri", sans-serif';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('(ইনস্টাগ্রাম বা ফেসবুক স্টোরিতে টেক্সট টুল দিয়ে আপনার উত্তর লিখুন)', width / 2, replyBoxY + 170);
-    ctx.font = '56px sans-serif';
-    ctx.fillText('✍️💭', width / 2, replyBoxY + 280);
+    ctx.font = '22px "Hind Siliguri", sans-serif';
+    ctx.fillStyle = '#71717a';
+    ctx.fillText('(ইনস্টাগ্রাম বা ফেসবুক স্টোরিতে টেক্সট দিয়ে উত্তর লিখুন)', width / 2, replyBoxY + 115);
+
+    ctx.font = '38px sans-serif';
+    ctx.fillText('✍️💭', width / 2, replyBoxY + 170);
   }
 
-  // Bottom Branding Watermark (mahims.com/chithi)
+  // ================= BOTTOM WATERMARK =================
   ctx.fillStyle = '#1e293b';
-  ctx.font = 'bold 28px "Plus Jakarta Sans", sans-serif';
+  ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('mahims.com/chithi', width / 2, height - 90);
+  ctx.fillText('mahims.com/chithi', width / 2, height - 75);
 
-  ctx.font = '20px "Hind Siliguri", sans-serif';
+  ctx.font = '19px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#64748b';
-  ctx.fillText('গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 58);
+  ctx.fillText('গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 45);
 
   return canvas.toDataURL('image/png');
 }

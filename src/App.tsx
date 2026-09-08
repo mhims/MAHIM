@@ -20,12 +20,13 @@ import { AdminModal } from './components/AdminModal';
 import { AuthModal } from './components/AuthModal';
 import { DynamicSEO } from './components/DynamicSEO';
 import { SalamiPage } from './components/SalamiPage';
+import { WalletPage } from './components/WalletPage';
 import { SECTION_ROUTES } from './utils/navigation';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() => {
     if (typeof window === 'undefined') return '/';
-    // Support both: If user enters with hash (e.g. #about or #salami), immediately resolve and clean URL
+    // Support both: If user enters with hash (e.g. #about or #salami or #wallet), immediately resolve and clean URL
     if (window.location.hash) {
       const cleanPath = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
       if (window.history.replaceState) {
@@ -37,6 +38,7 @@ export default function App() {
   });
 
   const isSalami = currentPath === '/salami';
+  const isWallet = currentPath === '/wallet';
 
   useEffect(() => {
     const handleUrlChange = () => {
@@ -91,7 +93,7 @@ export default function App() {
 
   // Clean scroll spy to keep browser URL in sync without hashes
   useEffect(() => {
-    if (isSalami) return;
+    if (isSalami || isWallet) return;
 
     let timeoutId: number;
     const sections = ['home', 'about', 'skills', 'experience', 'education', 'blog', 'contact'];
@@ -105,7 +107,11 @@ export default function App() {
           const el = document.getElementById(sectionId);
           if (el && scrollPos >= el.offsetTop) {
             const targetPath = sectionId === 'home' ? '/' : `/${sectionId}`;
-            if (window.location.pathname !== targetPath && window.location.pathname !== '/salami') {
+            if (
+              window.location.pathname !== targetPath &&
+              window.location.pathname !== '/salami' &&
+              window.location.pathname !== '/wallet'
+            ) {
               window.history.replaceState(null, '', targetPath);
             }
             break;
@@ -119,10 +125,14 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami]);
+  }, [isSalami, isWallet]);
 
   if (isSalami) {
     return <SalamiPage />;
+  }
+
+  if (isWallet) {
+    return <WalletPage />;
   }
 
   return (

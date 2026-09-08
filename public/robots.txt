@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /wallet
+Disallow: /wallet/
 
 # Traditional Search Engines
 User-agent: Googlebot

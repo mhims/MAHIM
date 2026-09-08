@@ -22,17 +22,20 @@ export const WhatsAppButton: React.FC = () => {
     setCurrentTime(`${hours}:${minutes} ${ampm}`);
 
     // Time-based greeting:
-    // 5 AM to 11:59 AM -> সকাল
-    // 12 PM to 3:59 PM -> দুপুর
-    // 4 PM to 7:59 PM -> বিকাল
-    // 8 PM to 4:59 AM -> রাত্রি
+    // 5 AM to 11:59 AM -> সকাল (শুভ সকাল)
+    // 12 PM to 2:59 PM  -> দুপুর (শুভ দুপুর)
+    // 3 PM to 5:59 PM   -> বিকাল (শুভ বিকাল)
+    // 6 PM to 7:59 PM   -> সন্ধ্যা (শুভ সন্ধ্যা)
+    // 8 PM to 4:59 AM   -> রাত্রি (শুভ রাত্রি)
     const currentHour = now.getHours();
     if (currentHour >= 5 && currentHour < 12) {
       setTimeGreeting('সকাল');
-    } else if (currentHour >= 12 && currentHour < 16) {
+    } else if (currentHour >= 12 && currentHour < 15) {
       setTimeGreeting('দুপুর');
-    } else if (currentHour >= 16 && currentHour < 20) {
+    } else if (currentHour >= 15 && currentHour < 18) {
       setTimeGreeting('বিকাল');
+    } else if (currentHour >= 18 && currentHour < 20) {
+      setTimeGreeting('সন্ধ্যা');
     } else {
       setTimeGreeting('রাত্রি');
     }

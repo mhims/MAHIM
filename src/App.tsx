@@ -21,6 +21,7 @@ import { AuthModal } from './components/AuthModal';
 import { DynamicSEO } from './components/DynamicSEO';
 import { SalamiPage } from './components/SalamiPage';
 import { WalletPage } from './components/WalletPage';
+import { ChithiPage } from './components/ChithiPage';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
 
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
+  const isChithi = currentPath === '/chithi';
 
   useEffect(() => {
     const handleUrlChange = () => {
@@ -110,7 +112,7 @@ export default function App() {
 
   // Clean scroll spy to keep browser URL in sync without hashes
   useEffect(() => {
-    if (isSalami || isWallet) return;
+    if (isSalami || isWallet || isChithi) return;
 
     let timeoutId: number;
     const sections = ['home', 'about', 'skills', 'experience', 'education', 'blog', 'contact'];
@@ -127,7 +129,8 @@ export default function App() {
             if (
               window.location.pathname !== targetPath &&
               window.location.pathname !== '/salami' &&
-              window.location.pathname !== '/wallet'
+              window.location.pathname !== '/wallet' &&
+              window.location.pathname !== '/chithi'
             ) {
               window.history.replaceState(null, '', targetPath);
             }
@@ -142,7 +145,7 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami, isWallet]);
+  }, [isSalami, isWallet, isChithi]);
 
   if (isSalami) {
     return <SalamiPage />;
@@ -150,6 +153,10 @@ export default function App() {
 
   if (isWallet) {
     return <WalletPage />;
+  }
+
+  if (isChithi) {
+    return <ChithiPage />;
   }
 
   return (

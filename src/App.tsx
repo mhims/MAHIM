@@ -21,20 +21,29 @@ import { AuthModal } from './components/AuthModal';
 import { DynamicSEO } from './components/DynamicSEO';
 import { SalamiPage } from './components/SalamiPage';
 import { WalletPage } from './components/WalletPage';
-import { SECTION_ROUTES } from './utils/navigation';
+import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() => {
     if (typeof window === 'undefined') return '/';
     // Support both: If user enters with hash (e.g. #about or #salami or #wallet), immediately resolve and clean URL
+    let path = window.location.pathname.replace(/\/+$/, '') || '/';
     if (window.location.hash) {
-      const cleanPath = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
-      if (window.history.replaceState) {
-        window.history.replaceState(null, '', cleanPath);
-      }
-      return cleanPath;
+      path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
     }
-    return window.location.pathname.replace(/\/+$/, '') || '/';
+
+    // Auto-redirect 404 / unknown routes to homepage for clean SEO & user experience
+    if (!isValidRoute(path)) {
+      if (window.history.replaceState) {
+        window.history.replaceState(null, '', '/');
+      }
+      return '/';
+    }
+
+    if (window.location.hash && window.history.replaceState) {
+      window.history.replaceState(null, '', path);
+    }
+    return path;
   });
 
   const isSalami = currentPath === '/salami';
@@ -45,6 +54,14 @@ export default function App() {
       let path = window.location.pathname.replace(/\/+$/, '') || '/';
       if (window.location.hash) {
         path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
+      }
+
+      if (!isValidRoute(path)) {
+        if (window.history.replaceState) {
+          window.history.replaceState(null, '', '/');
+        }
+        path = '/';
+      } else if (window.location.hash && window.history.replaceState) {
         window.history.replaceState(null, '', path);
       }
       setCurrentPath(path);

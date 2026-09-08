@@ -15,6 +15,13 @@ export const SECTION_ROUTES: Record<string, string> = {
   '/contact': 'contact',
 };
 
+export const STANDALONE_ROUTES = new Set(['/salami', '/wallet', '/admin']);
+
+export function isValidRoute(pathname: string): boolean {
+  const normalized = pathname.replace(/\/+$/, '') || '/';
+  return Boolean(SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized));
+}
+
 export const navigateTo = (path: string, event?: MouseEvent) => {
   if (event) {
     event.preventDefault();

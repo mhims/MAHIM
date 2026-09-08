@@ -1,84 +1,257 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!doctype html>
+<html lang="bn" class="dark scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Mahim Salami | Eid Salami Tracker - Mahim Ibne Khudi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mahim | Graphic Designer & Creative Professional - mahims.com</title>
+
+    <!-- Clean SPA Routing URL Restorer for GitHub Pages -->
+    <script>
+      (function() {
+        var redirect = sessionStorage.getItem('spa_redirect');
+        if (redirect) {
+          sessionStorage.removeItem('spa_redirect');
+          window.history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
+    
+    <!-- Official Brand Favicons & Touch Icons (Google Search & Browser Tabs) -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    
-    <!-- Primary SEO & Exact Keyword Optimization -->
-    <meta name="title" content="Mahim Salami | Eid Salami Tracker - Mahim Ibne Khudi" />
-    <meta name="description" content="Mahim Salami (মাহিম সালামি) - Mahim Ibne Khudi's official Eid Salami Tracker & Portal. Check your salami and send salami to Mahim online via bKash, Nagad or Rocket." />
-    <meta name="keywords" content="mahim salami, Mahim salami, mahim eid salami, eid salami mahim, mahims salami, mahim salami tracker, মাহিম সালামি, ঈদ সালামি মাহিম, Mahim Ibne Khudi salami" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#09090b" />
+
+    <!-- Primary SEO Meta Tags -->
+    <meta name="title" content="Mahim | Graphic Designer & Creative Professional - mahims.com" />
+    <meta name="description" content="Mahim (Mahim Ibne Khudi) - প্রফেশনাল গ্রাফিক ডিজাইনার, ব্র্যান্ডিং ও ভিজ্যুয়াল স্টোরিটেলার। সোশ্যাল মিডিয়া ডিজাইন, ব্র্যান্ড আইডেন্টিটি এবং প্রিন্ট ডিজাইন এক্সপার্ট।" />
+    <meta name="keywords" content="Mahim, মাহিম, Mahims, মাহিমস, মাহিম'স, মাহিম ইবনে খুদি, Mahim Ibne Khudi, Mahim Ibn Khudi, Ibn Khudi, Ibne Khudi, Asrare Khudi, Mahim Ibne Asrare Khudi, Graphic Designer Bangladesh, Graphic Design Gaibandha, mahims.com, Political Science Dhaka Central University" />
     <meta name="author" content="Mahim Ibne Khudi" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <link rel="canonical" href="https://mahims.com/salami" />
-
-    <!-- Open Graph / Facebook -->
+    <meta name="google-site-verification" content="t4ejgDcENe8vJ4Q97NJwtR6odLfYib__3hEpQhVwuIQ" />
+    <link rel="canonical" href="https://mahims.com" />
+    
+    <!-- Open Graph / Facebook / WhatsApp Social Share Banner -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mahims.com/salami" />
-    <meta property="og:title" content="Mahim Salami | Eid Salami Tracker" />
-    <meta property="og:description" content="Mahim Salami - মাহিমের অফিসিয়াল ঈদ সালামি ট্র্যাকার ও পোর্টাল।" />
+    <meta property="og:url" content="https://mahims.com/" />
+    <meta property="og:title" content="Mahim | Graphic Designer & Creative Professional" />
+    <meta property="og:description" content="Mahim Ibne Khudi (মাহিম) - ক্রিয়েটিভ গ্রাফিক ডিজাইনার ও সোশ্যাল মিডিয়া ব্র্যান্ডিং স্পেশালিস্ট।" />
     <meta property="og:image" content="https://mahims.com/assets/og-preview.jpg" />
+    <meta property="og:image:secure_url" content="https://mahims.com/assets/og-preview.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="Mahim - Graphic Designer Official Logo & Portfolio" />
+    <meta property="og:site_name" content="Mahim (mahims.com)" />
+    
+    <!-- Open Graph Profile Details for Entity Matching -->
+    <meta property="profile:first_name" content="Mahim" />
+    <meta property="profile:last_name" content="Ibne Khudi" />
+    <meta property="profile:username" content="mahimibnekhudi" />
+    <meta property="profile:gender" content="male" />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://mahims.com/salami" />
-    <meta name="twitter:title" content="Mahim Salami | Eid Salami Tracker" />
-    <meta name="twitter:description" content="Mahim Salami - মাহিমের অফিসিয়াল ঈদ সালামি পোর্টাল।" />
-    <meta name="twitter:image" content="https://mahims.com/assets/og-preview.jpg" />
+    <!-- Geographic & Regional Entity Signals -->
+    <meta name="geo.region" content="BD-55" />
+    <meta name="geo.placename" content="Gaibandha, Dhaka, Bangladesh" />
+    <meta name="geo.position" content="25.3297;89.5430" />
+    <meta name="ICBM" content="25.3297, 89.5430" />
 
-    <!-- Google Structured Data (JSON-LD) for Exact Keyword 'mahim salami' -->
+    <!-- AI Agent & LLM Knowledge Profile Link -->
+    <link rel="author" href="https://mahims.com/about" />
+    <link rel="alternate" type="text/plain" href="https://mahims.com/llms.txt" title="LLM Knowledge Profile" />
+
+    <!-- WhatsApp & Legacy Scraper Image Fallback -->
+    <link rel="image_src" href="https://mahims.com/assets/og-preview.jpg" />
+    
+    <!-- Twitter Social Share Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://mahims.com/" />
+    <meta property="twitter:title" content="Mahim | Graphic Designer & Creative Professional" />
+    <meta property="twitter:description" content="Official Portfolio & Creative Design Showcase of Mahim Ibne Khudi (মাহিম)।" />
+    <meta property="twitter:image" content="https://mahims.com/assets/og-preview.jpg" />
+
+    <!-- Google Fonts: Hind Siliguri for Bengali + Plus Jakarta Sans for Latin -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Comprehensive JSON-LD Structured Data for Google Knowledge Graph & AI LLMs -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Mahim Salami",
-      "alternateName": ["Mahim Eid Salami", "মাহিম সালামি", "Mahims Salami"],
-      "url": "https://mahims.com/salami",
-      "description": "Mahim Ibne Khudi's official Eid Salami Portal and Tracker.",
-      "author": {
-        "@type": "Person",
-        "name": "Mahim Ibne Khudi",
-        "url": "https://mahims.com"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Mahim Ibne Khudi"
-      }
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://mahims.com/#person",
+          "name": "Mahim Ibne Khudi",
+          "givenName": "Mahim",
+          "familyName": "Ibne Khudi",
+          "alternateName": [
+            "Mahim",
+            "মাহিম",
+            "Mahims",
+            "মাহিমস",
+            "মাহিম'স",
+            "মাহিম ইবনে খুদি",
+            "Mahim Ibn Khudi",
+            "Ibn Khudi",
+            "Ibne Khudi",
+            "Asrare Khudi",
+            "Mahim Ibne Asrare Khudi"
+          ],
+          "description": "Mahim Ibne Khudi (মাহিম) is a Bangladeshi creative graphic designer, brand identity specialist, and social media creative strategist with extensive expertise in visual branding, typography, and print design.",
+          "disambiguatingDescription": "Mahim Ibne Khudi (মাহিম) is the founder of mahims.com, professional graphic designer, and student of Political Science at Dhaka Central University, based in Gaibandha and Dhaka, Bangladesh.",
+          "url": "https://mahims.com",
+          "image": [
+            "https://res.cloudinary.com/drvyjj7td/image/upload/v1788629825/MAHIMIBNEKHUDI_wafylv.png",
+            "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
+            "https://mahims.com/logo.png"
+          ],
+          "gender": "https://schema.org/Male",
+          "nationality": {
+            "@type": "Country",
+            "name": "Bangladesh"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Gaibandha",
+            "addressRegion": "Rangpur Division",
+            "addressCountry": "BD"
+          },
+          "jobTitle": "Professional Graphic Designer & Brand Identity Specialist",
+          "hasOccupation": {
+            "@type": "Occupation",
+            "name": "Graphic Designer",
+            "occupationalCategory": "27-1024.00",
+            "skills": [
+              "Brand Identity Design",
+              "Social Media Post & Ad Design",
+              "Logo & Vector Illustration",
+              "Adobe Photoshop",
+              "Adobe Illustrator",
+              "Canva Pro",
+              "Print & Banner Design",
+              "Typography & Visual Layout"
+            ]
+          },
+          "worksFor": [
+            {
+              "@type": "Organization",
+              "name": "Freelance Brand & Graphic Designer"
+            },
+            {
+              "@type": "Organization",
+              "name": "Alokito Gaibandha"
+            }
+          ],
+          "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": "Dhaka Central University",
+            "department": "Department of Political Science"
+          },
+          "sameAs": [
+            "https://www.linkedin.com/in/mahimibnekhudi",
+            "https://www.behance.net/mahimibnekhudi",
+            "https://facebook.com/mahim2005",
+            "https://instagram.com/_mahim_official_",
+            "https://fiverr.com/mahimibnekhudi",
+            "https://wa.me/@mahim.wp"
+          ],
+          "email": "mahimibnekhudi@gmail.com",
+          "knowsLanguage": [
+            {
+              "@type": "Language",
+              "name": "Bengali",
+              "alternateName": "bn"
+            },
+            {
+              "@type": "Language",
+              "name": "English",
+              "alternateName": "en"
+            }
+          ],
+          "knowsAbout": [
+            "Graphic Design",
+            "Brand Identity",
+            "Logo Design",
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "Canva Pro",
+            "Social Media Marketing",
+            "Digital Advertising",
+            "Political Science",
+            "Visual Storytelling"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mahims.com/#website",
+          "url": "https://mahims.com/",
+          "name": "Mahim Official Portfolio & Blog",
+          "alternateName": [
+            "mahims.com",
+            "Mahim",
+            "মাহিম",
+            "Mahim Ibne Khudi Website",
+            "মাহিম এর ওয়েবসাইট"
+          ],
+          "description": "Official creative design portfolio, branding showcase, and knowledge blog of Mahim Ibne Khudi.",
+          "publisher": {
+            "@id": "https://mahims.com/#person"
+          },
+          "inLanguage": ["bn", "en"]
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": "https://mahims.com/#webpage",
+          "url": "https://mahims.com/",
+          "name": "Mahim | Graphic Designer & Creative Professional - mahims.com",
+          "isPartOf": {
+            "@id": "https://mahims.com/#website"
+          },
+          "about": {
+            "@id": "https://mahims.com/#person"
+          },
+          "mainEntity": {
+            "@id": "https://mahims.com/#person"
+          },
+          "inLanguage": ["bn", "en"]
+        }
+      ]
     }
     </script>
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background-color: #ffffff;
-      }
-      iframe {
-        width: 100vw;
-        height: 100vh;
-        border: 0;
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-      }
-    </style>
+    <script type="module" crossorigin src="/assets/app.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/app.css">
   </head>
-  <body>
-    <iframe 
-      src="https://script.google.com/macros/s/AKfycbxrBZ9EGkIrbrdAyC5f-SSfQkY8HYdN_I745ZcccfJWrJbV0pu6GmVYycQD7hrf5lPJTg/exec" 
-      title="Eid Salami Tracker"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; payment"
-    ></iframe>
+  <body class="bg-[#fdfdfb] text-[#1a1a1a] antialiased selection:bg-black selection:text-white">
+    <div id="root"></div>
+    <script>
+      (function() {
+        var isDev = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.port === '3000' ||
+                    window.location.hostname.includes('run.app');
+        if (!isDev) {
+          if (document.querySelector('script[src*="app.js"]')) return;
+          var head = document.head;
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = '/assets/app.css';
+          head.appendChild(link);
+
+          var script = document.createElement('script');
+          script.type = 'module';
+          script.crossOrigin = 'anonymous';
+          script.src = '/assets/app.js';
+          document.body.appendChild(script);
+        }
+      })();
+    </script>
   </body>
 </html>
+

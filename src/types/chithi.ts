@@ -3,8 +3,7 @@ export interface ChithiLetter {
   createdAt: string; // ISO date or formatted string
   timestamp: number;
   content: string;
-  senderLocation?: string; // User selected or typed location (e.g. "মিরপুর, ঢাকা")
-  locationType?: 'auto' | 'custom' | 'hidden';
+  senderLocation?: string;
   detectedLocation?: {
     city?: string;
     country?: string;

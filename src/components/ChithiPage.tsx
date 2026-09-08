@@ -1,24 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Send, Sparkles, MapPin, ShieldCheck, Heart, 
+  Send, Sparkles, ShieldCheck, Heart, 
   CheckCircle2, Copy, RefreshCw, PenTool, Lock, ArrowRight
 } from 'lucide-react';
 import { ChithiAdminModal } from './ChithiAdminModal';
-import { detectApproxLocation, detectUserDevice, saveLetter } from '../utils/chithiStorage';
+import { detectUserDevice, saveLetter } from '../utils/chithiStorage';
 
 export function ChithiPage() {
   const [content, setContent] = useState('');
   const [inkColor, setInkColor] = useState<'blue' | 'black' | 'maroon' | 'emerald'>('blue');
   const [paperTheme, setPaperTheme] = useState<'vintage' | 'parchment' | 'notebook' | 'blush'>('vintage');
-  
-  // Location states
-  const [locationMode, setLocationMode] = useState<'auto' | 'custom' | 'hidden'>('auto');
-  const [detectedLoc, setDetectedLoc] = useState<{ city: string; country: string; region: string }>({
-    city: 'ঢাকা',
-    region: 'Dhaka',
-    country: 'বাংলাদেশ'
-  });
-  const [customLocationInput, setCustomLocationInput] = useState('');
   
   // Sending & Animation states
   const [isSending, setIsSending] = useState(false);
@@ -32,12 +23,12 @@ export function ChithiPage() {
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
-    document.title = "Mahim Chithi | মাহিম চিঠি - চিঠি ডট মি (Mahims Chithi)";
+    document.title = "Mahim Chithi | মাহিম চিঠি (Mahims Chithi)";
     
     // Update or create meta tags
     const metaTags: Record<string, string> = {
       'description': 'Mahim Chithi (মাহিম চিঠি) - Mahim Ibne Khudi কে বেনামে চিঠি পাঠান। মনের না বলা কথা, সিক্রেট অনুভূতি বা প্রশংসা পাঠান সম্পূর্ণ গোপনে ও নিরাপদে।',
-      'keywords': 'Mahim Chithi, মাহিম চিঠি, Mahims Chithi, মাহিমস চিঠি, Mahim Chithi me, মাহিম চিঠি মি, mahim anonymous letter, চিঠি ডট মি মাহিম, chithi mahims',
+      'keywords': 'Mahim Chithi, মাহিম চিঠি, Mahims Chithi, মাহিমস চিঠি, Mahim Chithi me, মাহিম চিঠি মি, mahim anonymous letter, chithi mahims',
       'robots': 'index, follow, max-image-preview:large',
     };
 
@@ -59,11 +50,6 @@ export function ChithiPage() {
       document.head.appendChild(canonical);
     }
     canonical.setAttribute('href', 'https://mahims.com/chithi');
-
-    // Auto-detect approx location in background
-    detectApproxLocation().then((loc) => {
-      if (loc) setDetectedLoc(loc);
-    });
   }, []);
 
   // Keyboard shortcut listener: Ctrl + Alt + Windows + Shift + C
@@ -108,27 +94,12 @@ export function ChithiPage() {
     setErrorMessage('');
     setIsSending(true);
 
-    // Determine final sender location
-    let finalLocation = 'গোপন লোকেশন';
-    if (locationMode === 'auto') {
-      finalLocation = `${detectedLoc.city}, ${detectedLoc.country}`;
-    } else if (locationMode === 'custom' && customLocationInput.trim()) {
-      finalLocation = customLocationInput.trim();
-    }
-
     const deviceInfo = detectUserDevice();
 
     // Trigger sending envelope animation
     setTimeout(() => {
       saveLetter({
         content: content.trim(),
-        senderLocation: finalLocation,
-        locationType: locationMode,
-        detectedLocation: {
-          city: detectedLoc.city,
-          country: detectedLoc.country,
-          region: detectedLoc.region
-        },
         deviceInfo: deviceInfo,
         inkColor: inkColor,
         paperTheme: paperTheme,
@@ -179,7 +150,7 @@ export function ChithiPage() {
           <div className="relative inline-block">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-amber-600/30 shadow-xl mx-auto bg-amber-100/50 p-1">
               <img
-                src="https://res.cloudinary.com/drvyjj7td/image/upload/v1788629825/MAHIMIBNEKHUDI_wafylv.png"
+                src="https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg"
                 alt="Mahim Ibne Khudi"
                 className="w-full h-full object-cover rounded-full"
                 onError={(e) => {
@@ -198,7 +169,7 @@ export function ChithiPage() {
               Mahim Chithi
             </h1>
             <p className="text-sm font-semibold text-amber-800 font-['Hind_Siliguri',sans-serif] mt-0.5">
-              মাহিমকে বেনামে চিঠি পাঠান • চিঠি ডট মি
+              মাহিমকে বেনামে চিঠি পাঠান
             </p>
           </div>
 
@@ -321,69 +292,6 @@ export function ChithiPage() {
                 </div>
               </div>
 
-              {/* Location Options Section */}
-              <div className="mt-4 pt-4 border-t border-amber-900/15 space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-amber-700" />
-                    আপনার লোকেশন (ঐচ্ছিক):
-                  </label>
-
-                  {/* Mode switcher tabs */}
-                  <div className="flex items-center space-x-1 bg-amber-100/60 p-0.5 rounded-lg text-xs">
-                    <button
-                      type="button"
-                      onClick={() => setLocationMode('auto')}
-                      className={`px-2 py-0.5 rounded-md transition ${locationMode === 'auto' ? 'bg-white font-bold text-amber-900 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'}`}
-                    >
-                      অটো 📍
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLocationMode('custom')}
-                      className={`px-2 py-0.5 rounded-md transition ${locationMode === 'custom' ? 'bg-white font-bold text-amber-900 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'}`}
-                    >
-                      কাস্টম ✏️
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLocationMode('hidden')}
-                      className={`px-2 py-0.5 rounded-md transition ${locationMode === 'hidden' ? 'bg-white font-bold text-amber-900 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'}`}
-                    >
-                      গোপন 🔒
-                    </button>
-                  </div>
-                </div>
-
-                {/* Location Input / Display */}
-                {locationMode === 'auto' && (
-                  <div className="flex items-center gap-2 p-2 bg-amber-50/80 border border-amber-200/70 rounded-lg text-xs text-amber-900">
-                    <span className="font-semibold">ডিটেক্টেড লোকেশন:</span>
-                    <span>{detectedLoc.city}, {detectedLoc.country}</span>
-                    <span className="text-[10px] text-zinc-500 ml-auto">(চিঠির নিচে এটি শো করবে)</span>
-                  </div>
-                )}
-
-                {locationMode === 'custom' && (
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="আপনার এলাকা বা শহর লিখুন (যেমন: মিরপুর, ঢাকা / চট্টগ্রাম / ক্যাম্পাস)"
-                      value={customLocationInput}
-                      onChange={(e) => setCustomLocationInput(e.target.value)}
-                      maxLength={50}
-                      className="w-full px-3 py-2 bg-white/90 border border-amber-200 rounded-lg text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-amber-600"
-                    />
-                  </div>
-                )}
-
-                {locationMode === 'hidden' && (
-                  <p className="text-xs text-zinc-500 italic p-1">
-                    🔒 আপনার লোকেশন পুরোপুরি গোপন রাখা হবে (চিঠিতে "গোপন লোকেশন" লেখা থাকবে)।
-                  </p>
-                )}
-              </div>
-
               {/* Error Notice */}
               {errorMessage && (
                 <p className="mt-3 text-xs text-red-600 font-bold text-center">
@@ -472,8 +380,6 @@ export function ChithiPage() {
         <p className="flex items-center justify-center gap-1.5 text-zinc-500">
           <span>Mahim Chithi</span>
           <span>•</span>
-          <span>চিঠি ডট মি</span>
-          <span>•</span>
           <span>{new Date().getFullYear()}</span>
         </p>
 
@@ -487,7 +393,7 @@ export function ChithiPage() {
             onClick={() => setIsAdminOpen(true)}
             aria-label="Admin Access Dot"
             title="·"
-            className="w-4 h-4 flex items-center justify-center text-zinc-400/40 hover:text-zinc-600 transition cursor-pointer select-none text-base"
+            className="w-8 h-8 flex items-center justify-center text-zinc-400/40 hover:text-zinc-600 active:text-amber-600 transition cursor-pointer select-none text-xl font-bold"
           >
             ·
           </button>

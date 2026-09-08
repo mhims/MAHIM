@@ -4,7 +4,12 @@ import { ChithiLetter } from '../types/chithi';
  * High-res 1080x1920 Canvas Story Card Generator
  * Perfect for Instagram Stories, Facebook Stories, and WhatsApp Status
  */
-export async function generateStoryImage(letter: ChithiLetter): Promise<string> {
+/**
+ * High-res 1080x1920 Canvas Story Card Generator
+ * Perfect for Instagram Stories, Facebook Stories, and WhatsApp Status
+ * Supports both blank reply template or direct reply written inside the app!
+ */
+export async function generateStoryImage(letter: ChithiLetter, customReplyText?: string): Promise<string> {
   const canvas = document.createElement('canvas');
   const width = 1080;
   const height = 1920;
@@ -49,15 +54,15 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
     ctx.fill();
   }
 
-  // Header Stamp: Mahim Chithi
+  // Header Stamp: Mahim Chithi (Removed "চিঠি ডট মি")
   ctx.fillStyle = '#78350f';
-  ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+  ctx.font = 'bold 38px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('MAHIM CHITHI • চিঠি ডট মি', width / 2, 140);
+  ctx.fillText('MAHIM CHITHI', width / 2, 140);
 
   ctx.font = '24px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#92400e';
-  ctx.fillText('— গোপন চিঠির বাক্স / Anonymous Letter —', width / 2, 185);
+  ctx.fillText('— গোপন চিঠি ও উত্তর / Anonymous Letter & Reply —', width / 2, 185);
 
   // Vintage Postage Stamp on Top Right
   const stampX = width - 240;
@@ -110,7 +115,7 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
   const cardX = 90;
   const cardY = 320;
   const cardW = width - 180;
-  const cardH = 920;
+  const cardH = 880;
 
   // Shadow for paper
   ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
@@ -132,7 +137,7 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
   ctx.strokeStyle = '#e2d9c8';
   ctx.lineWidth = 1.5;
   const lineSpacing = 48;
-  for (let y = cardY + 110; y < cardY + cardH - 120; y += lineSpacing) {
+  for (let y = cardY + 110; y < cardY + cardH - 100; y += lineSpacing) {
     ctx.beginPath();
     ctx.moveTo(cardX + 40, y);
     ctx.lineTo(cardX + cardW - 40, y);
@@ -170,7 +175,7 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
   const startX = cardX + 110;
   let currentY = cardY + 140;
 
-  // Wrap lines
+  // Wrap lines for letter
   const words = text.split(/\s+/);
   let currentLine = '';
   for (let n = 0; n < words.length; n++) {
@@ -180,7 +185,7 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
       ctx.fillText(currentLine, startX, currentY);
       currentLine = words[n];
       currentY += lineSpacing;
-      if (currentY > cardY + cardH - 140) {
+      if (currentY > cardY + cardH - 120) {
         currentLine += '...';
         break;
       }
@@ -188,15 +193,15 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
       currentLine = testLine;
     }
   }
-  if (currentLine && currentY <= cardY + cardH - 140) {
+  if (currentLine && currentY <= cardY + cardH - 120) {
     ctx.fillText(currentLine, startX, currentY);
   }
 
-  // Sender Metadata Footer inside Paper
-  const metaY = cardY + cardH - 60;
+  // Footer inside Paper (Date & Device only, no location mentioned)
+  const metaY = cardY + cardH - 50;
   ctx.font = '22px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#6b7280';
-  ctx.fillText(`📍 ${letter.senderLocation || 'অজ্ঞাত লোকেশন'}`, startX, metaY);
+  ctx.fillText(`🔒 ১০০% বেনামী বার্তা`, startX, metaY);
 
   const dateStr = new Date(letter.timestamp || letter.createdAt).toLocaleDateString('bn-BD', {
     day: 'numeric',
@@ -206,39 +211,106 @@ export async function generateStoryImage(letter: ChithiLetter): Promise<string> 
   ctx.textAlign = 'right';
   ctx.fillText(`🕒 ${dateStr}`, cardX + cardW - 60, metaY);
 
-  // Reply Box Placeholder for Instagram Story (Below paper)
-  const replyBoxY = 1300;
-  const replyBoxH = 380;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-  ctx.strokeStyle = '#cbd5e1';
-  ctx.lineWidth = 3;
-  ctx.setLineDash([12, 8]);
-  ctx.beginPath();
-  ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [20, 20, 20, 20]);
-  ctx.fill();
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // Reply Box / Card Section Below Paper
+  const replyBoxY = 1250;
+  const replyBoxH = 460;
+  
+  if (customReplyText && customReplyText.trim()) {
+    // RENDER ACTUAL REPLY ON STORY CARD
+    // Card background
+    ctx.fillStyle = '#1e293b'; // Slate dark premium card for Mahim's answer
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+    ctx.shadowBlur = 30;
+    ctx.shadowOffsetY = 15;
+    ctx.beginPath();
+    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [20, 20, 20, 20]);
+    ctx.fill();
 
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#0f172a';
-  ctx.font = 'bold 32px "Hind Siliguri", sans-serif';
-  ctx.fillText('মাহিমের উত্তর / Reply:', width / 2, replyBoxY + 80);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
 
-  ctx.font = '26px "Hind Siliguri", sans-serif';
-  ctx.fillStyle = '#94a3b8';
-  ctx.fillText('(ইনস্টাগ্রাম বা ফেসবুক স্টোরিতে টেক্সট টুল দিয়ে আপনার উত্তর লিখুন)', width / 2, replyBoxY + 140);
-  ctx.font = '48px sans-serif';
-  ctx.fillText('✍️💭', width / 2, replyBoxY + 230);
+    // Header of Reply Box
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = 'bold 30px "Hind Siliguri", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('💬 মাহিমের উত্তর (Mahim\'s Reply):', cardX + 40, replyBoxY + 60);
 
-  // Bottom Branding Watermark
+    // Decorative divider line
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cardX + 40, replyBoxY + 80);
+    ctx.lineTo(cardX + cardW - 40, replyBoxY + 80);
+    ctx.stroke();
+
+    // Reply text wrap
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '32px "Hind Siliguri", sans-serif';
+    const replyStartX = cardX + 40;
+    let replyY = replyBoxY + 135;
+    const replyMaxWidth = cardW - 80;
+    const replyLineSpacing = 44;
+
+    const replyWords = customReplyText.trim().split(/\s+/);
+    let rLine = '';
+    for (let r = 0; r < replyWords.length; r++) {
+      const testR = rLine ? rLine + ' ' + replyWords[r] : replyWords[r];
+      const metrics = ctx.measureText(testR);
+      if (metrics.width > replyMaxWidth && r > 0) {
+        ctx.fillText(rLine, replyStartX, replyY);
+        rLine = replyWords[r];
+        replyY += replyLineSpacing;
+        if (replyY > replyBoxY + replyBoxH - 60) {
+          rLine += '...';
+          break;
+        }
+      } else {
+        rLine = testR;
+      }
+    }
+    if (rLine && replyY <= replyBoxY + replyBoxH - 60) {
+      ctx.fillText(rLine, replyStartX, replyY);
+    }
+
+    // Mahim Signature in Reply Box
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('— @mahim.wp', cardX + cardW - 40, replyBoxY + replyBoxH - 35);
+  } else {
+    // Blank Reply Box Placeholder for manual IG story reply
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([12, 8]);
+    ctx.beginPath();
+    ctx.roundRect(cardX, replyBoxY, cardW, replyBoxH, [20, 20, 20, 20]);
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 34px "Hind Siliguri", sans-serif';
+    ctx.fillText('মাহিমের উত্তর / Reply:', width / 2, replyBoxY + 100);
+
+    ctx.font = '26px "Hind Siliguri", sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('(ইনস্টাগ্রাম বা ফেসবুক স্টোরিতে টেক্সট টুল দিয়ে আপনার উত্তর লিখুন)', width / 2, replyBoxY + 170);
+    ctx.font = '56px sans-serif';
+    ctx.fillText('✍️💭', width / 2, replyBoxY + 280);
+  }
+
+  // Bottom Branding Watermark (mahims.com/chithi)
   ctx.fillStyle = '#1e293b';
   ctx.font = 'bold 28px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('mahims.com/chithi', width / 2, height - 100);
+  ctx.fillText('mahims.com/chithi', width / 2, height - 90);
 
   ctx.font = '20px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#64748b';
-  ctx.fillText('আপনার গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 68);
+  ctx.fillText('গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 58);
 
   return canvas.toDataURL('image/png');
 }

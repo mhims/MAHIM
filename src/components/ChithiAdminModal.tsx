@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Lock, X, Mail, Star, Trash2, Eye, EyeOff, Download, RefreshCw, 
   MapPin, Smartphone, Calendar, CheckCircle2, Copy, FileSpreadsheet,
-  Settings, ShieldAlert, Sparkles, Send
+  Settings, ShieldAlert, Sparkles, Send, PenTool, ShieldCheck
 } from 'lucide-react';
 import { ChithiLetter, ChithiSettings } from '../types/chithi';
 import { 
@@ -30,6 +30,11 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
   const [copySuccess, setCopySuccess] = useState(false);
   const [settings, setSettings] = useState<ChithiSettings>({});
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
+
+  // In-modal reply generator state (purely transient - never saved, wiped upon close or reset)
+  const [replyInput, setReplyInput] = useState('');
+  const [showReplyEditor, setShowReplyEditor] = useState(false);
+  const [replyImagePreview, setReplyImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -100,6 +105,9 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
 
   const handleOpenLetter = (letter: ChithiLetter) => {
     setSelectedLetter(letter);
+    setReplyInput('');
+    setShowReplyEditor(false);
+    setReplyImagePreview(null);
     if (!letter.isRead) {
       toggleLetterRead(letter.id);
       loadLetters();
@@ -117,6 +125,30 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
     } finally {
       setGeneratingStory(false);
     }
+  };
+
+  const handleGenerateReplyStory = async (letter: ChithiLetter) => {
+    if (!replyInput.trim()) {
+      alert('অনুগ্রহ করে চিঠির একটি উত্তর লিখুন!');
+      return;
+    }
+    try {
+      setGeneratingStory(true);
+      const dataUrl = await generateStoryImage(letter, replyInput.trim());
+      setReplyImagePreview(dataUrl);
+    } catch (err) {
+      console.error('Failed to generate reply story image:', err);
+      alert('উত্তর সহ ছবি তৈরিতে সমস্যা হয়েছে।');
+    } finally {
+      setGeneratingStory(false);
+    }
+  };
+
+  const handleCloseReplyEditor = () => {
+    // Clear immediately without saving anywhere
+    setReplyInput('');
+    setReplyImagePreview(null);
+    setShowReplyEditor(false);
   };
 
   const handleCopyLetter = (content: string) => {
@@ -419,12 +451,24 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     </button>
                     <div className="flex items-center space-x-2">
                       <button
+                        onClick={() => {
+                          setShowReplyEditor(!showReplyEditor);
+                          if (!showReplyEditor) {
+                            setReplyImagePreview(null);
+                          }
+                        }}
+                        className="px-3.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
+                      >
+                        <PenTool className="w-3.5 h-3.5" />
+                        {showReplyEditor ? 'উত্তর প্যানেল বন্ধ করুন' : 'উত্তর লিখে ছবি বানান'}
+                      </button>
+                      <button
                         onClick={() => handleDownloadStory(selectedLetter)}
                         disabled={generatingStory}
                         className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-md disabled:opacity-50"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        {generatingStory ? 'ছবি তৈরি হচ্ছে...' : 'স্টোরি ইমেজ ডাউনলোড (Story Card)'}
+                        {generatingStory ? 'ছবি তৈরি হচ্ছে...' : 'ব্ল্যাঙ্ক স্টোরি কার্ড'}
                       </button>
                       <button
                         onClick={() => handleCopyLetter(selectedLetter.content)}
@@ -443,6 +487,113 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     </div>
                   </div>
 
+                  {/* 
+                    REPLY WRITER & IMAGE GENERATOR CARD
+                    Strict requirement:
+                    "আর ওয়েবসাইটের মধ্যেই উত্তর লিখে ছবি বানানোর একটা অপশন রাখো। তবে সেই লেখা কোথাও সেভ হবে না। ছবি আকারে বানানোর পরপর আমি যখন কেটে দিবো ওখান থেকেই কেটে যাবে। ওটা শুধু ছবি বানানোর জন্য।"
+                  */}
+                  {showReplyEditor && (
+                    <div className="p-5 bg-zinc-900 border-2 border-amber-500/40 rounded-2xl space-y-4 shadow-xl animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                            <Sparkles className="w-4 h-4" />
+                          </span>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">চিঠির উত্তর লিখে ছবি বানান</h4>
+                            <p className="text-[11px] text-zinc-400">
+                              🔒 এই লেখা কোথাও ডাটাবেসে সেভ হবে না। এটি শুধুই ছবি বানানোর জন্য, কেটে দিলে মুছে যাবে।
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleCloseReplyEditor}
+                          className="p-1 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Reply Textarea */}
+                      <div className="space-y-2">
+                        <label className="block text-xs font-semibold text-zinc-300">
+                          আপনার উত্তর (Mahim's Reply):
+                        </label>
+                        <textarea
+                          rows={4}
+                          value={replyInput}
+                          onChange={(e) => setReplyInput(e.target.value)}
+                          placeholder="এখানে চিঠির উত্তর লিখুন... যেমন: অনেক অনেক ভালোবাসা ও কৃতজ্ঞতা আপনার সুন্দর কথার জন্য!"
+                          className="w-full p-3 bg-zinc-950 border border-zinc-700 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 font-['Hind_Siliguri',sans-serif] leading-relaxed"
+                          maxLength={350}
+                        />
+                        <div className="flex items-center justify-between text-[11px] text-zinc-500">
+                          <span>ইনস্টাগ্রাম/ফেসবুক স্টোরি কার্ডে আপনার এই উত্তরটি যুক্ত হবে</span>
+                          <span>{replyInput.length} / ৩৫০ অক্ষর</span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleGenerateReplyStory(selectedLetter)}
+                          disabled={generatingStory || !replyInput.trim()}
+                          className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-md disabled:opacity-50 cursor-pointer"
+                        >
+                          {generatingStory ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>ছবি তৈরি হচ্ছে...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>উত্তর সহ ছবি তৈরি করুন (Generate Image)</span>
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleCloseReplyEditor}
+                          className="px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold rounded-xl transition"
+                        >
+                          বাতিল ও মুছে ফেলুন
+                        </button>
+                      </div>
+
+                      {/* Image Preview & Download Area */}
+                      {replyImagePreview && (
+                        <div className="pt-4 border-t border-zinc-800 space-y-3 animate-in fade-in duration-150">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                              <CheckCircle2 className="w-4 h-4" />
+                              ছবি তৈরি সম্পন্ন হয়েছে!
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => downloadBase64Image(replyImagePreview, `mahim-reply-story-${selectedLetter.id}.png`)}
+                              className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-md"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              ছবি ডাউনলোড করুন (Download Story Image)
+                            </button>
+                          </div>
+
+                          <div className="relative max-w-xs mx-auto rounded-xl overflow-hidden border-2 border-zinc-700 shadow-2xl bg-zinc-950 p-1">
+                            <img
+                              src={replyImagePreview}
+                              alt="Generated Story Card"
+                              className="w-full h-auto rounded-lg"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Letter Parchment Presentation */}
                   <div className="relative bg-[#fffdf9] text-zinc-900 rounded-2xl p-6 sm:p-10 shadow-2xl border-4 border-[#e6dcce] overflow-hidden">
                     {/* Airmail Border Accent */}
@@ -453,14 +604,9 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300/60">
-                            <MapPin className="w-3 h-3 text-amber-700" />
-                            {selectedLetter.senderLocation || 'গোপন লোকেশন'}
+                            <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                            ১০০% বেনামী চিঠি
                           </span>
-                          {selectedLetter.detectedLocation?.city && (
-                            <span className="text-[11px] text-zinc-500">
-                              (IP: {selectedLetter.detectedLocation.city}, {selectedLetter.detectedLocation.country})
-                            </span>
-                          )}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-zinc-500 pt-1">
                           <span className="flex items-center gap-1">
@@ -492,7 +638,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
 
                     {/* Bottom watermark */}
                     <div className="pt-6 border-t border-[#e2d9c8] flex items-center justify-between text-xs text-zinc-500">
-                      <span>চিঠি ডট মি / Mahim Chithi</span>
+                      <span>Mahim Chithi</span>
                       <span className="font-mono">mahims.com/chithi</span>
                     </div>
                   </div>
@@ -527,8 +673,8 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                               <div className="flex items-center gap-2">
                                 <span className={`w-2 h-2 rounded-full ${!letter.isRead ? 'bg-amber-400 ring-4 ring-amber-400/20' : 'bg-transparent'}`} />
                                 <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
-                                  <MapPin className="w-3 h-3 text-amber-400" />
-                                  {letter.senderLocation || 'গোপন লোকেশন'}
+                                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                                  {!letter.isRead ? 'নতুন চিঠি' : 'বেনামী চিঠি'}
                                 </span>
                               </div>
                               <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>

@@ -12,14 +12,7 @@ export const SAMPLE_LETTERS: ChithiLetter[] = [
     id: 'chithi-demo-1',
     createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
     timestamp: Date.now() - 3600000 * 4,
-    content: 'প্রিয় মাহিম ভাই, আপনার সোশ্যাল মিডিয়া ডিজাইন ও ক্রিয়েটিভিটি সত্যিই অসাধারণ! ফেসবুক ও বেহান্সে আপনার কাজ দেখে প্রতিদিন অনুপ্রাণিত হই। সামনের দিনগুলোতে আপনার আরও বড় সাফল্য কামনা করছি। শুভকামনা রইল!',
-    senderLocation: 'ঢাকা, বাংলাদেশ',
-    locationType: 'auto',
-    detectedLocation: {
-      city: 'Dhaka',
-      country: 'Bangladesh',
-      region: 'Dhaka Division'
-    },
+    content: 'প্রিয় মাহিম ভাই, আপনার সোশ্যাল মিডিয়া ডিজাইন ও ক্রিয়েটিভিটি সত্যিই অসাধারণ! ফেসবুকে আপনার কাজ দেখে প্রতিদিন অনুপ্রাণিত হই। সামনের দিনগুলোতে আপনার আরও বড় সাফল্য কামনা করছি। শুভকামনা রইল!',
     deviceInfo: 'Android (Chrome Mobile)',
     inkColor: 'blue',
     paperTheme: 'vintage',
@@ -31,13 +24,6 @@ export const SAMPLE_LETTERS: ChithiLetter[] = [
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     timestamp: Date.now() - 86400000,
     content: 'একটা না বলা কথা ছিল... আপনার কাজের প্রতি যে নিষ্ঠা আর ডেডিকেশন, সেটা সবাইকে মুগ্ধ করে। কখনো হাল ছাড়বেন না, আপনি আরও অনেক দূর যাবেন!',
-    senderLocation: 'গোপন লোকেশন 🤫',
-    locationType: 'hidden',
-    detectedLocation: {
-      city: 'Chittagong',
-      country: 'Bangladesh',
-      region: 'Chittagong Division'
-    },
     deviceInfo: 'iPhone 15 Pro (Mobile Safari)',
     inkColor: 'maroon',
     paperTheme: 'notebook',
@@ -167,36 +153,6 @@ export function detectUserDevice(): string {
   return `${os} • ${browser}`;
 }
 
-// Non-blocking location detection
-export async function detectApproxLocation(): Promise<{ city: string; country: string; region: string }> {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500); // Max 2.5s wait
-    
-    // Fast reliable IP geolocation API
-    const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-    clearTimeout(timeoutId);
-    
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        city: data.city || 'ঢাকা',
-        region: data.region || 'Dhaka',
-        country: data.country_name || 'বাংলাদেশ',
-      };
-    }
-  } catch (err) {
-    // Non-blocking fallback
-  }
-
-  // Graceful fallback for Bangladesh
-  return {
-    city: 'ঢাকা',
-    region: 'Dhaka',
-    country: 'বাংলাদেশ',
-  };
-}
-
 // Google Sheet sync sender
 export async function sendLetterToGoogleSheet(webhookUrl: string, letter: ChithiLetter): Promise<boolean> {
   if (!webhookUrl || !webhookUrl.startsWith('http')) return false;
@@ -207,9 +163,6 @@ export async function sendLetterToGoogleSheet(webhookUrl: string, letter: Chithi
       timestamp: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
       letterId: letter.id,
       content: letter.content,
-      senderLocation: letter.senderLocation || 'গোপন',
-      detectedCity: letter.detectedLocation?.city || '',
-      detectedCountry: letter.detectedLocation?.country || '',
       device: letter.deviceInfo || '',
       source: 'mahims.com/chithi',
     };

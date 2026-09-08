@@ -264,15 +264,14 @@ export const WalletPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex-1 w-full h-[calc(100vh-53px)] bg-neutral-950 relative">
+          <div className="flex-1 w-full h-[calc(100vh-53px)] bg-neutral-950 flex flex-col relative">
             {decryptedAppUrl && (
               <iframe
                 key={iframeKey}
                 src={decryptedAppUrl}
                 title="Mahim Personal Wallet & Cash Management"
-                className="w-full h-full border-0"
+                className="w-full flex-1 border-0"
                 allow="clipboard-write; clipboard-read"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
               />
             )}
           </div>

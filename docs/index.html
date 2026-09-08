@@ -17,14 +17,14 @@
     </script>
     
     <!-- Official Brand Favicons & Touch Icons (Google Search & Browser Tabs) -->
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="./favicon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="./android-chrome-192x192.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <link rel="shortcut icon" href="./favicon.ico" />
-    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#09090b" />
 
     <!-- Primary SEO Meta Tags -->
@@ -225,8 +225,8 @@
       ]
     }
     </script>
-    <script type="module" crossorigin src="./assets/app.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/app.css">
+    <script type="module" crossorigin src="/assets/app.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/app.css">
   </head>
   <body class="bg-[#fdfdfb] text-[#1a1a1a] antialiased selection:bg-black selection:text-white">
     <div id="root"></div>
@@ -241,13 +241,13 @@
           var head = document.head;
           var link = document.createElement('link');
           link.rel = 'stylesheet';
-          link.href = './assets/app.css';
+          link.href = '/assets/app.css';
           head.appendChild(link);
 
           var script = document.createElement('script');
           script.type = 'module';
           script.crossOrigin = 'anonymous';
-          script.src = './assets/app.js';
+          script.src = '/assets/app.js';
           document.body.appendChild(script);
         }
       })();

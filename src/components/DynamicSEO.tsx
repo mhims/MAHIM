@@ -5,8 +5,18 @@ export const DynamicSEO: React.FC = () => {
   const { settings, posts, skills, experiences, education, selectedPostForView } = useSite();
 
   useEffect(() => {
+    const path = typeof window !== 'undefined' 
+      ? (window.location.pathname + window.location.hash).toLowerCase()
+      : '';
+    const isChithi = path.includes('chithi');
+    const isSalami = path.includes('salami');
+
     // 1. Dynamic Document Title
-    if (selectedPostForView) {
+    if (isChithi) {
+      document.title = 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে';
+    } else if (isSalami) {
+      document.title = 'Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল';
+    } else if (selectedPostForView) {
       document.title = `${selectedPostForView.title} | ${settings.siteName || 'Mahim'}`;
     } else if (settings.seoTitle) {
       document.title = settings.seoTitle;
@@ -25,17 +35,31 @@ export const DynamicSEO: React.FC = () => {
       meta.content = content;
     };
 
-    const activeDescription = selectedPostForView
-      ? selectedPostForView.excerpt || selectedPostForView.title
-      : settings.seoDescription || settings.heroBio || '';
+    let activeDescription = '';
+    let activeImage = '';
+    let activeUrl = '';
 
-    const activeImage = selectedPostForView?.coverImage
-      ? selectedPostForView.coverImage
-      : settings.heroImage || 'https://mahims.com/assets/og-preview.jpg';
+    if (isChithi) {
+      activeDescription = 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।';
+      activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-chithi.jpg`;
+      activeUrl = `https://${settings.domain || 'mahims.com'}/chithi`;
+    } else if (isSalami) {
+      activeDescription = 'ঈদ মোবারক! মাহিমকে ঈদ সালামি পাঠান অথবা আপনার প্রাপ্ত সালামি চেক করুন বিকাশ, নগদ বা রকেটের মাধ্যমে।';
+      activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-salami.jpg`;
+      activeUrl = `https://${settings.domain || 'mahims.com'}/salami`;
+    } else {
+      activeDescription = selectedPostForView
+        ? selectedPostForView.excerpt || selectedPostForView.title
+        : settings.seoDescription || settings.heroBio || '';
 
-    const activeUrl = selectedPostForView
-      ? `https://${settings.domain || 'mahims.com'}/#blog/${selectedPostForView.slug}`
-      : `https://${settings.domain || 'mahims.com'}/`;
+      activeImage = selectedPostForView?.coverImage
+        ? selectedPostForView.coverImage
+        : settings.heroImage || 'https://mahims.com/assets/og-preview.jpg';
+
+      activeUrl = selectedPostForView
+        ? `https://${settings.domain || 'mahims.com'}/#blog/${selectedPostForView.slug}`
+        : `https://${settings.domain || 'mahims.com'}/`;
+    }
 
     // 2. Update Primary Meta Tags
     setMetaTag('meta[name="description"]', 'name', 'description', activeDescription);

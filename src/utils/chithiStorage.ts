@@ -90,6 +90,22 @@ export function getStoredLetters(): ChithiLetter[] {
   }
 }
 
+// User's configured Google Apps Script Webhook URL
+export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
+
+// Effective Google Sheet webhook URL resolver
+export function getEffectiveGoogleSheetWebhookUrl(): string {
+  if (typeof window !== 'undefined') {
+    const fromSettings = getChithiSettings().googleSheetWebhookUrl?.trim();
+    if (fromSettings) return fromSettings;
+    const fromLocal = localStorage.getItem('chithi_global_webhook_url')?.trim();
+    if (fromLocal) return fromLocal;
+  }
+  const metaEnv = ((import.meta as unknown) as { env?: Record<string, string> }).env;
+  const envUrl = metaEnv?.VITE_CHITHI_GOOGLE_SHEET_URL?.trim();
+  return envUrl || DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+}
+
 export function saveLetter(letter: Omit<ChithiLetter, 'id' | 'createdAt' | 'timestamp'>): ChithiLetter {
   const letters = getStoredLetters();
   const newLetter: ChithiLetter = {
@@ -105,11 +121,11 @@ export function saveLetter(letter: Omit<ChithiLetter, 'id' | 'createdAt' | 'time
     localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(updated));
   }
 
-  // Attempt Google Sheets Sync if webhook is configured
+  // Forward to central Google Sheet Webhook so it immediately lands in Mahim's Google Sheet
   try {
-    const settings = getChithiSettings();
-    if (settings.googleSheetWebhookUrl) {
-      sendLetterToGoogleSheet(settings.googleSheetWebhookUrl, newLetter).catch((e) =>
+    const webhookUrl = getEffectiveGoogleSheetWebhookUrl();
+    if (webhookUrl) {
+      sendLetterToGoogleSheet(webhookUrl, newLetter).catch((e) =>
         console.warn('Google Sheet sync background error:', e)
       );
     }
@@ -145,12 +161,16 @@ export function toggleLetterStar(id: string): void {
 }
 
 export function getChithiSettings(): ChithiSettings {
-  if (typeof window === 'undefined') return {};
+  if (typeof window === 'undefined') return { googleSheetWebhookUrl: DEFAULT_GOOGLE_SHEET_WEBHOOK_URL };
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    const parsed = raw ? JSON.parse(raw) : {};
+    if (!parsed.googleSheetWebhookUrl) {
+      parsed.googleSheetWebhookUrl = DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+    }
+    return parsed;
   } catch {
-    return {};
+    return { googleSheetWebhookUrl: DEFAULT_GOOGLE_SHEET_WEBHOOK_URL };
   }
 }
 
@@ -206,6 +226,7 @@ export async function sendLetterToGoogleSheet(webhookUrl: string, letter: Chithi
       letterId: letter.id,
       content: letter.content,
       device: letter.deviceInfo || '',
+      location: letter.senderLocation || 'Unknown',
       source: 'mahims.com/chithi',
     };
 
@@ -221,3 +242,97 @@ export async function sendLetterToGoogleSheet(webhookUrl: string, letter: Chithi
     return false;
   }
 }
+
+// Fetch letters from Google Sheet into local Admin Panel inbox
+export async function fetchLettersFromGoogleSheet(webhookUrl: string): Promise<ChithiLetter[]> {
+  if (!webhookUrl || !webhookUrl.startsWith('http')) return [];
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: 'GET',
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (data && Array.isArray(data.letters)) {
+      const sheetLetters: Array<Record<string, unknown>> = data.letters;
+      // Merge with local letters without duplicates
+      const local = getStoredLetters();
+      const existingIds = new Set(local.map((l) => l.id));
+      const newlyFetched: ChithiLetter[] = [];
+
+      for (const item of sheetLetters) {
+        const id = String(item.id || 'sheet-' + Date.now());
+        if (!existingIds.has(id)) {
+          newlyFetched.push({
+            id,
+            content: String(item.content || ''),
+            createdAt: String(item.createdAt || new Date().toISOString()),
+            timestamp: typeof item.timestamp === 'number' ? item.timestamp : Date.now(),
+            deviceInfo: item.deviceInfo ? String(item.deviceInfo) : '',
+            senderLocation: item.senderLocation || item.locationInfo ? String(item.senderLocation || item.locationInfo) : '',
+            paperTheme: (item.paperTheme as ChithiLetter['paperTheme']) || 'vintage',
+            inkColor: (item.inkColor as ChithiLetter['inkColor']) || 'blue',
+            isRead: Boolean(item.isRead),
+            isStarred: Boolean(item.isStarred),
+          });
+        }
+      }
+
+      const merged = [...newlyFetched, ...local];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(merged));
+      }
+      return merged;
+    }
+    return [];
+  } catch (err) {
+    console.warn('Could not pull from Google Sheet:', err);
+    return [];
+  }
+}
+
+// Google Apps Script ready-to-use template for user's Google Sheet
+export const GOOGLE_APPS_SCRIPT_TEMPLATE = `function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["ID", "তারিখ ও সময় (Date)", "চিঠি (Content)", "ডিভাইস (Device)", "লোকেশন (Location)"]);
+      sheet.getRange(1, 1, 1, 5).setFontWeight("bold").setBackground("#fef3c7");
+    }
+    var data = JSON.parse(e.postData.contents);
+    sheet.appendRow([
+      data.letterId || ("chithi-" + new Date().getTime()),
+      data.timestamp || new Date().toLocaleString("bn-BD", { timeZone: "Asia/Dhaka" }),
+      data.content || "",
+      data.device || "",
+      data.location || ""
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var rows = sheet.getDataRange().getValues();
+    var letters = [];
+    for (var i = 1; i < rows.length; i++) {
+      if (rows[i][2]) {
+        letters.push({
+          id: String(rows[i][0] || ("letter-" + i)),
+          createdAt: String(rows[i][1] || ""),
+          content: String(rows[i][2] || ""),
+          deviceInfo: String(rows[i][3] || ""),
+          locationInfo: String(rows[i][4] || ""),
+          isRead: true,
+          isStarred: false
+        });
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", letters: letters })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", letters: [] })).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;

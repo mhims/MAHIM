@@ -10,7 +10,8 @@ import {
   getChithiSettings, saveChithiSettings,
   verifyChithiAdminPassword, changeChithiAdminPassword, resetChithiAdminPasswordToDefault,
   isChithiAdminAuthenticated, setChithiAdminAuthenticated,
-  sendLetterToGoogleSheet
+  sendLetterToGoogleSheet, fetchLettersFromGoogleSheet, getEffectiveGoogleSheetWebhookUrl,
+  GOOGLE_APPS_SCRIPT_TEMPLATE
 } from '../utils/chithiStorage';
 import { generateStoryImage, downloadBase64Image } from '../utils/chithiStoryGenerator';
 
@@ -33,6 +34,9 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
   const [copySuccess, setCopySuccess] = useState(false);
   const [settings, setSettings] = useState<ChithiSettings>({});
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
+  const [fetchingFromSheet, setFetchingFromSheet] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
+  const [showScriptCode, setShowScriptCode] = useState(false);
 
   // In-modal reply generator state (purely transient - never saved, wiped upon close or reset)
   const [replyInput, setReplyInput] = useState('');
@@ -50,7 +54,14 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
       setIsAuthenticated(auth);
       if (auth) {
         loadLetters();
-        setSettings(getChithiSettings());
+        const currentSettings = getChithiSettings();
+        setSettings(currentSettings);
+        const url = currentSettings.googleSheetWebhookUrl?.trim() || getEffectiveGoogleSheetWebhookUrl();
+        if (url) {
+          fetchLettersFromGoogleSheet(url).then((merged) => {
+            if (merged.length) setLetters(merged);
+          }).catch(() => {});
+        }
       }
     }
   }, [isOpen]);
@@ -73,7 +84,14 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
         setPasswordError(false);
         setPasswordInput('');
         loadLetters();
-        setSettings(getChithiSettings());
+        const currentSettings = getChithiSettings();
+        setSettings(currentSettings);
+        const url = currentSettings.googleSheetWebhookUrl?.trim() || getEffectiveGoogleSheetWebhookUrl();
+        if (url) {
+          fetchLettersFromGoogleSheet(url).then((merged) => {
+            if (merged.length) setLetters(merged);
+          }).catch(() => {});
+        }
       } else {
         setPasswordError(true);
       }
@@ -253,6 +271,34 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
     setTimeout(() => setSyncStatus(null), 4000);
   };
 
+  const handleFetchFromGoogleSheet = async () => {
+    const url = settings.googleSheetWebhookUrl?.trim() || getEffectiveGoogleSheetWebhookUrl();
+    if (!url) {
+      alert('অনুগ্রহ করে আগে "সেটিংস ও ব্যাকআপ" ট্যাবে গিয়ে আপনার Google Sheets Webhook URL সেভ করুন।');
+      return;
+    }
+    setFetchingFromSheet(true);
+    setSyncStatus('গুগল শিট থেকে চিঠি লোড হচ্ছে...');
+    try {
+      const merged = await fetchLettersFromGoogleSheet(url);
+      setLetters(merged);
+      setSyncStatus(`গুগল শিট থেকে সফলভাবে মোট ${merged.length} টি চিঠি লোড হয়েছে!`);
+      setTimeout(() => setSyncStatus(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setSyncStatus('গুগল শিট থেকে লোড করা সম্ভব হয়নি। Webhook URL এবং Apps Script ঠিক আছে কিনা দেখুন।');
+      setTimeout(() => setSyncStatus(null), 5000);
+    } finally {
+      setFetchingFromSheet(false);
+    }
+  };
+
+  const handleCopyScriptCode = () => {
+    navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_TEMPLATE);
+    setCopiedScript(true);
+    setTimeout(() => setCopiedScript(false), 3000);
+  };
+
   if (!isOpen) return null;
 
   const filteredLetters = letters.filter((l) => {
@@ -402,7 +448,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
               </div>
 
               {activeTab === 'inbox' && (
-                <div className="flex items-center space-x-1.5 text-xs">
+                <div className="flex items-center space-x-1.5 text-xs flex-wrap gap-y-1">
                   <button
                     onClick={() => setFilter('all')}
                     className={`px-2.5 py-1 rounded-md transition ${filter === 'all' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
@@ -421,9 +467,34 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                   >
                     স্টার
                   </button>
+                  <button
+                    onClick={handleFetchFromGoogleSheet}
+                    disabled={fetchingFromSheet}
+                    title="গুগল শিট থেকে সব ডিভাইসের চিঠি লোড ও সিঙ্ক করুন"
+                    className="px-2.5 py-1 rounded-md bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-300 border border-emerald-700/60 transition flex items-center gap-1.5 text-xs font-semibold ml-1 cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3 h-3 text-emerald-400 ${fetchingFromSheet ? 'animate-spin' : ''}`} />
+                    <span>শিট সিঙ্ক</span>
+                  </button>
                 </div>
               )}
             </div>
+
+            {/* Sync Notification Banner */}
+            {syncStatus && (
+              <div className="px-5 py-2 bg-emerald-950/80 border-b border-emerald-800/60 text-xs text-emerald-300 flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  {syncStatus}
+                </span>
+                <button 
+                  onClick={() => setSyncStatus(null)}
+                  className="text-emerald-400/60 hover:text-emerald-300 text-xs ml-2"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
 
             {/* View Details Area */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6">
@@ -431,18 +502,54 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                 /* Settings & Backup View */
                 <div className="max-w-2xl mx-auto space-y-6">
                   <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-xl space-y-4">
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
-                      Google Sheets ব্যাকআপ সিঙ্ক
-                    </h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed">
-                      চিঠিগুলো স্বয়ংক্রিয়ভাবে আপনার গুগল শিটে রাখতে চাইলে আপনার Google Apps Script Webhook URL এখানে সংরক্ষণ করতে পারেন।
-                    </p>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
+                          <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+                          Google Sheets সেন্ট্রাল ডাটাবেস (১০০% প্রাইভেট)
+                        </h3>
+                        <p className="text-xs text-zinc-400 leading-relaxed mt-1">
+                          যেকোনো ডিভাইস থেকে মানুষ চিঠি পাঠানো মাত্রই সরাসরি আপনার নিজস্ব গুগল শিটে রিয়েল-টাইমে জমা হবে। কোনো ডাটা লিকের ঝুঁকি নেই।
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Simple 3-step setup guide */}
+                    <div className="p-3.5 bg-zinc-950/90 border border-zinc-800 rounded-lg space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-amber-400">সহজ ২ মিনিটে গুগল শিট কানেক্ট করার উপায়:</span>
+                        <button
+                          type="button"
+                          onClick={handleCopyScriptCode}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[11px] font-semibold transition"
+                        >
+                          <Copy className="w-3 h-3" />
+                          {copiedScript ? 'কপি হয়েছে!' : 'Apps Script কোড কপি করুন'}
+                        </button>
+                      </div>
+                      <ol className="list-decimal list-inside space-y-1 text-zinc-300 text-[11px] leading-normal">
+                        <li>আপনার গুগল অ্যাকাউন্টে একটি নতুন <strong>Google Sheet</strong> তৈরি করুন।</li>
+                        <li>উপরে মেনু থেকে <strong>Extensions &gt; Apps Script</strong>-এ যান এবং বিদ্যমান কোড মুছে ওপরের কপি করা কোডটি পেস্ট করে সেভ করুন।</li>
+                        <li>উপরে নীল <strong>Deploy &gt; New deployment</strong> বাটনে ক্লিক করে <strong>Web app</strong> নির্বাচন করুন (Who has access: <em>Anyone</em>), এরপর প্রাপ্ত <strong>Web app URL</strong> টি নিচের বক্সে পেস্ট করে সেভ করুন!</li>
+                      </ol>
+                      <button
+                        type="button"
+                        onClick={() => setShowScriptCode(!showScriptCode)}
+                        className="text-[11px] text-zinc-400 hover:text-zinc-200 underline pt-1 cursor-pointer"
+                      >
+                        {showScriptCode ? '▲ কোড লুকান' : '▼ কোড দেখুন'}
+                      </button>
+                      {showScriptCode && (
+                        <pre className="p-2.5 bg-black/60 rounded text-[10px] text-emerald-300 font-mono overflow-x-auto max-h-48 border border-zinc-800 select-all">
+                          {GOOGLE_APPS_SCRIPT_TEMPLATE}
+                        </pre>
+                      )}
+                    </div>
 
                     <form onSubmit={handleSaveSettings} className="space-y-3">
                       <div>
                         <label className="block text-xs font-semibold text-zinc-300 mb-1">
-                          Google Apps Script Webhook URL
+                          আপনার Google Apps Script Webhook URL
                         </label>
                         <input
                           type="url"
@@ -453,7 +560,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                         />
                       </div>
 
-                      <div className="flex items-center gap-2 pt-1">
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
                         <button
                           type="submit"
                           className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg transition"
@@ -462,19 +569,22 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                         </button>
                         <button
                           type="button"
-                          onClick={handleSyncAllToGoogleSheet}
-                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5"
+                          onClick={handleFetchFromGoogleSheet}
+                          disabled={fetchingFromSheet}
+                          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5"
                         >
-                          <RefreshCw className="w-3.5 h-3.5" />
-                          সব চিঠি শিটে পাঠান
+                          <RefreshCw className={`w-3.5 h-3.5 ${fetchingFromSheet ? 'animate-spin' : ''}`} />
+                          গুগল শিট থেকে চিঠি লোড করুন
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSyncAllToGoogleSheet}
+                          className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 border border-zinc-700"
+                        >
+                          <Send className="w-3.5 h-3.5 text-zinc-400" />
+                          বর্তমান চিঠি শিটে পাঠান
                         </button>
                       </div>
-
-                      {syncStatus && (
-                        <p className="text-xs text-emerald-400 font-medium pt-1">
-                          {syncStatus}
-                        </p>
-                      )}
                     </form>
                   </div>
 

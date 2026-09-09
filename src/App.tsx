@@ -22,6 +22,7 @@ import { DynamicSEO } from './components/DynamicSEO';
 import { SalamiPage } from './components/SalamiPage';
 import { WalletPage } from './components/WalletPage';
 import { ChithiPage } from './components/ChithiPage';
+import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 
 export default function App() {
@@ -50,6 +51,8 @@ export default function App() {
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
+  const isAllF = currentPath === '/allf';
+  const isAllU = currentPath === '/allu';
 
   useEffect(() => {
     const handleUrlChange = () => {
@@ -145,7 +148,7 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami, isWallet, isChithi]);
+  }, [isSalami, isWallet, isChithi, isAllF, isAllU]);
 
   if (isSalami) {
     return <SalamiPage />;
@@ -157,6 +160,14 @@ export default function App() {
 
   if (isChithi) {
     return <ChithiPage />;
+  }
+
+  if (isAllF) {
+    return <DriveGatewayPage mode="allf" />;
+  }
+
+  if (isAllU) {
+    return <DriveGatewayPage mode="allu" />;
   }
 
   return (

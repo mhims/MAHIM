@@ -3,6 +3,10 @@ Allow: /
 Disallow: /admin
 Disallow: /wallet
 Disallow: /wallet/
+Disallow: /allf
+Disallow: /allf/
+Disallow: /allu
+Disallow: /allu/
 
 # Traditional Search Engines
 User-agent: Googlebot

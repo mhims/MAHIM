@@ -48,45 +48,32 @@ export async function resetChithiAdminPasswordToDefault(): Promise<void> {
   }
 }
 
-// Initial sample letters for Mahim to test the preview & story cards immediately
-export const SAMPLE_LETTERS: ChithiLetter[] = [
-  {
-    id: 'chithi-demo-1',
-    createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-    timestamp: Date.now() - 3600000 * 4,
-    content: 'প্রিয় মাহিম ভাই, আপনার সোশ্যাল মিডিয়া ডিজাইন ও ক্রিয়েটিভিটি সত্যিই অসাধারণ! ফেসবুকে আপনার কাজ দেখে প্রতিদিন অনুপ্রাণিত হই। সামনের দিনগুলোতে আপনার আরও বড় সাফল্য কামনা করছি। শুভকামনা রইল!',
-    deviceInfo: 'Android (Chrome Mobile)',
-    inkColor: 'blue',
-    paperTheme: 'vintage',
-    isRead: false,
-    isStarred: true
-  },
-  {
-    id: 'chithi-demo-2',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    timestamp: Date.now() - 86400000,
-    content: 'একটা না বলা কথা ছিল... আপনার কাজের প্রতি যে নিষ্ঠা আর ডেডিকেশন, সেটা সবাইকে মুগ্ধ করে। কখনো হাল ছাড়বেন না, আপনি আরও অনেক দূর যাবেন!',
-    deviceInfo: 'iPhone 15 Pro (Mobile Safari)',
-    inkColor: 'maroon',
-    paperTheme: 'notebook',
-    isRead: true,
-    isStarred: false
-  }
-];
+// No demo letters - inbox begins completely clean
+export const SAMPLE_LETTERS: ChithiLetter[] = [];
 
 export function getStoredLetters(): ChithiLetter[] {
-  if (typeof window === 'undefined') return SAMPLE_LETTERS;
+  if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(LETTERS_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(SAMPLE_LETTERS));
-      return SAMPLE_LETTERS;
+      localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : SAMPLE_LETTERS;
+    if (Array.isArray(parsed)) {
+      // Clean out any legacy demo letters
+      const cleaned = parsed.filter(
+        (l) => l.id !== 'chithi-demo-1' && l.id !== 'chithi-demo-2'
+      );
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(cleaned));
+      }
+      return cleaned;
+    }
+    return [];
   } catch (err) {
     console.error('Error loading stored letters:', err);
-    return SAMPLE_LETTERS;
+    return [];
   }
 }
 

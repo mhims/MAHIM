@@ -1,57 +1,148 @@
 import { ChithiLetter } from '../types/chithi';
 
 /**
- * Helper to wrap text into distinct lines based on max pixel width and font.
+ * Robust text wrapping helper that handles:
+ * 1. Paragraph breaks & newlines (\n)
+ * 2. Space-separated words
+ * 3. Unbroken strings / long URLs / words exceeding maxWidth (splits character by character)
+ * NEVER overflows horizontally beyond maxWidth under any circumstance.
  */
-function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+function wrapTextLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   if (!text) return [];
-  const words = text.split(/\s+/);
-  const lines: string[] = [];
-  let currentLine = '';
 
-  for (let i = 0; i < words.length; i++) {
-    const testLine = currentLine ? currentLine + ' ' + words[i] : words[i];
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && i > 0) {
-      lines.push(currentLine);
-      currentLine = words[i];
-    } else {
-      currentLine = testLine;
+  const rawParagraphs = text.split(/\r?\n/);
+  const resultLines: string[] = [];
+
+  for (let pIdx = 0; pIdx < rawParagraphs.length; pIdx++) {
+    const paragraph = rawParagraphs[pIdx].trim();
+    if (!paragraph) {
+      if (resultLines.length > 0 && resultLines[resultLines.length - 1] !== '') {
+        resultLines.push('');
+      }
+      continue;
+    }
+
+    const words = paragraph.split(/\s+/);
+    let currentLine = '';
+
+    for (let wIdx = 0; wIdx < words.length; wIdx++) {
+      const word = words[wIdx];
+      if (!word) continue;
+
+      const wordWidth = ctx.measureText(word).width;
+
+      // If a single word or unbroken string is wider than maxWidth, break character by character
+      if (wordWidth > maxWidth) {
+        if (currentLine) {
+          resultLines.push(currentLine);
+          currentLine = '';
+        }
+
+        let chunk = '';
+        for (let c = 0; c < word.length; c++) {
+          const char = word[c];
+          const testChunk = chunk + char;
+          if (ctx.measureText(testChunk).width > maxWidth) {
+            if (chunk) resultLines.push(chunk);
+            chunk = char;
+          } else {
+            chunk = testChunk;
+          }
+        }
+        if (chunk) {
+          currentLine = chunk;
+        }
+        continue;
+      }
+
+      // Normal word flow
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(testLine).width > maxWidth) {
+        if (currentLine) resultLines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+
+    if (currentLine) {
+      resultLines.push(currentLine);
     }
   }
-  if (currentLine) {
-    lines.push(currentLine);
+
+  return resultLines;
+}
+
+/**
+ * Calculates adaptive font size & line spacing based on letter content length.
+ * - Short text (<= 150 chars): large 34px font, 52px line spacing (compact aesthetic card)
+ * - Medium text (151 - 350 chars): 30px font, 46px line spacing
+ * - Long text (351 - 650 chars): 26px font, 40px line spacing
+ * - Very long text (651+ chars): 22px font, 35px line spacing
+ */
+function getAdaptiveLetterTypography(contentLength: number) {
+  if (contentLength <= 150) {
+    return {
+      fontSize: 34,
+      lineSpacing: 52,
+      font: '34px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif',
+    };
+  } else if (contentLength <= 350) {
+    return {
+      fontSize: 30,
+      lineSpacing: 46,
+      font: '30px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif',
+    };
+  } else if (contentLength <= 650) {
+    return {
+      fontSize: 26,
+      lineSpacing: 40,
+      font: '26px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif',
+    };
+  } else {
+    return {
+      fontSize: 22,
+      lineSpacing: 35,
+      font: '22px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif',
+    };
   }
-  return lines;
 }
 
 /**
  * Adaptive Canvas Story Card Generator
- * Supports dynamic height:
- * - Short messages produce a compact, well-proportioned aesthetic card
- * - Long messages expand dynamically without cutting off
- * - Reply box renders in clean, high-contrast LIGHT MODE
- * - Simple header "উত্তর / Reply:" without unnecessary branding
+ * - Short text keeps original compact, balanced dimensions
+ * - Long text gracefully expands card height and overall image height
+ * - Unbreakable strings and long words never overflow horizontally
+ * - Ruled notebook lines align with handwriting baseline
  */
 export async function generateStoryImage(letter: ChithiLetter, customReplyText?: string): Promise<string> {
   const width = 1080;
   const cardX = 90;
   const cardW = width - 180; // 900px
-  const letterMaxTextW = cardW - 170; // ~730px
-  const replyMaxTextW = cardW - 80; // ~820px
+  const startX = cardX + 110; // ~200px (leaves 25px right of red margin line)
+  const letterMaxTextW = cardW - 110 - 45; // ~745px available width
+  const replyMaxTextW = cardW - 80; // ~820px available width
 
   // Temporary canvas to measure text lines accurately
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) throw new Error('Could not get measurement context');
 
-  // Measure letter content lines
-  measureCtx.font = '34px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif';
-  const letterLines = wrapLines(measureCtx, (letter.content || '').trim(), letterMaxTextW);
-  const letterLineSpacing = 50;
-  const letterContentH = Math.max(1, letterLines.length) * letterLineSpacing;
-  // Dynamic paper card height (minimum 260px)
-  const cardH = Math.max(260, 130 + letterContentH + 85);
+  // Determine adaptive typography for letter
+  const trimmedLetterContent = (letter.content || '').trim();
+  const typo = getAdaptiveLetterTypography(trimmedLetterContent.length);
+
+  measureCtx.font = typo.font;
+  const letterLines = wrapTextLines(measureCtx, trimmedLetterContent, letterMaxTextW);
+  const letterLineCount = Math.max(1, letterLines.length);
+
+  // Calculate dynamic paper card height
+  // Top header inside card = 105px (wax seal + breathing room)
+  // Text content = letterLineCount * lineSpacing
+  // Bottom metadata footer = 65px
+  // Minimum card height = 260px (for short messages)
+  const calculatedCardH = 105 + letterLineCount * typo.lineSpacing + 65;
+  const cardH = Math.max(260, calculatedCardH);
 
   // Measure reply content lines (if reply provided)
   const hasReply = Boolean(customReplyText && customReplyText.trim());
@@ -59,11 +150,13 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   let replyBoxH = 210; // Default height for blank template
 
   if (hasReply) {
-    measureCtx.font = '30px "Hind Siliguri", sans-serif';
-    replyLines = wrapLines(measureCtx, customReplyText!.trim(), replyMaxTextW);
-    const replyLineSpacing = 46;
-    const replyContentH = Math.max(1, replyLines.length) * replyLineSpacing;
-    replyBoxH = Math.max(180, 100 + replyContentH + 45);
+    const trimmedReply = customReplyText!.trim();
+    const replyFontSize = trimmedReply.length > 300 ? 25 : 29;
+    const replyLineSpacing = replyFontSize === 25 ? 38 : 44;
+    measureCtx.font = `${replyFontSize}px "Hind Siliguri", sans-serif`;
+    replyLines = wrapTextLines(measureCtx, trimmedReply, replyMaxTextW);
+    const replyLinesH = Math.max(1, replyLines.length) * replyLineSpacing;
+    replyBoxH = Math.max(180, 95 + replyLinesH + 35);
   }
 
   // Calculate dynamic canvas total height
@@ -71,7 +164,7 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   const cardY = topHeaderH;
   const gap = 34;
   const replyBoxY = cardY + cardH + gap;
-  const bottomWatermarkH = 140;
+  const bottomWatermarkH = 135;
   const height = replyBoxY + replyBoxH + bottomWatermarkH;
 
   // Create final canvas
@@ -199,7 +292,9 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   // Ruled Notebook Lines
   ctx.strokeStyle = '#e8dfd1';
   ctx.lineWidth = 1.5;
-  for (let y = cardY + 115; y < cardY + cardH - 60; y += letterLineSpacing) {
+  const ruledStart = cardY + 115;
+  const ruledEnd = cardY + cardH - 55;
+  for (let y = ruledStart; y <= ruledEnd; y += typo.lineSpacing) {
     ctx.beginPath();
     ctx.moveTo(cardX + 36, y);
     ctx.lineTo(cardX + cardW - 36, y);
@@ -229,19 +324,21 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
 
   // Letter Content
   ctx.textAlign = 'left';
-  ctx.font = '34px "Galada", "Kalam", "Hind Siliguri", cursive, sans-serif';
+  ctx.font = typo.font;
   ctx.fillStyle =
     letter.inkColor === 'maroon' ? '#831843' : letter.inkColor === 'black' ? '#18181b' : '#1e3a8a';
 
-  const startX = cardX + 105;
-  let textY = cardY + 130;
+  // Text baseline is positioned 7px above ruled line so characters rest neatly on the notebook rule
+  let textBaselineY = cardY + 108;
   for (const line of letterLines) {
-    ctx.fillText(line, startX, textY);
-    textY += letterLineSpacing;
+    if (line) {
+      ctx.fillText(line, startX, textBaselineY);
+    }
+    textBaselineY += typo.lineSpacing;
   }
 
   // Footer inside Paper (Date & Anonymous status)
-  const metaY = cardY + cardH - 35;
+  const metaY = cardY + cardH - 30;
   ctx.font = '21px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#6b7280';
   ctx.fillText(`🔒 ১০০% বেনামী বার্তা`, startX, metaY);
@@ -290,12 +387,17 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
     ctx.stroke();
 
     // Reply Text (Dark high-contrast legible font)
+    const trimmedReply = customReplyText!.trim();
+    const replyFontSize = trimmedReply.length > 300 ? 25 : 29;
+    const replyLineSpacing = replyFontSize === 25 ? 38 : 44;
     ctx.fillStyle = '#18181b';
-    ctx.font = '30px "Hind Siliguri", sans-serif';
-    let rY = replyBoxY + 120;
+    ctx.font = `${replyFontSize}px "Hind Siliguri", sans-serif`;
+    let rY = replyBoxY + 116;
     for (const rLine of replyLines) {
-      ctx.fillText(rLine, cardX + 40, rY);
-      rY += 46;
+      if (rLine) {
+        ctx.fillText(rLine, cardX + 40, rY);
+      }
+      rY += replyLineSpacing;
     }
   } else {
     // Blank Reply Box for manual Instagram/Facebook Story text overlay
@@ -326,11 +428,11 @@ export async function generateStoryImage(letter: ChithiLetter, customReplyText?:
   ctx.fillStyle = '#1e293b';
   ctx.font = 'bold 26px "Plus Jakarta Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('mahims.com/chithi', width / 2, height - 75);
+  ctx.fillText('mahims.com/chithi', width / 2, height - 70);
 
   ctx.font = '19px "Hind Siliguri", sans-serif';
   ctx.fillStyle = '#64748b';
-  ctx.fillText('গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 45);
+  ctx.fillText('গোপন চিঠি পাঠাতে ভিজিট করুন', width / 2, height - 40);
 
   return canvas.toDataURL('image/png');
 }

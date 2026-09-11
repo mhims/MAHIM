@@ -23,12 +23,13 @@ export function ChithiPage() {
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
-    document.title = "Mahim Chithi | মাহিম চিঠি (Mahims Chithi)";
+    document.title = "Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে";
     
-    // Update or create meta tags
+    // Update or create name meta tags
     const metaTags: Record<string, string> = {
-      'description': 'Mahim Chithi (মাহিম চিঠি) - Mahim Ibne Khudi কে বেনামে চিঠি পাঠান। মনের না বলা কথা, সিক্রেট অনুভূতি বা প্রশংসা পাঠান সম্পূর্ণ গোপনে ও নিরাপদে।',
-      'keywords': 'Mahim Chithi, মাহিম চিঠি, Mahims Chithi, মাহিমস চিঠি, Mahim Chithi me, মাহিম চিঠি মি, mahim anonymous letter, chithi mahims',
+      'title': 'Mahim Chithi | মাহিম চিঠি - চিঠি ডট মি (Mahims Chithi)',
+      'description': 'Mahim Chithi (মাহিম চিঠি) - Mahim Ibne Khudi কে বেনামে চিঠি পাঠান। মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান সম্পূর্ণ গোপনে ও নিরাপদে।',
+      'keywords': 'Mahim Chithi, মাহিম চিঠি, Mahims Chithi, মাহিমস চিঠি, Mahim Chithi me, মাহিম চিঠি মি, mahim anonymous letter, চিঠি ডট মি মাহিম, chithi mahims, Mahim Ibne Khudi chithi',
       'robots': 'index, follow, max-image-preview:large',
     };
 
@@ -37,6 +38,30 @@ export function ChithiPage() {
       if (!el) {
         el = document.createElement('meta');
         el.setAttribute('name', name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', val);
+    });
+
+    // Update Open Graph and Twitter tags
+    const ogTags: Record<string, string> = {
+      'og:title': 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে',
+      'og:description': 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।',
+      'og:url': 'https://mahims.com/chithi',
+      'og:site_name': 'Mahim Chithi',
+      'og:image': 'https://mahims.com/assets/og-chithi.jpg',
+      'og:image:secure_url': 'https://mahims.com/assets/og-chithi.jpg',
+      'twitter:title': 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে',
+      'twitter:description': 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা বা সিক্রেট বার্তা পাঠান ১০০% নিরাপদে।',
+      'twitter:image': 'https://mahims.com/assets/og-chithi.jpg',
+      'twitter:card': 'summary_large_image',
+    };
+
+    Object.entries(ogTags).forEach(([prop, val]) => {
+      let el = document.querySelector(`meta[property="${prop}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute('property', prop);
         document.head.appendChild(el);
       }
       el.setAttribute('content', val);

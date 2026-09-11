@@ -20,8 +20,11 @@ import {
   Clock,
   Compass,
   FileText,
+  Lock,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
+import { ClassroomAdminModal } from './ClassroomAdminModal';
+import { saveClassroomRegistration } from '../utils/classroomStorage';
 
 interface CourseItem {
   id: string;
@@ -237,6 +240,9 @@ export const ClassroomPage: React.FC = () => {
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
+  // State for Classroom Dedicated Admin Modal
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
   // State for Article Reading Modal
   const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
@@ -329,7 +335,20 @@ export const ClassroomPage: React.FC = () => {
     }
     imageSrc.href = 'https://mahims.com/assets/og-classroom.jpg';
 
+    // Keyboard shortcut to open Classroom Admin: Ctrl+Shift+A or Cmd+Shift+A
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setIsAdminModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     window.scrollTo({ top: 0, behavior: 'instant' });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const handlePreRegister = (courseTitle?: string) => {
@@ -345,15 +364,12 @@ export const ClassroomPage: React.FC = () => {
     if (!studentName.trim() || !studentPhone.trim()) return;
 
     try {
-      const existing = JSON.parse(localStorage.getItem('mahim_classroom_leads') || '[]');
-      existing.push({
+      saveClassroomRegistration({
         name: studentName,
         phone: studentPhone,
         course: studentClass,
         message: studentMessage,
-        timestamp: new Date().toISOString(),
       });
-      localStorage.setItem('mahim_classroom_leads', JSON.stringify(existing));
     } catch {
       // ignore
     }
@@ -902,8 +918,19 @@ export const ClassroomPage: React.FC = () => {
             </div>
           </div>
 
-          <p className="text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif]">
-            © {new Date().getFullYear()} Mahim's Classroom • সর্বস্বত্ব সংরক্ষিত
+          <p className="text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif] flex items-center justify-center gap-1 select-none">
+            <span>© {new Date().getFullYear()} Mahim's Classroom</span>
+            <button
+              id="classroom-secret-admin-dot"
+              type="button"
+              onClick={() => setIsAdminModalOpen(true)}
+              aria-label="Secret Admin Dot"
+              className="w-6 h-6 inline-flex items-center justify-center text-zinc-400 hover:text-orange-600 active:scale-90 transition cursor-pointer select-none -mx-0.5"
+              title="Classroom Admin"
+            >
+              •
+            </button>
+            <span>সর্বস্বত্ব সংরক্ষিত</span>
           </p>
 
           <div className="flex items-center gap-4 text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif]">
@@ -919,6 +946,16 @@ export const ClassroomPage: React.FC = () => {
               className="hover:text-orange-600 transition-colors cursor-pointer"
             >
               উপরে যান ↑
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => setIsAdminModalOpen(true)}
+              className="hover:text-orange-600 transition-colors cursor-pointer flex items-center gap-1 text-zinc-400 hover:text-zinc-700 px-1.5 py-0.5 rounded hover:bg-zinc-100 transition-all"
+              title="ক্লাসরুম এডমিন প্যানেল"
+              id="classroom-admin-footer-btn"
+            >
+              <Lock size={11} />
+              <span>এডমিন</span>
             </button>
           </div>
         </div>
@@ -1272,6 +1309,14 @@ export const ClassroomPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ========================================================================= */}
+      {/* 4. Dedicated Classroom Admin Modal (Completely separate from portfolio)   */}
+      {/* ========================================================================= */}
+      <ClassroomAdminModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+      />
     </div>
   );
 };

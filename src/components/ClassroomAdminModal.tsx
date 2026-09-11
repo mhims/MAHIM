@@ -20,7 +20,9 @@ import {
   BookOpen,
   GraduationCap,
   ExternalLink,
-  PhoneCall
+  PhoneCall,
+  Send,
+  Sparkles,
 } from 'lucide-react';
 import { ClassroomRegistration, ClassroomSettings } from '../types/classroom';
 import {
@@ -36,6 +38,9 @@ import {
   setClassroomAdminAuthenticated,
   exportRegistrationsToCSV,
   GOOGLE_APPS_SCRIPT_CLASSROOM,
+  fetchRegistrationsFromGoogleSheet,
+  getEffectiveClassroomWebhookUrl,
+  sendRegistrationToGoogleSheet,
 } from '../utils/classroomStorage';
 
 interface ClassroomAdminModalProps {
@@ -56,6 +61,12 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
   const [statusFilter, setStatusFilter] = useState('all');
   const [registrations, setRegistrations] = useState<ClassroomRegistration[]>([]);
 
+  // Sync state
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+  const [isPushingAll, setIsPushingAll] = useState(false);
+  const [showScriptCode, setShowScriptCode] = useState(false);
+
   // Settings state
   const [settings, setSettings] = useState<ClassroomSettings>({});
   const [newPassword, setNewPassword] = useState('');
@@ -70,14 +81,72 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
       const auth = isClassroomAdminAuthenticated();
       setIsAuthenticated(auth);
       if (auth) {
-        loadData();
+        loadData(true);
       }
     }
   }, [isOpen]);
 
-  const loadData = () => {
-    setRegistrations(getStoredClassroomRegistrations());
-    setSettings(getClassroomSettings());
+  const loadData = async (syncWithSheet = true) => {
+    const local = getStoredClassroomRegistrations();
+    setRegistrations(local);
+    const currentSettings = getClassroomSettings();
+    setSettings(currentSettings);
+
+    const effectiveUrl = currentSettings.googleSheetWebhookUrl?.trim() || getEffectiveClassroomWebhookUrl();
+    if (syncWithSheet && effectiveUrl) {
+      setIsSyncing(true);
+      try {
+        const fetched = await fetchRegistrationsFromGoogleSheet(effectiveUrl);
+        if (fetched) {
+          setRegistrations(fetched);
+        }
+      } catch (err) {
+        console.warn('Google Sheet sync warning:', err);
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+  };
+
+  const handleManualSync = async () => {
+    const effectiveUrl = settings.googleSheetWebhookUrl?.trim() || getEffectiveClassroomWebhookUrl();
+    if (!effectiveUrl) {
+      alert('প্রথমে সেটিংস ট্যাবে গিয়ে আপনার Google Apps Script Webhook URL দিন এবং সংরক্ষণ করুন।');
+      setActiveTab('settings');
+      return;
+    }
+    setIsSyncing(true);
+    setSyncStatusMsg(null);
+    try {
+      const fetched = await fetchRegistrationsFromGoogleSheet(effectiveUrl);
+      setRegistrations(fetched);
+      setSyncStatusMsg(`✓ গুগল শিট থেকে সফলভাবে ${fetched.length} জন শিক্ষার্থীর তালিকা লোড হয়েছে!`);
+      setTimeout(() => setSyncStatusMsg(null), 5000);
+    } catch {
+      setSyncStatusMsg('⚠️ গুগল শিট থেকে ডাটা আনা যায়নি। Apps Script এর Web app পারমিশন (Who has access: Anyone) চেক করুন।');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handlePushAllToSheet = async () => {
+    const effectiveUrl = settings.googleSheetWebhookUrl?.trim() || getEffectiveClassroomWebhookUrl();
+    if (!effectiveUrl) {
+      alert('প্রথমে নিচে আপনার Google Apps Script Webhook URL দিন এবং সংরক্ষণ করুন।');
+      return;
+    }
+    if (!registrations.length) {
+      alert('কোনো শিক্ষার্থী তালিকা নেই।');
+      return;
+    }
+    setIsPushingAll(true);
+    let successCount = 0;
+    for (const reg of registrations) {
+      const ok = await sendRegistrationToGoogleSheet(reg, effectiveUrl);
+      if (ok) successCount++;
+    }
+    setIsPushingAll(false);
+    alert(`মোট ${successCount} টি এন্ট্রি গুগল শিটে ব্যাকআপ পাঠানো হয়েছে!`);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -92,7 +161,7 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
       setIsAuthenticated(true);
       setClassroomAdminAuthenticated(true);
       setPasswordInput('');
-      loadData();
+      loadData(true);
     } else {
       setPasswordError(true);
     }
@@ -106,27 +175,30 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
 
   const handleStatusChange = (id: string, newStatus: ClassroomRegistration['status']) => {
     updateRegistrationStatus(id, newStatus);
-    loadData();
+    loadData(false);
   };
 
   const handleDelete = (id: string, name: string) => {
     if (window.confirm(`আপনি কি "${name}" এর প্রি-রেজিস্ট্রেশন রেকর্ড মুছে ফেলতে চান?`)) {
       deleteClassroomRegistration(id);
-      loadData();
+      loadData(false);
     }
   };
 
   const handleClearAll = () => {
     if (window.confirm('সতর্কতা: আপনি কি নিশ্চিত যে সমস্ত শিক্ষার্থীর তালিকা মুছে ফেলতে চান? এই কাজটি ফিরিয়ে আনা যাবে না!')) {
       clearAllClassroomRegistrations();
-      loadData();
+      loadData(false);
     }
   };
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
     saveClassroomSettings(settings);
-    alert('গুগল শিট ওয়েবহুক সেটিংস সংরক্ষিত হয়েছে!');
+    alert('গুগল শিট ওয়েবহুক সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
+    if (settings.googleSheetWebhookUrl?.trim()) {
+      handleManualSync();
+    }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -305,6 +377,17 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
 
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
+                  onClick={handleManualSync}
+                  disabled={isSyncing}
+                  title="গুগল শিট থেকে নতুন তথ্য রিফ্রেশ করুন"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5"
+                >
+                  <RefreshCw size={13} className={isSyncing ? 'animate-spin' : ''} />
+                  <span>{isSyncing ? 'সিঙ্ক হচ্ছে...' : 'শিট রিফ্রেশ'}</span>
+                </button>
+
+                <button
                   onClick={handleLogout}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-600 hover:text-red-600 hover:bg-red-50 border border-zinc-200 transition-colors cursor-pointer font-['Hind_Siliguri',sans-serif]"
                 >
@@ -312,6 +395,22 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                 </button>
               </div>
             </div>
+
+            {/* Sync Status Banner */}
+            {syncStatusMsg && (
+              <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-900 flex items-center justify-between font-['Hind_Siliguri',sans-serif] shadow-xs">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  <span>{syncStatusMsg}</span>
+                </div>
+                <button
+                  onClick={() => setSyncStatusMsg(null)}
+                  className="p-1 rounded-md text-emerald-600 hover:bg-emerald-100 transition-colors cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
 
             {/* Tab: Students List */}
             {activeTab === 'students' && (
@@ -545,20 +644,94 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
             {activeTab === 'settings' && (
               <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6 text-left">
                 {/* 1. Google Sheets Live Integration */}
-                <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-xs">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileSpreadsheet className="text-emerald-600" size={20} />
-                    <h4 className="text-base font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
-                      গুগল শিট লাইভ সিঙ্ক (Google Sheet Webhook)
-                    </h4>
-                  </div>
-                  <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] leading-relaxed mb-4">
-                    এখানে আপনার গুগল স্প্রেডশিটের Webhook URL সেট করে রাখলে যে কোনো শিক্ষার্থী প্রি-রেজিস্ট্রেশন করার সাথে সাথে তার নাম ও নম্বর সরাসরি আপনার গুগল শিটে ব্যাকআপ হয়ে যাবে।
-                  </p>
+                <div className="bg-white border border-zinc-200 rounded-2xl p-5 sm:p-6 shadow-xs">
+                  <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shrink-0">
+                        <FileSpreadsheet size={20} />
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] leading-tight">
+                          গুগল শিট লাইভ অটো-সিঙ্ক (Google Sheet Integration)
+                        </h4>
+                        <p className="text-[11px] text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+                          শিক্ষার্থীদের প্রি-রেজিস্ট্রেশন ডাটা সরাসরি আপনার গুগল স্প্রেডশিটে ব্যাকআপ হবে
+                        </p>
+                      </div>
+                    </div>
 
-                  <form onSubmit={handleSaveSettings} className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      {settings.googleSheetWebhookUrl?.trim() || getEffectiveClassroomWebhookUrl() ? (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1 font-['Hind_Siliguri',sans-serif]">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>সংযুক্ত (Connected)</span>
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 font-['Hind_Siliguri',sans-serif]">
+                          সেটআপ প্রয়োজন
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Step by step guide box */}
+                  <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-200/80 mb-5 space-y-2 text-xs font-['Hind_Siliguri',sans-serif] text-zinc-700">
+                    <p className="font-bold text-zinc-900 flex items-center gap-1.5">
+                      <span>📌 যেভাবে গুগল শিট কানেক্ট করবেন (খুব সহজ ৪টি ধাপ):</span>
+                    </p>
+                    <ol className="list-decimal pl-4 space-y-1.5 leading-relaxed text-zinc-600">
+                      <li>
+                        আপনার গুগল ড্রাইভে গিয়ে একটি নতুন <b>Google Sheet</b> খুলুন (যেমন নাম দিতে পারেন: <span className="font-mono text-zinc-800 font-bold">Mahims Classroom Registrations</span>)।
+                      </li>
+                      <li>
+                        উপরের মেনু বার থেকে <b>Extensions &gt; Apps Script</b> এ ক্লিক করুন।
+                      </li>
+                      <li>
+                        এডিটরে যা কোড আছে সব মুছে দিয়ে নিচের <b>"Apps Script কোড কপি করুন"</b> বাটনে ক্লিক করে কপি করা কোডটি পেস্ট করুন এবং উপরে <b>Save (💾)</b> আইকনে ক্লিক করুন।
+                      </li>
+                      <li>
+                        উপরের ডানপাশের নীল রঙের <b>Deploy &gt; New deployment</b> বাটনে ক্লিক করুন। গিয়ার আইকন থেকে <b>Web app</b> সিলেক্ট করুন। Description: <i>Classroom</i>, Execute as: <b>Me</b>, এবং Who has access: <b>Anyone</b> দিয়ে <b>Deploy</b> চাপুন।
+                      </li>
+                      <li>
+                        এরপর <b>Web app URL</b> টি কপি করে এনে নিচের বক্সে পেস্ট করে <b>"ইউআরএল সংরক্ষণ করুন"</b> বাটনে ক্লিক করুন!
+                      </li>
+                    </ol>
+
+                    <div className="pt-2 flex items-center gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_CLASSROOM);
+                          setCopiedScript(true);
+                          setTimeout(() => setCopiedScript(false), 2500);
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                      >
+                        <Copy size={13} />
+                        <span>{copiedScript ? '✓ কোড কপি হয়েছে!' : 'Apps Script কোড কপি করুন'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowScriptCode((prev) => !prev)}
+                        className="px-3 py-2 rounded-xl bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-300 font-bold text-xs transition-colors cursor-pointer"
+                      >
+                        {showScriptCode ? 'কোড লুকান ▲' : 'কোড প্রিভিউ দেখুন ▼'}
+                      </button>
+                    </div>
+
+                    {showScriptCode && (
+                      <div className="mt-3 relative">
+                        <pre className="p-3.5 rounded-xl bg-zinc-900 text-zinc-100 text-[11px] font-mono overflow-x-auto max-h-56 leading-relaxed border border-zinc-800">
+                          {GOOGLE_APPS_SCRIPT_CLASSROOM}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+
+                  <form onSubmit={handleSaveSettings} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-zinc-700 mb-1 font-mono">
+                      <label className="block text-xs font-bold text-zinc-800 mb-1.5 font-['Hind_Siliguri',sans-serif]">
                         Google Apps Script Webhook URL:
                       </label>
                       <input
@@ -566,24 +739,39 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                         value={settings.googleSheetWebhookUrl || ''}
                         onChange={(e) => setSettings({ ...settings, googleSheetWebhookUrl: e.target.value })}
                         placeholder="https://script.google.com/macros/s/.../exec"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 focus:border-orange-500 text-xs font-mono text-zinc-800"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 border border-zinc-200 focus:border-orange-500 focus:bg-white text-xs font-mono text-zinc-900 outline-none transition-all"
                       />
+                      <p className="text-[11px] text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif]">
+                        Deploy করার পর পাওয়া <code className="font-mono bg-zinc-100 px-1 py-0.5 rounded text-zinc-700">/exec</code> যুক্ত ইউআরএলটি এখানে দিন।
+                      </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5 flex-wrap pt-1">
                       <button
                         type="submit"
-                        className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs font-['Hind_Siliguri',sans-serif] shadow-xs cursor-pointer"
+                        className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs font-['Hind_Siliguri',sans-serif] shadow-xs cursor-pointer transition-all active:scale-98"
                       >
                         ইউআরএল সংরক্ষণ করুন
                       </button>
 
                       <button
                         type="button"
-                        onClick={() => setShowScriptModal(true)}
-                        className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-xs font-['Hind_Siliguri',sans-serif] cursor-pointer"
+                        onClick={handleManualSync}
+                        disabled={isSyncing}
+                        className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-xs font-['Hind_Siliguri',sans-serif] cursor-pointer transition-colors flex items-center gap-1.5"
                       >
-                        শিট কোড ও নির্দেশিকা দেখুন 📋
+                        <RefreshCw size={13} className={isSyncing ? 'animate-spin' : ''} />
+                        <span>{isSyncing ? 'ডাটা সিঙ্ক হচ্ছে...' : 'শিট থেকে ডাটা আনুন'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handlePushAllToSheet}
+                        disabled={isPushingAll || !registrations.length}
+                        className="px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-zinc-200 font-bold text-xs font-['Hind_Siliguri',sans-serif] cursor-pointer transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                      >
+                        <Send size={13} />
+                        <span>{isPushingAll ? 'পাঠানো হচ্ছে...' : 'বর্তমান তালিকা শিটে ব্যাকআপ পাঠান'}</span>
                       </button>
                     </div>
                   </form>

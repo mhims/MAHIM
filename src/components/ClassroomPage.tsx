@@ -252,6 +252,7 @@ export const ClassroomPage: React.FC = () => {
   const [studentClass, setStudentClass] = useState('ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ');
   const [studentMessage, setStudentMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Scroll to section
   const scrollTo = (id: string) => {
@@ -359,10 +360,11 @@ export const ClassroomPage: React.FC = () => {
     setFormSubmitted(false);
   };
 
-  const submitRegistration = (e: React.FormEvent) => {
+  const submitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentName.trim() || !studentPhone.trim()) return;
 
+    setIsSubmitting(true);
     try {
       saveClassroomRegistration({
         name: studentName,
@@ -370,11 +372,14 @@ export const ClassroomPage: React.FC = () => {
         course: studentClass,
         message: studentMessage,
       });
+      // Short delay so request gets dispatched over network cleanly
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch {
       // ignore
+    } finally {
+      setIsSubmitting(false);
+      setFormSubmitted(true);
     }
-
-    setFormSubmitted(true);
   };
 
   // Filter courses based on active tab
@@ -1280,9 +1285,17 @@ export const ClassroomPage: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 disabled:opacity-75 text-white shadow-lg shadow-orange-500/25 transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 flex items-center justify-center gap-2"
                   >
-                    নাম জমা দিন (Submit) ➔
+                    {isSubmitting ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>জমা হচ্ছে...</span>
+                      </>
+                    ) : (
+                      <span>নাম জমা দিন (Submit) ➔</span>
+                    )}
                   </button>
                 </form>
               </div>

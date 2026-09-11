@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Links & Docs | Protected Portal - Mahim</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", sans-serif;
+      background-color: #0d0f12;
+      color: #f4f4f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background-color: #161a20;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 22px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+    p { font-size: 13px; color: #a1a1aa; margin-bottom: 24px; line-height: 1.5; }
+    label { display: block; font-size: 12px; color: #a1a1aa; margin-bottom: 8px; font-weight: 500; }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: #09090b;
+      border: 1px solid #3f3f46;
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 18px;
+      letter-spacing: 4px;
+      font-family: monospace;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2); }
+    .error-msg { color: #f87171; font-size: 12px; margin-top: 8px; display: none; }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 18px;
+      background-color: #d97706;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background-color: #f59e0b; }
+    .footer-note {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #27272a;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #71717a;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      color: #71717a;
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .back-link:hover { color: #d4d4d8; }
+
+    /* Viewer Container */
+    #viewerContainer {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #0d0f12;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .top-bar {
+      height: 52px;
+      background: #161a20;
+      border-bottom: 1px solid #27272a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-open { background: #f59e0b; color: #000; }
+    .btn-open:hover { background: #fbbf24; }
+    .btn-edit { background: #27272a; color: #e4e4e7; }
+    .btn-edit:hover { background: #3f3f46; }
+    .btn-lock { background: #27272a; color: #ef4444; }
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: #ffffff;
+    }
+    .edit-box {
+      display: none;
+      padding: 12px 16px;
+      background: #18181b;
+      border-bottom: 1px solid #27272a;
+      gap: 8px;
+    }
+    .edit-box input {
+      font-size: 13px;
+      letter-spacing: normal;
+      padding: 8px 12px;
+      font-family: inherit;
+    }
+    .edit-box button {
+      width: auto;
+      margin: 0;
+      padding: 8px 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="lockCard">
+    <div class="badge">📝 অল লিংক ও ডকস (All Links)</div>
+    <h1>All Links & Docs (/alll)</h1>
+    <p>আপনার জরুরি লেখা বা লিংক দেখতে পাসওয়ার্ড দিন। সঠিক হলে পেজের ভেতরেই ডকস ওপেন হবে।</p>
+
+    <form id="loginForm" onsubmit="handleVerify(event)">
+      <label for="passInput">পাসওয়ার্ড লিখুন:</label>
+      <input type="password" id="passInput" inputmode="numeric" placeholder="••••••" autofocus required autocomplete="off">
+      <div id="errorMsg" class="error-msg">⚠️ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</div>
+      <button type="submit">প্রবেশ করুন ➔</button>
+    </form>
+
+    <div class="footer-note">
+      <span>🔒 ১০০% ব্যক্তিগত ও সুরক্ষিত</span>
+      <span>No-Index Protected</span>
+    </div>
+
+    <a href="/" class="back-link">← মূল ওয়েবসাইটে ফিরে যান</a>
+  </div>
+
+  <!-- In-Page Embedded Viewer -->
+  <div id="viewerContainer">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span>📝 All Links & Docs (/alll)</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="top-btn btn-edit" onclick="toggleEditBox()">লিংক পরিবর্তন</button>
+        <a id="externalLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="top-btn btn-open">নতুন ট্যাবে ওপেন ↗</a>
+        <button class="top-btn btn-lock" onclick="lockPortal()">লক করুন 🔒</button>
+      </div>
+    </div>
+
+    <div id="editBox" class="edit-box">
+      <input type="url" id="customUrlInput" placeholder="আপনার গুগল ডকস লিংক পেস্ট করুন...">
+      <button class="top-btn btn-open" onclick="saveCustomUrl()">সেভ করুন</button>
+    </div>
+
+    <iframe id="docFrame" src="" allow="autoplay"></iframe>
+  </div>
+
+  <script>
+    const PASS = "197200";
+    let targetDocUrl = localStorage.getItem('mahim_alll_docs_url') || "https://docs.google.com/document/d/1gQEKNhJaVhAlTfrKYQMqMYijSu_2szjMHOhzmeuMeoA/edit?tab=t.0";
+
+    function getEmbedUrl(url) {
+      if (!url) return "";
+      if (url.includes('docs.google.com/document/d/')) {
+        if (url.includes('/edit')) return url.replace(/\/edit.*$/, '/preview');
+        if (!url.includes('/preview')) return url.replace(/\/+$/, '') + '/preview';
+      }
+      return url;
+    }
+
+    function handleVerify(e) {
+      e.preventDefault();
+      const input = document.getElementById('passInput');
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (input.value.trim() === PASS) {
+        errorMsg.style.display = 'none';
+        unlockViewer();
+      } else {
+        errorMsg.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function unlockViewer() {
+      document.getElementById('lockCard').style.display = 'none';
+      const container = document.getElementById('viewerContainer');
+      container.style.display = 'flex';
+
+      if (!targetDocUrl) {
+        document.getElementById('editBox').style.display = 'flex';
+      } else {
+        loadDoc(targetDocUrl);
+      }
+    }
+
+    function loadDoc(url) {
+      targetDocUrl = url;
+      document.getElementById('externalLinkBtn').href = url;
+      document.getElementById('docFrame').src = getEmbedUrl(url);
+    }
+
+    function toggleEditBox() {
+      const box = document.getElementById('editBox');
+      box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+      document.getElementById('customUrlInput').value = targetDocUrl;
+    }
+
+    function saveCustomUrl() {
+      const input = document.getElementById('customUrlInput');
+      const val = input.value.trim();
+      if (val) {
+        localStorage.setItem('mahim_alll_docs_url', val);
+        loadDoc(val);
+        document.getElementById('editBox').style.display = 'none';
+      }
+    }
+
+    function lockPortal() {
+      document.getElementById('docFrame').src = '';
+      document.getElementById('viewerContainer').style.display = 'none';
+      document.getElementById('lockCard').style.display = 'block';
+      document.getElementById('passInput').value = '';
+      document.getElementById('passInput').focus();
+    }
+  </script>
+</body>
+</html>

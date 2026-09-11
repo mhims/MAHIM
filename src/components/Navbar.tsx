@@ -21,7 +21,8 @@ import {
   Linkedin,
   ExternalLink,
   Sun,
-  Moon
+  Moon,
+  School
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -44,6 +45,7 @@ export const Navbar: React.FC = () => {
     { name: 'অভিজ্ঞতা', path: '/experience', href: '/experience', icon: Briefcase },
     { name: 'শিক্ষা', path: '/education', href: '/education', icon: GraduationCap },
     { name: 'ব্লগ', path: '/blog', href: '/blog', icon: BookOpen },
+    { name: 'ক্লাসরুম', path: '/classroom', href: '/classroom', icon: School, isNew: true },
     { name: 'যোগাযোগ', path: '/contact', href: '/contact', icon: Mail },
   ];
 
@@ -161,9 +163,14 @@ export const Navbar: React.FC = () => {
               key={link.path}
               href={link.href}
               onClick={(e) => navigateTo(link.path, e)}
-              className="px-3.5 py-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800 rounded-full transition-all duration-200 shadow-xs"
+              className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all duration-200 shadow-xs flex items-center gap-1.5 ${
+                link.isNew
+                  ? 'text-orange-600 dark:text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20'
+                  : 'text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800'
+              }`}
             >
-              {link.name}
+              {link.isNew && <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />}
+              <span>{link.name}</span>
             </a>
           ))}
         </nav>
@@ -294,10 +301,21 @@ export const Navbar: React.FC = () => {
                     setMobileMenuOpen(false);
                     navigateTo(link.path, e);
                   }}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-800 dark:text-zinc-200 hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-xl transition-colors"
+                  className={`flex items-center justify-between px-4 py-2.5 text-sm font-bold rounded-xl transition-colors ${
+                    link.isNew
+                      ? 'text-orange-600 dark:text-orange-400 bg-orange-500/10'
+                      : 'text-zinc-800 dark:text-zinc-200 hover:text-black dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  }`}
                 >
-                  <Icon className="w-4 h-4 text-amber-500" />
-                  <span>{link.name}</span>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${link.isNew ? 'text-orange-500' : 'text-amber-500'}`} />
+                    <span>{link.name}</span>
+                  </div>
+                  {link.isNew && (
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-orange-500 text-black">
+                      নতুন
+                    </span>
+                  )}
                 </a>
               );
             })}

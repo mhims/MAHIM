@@ -10,9 +10,12 @@ export const DynamicSEO: React.FC = () => {
       : '';
     const isChithi = path.includes('chithi');
     const isSalami = path.includes('salami');
+    const isClassroom = path.includes('classroom');
 
     // 1. Dynamic Document Title
-    if (isChithi) {
+    if (isClassroom) {
+      document.title = "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম (Mahims Classroom)";
+    } else if (isChithi) {
       document.title = 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে';
     } else if (isSalami) {
       document.title = 'Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল';
@@ -39,7 +42,11 @@ export const DynamicSEO: React.FC = () => {
     let activeImage = '';
     let activeUrl = '';
 
-    if (isChithi) {
+    if (isClassroom) {
+      activeDescription = "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম। প্রতিষ্ঠাতা: মাহিম (ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।";
+      activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-classroom.jpg`;
+      activeUrl = `https://${settings.domain || 'mahims.com'}/classroom`;
+    } else if (isChithi) {
       activeDescription = 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।';
       activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-chithi.jpg`;
       activeUrl = `https://${settings.domain || 'mahims.com'}/chithi`;

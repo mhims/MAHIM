@@ -53,6 +53,7 @@ export default function App() {
   const isChithi = currentPath === '/chithi';
   const isAllF = currentPath === '/allf';
   const isAllU = currentPath === '/allu';
+  const isAllL = currentPath === '/alll';
 
   useEffect(() => {
     const handleUrlChange = () => {
@@ -148,7 +149,7 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami, isWallet, isChithi, isAllF, isAllU]);
+  }, [isSalami, isWallet, isChithi, isAllF, isAllU, isAllL]);
 
   if (isSalami) {
     return <SalamiPage />;
@@ -168,6 +169,10 @@ export default function App() {
 
   if (isAllU) {
     return <DriveGatewayPage mode="allu" />;
+  }
+
+  if (isAllL) {
+    return <DriveGatewayPage mode="alll" />;
   }
 
   return (

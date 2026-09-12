@@ -143,13 +143,22 @@ const routeData = {
             </article>
           </section>
 
-          <section class="p-8 rounded-3xl bg-zinc-900 text-white space-y-4 mb-16 text-center">
-            <h2 class="text-2xl font-bold text-white">প্রতিষ্ঠাতা পরিচিতি: মাহিম ইবনে খুদি</h2>
-            <p class="text-sm text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-              প্রতিষ্ঠাতা: মাহিম (শিক্ষার্থী, রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)। দীর্ঘদিনের পাঠদান অভিজ্ঞতা ও প্রযুক্তিগত দক্ষতার সমন্বয়ে শিক্ষার্থীদের সহজ ও মানসম্মত শিক্ষা সহায়তা প্রদানে নিবেদিত।
-            </p>
-            <div class="pt-2">
-              <a href="/about" class="inline-block px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold">মাহিম সম্পর্কে বিস্তারিত</a>
+          <section class="p-8 rounded-3xl bg-zinc-900 text-white space-y-6 mb-16">
+            <div class="text-center space-y-2">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">শিক্ষক ও মেন্টর প্যানেল</span>
+              <h2 class="text-2xl font-bold text-white">Classroom Faculty & Mentors</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
+                <h3 class="text-lg font-bold text-orange-400">মাহিম (Mahim)</h3>
+                <p class="text-xs text-zinc-300 font-semibold">ঢাকা সেন্ট্রাল ইউনিভার্সিটি • প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা কলেজ ক্যাম্পাস (সেশন: ২০২৫-২০২৬)। শিক্ষার্থীদের একাডেমিক প্রস্তুতি ও স্মার্ট এক্সাম পদ্ধতির উদ্ভাবক।</p>
+              </div>
+              <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
+                <h3 class="text-lg font-bold text-orange-400">সামিউল ইসলাম সোহরাব</h3>
+                <p class="text-xs text-zinc-300 font-semibold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, শেখার সিড়ি</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং)। শিক্ষার্থীদের স্কিল ও অ্যাকাডেমিক মেন্টরশিপে নিবেদিত।</p>
+              </div>
             </div>
           </section>
 

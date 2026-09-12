@@ -237,6 +237,9 @@ export const ClassroomPage: React.FC = () => {
   // State for Mahim's Profile Modal
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
+  // State for Samiul Islam Sohrab's Profile Modal
+  const [isSamiulModalOpen, setIsSamiulModalOpen] = useState(false);
+
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
@@ -696,7 +699,7 @@ export const ClassroomPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Mahim's Card */}
           {/* Front details strictly matching user prompt:
               - Name: মাহিম (Mahim)
@@ -706,42 +709,44 @@ export const ClassroomPage: React.FC = () => {
           */}
           <div
             id="mentor-card-mahim"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 sm:p-8 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
           >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-              {/* Photo */}
-              <div className="relative shrink-0">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl p-1 bg-gradient-to-br from-orange-400 via-amber-400 to-orange-500 shadow-md shadow-orange-500/20">
-                  <img
-                    src="https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg"
-                    alt="Mahim - Lead Mentor"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/mahim.jpg';
-                    }}
-                    className="w-full h-full object-cover rounded-[14px]"
-                  />
+            <div>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                {/* Photo */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-orange-400 via-amber-400 to-orange-500 shadow-md shadow-orange-500/20">
+                    <img
+                      src="https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg"
+                      alt="Mahim - Lead Mentor"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/mahim.jpg';
+                      }}
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
+                    <CheckCircle2 size={15} />
+                  </span>
                 </div>
-                <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
-                  <CheckCircle2 size={16} />
-                </span>
-              </div>
 
-              {/* Identity on front */}
-              <div className="text-center sm:text-left flex-1">
-                <h3 className="text-2xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
-                  মাহিম <span className="text-xs font-mono text-zinc-500 font-normal">(Mahim)</span>
-                </h3>
+                {/* Identity on front */}
+                <div className="text-center sm:text-left flex-1">
+                  <h3 className="text-xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
+                    মাহিম <span className="text-xs font-mono text-zinc-500 font-normal">(Mahim)</span>
+                  </h3>
 
-                {/* ঢাকা সেন্ট্রাল ইউনিভার্সিটি */}
-                <p className="mt-2 text-sm font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
-                  <School size={16} className="text-orange-600 shrink-0" />
-                  <span>ঢাকা সেন্ট্রাল ইউনিভার্সিটি</span>
-                </p>
+                  {/* ঢাকা সেন্ট্রাল ইউনিভার্সিটি */}
+                  <p className="mt-1.5 text-xs sm:text-sm font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
+                    <School size={15} className="text-orange-600 shrink-0" />
+                    <span>ঢাকা সেন্ট্রাল ইউনিভার্সিটি</span>
+                  </p>
 
-                {/* ফাউন্ডার, মাহিম'স ক্লাসরুম */}
-                <p className="mt-1 text-xs font-semibold text-orange-700 font-['Hind_Siliguri',sans-serif]">
-                  ফাউন্ডার, মাহিম'স ক্লাসরুম
-                </p>
+                  {/* ফাউন্ডার, মাহিম'স ক্লাসরুম */}
+                  <p className="mt-1 text-xs font-semibold text-orange-700 font-['Hind_Siliguri',sans-serif]">
+                    ফাউন্ডার, মাহিম'স ক্লাসরুম
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -758,21 +763,73 @@ export const ClassroomPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Upcoming Faculty Expansion Card (Updated copy as requested: বিভিন্ন পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয়) */}
-          <div className="bg-white/80 border-2 border-dashed border-orange-300 hover:border-orange-400 rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition-all shadow-xs">
-            <div className="w-14 h-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4">
-              <Users size={26} />
+          {/* Samiul Islam Sohrab's Card */}
+          <div
+            id="mentor-card-samiul"
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                {/* Photo */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 shadow-md shadow-orange-500/20">
+                    <img
+                      src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg"
+                      alt="সামিউল ইসলাম সোহরাব"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
+                    <CheckCircle2 size={15} />
+                  </span>
+                </div>
+
+                {/* Identity on front */}
+                <div className="text-center sm:text-left flex-1">
+                  <h3 className="text-xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
+                    সামিউল ইসলাম সোহরাব
+                  </h3>
+
+                  {/* ফাউন্ডার, সামনাদ একাডেমি */}
+                  <p className="mt-1.5 text-xs sm:text-sm font-bold text-orange-700 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
+                    <Sparkles size={14} className="text-orange-600 shrink-0" />
+                    <span>ফাউন্ডার, সামনাদ একাডেমি</span>
+                  </p>
+
+                  <p className="mt-1 text-xs font-medium text-zinc-600 font-['Hind_Siliguri',sans-serif]">
+                    ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* "বিস্তারিত" Button */}
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+              <button
+                onClick={() => setIsSamiulModalOpen(true)}
+                id="samiul-details-btn"
+                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Upcoming Faculty Expansion Card */}
+          <div className="bg-white/80 border-2 border-dashed border-orange-300 hover:border-orange-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center transition-all shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
+              <Users size={24} />
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 mb-2 font-['Hind_Siliguri',sans-serif]">
               <Sparkles size={13} className="text-orange-600" />
               <span>শীঘ্রই যুক্ত হচ্ছে</span>
             </div>
-            <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-2">
-              পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয়ের শিক্ষক প্যানেল
+            <h3 className="text-lg font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-1.5">
+              পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয় প্যানেল
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-sm font-['Hind_Siliguri',sans-serif] leading-relaxed">
-              দেশের বিভিন্ন স্বনামধন্য পাবলিক বিশ্ববিদ্যালয় এবং শীর্ষ প্রাইভেট বিশ্ববিদ্যালয়ের মেধাবী ও অভিজ্ঞ মেন্টরদের
-              নিয়ে শীঘ্রই আমাদের পূর্ণাঙ্গ শিক্ষক প্যানেল উন্মুক্ত করা হচ্ছে।
+            <p className="text-xs text-zinc-600 max-w-xs font-['Hind_Siliguri',sans-serif] leading-relaxed">
+              দেশের বিভিন্ন স্বনামধন্য পাবলিক বিশ্ববিদ্যালয় এবং শীর্ষ প্রাইভেট বিশ্ববিদ্যালয়ের মেধাবী ও অভিজ্ঞ মেন্টরদের নিয়ে শিক্ষক প্যানেল আরও সমৃদ্ধ হচ্ছে।
             </p>
           </div>
         </div>
@@ -1134,6 +1191,129 @@ export const ClassroomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsProfileModalOpen(false)}
+                className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 1.1 Samiul Islam Sohrab Educational Profile Modal                         */}
+      {/* ========================================================================= */}
+      {isSamiulModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button
+              onClick={() => setIsSamiulModalOpen(false)}
+              id="close-samiul-modal-btn"
+              className="absolute top-4 right-4 p-2 rounded-xl bg-orange-50 text-zinc-500 hover:text-zinc-900 hover:bg-orange-100 transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header with Photo & Name */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-2xl p-1 bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 shrink-0 shadow-md shadow-orange-500/20">
+                <img
+                  src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg"
+                  alt="সামিউল ইসলাম সোহরাব"
+                  className="w-full h-full object-cover rounded-[12px]"
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                  সামিউল ইসলাম সোহরাব
+                </h3>
+                <p className="text-xs text-orange-600 font-bold font-['Hind_Siliguri',sans-serif]">
+                  ফাউন্ডার, সামনাদ একাডেমি
+                </p>
+                <p className="text-[12px] text-zinc-700 font-bold mt-0.5 font-['Hind_Siliguri',sans-serif]">
+                  মেন্টর, শেখার সিড়ি
+                </p>
+              </div>
+            </div>
+
+            {/* Detailed Academic & Professional Credentials */}
+            <div className="space-y-3 mb-6">
+              <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                <GraduationCap size={16} className="text-orange-600" />
+                <span>বিস্তারিত পরিচয় ও শিক্ষা:</span>
+              </h4>
+
+              {/* University Details */}
+              <div className="bg-orange-50/80 border border-orange-200 rounded-2xl p-4">
+                <div className="flex items-center justify-between text-xs font-bold text-orange-700 font-['Hind_Siliguri',sans-serif]">
+                  <span className="flex items-center gap-1.5">
+                    <School size={15} className="text-orange-600" />
+                    বিশ্ববিদ্যালয়
+                  </span>
+                  <span className="font-mono bg-white px-2 py-0.5 rounded border border-orange-200 text-zinc-700 text-xs">
+                    DIU
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-2 font-['Hind_Siliguri',sans-serif]">
+                  ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি
+                </p>
+                <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-orange-200 text-xs font-bold text-orange-800 font-['Hind_Siliguri',sans-serif]">
+                  <BrainCircuit size={14} className="text-orange-600" />
+                  <span>সফটওয়্যার ইঞ্জিনিয়ারিং (Software Engineering)</span>
+                </div>
+              </div>
+
+              {/* Roles & Experience Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-white border border-orange-200 rounded-2xl p-3.5 shadow-xs">
+                  <div className="flex items-center gap-2 text-xs font-bold text-orange-700 font-['Hind_Siliguri',sans-serif]">
+                    <Sparkles size={14} className="text-orange-600" />
+                    <span>প্রতিষ্ঠাতা ও পরিচালক</span>
+                  </div>
+                  <p className="text-sm font-bold text-zinc-900 mt-1 font-['Hind_Siliguri',sans-serif]">
+                    সামনাদ একাডেমি
+                  </p>
+                  <p className="text-xs text-zinc-500 mt-0.5 font-['Hind_Siliguri',sans-serif]">
+                    Founder, Samnad Academy
+                  </p>
+                </div>
+
+                <div className="bg-white border border-orange-200 rounded-2xl p-3.5 shadow-xs">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-700 font-['Hind_Siliguri',sans-serif]">
+                    <Target size={14} className="text-amber-600" />
+                    <span>মেন্টরশিপ</span>
+                  </div>
+                  <p className="text-sm font-bold text-zinc-900 mt-1 font-['Hind_Siliguri',sans-serif]">
+                    মেন্টর, শেখার সিড়ি
+                  </p>
+                  <p className="text-xs text-zinc-500 mt-0.5 font-['Hind_Siliguri',sans-serif]">
+                    Mentor, Shekhar Shiri
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Philosophy / Vision */}
+            <div className="bg-orange-100/70 border border-orange-200 rounded-2xl p-4 mb-6">
+              <p className="text-xs text-zinc-800 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+                💡 <span className="font-bold text-orange-900">দিকনির্দেশনা ও লক্ষ্য:</span> সফটওয়্যার ইঞ্জিনিয়ারিং ও টেকনোলজির আধুনিক ধারণার সাথে অ্যাকাডেমিক শিক্ষার নিখুঁত সমন্বয় ঘটিয়ে শিক্ষার্থীদের স্কিল ও ক্যারিয়ার গঠনে নিরলসভাবে কাজ করে যাওয়া।
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsSamiulModalOpen(false);
+                  handlePreRegister();
+                }}
+                className="flex-1 py-3 rounded-xl font-bold text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white text-center transition-all shadow-md font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                প্রি-রেজিস্ট্রেশন করুন ➔
+              </button>
+              <button
+                onClick={() => setIsSamiulModalOpen(false)}
                 className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
               >
                 বন্ধ করুন

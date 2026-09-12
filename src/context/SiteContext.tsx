@@ -92,7 +92,7 @@ const SiteContext = createContext<SiteContextType | null>(null);
 
 const STORAGE_KEYS = {
   SETTINGS: 'mahims_site_settings_v1',
-  THEME: 'mahims_site_theme_v1',
+  THEME: 'mahims_site_theme_v2',
   EXPERIENCES: 'mahims_experiences_v1',
   EDUCATION: 'mahims_education_v1',
   SKILLS: 'mahims_skills_v1',
@@ -344,23 +344,26 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(contactMessages));
   }, [contactMessages]);
 
-  // Theme management: defaults to dark as requested, allows toggling to light
+  // Theme management: defaults to light mode for all visitors, allows toggling to dark mode
   const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.THEME);
       if (saved === 'dark' || saved === 'light') return saved;
-      return 'dark'; // Default is Dark Mode as requested
+      return 'light'; // Default is Light Mode as requested
     } catch {
-      return 'dark';
+      return 'light';
     }
   });
 
   useEffect(() => {
     const root = document.documentElement;
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (theme === 'dark') {
       root.classList.add('dark');
+      if (metaTheme) metaTheme.setAttribute('content', '#09090b');
     } else {
       root.classList.remove('dark');
+      if (metaTheme) metaTheme.setAttribute('content', '#fdfdfb');
     }
     try {
       localStorage.setItem(STORAGE_KEYS.THEME, theme);

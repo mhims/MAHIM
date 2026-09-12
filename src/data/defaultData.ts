@@ -1,17 +1,17 @@
 import { BlogPost, CertificationItem, EducationItem, ExperienceItem, SiteSettings, SkillItem, UserAccount } from '../types';
 
 export const DEFAULT_SETTINGS: SiteSettings = {
-  siteName: 'Mahim',
-  tagline: 'গ্রাফিক ডিজাইনার ও ভিজ্যুয়াল স্টোরিটেলার',
+  siteName: "Mahim's World",
+  tagline: 'শিক্ষা, প্রযুক্তি, দর্শন ও সৃষ্টিশীল ডিজিটাল অঙ্গন',
   domain: 'mahims.com',
   primaryLang: 'bn',
   logoUrl: '/logo.png',
 
   heroTitle: 'Mahim Ibne Khudi',
-  heroSubtitle: 'Professional Graphic Designer & Brand Specialist',
-  heroBio: 'হ্যালো! আমি মাহিম ইবনে খুদি। ক্রিয়েটিভ ডিজাইন ও ভিজ্যুয়াল ব্র্যান্ডিং এর মাধ্যমে যেকোনো আইডিয়াকে আকর্ষণীয় রূপে ফুটিয়ে তুলতে ভালোবাসি। ক্লায়েন্টের লক্ষ্য অনুযায়ী অর্থপূর্ণ ও প্রিমিয়াম ডিজাইন তৈরি করাই আমার প্রধান উদ্দেশ্য।',
+  heroSubtitle: "Mahim's World — Thoughts, Academy & Creative Ecosystem",
+  heroBio: 'স্বাগতম মাহিম ইবনে খুদি এর অফিসিয়াল ডিজিটাল ইকোসিস্টেমে। শিক্ষা, প্রযুক্তি, মুক্ত দর্শন ও সৃষ্টিশীল নানা প্রজেক্টের এক উন্মুক্ত সংগ্রহশালা।',
   heroImage: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1788629825/MAHIMIBNEKHUDI_wafylv.png',
-  heroImageAlt: 'Mahim Ibne Khudi - গ্রাফিক ডিজাইনার',
+  heroImageAlt: 'Mahim Ibne Khudi - মাহিম ইবনে খুদি',
   resumeDownloadUrl: '#',
 
   phone: '',
@@ -27,20 +27,27 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   whatsappMessage: 'হ্যালো মাহিম! mahims.com দেখে যোগাযোগ করছি।',
   whatsappAvatarUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg',
 
-  aboutHeadline: 'ক্রিয়েটিভিটি ও পারফেকশনের সমন্বয়ে ভিজ্যুয়াল সলিউশন',
+  aboutHeadline: 'শিক্ষা, প্রযুক্তি ও মুক্ত দর্শনের মেলবন্ধন',
   aboutStory: [
-    'আমি একজন ডেডিকেটেড গ্রাফিক ডিজাইনার, যিনি আধুনিক ভিজ্যুয়াল ডিজাইন এবং সোশ্যাল মিডিয়া কনটেন্ট তৈরিতে পারদর্শী। ক্লায়েন্টের ব্র্যান্ডিং যেন দর্শকদের হৃদয়ে দীর্ঘস্থায়ী প্রভাব ফেলে, সেই লক্ষ্যে আমি নিখুঁত মনোযোগ দিয়ে প্রতিটি প্রজেক্ট সম্পন্ন করি।',
-    'ডিজাইনের পাশাপাশি আমি ডিজিটাল মার্কেটিং এবং সোশ্যাল মিডিয়া স্ট্র্যাটেজি নিয়ে কাজ করি, যাতে ডিজাইন কেবল সুন্দরই না হয়, বরং তা কাঙ্ক্ষিত ফলাফল এনে দিতে সক্ষম হয়।'
+    'আমি মাহিম ইবনে খুদি। এটি আমার কাজের, দর্শনের এবং ভাবনার এক সমন্বিত ডিজিটাল মহাবিশ্ব। এখানে একাডেমিক পাঠদান, সৃজনশীল ডিজাইন, অটোমেশন ও ব্যক্তিগত স্মৃতির পাতা—সবকিছু এক ছাদের নিচে সংরক্ষিত।',
+    'জীবনের প্রতিটি অভিজ্ঞতাকে নতুন সম্ভাবনায় রূপান্তর করা এবং জ্ঞানের আলো ছড়িয়ে দেওয়াই আমার কাজের মূল প্রেরণা।'
   ],
   nativeLanguage: 'বাংলা (মাতৃভাষা - ফুল প্রফিশিয়েন্সি)',
   foreignLanguage: 'ইংরেজি (লিখিত ও মৌখিক দক্ষতা)',
-  interests: ['গ্রাফিক ডিজাইন', 'ব্র্যান্ডিং ও আইডেন্টিটি', 'সোশ্যাল মিডিয়া মার্কেটিং', 'ফটোগ্রাফি', 'নতুন কিছু শেখা ও এক্সপ্লোরেশন'],
+  interests: ['শিক্ষকতা ও একাডেমি', 'প্রযুক্তি ও অটোমেশন', 'গ্রাফিক ডিজাইন ও ব্র্যান্ডিং', 'দর্শন ও সাহিত্য', 'স্মৃতিচারণ ও ফটোগ্রাফি'],
 
-  seoTitle: 'Mahim | Graphic Designer & Creative Professional - mahims.com',
-  seoDescription: 'Mahim Ibne Khudi (মাহিম) - প্রফেশনাল গ্রাফিক ডিজাইনার, সোশ্যাল মিডিয়া স্পেশালিস্ট ও ক্রিয়েটিভ ভিজ্যুয়ালাইজার। সোশ্যাল মিডিয়া ডিজাইন, ব্র্যান্ড আইডেন্টিটি এবং প্রিন্ট ডিজাইন সার্ভিস।',
+  seoTitle: "Mahim's World | মাহিম ইবনে খুদি — ডিজিটাল ইকোসিস্টেম (mahims.com)",
+  seoDescription: "Mahim's World (মাহিম'স ওয়ার্ল্ড) - মাহিম ইবনে খুদি এর অফিসিয়াল ডিজিটাল ইকোসিস্টেম। শিক্ষা ও একাডেমি (Mahim's Classroom), প্রযুক্তি, মুক্ত দর্শন, সৃষ্টিশীল প্রজেক্ট ও জীবনের নানা গল্পের উন্মুক্ত প্ল্যাটফর্ম।",
   seoKeywords: [
+    'মাহিম ওয়ার্ল্ড',
+    'Mahims World',
+    'Mahim World',
+    'মাহিমস ওয়ার্ল্ড',
+    'মাহিম গাইবান্ধা',
+    'Mahim Gaibandha',
     'Mahim',
     'মাহিম',
+    "Mahim's World",
     'Mahims',
     'মাহিমস',
     'মাহিম\'স',
@@ -51,9 +58,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     'Ibne Khudi',
     'Asrare Khudi',
     'Mahim Ibne Asrare Khudi',
-    'Graphic Designer Bangladesh',
-    'Remote Graphic Designer',
-    'Social Media Graphic Designer',
+    "Mahim's Classroom",
+    'মাহিম ক্লাসরুম',
+    'Gaibandha',
+    'গাইবান্ধা',
     'mahims.com'
   ],
   googleSiteVerification: 't4ejgDcENe8vJ4Q97NJwtR6odLfYib__3hEpQhVwuIQ',

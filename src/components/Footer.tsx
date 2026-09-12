@@ -64,12 +64,19 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-6 space-y-3 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3">
               <Logo3D size="sm" />
-              <span className="text-xl font-black text-[#1a1a1a] dark:text-white tracking-tight">
-                {settings.heroTitle}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xl font-black text-[#1a1a1a] dark:text-white tracking-tight">
+                  Mahim&apos;s World
+                </span>
+                <span className="text-xs text-amber-600 dark:text-amber-400 font-bold font-['Hind_Siliguri',sans-serif]">
+                  মাহিম ইবনে খুদি এর ডিজিটাল ইকোসিস্টেম
+                </span>
+              </div>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md font-normal leading-relaxed">
-              {settings.seoDescription}
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md font-normal leading-relaxed font-['Hind_Siliguri',sans-serif]">
+              {settings.seoDescription && !settings.seoDescription.includes('গ্রাফিক ডিজাইনার')
+                ? settings.seoDescription
+                : "মাহিম ইবনে খুদি এর অফিসিয়াল ডিজিটাল ইকোসিস্টেম। শিক্ষা ও একাডেমি (Mahim's Classroom), প্রযুক্তি, মুক্ত দর্শন, সৃষ্টিশীল কাজ ও ভাবনার এক সমন্বিত প্ল্যাটফর্ম।"}
             </p>
 
             {/* Social Links Row */}
@@ -109,14 +116,20 @@ export const Footer: React.FC = () => {
             অনুসন্ধান কীওয়ার্ড (SEO Index Tags):
           </p>
           <div className="flex flex-wrap gap-2">
-            {settings.seoKeywords.map((kw, i) => (
-              <span
-                key={i}
-                className="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:border-black/30 dark:hover:border-white/30 transition-colors font-medium text-xs"
-              >
-                #{kw}
-              </span>
-            ))}
+            {settings.seoKeywords
+              .filter(
+                (kw) =>
+                  !kw.toLowerCase().includes('graphic designer') &&
+                  !kw.toLowerCase().includes('social media graphic')
+              )
+              .map((kw, i) => (
+                <span
+                  key={i}
+                  className="px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-900 border border-black/10 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:text-black dark:hover:text-white hover:border-black/30 dark:hover:border-white/30 transition-colors font-medium text-xs"
+                >
+                  #{kw}
+                </span>
+              ))}
           </div>
         </div>
 

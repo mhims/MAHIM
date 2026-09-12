@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const distDir = path.resolve('dist');
-const routes = ['about', 'skills', 'experience', 'education', 'blog', 'contact', 'wallet', 'salami', 'chithi', 'classroom'];
+const routes = ['about', 'skills', 'experience', 'education', 'blog', 'contact', 'wallet', 'salami', 'chithi', 'classroom', 'portfolio'];
 
 if (fs.existsSync(distDir)) {
   const rootIndexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');

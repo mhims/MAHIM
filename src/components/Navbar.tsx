@@ -22,7 +22,8 @@ import {
   ExternalLink,
   Sun,
   Moon,
-  School
+  School,
+  Home
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -39,14 +40,11 @@ export const Navbar: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { name: 'হোম', path: '/', href: '/', icon: Layers },
-    { name: 'সম্পর্কে', path: '/about', href: '/about', icon: User },
-    { name: 'দক্ষতা', path: '/skills', href: '/skills', icon: Wrench },
-    { name: 'অভিজ্ঞতা', path: '/experience', href: '/experience', icon: Briefcase },
-    { name: 'শিক্ষা', path: '/education', href: '/education', icon: GraduationCap },
-    { name: 'ব্লগ', path: '/blog', href: '/blog', icon: BookOpen },
+    { name: 'হোম', path: '/', href: '/', icon: Home },
+    { name: 'পোর্টফোলিও', path: '/portfolio', href: '/portfolio', icon: Briefcase },
     { name: 'ক্লাসরুম', path: '/classroom', href: '/classroom', icon: School, isNew: true },
-    { name: 'যোগাযোগ', path: '/contact', href: '/contact', icon: Mail },
+    { name: 'ব্লগ', path: '/blog', href: '/blog', icon: BookOpen },
+    { name: 'যোগাযোগ', path: '/contact', href: '/contact', icon: MessageCircle },
   ];
 
   const socialLinks = [
@@ -106,7 +104,7 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300 font-bold">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>গ্রাফিক্স ডিজাইনার ও ব্র্যান্ডিং স্পেশালিস্ট</span>
+            <span>Mahim&apos;s World • মাহিম’স ওয়ার্ল্ড</span>
           </span>
         </div>
 

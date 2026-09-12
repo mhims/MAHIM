@@ -15,7 +15,7 @@ export const SECTION_ROUTES: Record<string, string> = {
   '/contact': 'contact',
 };
 
-export const STANDALONE_ROUTES = new Set(['/salami', '/wallet', '/admin', '/chithi', '/allf', '/allu', '/alll', '/classroom']);
+export const STANDALONE_ROUTES = new Set(['/portfolio', '/salami', '/wallet', '/admin', '/chithi', '/allf', '/allu', '/alll', '/classroom']);
 
 export function isValidRoute(pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, '') || '/';

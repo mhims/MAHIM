@@ -111,7 +111,6 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed = JSON.parse(saved);
         // If parsed heroImage is an old local file (mahim.jpg) or empty, upgrade to default Cloudinary link.
-        // Otherwise, keep the user's custom URL or uploaded image!
         const heroImageVal =
           parsed.heroImage &&
           typeof parsed.heroImage === 'string' &&
@@ -119,9 +118,58 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ? parsed.heroImage
             : DEFAULT_SETTINGS.heroImage;
 
+        // Clean out any obsolete "Graphic Designer" keywords
+        const existingKw: string[] = Array.isArray(parsed.seoKeywords)
+          ? parsed.seoKeywords
+          : DEFAULT_SETTINGS.seoKeywords;
+        const cleanedKw = existingKw.filter(
+          (k: string) =>
+            !k.toLowerCase().includes('graphic designer') &&
+            !k.toLowerCase().includes('social media graphic')
+        );
+
+        // Required SEO search keys requested by user
+        const targetKw = [
+          'মাহিম ওয়ার্ল্ড',
+          'Mahims World',
+          'Mahim World',
+          'মাহিমস ওয়ার্ল্ড',
+          'মাহিম গাইবান্ধা',
+          'Mahim Gaibandha',
+        ];
+        targetKw.forEach((kw) => {
+          if (!cleanedKw.includes(kw)) {
+            cleanedKw.unshift(kw);
+          }
+        });
+
+        const isOldDescription =
+          !parsed.seoDescription ||
+          parsed.seoDescription.includes('গ্রাফিক ডিজাইনার') ||
+          parsed.seoDescription.includes('Graphic Designer');
+
+        const cleanDescription = isOldDescription
+          ? DEFAULT_SETTINGS.seoDescription
+          : parsed.seoDescription;
+
+        const cleanTagline =
+          !parsed.tagline || parsed.tagline.includes('গ্রাফিক ডিজাইনার')
+            ? DEFAULT_SETTINGS.tagline
+            : parsed.tagline;
+
+        const cleanHeroSubtitle =
+          !parsed.heroSubtitle || parsed.heroSubtitle.includes('Graphic Designer')
+            ? DEFAULT_SETTINGS.heroSubtitle
+            : parsed.heroSubtitle;
+
         return {
           ...DEFAULT_SETTINGS,
           ...parsed,
+          siteName: "Mahim's World",
+          tagline: cleanTagline,
+          heroSubtitle: cleanHeroSubtitle,
+          seoDescription: cleanDescription,
+          seoKeywords: cleanedKw,
           whatsappLink: 'https://wa.me/@mahim.wp',
           heroImage: heroImageVal,
         };

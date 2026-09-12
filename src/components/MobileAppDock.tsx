@@ -7,7 +7,10 @@ import {
   Layers, 
   BookOpen, 
   MessageCircle,
-  Sparkles
+  Sparkles,
+  Briefcase,
+  School,
+  Mail
 } from 'lucide-react';
 
 export const MobileAppDock: React.FC = () => {
@@ -43,28 +46,28 @@ export const MobileAppDock: React.FC = () => {
       icon: Home, 
       path: '/',
       href: '/',
+      activeColor: 'text-amber-600',
+      bgGlow: 'bg-amber-50 text-amber-600 border-amber-200',
+      indicator: 'bg-amber-500'
+    },
+    { 
+      id: 'portfolio', 
+      label: 'পোর্টফোলিও', 
+      icon: Briefcase, 
+      path: '/portfolio',
+      href: '/portfolio',
       activeColor: 'text-[#2563eb]',
       bgGlow: 'bg-blue-50 text-blue-600 border-blue-200',
       indicator: 'bg-[#2563eb]'
     },
     { 
-      id: 'about', 
-      label: 'প্রোফাইল', 
-      icon: User, 
-      path: '/about',
-      href: '/about',
-      activeColor: 'text-[#7c3aed]',
-      bgGlow: 'bg-purple-50 text-purple-600 border-purple-200',
-      indicator: 'bg-[#7c3aed]'
-    },
-    { 
-      id: 'skills', 
-      label: 'দক্ষতা', 
-      icon: Layers, 
-      path: '/skills',
-      href: '/skills',
+      id: 'classroom', 
+      label: 'ক্লাসরুম', 
+      icon: School, 
+      path: '/classroom',
+      href: '/classroom',
       activeColor: 'text-[#ea580c]',
-      bgGlow: 'bg-amber-50 text-amber-600 border-amber-200',
+      bgGlow: 'bg-orange-50 text-orange-600 border-orange-200',
       indicator: 'bg-[#ea580c]'
     },
     { 
@@ -76,7 +79,7 @@ export const MobileAppDock: React.FC = () => {
       activeColor: 'text-[#059669]',
       bgGlow: 'bg-emerald-50 text-emerald-600 border-emerald-200',
       indicator: 'bg-[#059669]'
-    },
+    }
   ];
 
   return (
@@ -129,30 +132,6 @@ export const MobileAppDock: React.FC = () => {
             );
           })}
         </div>
-
-        {/* Vertical divider */}
-        <div className="h-7 w-[1px] bg-black/10 dark:bg-white/10 mx-1" />
-
-        {/* Standout 3D WhatsApp Button in Dock */}
-        <a
-          href={settings.whatsappLink || 'https://wa.me/@mahim.wp'}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="হোয়াটসঅ্যাপে সরাসরি কথা বলুন"
-          className="relative group flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-[0_4px_14px_rgba(16,185,129,0.4)] active:scale-90 transition-all border border-emerald-400/40"
-        >
-          {/* Subtle gloss overlay */}
-          <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/25 rounded-t-2xl pointer-events-none" />
-          
-          <div className="relative">
-            <MessageCircle className="w-5 h-5 text-white" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-white animate-ping" />
-          </div>
-          <span className="text-[11px] font-black tracking-tight text-white">
-            চ্যাট
-          </span>
-        </a>
-
       </nav>
     </aside>
   );

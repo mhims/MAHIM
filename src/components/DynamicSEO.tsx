@@ -11,6 +11,7 @@ export const DynamicSEO: React.FC = () => {
     const isChithi = path.includes('chithi');
     const isSalami = path.includes('salami');
     const isClassroom = path.includes('classroom');
+    const isPortfolio = path.includes('portfolio');
 
     // 1. Dynamic Document Title
     if (isClassroom) {
@@ -19,12 +20,12 @@ export const DynamicSEO: React.FC = () => {
       document.title = 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে';
     } else if (isSalami) {
       document.title = 'Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল';
+    } else if (isPortfolio) {
+      document.title = 'Mahim Portfolio | মাহিম — প্রফেশনাল পোর্টফোলিও, কোডিং ও ক্যারিয়ার';
     } else if (selectedPostForView) {
-      document.title = `${selectedPostForView.title} | ${settings.siteName || 'Mahim'}`;
-    } else if (settings.seoTitle) {
-      document.title = settings.seoTitle;
+      document.title = `${selectedPostForView.title} | ${settings.siteName || "Mahim's World"}`;
     } else {
-      document.title = `${settings.heroTitle || 'Mahim'} | ${settings.heroSubtitle || 'Graphic Designer'}`;
+      document.title = "Mahim's World | মাহিম’স ওয়ার্ল্ড — ডিজিটাল ইকোসিস্টেম ও ভাবনা ভুবন";
     }
 
     // Helper to safely set or create meta tag
@@ -57,11 +58,11 @@ export const DynamicSEO: React.FC = () => {
     } else {
       activeDescription = selectedPostForView
         ? selectedPostForView.excerpt || selectedPostForView.title
-        : settings.seoDescription || settings.heroBio || '';
+        : "Mahim's World (মাহিম'স ওয়ার্ল্ড) - মাহিম ইবনে খুদি এর অফিসিয়াল ডিজিটাল ইকোসিস্টেম। শিক্ষা ও একাডেমি (Mahim's Classroom), প্রযুক্তি, মুক্ত দর্শন, ক্রিয়েটিভ প্রজেক্ট ও স্মৃতির এক উন্মুক্ত প্ল্যাটফর্ম।";
 
       activeImage = selectedPostForView?.coverImage
         ? selectedPostForView.coverImage
-        : settings.heroImage || 'https://mahims.com/assets/og-preview.jpg';
+        : 'https://res.cloudinary.com/drvyjj7td/image/upload/v1788629825/MAHIMIBNEKHUDI_wafylv.png';
 
       activeUrl = selectedPostForView
         ? `https://${settings.domain || 'mahims.com'}/#blog/${selectedPostForView.slug}`
@@ -99,6 +100,13 @@ export const DynamicSEO: React.FC = () => {
         givenName: 'Mahim',
         familyName: 'Ibne Khudi',
         alternateName: [
+          "Mahim's World",
+          'Mahims World',
+          'Mahim World',
+          'মাহিমস ওয়ার্ল্ড',
+          'মাহিম ওয়ার্ল্ড',
+          'মাহিম গাইবান্ধা',
+          'Mahim Gaibandha',
           'Mahim',
           'মাহিম',
           'Mahims',
@@ -110,11 +118,11 @@ export const DynamicSEO: React.FC = () => {
           'Ibne Khudi',
           'Asrare Khudi',
         ],
-        description: settings.heroBio || 'Professional Graphic Designer & Brand Specialist',
-        disambiguatingDescription: `${settings.heroTitle} is a Bangladeshi graphic designer and creative visual specialist at ${siteDomain}.`,
+        description: settings.heroBio || "Mahim's World (মাহিম'স ওয়ার্ল্ড) - Founder of Mahim's Classroom, educator, and digital creator.",
+        disambiguatingDescription: `${settings.heroTitle} is the creator of Mahim's World and founder of Mahim's Classroom at ${siteDomain}.`,
         url: siteUrl,
         image: settings.heroImage ? [settings.heroImage, settings.whatsappAvatarUrl || ''] : undefined,
-        jobTitle: settings.heroSubtitle || 'Graphic Designer & Creative Professional',
+        jobTitle: settings.heroSubtitle || "Educator, Tech Enthusiast & Creator — Founder of Mahim's Classroom",
         email: settings.email ? `mailto:${settings.email}` : undefined,
         sameAs: [
           settings.linkedinUrl,

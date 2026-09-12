@@ -17,6 +17,7 @@ const routes = [
   'classroom/samiul',
   'classroom/suza',
   'classroom/mithen',
+  'classroom/swocchol',
   'portfolio'
 ];
 
@@ -30,8 +31,8 @@ const routeData = {
   classroom: {
     title: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি, কনসেপ্ট ক্লাস ও স্মার্ট এক্সাম",
     metaTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
-    description: "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।",
-    keywords: "Mahim's Classroom, মাহিম ক্লাসরুম, Mahims Classroom, Mahim Classroom, মাহিমস ক্লাসরুম, mahim classroom, mahims.com/classroom, এইচএসসি আইসিটি, এইচএসসি বাংলা, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম, মাহিম ঢাকা সেন্ট্রাল ইউনিভার্সিটি, Mahim Ibne Khudi classroom",
+    description: "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। শিক্ষক প্যানেল: মাহিম (Mahim), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), আবু সালেহ সুজা (Abu Saleh Suza), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
+    keywords: "Mahim's Classroom, মাহিম ক্লাসরুম, Mahims Classroom, Mahim Classroom, মাহিমস ক্লাসরুম, mahim classroom, mahims.com/classroom, মাহিম, Mahim Ibne Khudi, সামিউল ইসলাম সোহরাব, Samiul Islam Sohrab, আবু সালেহ সুজা, Abu Saleh Suza, মিশকাত শরীফ মিথেন, Mishkat Sharif Mithen, স্বচ্ছল কুমার কর্মকার, Swocchol Kumar Karmokar, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
     canonical: `${siteUrl}/classroom`,
     ogTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
     ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
@@ -61,10 +62,16 @@ const routeData = {
           "founder": {
             "@type": "Person",
             "name": "Mahim Ibne Khudi",
-            "alternateName": "মাহিম",
+            "alternateName": ["মাহিম", "মাহিম ইবনে খুদি", "Mahim"],
             "alumniOf": "Dhaka Central University",
-            "url": "https://mahims.com/"
-          }
+            "url": "https://mahims.com/classroom/mahim"
+          },
+          "alumni": [
+            { "@type": "Person", "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "url": "https://mahims.com/classroom/suza" },
+            { "@type": "Person", "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)", "url": "https://mahims.com/classroom/samiul" },
+            { "@type": "Person", "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "url": "https://mahims.com/classroom/mithen" },
+            { "@type": "Person", "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)", "url": "https://mahims.com/classroom/swocchol" }
+          ]
         },
         {
           "@type": "Course",
@@ -152,26 +159,31 @@ const routeData = {
               <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">শিক্ষক ও মেন্টর প্যানেল</span>
               <h2 class="text-2xl font-bold text-white">Classroom Faculty & Mentors</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
-                <h3 class="text-lg font-bold text-orange-400">মাহিম (Mahim)</h3>
+                <a href="/classroom/mahim" class="text-lg font-bold text-orange-400 hover:underline">মাহিম ইবনে খুদি (Mahim Ibne Khudi)</a>
                 <p class="text-xs text-zinc-300 font-semibold">ঢাকা সেন্ট্রাল ইউনিভার্সিটি • প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা কলেজ ক্যাম্পাস (সেশন: ২০২৫-২০২৬)। শিক্ষার্থীদের একাডেমিক প্রস্তুতি ও স্মার্ট এক্সাম পদ্ধতির উদ্ভাবক।</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা কলেজ ক্যাম্পাস। শিক্ষার্থীদের একাডেমিক প্রস্তুতি ও স্মার্ট এক্সাম পদ্ধতির উদ্ভাবক।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
-                <h3 class="text-lg font-bold text-orange-400">সামিউল ইসলাম সোহরাব</h3>
+                <a href="/classroom/samiul" class="text-lg font-bold text-orange-400 hover:underline">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)</a>
                 <p class="text-xs text-zinc-300 font-semibold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, শেখার সিড়ি</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং)। শিক্ষার্থীদের স্কিল ও অ্যাকাডেমিক মেন্টরশিপে নিবেদিত।</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং - DIU SWE)। স্কিল ও অ্যাকাডেমিক মেন্টরশিপ।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
-                <h3 class="text-lg font-bold text-orange-400">আবু সালেহ সুজা</h3>
-                <p class="text-xs text-zinc-300 font-semibold">ফার্মেসি বিভাগ • মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২৫ সেশনে ৫১তম। জবি বোটানি ও কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়ে সুযোগপ্রাপ্ত।</p>
+                <a href="/classroom/suza" class="text-lg font-bold text-orange-400 hover:underline">আবু সালেহ সুজা (Abu Saleh Suja)</a>
+                <p class="text-xs text-zinc-300 font-semibold">ফার্মেসি বিভাগ • মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২৫ সেশনে ৫১তম মেধাক্রম (GST Rank 51)। জবি বোটানি ও কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়ে সুযোগপ্রাপ্ত।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
-                <h3 class="text-lg font-bold text-orange-400">মিশকাত শরীফ মিথেন</h3>
-                <p class="text-xs text-zinc-300 font-semibold">বেগম রোকেয়া বিশ্ববিদ্যালয় • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগে সুযোগপ্রাপ্ত। এসএসসি ও এইচএসসি উভয় পরীক্ষায় জিপিএ ৫ প্রাপ্ত।</p>
+                <a href="/classroom/mithen" class="text-lg font-bold text-orange-400 hover:underline">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</a>
+                <p class="text-xs text-zinc-300 font-semibold">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগ। এসএসসি ও এইচএসসি বিজ্ঞান বিভাগে জিপিএ ৫.০০ প্রাপ্ত।</p>
+              </div>
+              <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
+                <a href="/classroom/swocchol" class="text-lg font-bold text-orange-400 hover:underline">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)</a>
+                <p class="text-xs text-zinc-300 font-semibold">কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (UIU CSE) • ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">প্রোগ্রামিং, অ্যালগরিদম, কম্পিউটার সাইন্স ও উচ্চতর গণিতে শিক্ষার্থীদের দক্ষ করে গড়ে তুলতে নিবেদিত মেন্টর।</p>
               </div>
             </div>
           </section>
@@ -195,132 +207,266 @@ const routeData = {
   },
 
   'classroom/mahim': {
-    title: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
-    metaTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম | Mahim Profile",
-    description: "মাহিম - ঢাকা সেন্ট্রাল ইউনিভার্সিটি (অনার্স)। প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম। একাডেমি ও এডমিশন মেন্টরশিপ প্রোফাইল।",
-    keywords: "মাহিম, মাহিম ক্লাসরুম, Mahim Classroom, Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি, মাহিম শিক্ষক প্রোফাইল",
+    title: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) | প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)",
+    metaTitle: "Mahim Ibne Khudi (মাহিম ইবনে খুদি) — Founder & Mentor | Mahim's Classroom",
+    description: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)। এইচএসসি ২০২৪ ও এসএসসি ২০২২ উভয় পরীক্ষায় বিজ্ঞান বিভাগে জিপিএ ৫.০০ (দিনাজপুর শিক্ষা বোর্ড)। প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম।",
+    keywords: "মাহিম ইবনে খুদি, মাহিম, Mahim Ibne Khudi, Mahim, Mahim Khudi, Mahim's Classroom, মাহিম ক্লাসরুম, ঢাকা সেন্ট্রাল ইউনিভার্সিটি, Dhaka Central University, দিনাজপুর বোর্ড জিপিএ ৫, HSC 2024 GPA 5.00, SSC 2022 GPA 5.00, মাহিম শিক্ষক প্রোফাইল, Mahim Profile, এডমিশন মেন্টর মাহিম",
     canonical: `${siteUrl}/classroom/mahim`,
-    ogTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম",
-    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | ফাউন্ডার, মাহিম'স ক্লাসরুম। শিক্ষক ও মেন্টর প্রোফাইল এবং কোর্সসমূহ।",
-    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
-    twitterTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম",
-    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | ফাউন্ডার, মাহিম'স ক্লাসরুম। শিক্ষক ও মেন্টর প্রোফাইল।",
-    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
+    ogTitle: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) — প্রতিষ্ঠাতা ও প্রধান মেন্টর | মাহিম'স ক্লাসরুম",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) | বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি উভয় পরীক্ষায় জিপিএ ৫.০০ (দিনাজপুর শিক্ষা বোর্ড) | প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
+    twitterTitle: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) — মাহিম'স ক্লাসরুম",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | এসএসসি ও এইচএসসি জিপিএ ৫.০০ | প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Person",
-      "name": "মাহিম (Mahim)",
+      "name": "মাহিম ইবনে খুদি",
+      "alternateName": ["Mahim Ibne Khudi", "Mahim", "Mahim Khudi", "মাহিম"],
       "url": `${siteUrl}/classroom/mahim`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
-      "jobTitle": "ফাউন্ডার ও প্রধান মেন্টর",
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
+      "jobTitle": "প্রতিষ্ঠাতা ও প্রধান মেন্টর (Founder & Lead Mentor)",
       "worksFor": {
         "@type": "EducationalOrganization",
-        "name": "Mahim's Classroom"
+        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+        "url": `${siteUrl}/classroom`
       },
-      "alumniOf": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি"
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (Dhaka Central University, Dhaka College Campus)"
+      },
+      "description": "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - ঢাকা সেন্ট্রাল ইউনিভার্সিটির শিক্ষার্থী ও মাহিম'স ক্লাসরুমের প্রতিষ্ঠাতা। বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি উভয় পরীক্ষায় দিনাজপুর বোর্ড থেকে জিপিএ ৫.০০ প্রাপ্ত।",
+      "knowsAbout": ["HSC Preparation", "University Admission", "Political Science", "Online Exam Engines", "Dinajpur Board Science GPA 5.00"]
     },
     prerenderHtml: `
-      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
-        <h1 class="text-3xl font-black text-zinc-900">মাহিম</h1>
-        <p class="text-base text-orange-600 font-bold">ফাউন্ডার ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম</p>
-        <p class="text-sm text-zinc-600 mt-2">ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
+        <nav class="text-xs text-zinc-500 mb-6 font-mono">
+          <a href="/" class="hover:underline">হোম</a> &gt; <a href="/classroom" class="hover:underline">মাহিম'স ক্লাসরুম</a> &gt; <span>মাহিম ইবনে খুদি</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-black text-zinc-900">
+          মাহিম ইবনে খুদি
+          <span class="block text-lg font-mono text-zinc-500 font-normal mt-1">Mahim Ibne Khudi</span>
+        </h1>
+        <p class="text-base text-orange-600 font-bold mt-2">প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)</p>
+        <p class="text-sm text-zinc-700 mt-1">ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ (ঢাকা কলেজ ক্যাম্পাস)</p>
+        <p class="text-xs text-zinc-600 mt-1 font-medium">উচ্চ মাধ্যমিক (HSC ২০২৪) ও মাধ্যমিক (SSC ২০২২): বিজ্ঞান বিভাগ, দিনাজপুর শিক্ষা বোর্ড (জিপিএ ৫.০০ / GPA 5.00)</p>
+        <p class="text-sm text-zinc-600 mt-4 leading-relaxed">
+          কনসেপ্ট নির্ভর শিক্ষা ও স্মার্ট টেস্ট পদ্ধতির উদ্ভাবক। এইচএসসি, এসএসসি এবং বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা সহায়তা প্ল্যাটফর্ম পরিচালনাকারী।
+        </p>
       </div>
     `
   },
 
   'classroom/samiul': {
-    title: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
-    metaTitle: "সামিউল ইসলাম সোহরাব — শিক্ষক প্রোফাইল | Mahim's Classroom",
-    description: "সামিউল ইসলাম সোহরাব - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং)। ফাউন্ডার, সামনাদ একাডেমি এবং মেন্টর, শেখার সিঁড়ি।",
-    keywords: "সামিউল ইসলাম সোহরাব, সামনাদ একাডেমি, ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি, সফটওয়্যার ইঞ্জিনিয়ারিং, শেখার সিঁড়ি, মাহিম ক্লাসরুম শিক্ষক",
+    title: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)",
+    metaTitle: "Samiul Islam Sohrab (সামিউল ইসলাম সোহরাব) — Mentor | Mahim's Classroom",
+    description: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং - DIU SWE)। ফাউন্ডার, সামনাদ একাডেমি (Samnad Academy) ও মেন্টর, শেখার সিঁড়ি। মেন্টর — মাহিম'স ক্লাসরুম।",
+    keywords: "সামিউল ইসলাম সোহরাব, সামিউল ইসলাম, Samiul Islam Sohrab, Samiul Islam, Samiul Sohrab, সামনাদ একাডেমি, Samnad Academy, ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি, Daffodil International University, DIU SWE, সফটওয়্যার ইঞ্জিনিয়ারিং, শেখার সিঁড়ি, Sekhar Siri, মাহিম ক্লাসরুম শিক্ষক, Mahim's Classroom Mentor",
     canonical: `${siteUrl}/classroom/samiul`,
-    ogTitle: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম",
-    ogDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি | মেন্টর, শেখার সিঁড়ি।",
+    ogTitle: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — মেন্টর | মাহিম'স ক্লাসরুম",
+    ogDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি | মেন্টর, শেখার সিঁড়ি ও মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
-    twitterTitle: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterTitle: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — মেন্টর, মাহিম'স ক্লাসরুম",
     twitterDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি।",
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Person",
-      "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)",
+      "name": "সামিউল ইসলাম সোহরাব",
+      "alternateName": ["Samiul Islam Sohrab", "Samiul Islam", "Samiul Sohrab", "Samiul Samnad", "সামিউল ইসলাম"],
       "url": `${siteUrl}/classroom/samiul`,
       "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
-      "jobTitle": "ফাউন্ডার, সামনাদ একাডেমি ও মেন্টর",
-      "worksFor": {
-        "@type": "EducationalOrganization",
-        "name": "Samnad Academy"
+      "jobTitle": "ফাউন্ডার ও মেন্টর (Founder & Mentor)",
+      "worksFor": [
+        {
+          "@type": "EducationalOrganization",
+          "name": "Samnad Academy (সামনাদ একাডেমি)"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+          "url": `${siteUrl}/classroom`
+        }
+      ],
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Daffodil International University (DIU)"
       },
-      "alumniOf": "Daffodil International University"
+      "description": "সামিউল ইসলাম সোহরাব - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটির সফটওয়্যার ইঞ্জিনিয়ারিং শিক্ষার্থী ও সামনাদ একাডেমির প্রতিষ্ঠাতা।",
+      "knowsAbout": ["Software Engineering", "Programming", "Career Mentorship", "Web Development"]
     },
     prerenderHtml: `
-      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
-        <h1 class="text-3xl font-black text-zinc-900">সামিউল ইসলাম সোহরাব</h1>
-        <p class="text-base text-orange-600 font-bold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, মাহিম'স ক্লাসরুম</p>
-        <p class="text-sm text-zinc-600 mt-2">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি — সফটওয়্যার ইঞ্জিনিয়ারিং</p>
-        <p class="text-sm text-zinc-600">মেন্টর, শেখার সিঁড়ি</p>
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
+        <nav class="text-xs text-zinc-500 mb-6 font-mono">
+          <a href="/" class="hover:underline">হোম</a> &gt; <a href="/classroom" class="hover:underline">মাহিম'স ক্লাসরুম</a> &gt; <span>সামিউল ইসলাম সোহরাব</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-black text-zinc-900">
+          সামিউল ইসলাম সোহরাব
+          <span class="block text-lg font-mono text-zinc-500 font-normal mt-1">Samiul Islam Sohrab</span>
+        </h1>
+        <p class="text-base text-orange-600 font-bold mt-2">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, শেখার সিঁড়ি • মেন্টর, মাহিম'স ক্লাসরুম</p>
+        <p class="text-sm text-zinc-700 mt-1">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (DIU) — সফটওয়্যার ইঞ্জিনিয়ারিং (B.Sc. in Software Engineering)</p>
+        <p class="text-sm text-zinc-600 mt-4 leading-relaxed">
+          সফটওয়্যার ইঞ্জিনিয়ারিং ও টেকনোলজির মাধ্যমে শিক্ষার্থীদের স্কিল বৃদ্ধিতে নিবেদিত অভিজ্ঞ মেন্টর ও শিক্ষাউদ্যোক্তা।
+        </p>
       </div>
     `
   },
 
   'classroom/suza': {
-    title: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
-    metaTitle: "আবু সালেহ সুজা — শিক্ষক প্রোফাইল | Mahim's Classroom",
-    description: "আবু সালেহ সুজা - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষায় ৫১ তম স্থান অর্জনকারী।",
-    keywords: "আবু সালেহ সুজা, ফার্মেসি এমবিএসটিইউ, MBSTU Pharmacy, গুচ্ছ ভর্তি পরীক্ষা ৫১তম, Abu Saleh Suja, মাহিম ক্লাসরুম",
+    title: "আবু সালেহ সুজা (Abu Saleh Suza) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)",
+    metaTitle: "Abu Saleh Suza (আবু সালেহ সুজা) — Mentor | Mahim's Classroom",
+    description: "আবু সালেহ সুজা (Abu Saleh Suza) - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫ এ ৫১তম মেধাক্রম অর্জনকারী (GST Rank 51)। মেন্টর — মাহিম'স ক্লাসরুম।",
+    keywords: "আবু সালেহ সুজা, আবু সালেহ, Abu Saleh Suza, Abu Saleh, Suza MBSTU, MBSTU Pharmacy, ফার্মেসি এমবিএসটিইউ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়, Mawlana Bhashani Science and Technology University, গুচ্ছ ভর্তি পরীক্ষা ৫১তম, GST Admission 51, জগন্নাথ বিশ্ববিদ্যালয় বোটানি, কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক",
     canonical: `${siteUrl}/classroom/suza`,
-    ogTitle: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম",
-    ogDescription: "ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান।",
+    ogTitle: "আবু সালেহ সুজা (Abu Saleh Suza) — মেন্টর | মাহিম'স ক্লাসরুম",
+    ogDescription: "ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU) | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান | মেন্টর — মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
-    twitterTitle: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterTitle: "আবু সালেহ সুজা (Abu Saleh Suza) — মেন্টর, মাহিম'স ক্লাসরুম",
     twitterDescription: "ফার্মেসি বিভাগ, MBSTU | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান।",
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Person",
-      "name": "আবু সালেহ সুজা (Abu Saleh Suja)",
+      "name": "আবু সালেহ সুজা",
+      "alternateName": ["Abu Saleh Suza", "Abu Saleh", "Md Abu Saleh Suza", "Suza"],
       "url": `${siteUrl}/classroom/suza`,
       "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
-      "jobTitle": "মেন্টর",
-      "alumniOf": "Mawlana Bhashani Science and Technology University"
+      "jobTitle": "মেন্টর (Faculty & Mentor)",
+      "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+        "url": `${siteUrl}/classroom`
+      },
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Mawlana Bhashani Science and Technology University (MBSTU)"
+      },
+      "description": "আবু সালেহ সুজা - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষায় ৫১তম মেধাক্রম অর্জনকারী।",
+      "knowsAbout": ["Pharmacy", "Biology", "GST Admission Test", "Botany", "Agriculture Science"]
     },
     prerenderHtml: `
-      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
-        <h1 class="text-3xl font-black text-zinc-900">আবু সালেহ সুজা</h1>
-        <p class="text-base text-orange-600 font-bold">ফার্মেসি বিভাগ — মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়</p>
-        <p class="text-sm text-zinc-700 mt-2">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫ ঃ ৫১ তম মেধা স্থান</p>
-        <p class="text-sm text-zinc-600">বোটানি, জগন্নাথ বিশ্ববিদ্যালয় (২০২৪-২০২৫) | এগ্রিকালচার, কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয় (২০২৪-২০২৫)</p>
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
+        <nav class="text-xs text-zinc-500 mb-6 font-mono">
+          <a href="/" class="hover:underline">হোম</a> &gt; <a href="/classroom" class="hover:underline">মাহিম'স ক্লাসরুম</a> &gt; <span>আবু সালেহ সুজা</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-black text-zinc-900">
+          আবু সালেহ সুজা
+          <span class="block text-lg font-mono text-zinc-500 font-normal mt-1">Abu Saleh Suza</span>
+        </h1>
+        <p class="text-base text-orange-600 font-bold mt-2">ফার্মেসি বিভাগ — মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)</p>
+        <p class="text-sm text-zinc-700 mt-1">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫ ঃ ৫১ তম মেধা স্থান (GST Admission Merit Rank 51)</p>
+        <p class="text-xs text-zinc-600 mt-1">সুযোগপ্রাপ্ত: বোটানি, জগন্নাথ বিশ্ববিদ্যালয় (JnU) | এগ্রিকালচার, কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয় (KAU)</p>
+        <p class="text-sm text-zinc-600 mt-4 leading-relaxed">
+          ভর্তি পরীক্ষায় শীর্ষ তালিকায় উত্তীর্ণ হওয়ার মূল চাবিকাঠি হলো বিষয়ভিত্তিক নিখুঁত শর্টকাট, টাইপভিত্তিক সমাধান এবং নেগেটিভ মার্কিং নিয়ন্ত্রণের সঠিক অনুশীলন।
+        </p>
       </div>
     `
   },
 
   'classroom/mithen': {
-    title: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
-    metaTitle: "মিশকাত শরীফ মিথেন — শিক্ষক প্রোফাইল | Mahim's Classroom",
-    description: "মিশকাত শরীফ মিথেন - বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)। প্রতিষ্ঠাতা: মিথেন প্রাইভেট হোম। দিনাজপুর বোর্ড এসএসসি ও এইচএসসি জিপিএ ৫.০০ প্রাপ্ত।",
-    keywords: "মিশকাত শরীফ মিথেন, বেগম রোকেয়া বিশ্ববিদ্যালয়, BRUR, মিথেন প্রাইভেট হোম, Mishkat Sharif Mithen, মাহিম ক্লাসরুম",
+    title: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)",
+    metaTitle: "Mishkat Sharif Mithen (মিশকাত শরীফ মিথেন) — Mentor | Mahim's Classroom",
+    description: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) - বেগম রোকেয়া বিশ্ববিদ্যালয় (Begum Rokeya University - BRUR)। প্রতিষ্ঠাতা: মিথেন প্রাইভেট হোম। গণিত বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি। মেন্টর — মাহিম'স ক্লাসরুম।",
+    keywords: "মিশকাত শরীফ মিথেন, মিশকাত শরীফ, Mishkat Sharif Mithen, Mishkat Sharif, Mithen, মিথেন প্রাইভেট হোম, Mithen Private Home, বেগম রোকেয়া বিশ্ববিদ্যালয়, Begum Rokeya University, BRUR, ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত, Dhaka Central University Mathematics, দিনাজপুর বোর্ড জিপিএ ৫, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক",
     canonical: `${siteUrl}/classroom/mithen`,
-    ogTitle: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম",
-    ogDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম | ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত।",
+    ogTitle: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — মেন্টর | মাহিম'স ক্লাসরুম",
+    ogDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম | ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত | মেন্টর — মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
-    twitterTitle: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterTitle: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — মেন্টর, মাহিম'স ক্লাসরুম",
     twitterDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম।",
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Person",
-      "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)",
+      "name": "মিশকাত শরীফ মিথেন",
+      "alternateName": ["Mishkat Sharif Mithen", "Mishkat Sharif", "Mithen", "মিশকাত শরীফ"],
       "url": `${siteUrl}/classroom/mithen`,
       "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
-      "jobTitle": "ফাউন্ডার, মিথেন প্রাইভেট হোম ও মেন্টর",
-      "alumniOf": "Begum Rokeya University, Rangpur"
+      "jobTitle": "ফাউন্ডার ও মেন্টর (Founder & Mentor)",
+      "worksFor": [
+        {
+          "@type": "EducationalOrganization",
+          "name": "Mithen Private Home (মিথেন প্রাইভেট হোম)"
+        },
+        {
+          "@type": "EducationalOrganization",
+          "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+          "url": `${siteUrl}/classroom`
+        }
+      ],
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Begum Rokeya University, Rangpur (BRUR)"
+      },
+      "description": "মিশকাত শরীফ মিথেন - বেগম রোকেয়া বিশ্ববিদ্যালয় ও ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগের শিক্ষার্থী এবং মিথেন প্রাইভেট হোমের প্রতিষ্ঠাতা।",
+      "knowsAbout": ["Mathematics", "Physics", "SSC & HSC Science", "Board Exam Preparation"]
     },
     prerenderHtml: `
-      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
-        <h1 class="text-3xl font-black text-zinc-900">মিশকাত শরীফ মিথেন</h1>
-        <p class="text-base text-orange-600 font-bold">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
-        <p class="text-sm text-zinc-700 mt-2">গণিত বিভাগ — ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
-        <p class="text-sm text-zinc-600">এসএসসি ও এইচএসসি: বিজ্ঞান বিভাগ (জিপিএ ৫.০০), দিনাজপুর বোর্ড</p>
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
+        <nav class="text-xs text-zinc-500 mb-6 font-mono">
+          <a href="/" class="hover:underline">হোম</a> &gt; <a href="/classroom" class="hover:underline">মাহিম'স ক্লাসরুম</a> &gt; <span>মিশকাত শরীফ মিথেন</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-black text-zinc-900">
+          মিশকাত শরীফ মিথেন
+          <span class="block text-lg font-mono text-zinc-500 font-normal mt-1">Mishkat Sharif Mithen</span>
+        </h1>
+        <p class="text-base text-orange-600 font-bold mt-2">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • ফাউন্ডারঃ মিথেন প্রাইভেট হোম • মেন্টর, মাহিম'স ক্লাসরুম</p>
+        <p class="text-sm text-zinc-700 mt-1">গণিত বিভাগ — ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
+        <p class="text-xs text-zinc-600 mt-1">এসএসসি ও এইচএসসি: বিজ্ঞান বিভাগ (উভয়ে জিপিএ ৫.০০), দিনাজপুর শিক্ষা বোর্ড</p>
+        <p class="text-sm text-zinc-600 mt-4 leading-relaxed">
+          গণিত ও বিজ্ঞানের জটিল বিষয়গুলোকে গাণিতিক লজিক, বাস্তব উদাহরণ ও সহজ কৌশলে উপস্থাপন করে শিক্ষার্থীদের ভেতর আত্মবিশ্বাস জাগিয়ে তোলাই মূল লক্ষ্য।
+        </p>
+      </div>
+    `
+  },
+
+  'classroom/swocchol': {
+    title: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)",
+    metaTitle: "Swocchol Kumar Karmokar (স্বচ্ছল কুমার কর্মকার) — Mentor | Mahim's Classroom",
+    description: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) - কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (Computer Science and Engineering - CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (United International University - UIU)। মেন্টর — মাহিম'স ক্লাসরুম।",
+    keywords: "স্বচ্ছল কুমার কর্মকার, স্বচ্ছল কর্মকার, Swocchol Kumar Karmokar, Swocchol Karmakar, Swocchol Kumar, Swocchol, ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি, United International University, UIU CSE, কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং, Computer Science and Engineering, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক, UIU Swocchol",
+    canonical: `${siteUrl}/classroom/swocchol`,
+    ogTitle: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — মেন্টর | মাহিম'স ক্লাসরুম",
+    ogDescription: "কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE) | ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
+    twitterTitle: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterDescription: "কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "স্বচ্ছল কুমার কর্মকার",
+      "alternateName": ["Swocchol Kumar Karmokar", "Swocchol Karmakar", "Swocchol Kumar", "Swocchol", "স্বচ্ছল কর্মকার"],
+      "url": `${siteUrl}/classroom/swocchol`,
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
+      "jobTitle": "মেন্টর — কম্পিউটার সাইন্স ও ম্যাথমেটিক্স (Mentor)",
+      "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+        "url": `${siteUrl}/classroom`
+      },
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "United International University (UIU)"
+      },
+      "description": "স্বচ্ছল কুমার কর্মকার - কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)। মেন্টর — মাহিম'স ক্লাসরুম।",
+      "knowsAbout": ["Computer Science", "CSE", "Data Structures", "Algorithms", "Mathematics", "Programming"]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
+        <nav class="text-xs text-zinc-500 mb-6 font-mono">
+          <a href="/" class="hover:underline">হোম</a> &gt; <a href="/classroom" class="hover:underline">মাহিম'স ক্লাসরুম</a> &gt; <span>স্বচ্ছল কুমার কর্মকার</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-black text-zinc-900">
+          স্বচ্ছল কুমার কর্মকার
+          <span class="block text-lg font-mono text-zinc-500 font-normal mt-1">Swocchol Kumar Karmokar</span>
+        </h1>
+        <p class="text-base text-orange-600 font-bold mt-2">কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE) • ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)</p>
+        <p class="text-sm text-zinc-700 mt-1">মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom Official Faculty)</p>
+        <p class="text-sm text-zinc-600 mt-4 leading-relaxed">
+          কম্পিউটার বিজ্ঞানের মূল ধারণা এবং লজিক্যাল থিংকিংকে বাস্তব প্রজেক্ট ও সহজ উদাহরণের মাধ্যমে শিক্ষার্থীদের মাঝে ছড়িয়ে দেওয়া।
+        </p>
       </div>
     `
   },

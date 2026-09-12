@@ -21,6 +21,7 @@ import {
   Compass,
   FileText,
   Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { ClassroomAdminModal } from './ClassroomAdminModal';
@@ -245,6 +246,9 @@ export const ClassroomPage: React.FC = () => {
 
   // State for Mishkat Sharif Mithen's Profile Modal
   const [isMithenModalOpen, setIsMithenModalOpen] = useState(false);
+
+  // State for Swocchol Kumar Karmokar's Profile Modal
+  const [isSwoccholModalOpen, setIsSwoccholModalOpen] = useState(false);
 
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -880,7 +884,7 @@ export const ClassroomPage: React.FC = () => {
             <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
               <button
                 onClick={() => navigateTo('/classroom/suza')}
-                id="suja-details-btn"
+                id="suza-details-btn"
                 className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
               >
                 <span>বিস্তারিত প্রোফাইল</span>
@@ -949,6 +953,69 @@ export const ClassroomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsMithenModalOpen(true)}
+                title="কুইক ভিউ"
+                className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
+              >
+                <Sparkles size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* Card 5: Swocchol Kumar Karmokar (UIU CSE)                                  */}
+          {/* ========================================================================= */}
+          <div
+            id="mentor-card-swocchol"
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                {/* Photo */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-orange-400 via-amber-400 to-red-500 shadow-md shadow-orange-500/20">
+                    <img
+                      src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png"
+                      alt="স্বচ্ছল কুমার কর্মকার"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
+                    <CheckCircle2 size={15} />
+                  </span>
+                </div>
+
+                {/* Identity on front */}
+                <div className="text-center sm:text-left flex-1">
+                  <h3 className="text-xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
+                    স্বচ্ছল কুমার কর্মকার
+                  </h3>
+
+                  {/* কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং */}
+                  <p className="mt-1 text-xs sm:text-sm font-bold text-orange-600 font-['Hind_Siliguri',sans-serif]">
+                    কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE)
+                  </p>
+
+                  {/* ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি */}
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-zinc-800 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
+                    <School size={15} className="text-orange-600 shrink-0" />
+                    <span>ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* "বিস্তারিত" Button */}
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
+              <button
+                onClick={() => navigateTo('/classroom/swocchol')}
+                id="swocchol-details-btn"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত প্রোফাইল</span>
+                <ChevronRight size={16} />
+              </button>
+              <button
+                onClick={() => setIsSwoccholModalOpen(true)}
                 title="কুইক ভিউ"
                 className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
               >
@@ -1738,6 +1805,117 @@ export const ClassroomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsMithenModalOpen(false)}
+                className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 1e. Swocchol Kumar Karmokar Profile Modal                                 */}
+      {/* ========================================================================= */}
+      {isSwoccholModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsSwoccholModalOpen(false)}
+              id="close-swocchol-modal-btn"
+              className="absolute top-4 right-4 p-2 rounded-xl bg-orange-50 text-zinc-500 hover:text-zinc-900 hover:bg-orange-100 transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header info */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-orange-400 via-amber-400 to-red-500 shadow-md shrink-0">
+                <img
+                  src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png"
+                  alt="স্বচ্ছল কুমার কর্মকার"
+                  className="w-full h-full object-cover rounded-[14px]"
+                />
+              </div>
+              <div className="text-center sm:text-left flex-1">
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-orange-100 text-orange-800 mb-1">
+                  <ShieldCheck size={13} />
+                  <span>মেন্টর প্যানেল</span>
+                </div>
+                <h3 className="text-2xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                  স্বচ্ছল কুমার কর্মকার
+                </h3>
+                <p className="text-xs sm:text-sm font-bold text-orange-600 font-['Hind_Siliguri',sans-serif] mt-0.5">
+                  কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE)
+                </p>
+                <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1 mt-1">
+                  <School size={14} className="text-orange-600 shrink-0" />
+                  <span>ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Education & Info Details */}
+            <div className="space-y-3 mb-6">
+              <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                <GraduationCap size={16} className="text-orange-600" />
+                <span>বিস্তারিত তথ্য ও পরিচিতি:</span>
+              </h4>
+
+              {/* Current University */}
+              <div className="bg-orange-50/80 border border-orange-200 rounded-2xl p-4">
+                <div className="flex items-center justify-between text-xs font-bold text-orange-900 font-['Hind_Siliguri',sans-serif]">
+                  <span className="flex items-center gap-1.5">
+                    <School size={15} className="text-orange-600" />
+                    বিশ্ববিদ্যালয় (অনার্স অধ্যয়নরত)
+                  </span>
+                  <span className="font-mono bg-white px-2 py-0.5 rounded border border-orange-200 text-zinc-700 text-xs">
+                    UIU
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-2 font-['Hind_Siliguri',sans-serif]">
+                  ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)
+                </p>
+                <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] mt-0.5">
+                  বিভাগ: কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE)
+                </p>
+              </div>
+
+              {/* Focus Areas */}
+              <div className="bg-white border border-zinc-200 rounded-2xl p-3.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif] mb-1">
+                  <span>ফোকাস এরিয়া ও মেন্টরশিপ</span>
+                  <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-mono text-[10px] font-bold">
+                    CSE & Math
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+                  কম্পিউটার সায়েন্সের বেসিক কনসেপ্ট, লজিক্যাল প্রোগ্রামিং, অ্যালগরিদম ও আধুনিক তথ্যপ্রযুক্তি শিক্ষায় শিক্ষার্থীদের গাইডেন্স প্রদান।
+                </p>
+              </div>
+            </div>
+
+            {/* Philosophy / Message */}
+            <div className="bg-orange-100/70 border border-orange-200 rounded-2xl p-4 mb-6">
+              <p className="text-xs text-zinc-800 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+                💡 <span className="font-bold text-orange-900">টিচিং ফিলোসফি:</span> কম্পিউটার বিজ্ঞানের জটিল বিষয় এবং লজিক্যাল চিন্তাভাবনাকে বাস্তব উদাহরণ ও হ্যান্ডস-অন অনুশীলনের মাধ্যমে সহজভাবে পৌঁছে দেওয়া।
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsSwoccholModalOpen(false);
+                  navigateTo('/classroom/swocchol');
+                }}
+                className="flex-1 py-3 rounded-xl font-bold text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white text-center transition-all shadow-md font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                পূর্ণাঙ্গ প্রোফাইল লিংক ➔
+              </button>
+              <button
+                onClick={() => setIsSwoccholModalOpen(false)}
                 className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
               >
                 বন্ধ করুন

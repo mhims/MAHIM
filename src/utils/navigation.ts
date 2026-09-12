@@ -28,7 +28,8 @@ export const STANDALONE_ROUTES = new Set([
   '/classroom/mahim',
   '/classroom/samiul',
   '/classroom/suza',
-  '/classroom/mithen'
+  '/classroom/mithen',
+  '/classroom/swocchol'
 ]);
 
 export function isValidRoute(pathname: string): boolean {

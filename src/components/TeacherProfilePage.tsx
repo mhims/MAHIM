@@ -33,7 +33,10 @@ export const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ slug }) 
     if (!teacher) return;
 
     const originalTitle = document.title;
-    document.title = `${teacher.name} | মাহিম'স ক্লাসরুম`;
+    const pageTitle = teacher.englishName
+      ? `${teacher.name} (${teacher.englishName}) | শিক্ষক প্রোফাইল — মাহিম'স ক্লাসরুম`
+      : `${teacher.name} | শিক্ষক প্রোফাইল — মাহিম'স ক্লাসরুম`;
+    document.title = pageTitle;
 
     // Helper to update meta tag
     const updateMeta = (attr: string, key: string, content: string) => {
@@ -47,12 +50,12 @@ export const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ slug }) 
     };
 
     updateMeta('name', 'description', teacher.metaDescription);
-    updateMeta('property', 'og:title', `${teacher.name} — মাহিম'স ক্লাসরুম`);
+    updateMeta('property', 'og:title', pageTitle);
     updateMeta('property', 'og:description', teacher.metaDescription);
     updateMeta('property', 'og:image', teacher.photoUrl);
     updateMeta('property', 'og:url', `https://mahims.com/classroom/${teacher.slug}`);
     updateMeta('property', 'og:type', 'profile');
-    updateMeta('name', 'twitter:title', `${teacher.name} — মাহিম'স ক্লাসরুম`);
+    updateMeta('name', 'twitter:title', pageTitle);
     updateMeta('name', 'twitter:description', teacher.metaDescription);
     updateMeta('name', 'twitter:image', teacher.photoUrl);
     updateMeta('name', 'twitter:card', 'summary_large_image');
@@ -178,9 +181,16 @@ export const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ slug }) 
                 <span>অফিসিয়াল মেন্টর প্যানেল</span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif]">
-                {teacher.name}
-              </h1>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                  {teacher.name}
+                </h1>
+                {teacher.englishName && (
+                  <p className="text-xs sm:text-sm font-semibold text-zinc-500 font-mono tracking-wide mt-0.5">
+                    {teacher.englishName}
+                  </p>
+                )}
+              </div>
 
               <p className="text-sm sm:text-base font-bold text-orange-600 font-['Hind_Siliguri',sans-serif]">
                 {teacher.role}

@@ -159,6 +159,16 @@ const routeData = {
                 <p class="text-xs text-zinc-300 font-semibold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, শেখার সিড়ি</p>
                 <p class="text-xs text-zinc-400 leading-relaxed">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং)। শিক্ষার্থীদের স্কিল ও অ্যাকাডেমিক মেন্টরশিপে নিবেদিত।</p>
               </div>
+              <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
+                <h3 class="text-lg font-bold text-orange-400">আবু সালেহ সুজা</h3>
+                <p class="text-xs text-zinc-300 font-semibold">ফার্মেসি বিভাগ • মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২৫ সেশনে ৫১তম। জবি বোটানি ও কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়ে সুযোগপ্রাপ্ত।</p>
+              </div>
+              <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
+                <h3 class="text-lg font-bold text-orange-400">মিশকাত শরীফ মিথেন</h3>
+                <p class="text-xs text-zinc-300 font-semibold">বেগম রোকেয়া বিশ্ববিদ্যালয় • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগে সুযোগপ্রাপ্ত। এসএসসি ও এইচএসসি উভয় পরীক্ষায় জিপিএ ৫ প্রাপ্ত।</p>
+              </div>
             </div>
           </section>
 

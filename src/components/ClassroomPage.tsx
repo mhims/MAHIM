@@ -240,6 +240,12 @@ export const ClassroomPage: React.FC = () => {
   // State for Samiul Islam Sohrab's Profile Modal
   const [isSamiulModalOpen, setIsSamiulModalOpen] = useState(false);
 
+  // State for Abu Saleh Suja's Profile Modal
+  const [isSujaModalOpen, setIsSujaModalOpen] = useState(false);
+
+  // State for Mishkat Sharif Mithen's Profile Modal
+  const [isMithenModalOpen, setIsMithenModalOpen] = useState(false);
+
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
@@ -816,6 +822,113 @@ export const ClassroomPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Abu Saleh Suja's Card */}
+          <div
+            id="mentor-card-suja"
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                {/* Photo */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-emerald-400 via-teal-400 to-orange-500 shadow-md shadow-orange-500/20">
+                    <img
+                      src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg"
+                      alt="আবু সালেহ সুজা"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
+                    <CheckCircle2 size={15} />
+                  </span>
+                </div>
+
+                {/* Identity on front */}
+                <div className="text-center sm:text-left flex-1">
+                  <h3 className="text-xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
+                    আবু সালেহ সুজা
+                  </h3>
+
+                  {/* ফার্মেসি, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় */}
+                  <p className="mt-1.5 text-xs sm:text-sm font-bold text-emerald-700 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
+                    <Sparkles size={14} className="text-emerald-600 shrink-0" />
+                    <span>ফার্মেসি বিভাগ</span>
+                  </p>
+
+                  <p className="mt-1 text-xs font-medium text-zinc-700 font-['Hind_Siliguri',sans-serif] leading-tight">
+                    মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* "বিস্তারিত" Button */}
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+              <button
+                onClick={() => setIsSujaModalOpen(true)}
+                id="suja-details-btn"
+                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Mishkat Sharif Mithen's Card */}
+          <div
+            id="mentor-card-mithen"
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                {/* Photo */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-br from-blue-400 via-indigo-400 to-orange-500 shadow-md shadow-orange-500/20">
+                    <img
+                      src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png"
+                      alt="মিশকাত শরীফ মিথেন"
+                      className="w-full h-full object-cover rounded-[14px]"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-1 bg-white border border-orange-300 p-1 rounded-full text-orange-600 shadow-xs">
+                    <CheckCircle2 size={15} />
+                  </span>
+                </div>
+
+                {/* Identity on front */}
+                <div className="text-center sm:text-left flex-1">
+                  <h3 className="text-xl font-black text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif]">
+                    মিশকাত শরীফ মিথেন
+                  </h3>
+
+                  {/* বেগম রোকেয়া বিশ্ববিদ্যালয় */}
+                  <p className="mt-1.5 text-xs sm:text-sm font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif] flex items-center justify-center sm:justify-start gap-1.5">
+                    <School size={15} className="text-orange-600 shrink-0" />
+                    <span>বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)</span>
+                  </p>
+
+                  {/* ফাউন্ডারঃ মিথেন প্রাইভেট হোম */}
+                  <p className="mt-1 text-xs font-semibold text-orange-700 font-['Hind_Siliguri',sans-serif]">
+                    ফাউন্ডারঃ মিথেন প্রাইভেট হোম
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* "বিস্তারিত" Button */}
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+              <button
+                onClick={() => setIsMithenModalOpen(true)}
+                id="mithen-details-btn"
+                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+
           {/* Upcoming Faculty Expansion Card */}
           <div className="bg-white/80 border-2 border-dashed border-orange-300 hover:border-orange-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center transition-all shadow-xs">
             <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
@@ -823,13 +936,13 @@ export const ClassroomPage: React.FC = () => {
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 mb-2 font-['Hind_Siliguri',sans-serif]">
               <Sparkles size={13} className="text-orange-600" />
-              <span>শীঘ্রই যুক্ত হচ্ছে</span>
+              <span>শীঘ্রই আরও যুক্ত হচ্ছে</span>
             </div>
             <h3 className="text-lg font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-1.5">
-              পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয় প্যানেল
+              পাবলিক ও প্রযুক্তি বিশ্ববিদ্যালয় প্যানেল
             </h3>
             <p className="text-xs text-zinc-600 max-w-xs font-['Hind_Siliguri',sans-serif] leading-relaxed">
-              দেশের বিভিন্ন স্বনামধন্য পাবলিক বিশ্ববিদ্যালয় এবং শীর্ষ প্রাইভেট বিশ্ববিদ্যালয়ের মেধাবী ও অভিজ্ঞ মেন্টরদের নিয়ে শিক্ষক প্যানেল আরও সমৃদ্ধ হচ্ছে।
+              শীর্ষস্থানীয় পাবলিক বিশ্ববিদ্যালয় এবং প্রযুক্তি বিশ্ববিদ্যালয়ের অভিজ্ঞ মেন্টরদের নিয়ে মাহিম’স ক্লাসরুমের প্যানেল প্রতিনিয়ত সমৃদ্ধ হচ্ছে।
             </p>
           </div>
         </div>
@@ -1314,6 +1427,289 @@ export const ClassroomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsSamiulModalOpen(false)}
+                className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 1.2 Abu Saleh Suja Educational Profile Modal                              */}
+      {/* ========================================================================= */}
+      {isSujaModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button
+              onClick={() => setIsSujaModalOpen(false)}
+              id="close-suja-modal-btn"
+              className="absolute top-4 right-4 p-2 rounded-xl bg-orange-50 text-zinc-500 hover:text-zinc-900 hover:bg-orange-100 transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header with Photo & Name */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-2xl p-1 bg-gradient-to-br from-emerald-400 via-teal-400 to-orange-500 shrink-0 shadow-md shadow-orange-500/20">
+                <img
+                  src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg"
+                  alt="আবু সালেহ সুজা"
+                  className="w-full h-full object-cover rounded-[12px]"
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                  আবু সালেহ সুজা
+                </h3>
+                <p className="text-xs text-emerald-700 font-bold font-['Hind_Siliguri',sans-serif]">
+                  ফার্মেসি বিভাগ
+                </p>
+                <p className="text-[12px] text-zinc-700 font-bold mt-0.5 font-['Hind_Siliguri',sans-serif]">
+                  মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)
+                </p>
+              </div>
+            </div>
+
+            {/* Detailed Academic & Admission Success */}
+            <div className="space-y-3 mb-6">
+              <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                <GraduationCap size={16} className="text-orange-600" />
+                <span>বর্তমান অধ্যয়ন ও ভর্তি পরীক্ষার সাফল্য:</span>
+              </h4>
+
+              {/* Current University */}
+              <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4">
+                <div className="flex items-center justify-between text-xs font-bold text-emerald-800 font-['Hind_Siliguri',sans-serif]">
+                  <span className="flex items-center gap-1.5">
+                    <School size={15} className="text-emerald-600" />
+                    বর্তমান অধ্যয়ন (চলমান)
+                  </span>
+                  <span className="font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 text-zinc-700 text-xs">
+                    MBSTU
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-2 font-['Hind_Siliguri',sans-serif]">
+                  মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়
+                </p>
+                <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-emerald-200 text-xs font-bold text-emerald-800 font-['Hind_Siliguri',sans-serif]">
+                  <BrainCircuit size={14} className="text-emerald-600" />
+                  <span>ফার্মেসি বিভাগ (Department of Pharmacy)</span>
+                </div>
+              </div>
+
+              {/* GST Merit Rank */}
+              <div className="bg-orange-50/90 border border-orange-200 rounded-2xl p-4 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-orange-800 font-['Hind_Siliguri',sans-serif]">
+                  <span className="flex items-center gap-1.5">
+                    <Target size={15} className="text-orange-600" />
+                    গুচ্ছ ভর্তি পরীক্ষা (GST Admission)
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-800 font-mono font-bold text-xs border border-orange-300">
+                    মেধাক্রম: ৫১ তম (Rank: 51)
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-600 mt-1 font-['Hind_Siliguri',sans-serif]">
+                  সেশন: ২০২৪-২০২৫ শিক্ষাবর্ষ
+                </p>
+              </div>
+
+              {/* Other admission offers */}
+              <div className="space-y-2">
+                <p className="text-xs font-bold text-zinc-600 font-['Hind_Siliguri',sans-serif]">
+                  অন্যান্য শীর্ষ বিশ্ববিদ্যালয়ে সুযোগপ্রাপ্ত বিভাগসমূহ:
+                </p>
+                
+                <div className="bg-white border border-zinc-200 rounded-2xl p-3.5 shadow-xs flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                      বোটানি (Botany) • জগন্নাথ বিশ্ববিদ্যালয়
+                    </p>
+                    <p className="text-[11px] text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+                      ২০২৪-২০২৫ সেশন
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-semibold text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded">
+                    JnU
+                  </span>
+                </div>
+
+                <div className="bg-white border border-zinc-200 rounded-2xl p-3.5 shadow-xs flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                      এগ্রিকালচার (Agriculture) • কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়
+                    </p>
+                    <p className="text-[11px] text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+                      ২০২৪-২০২৫ সেশন
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-semibold text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded">
+                    KAU
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Philosophy / Message */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6">
+              <p className="text-xs text-zinc-800 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+                💡 <span className="font-bold text-emerald-900">ভর্তি পরীক্ষার গাইডলাইন:</span> গুচ্ছ ও প্রযুক্তি বিশ্ববিদ্যালয়ে শীর্ষ তালিকায় উত্তীর্ণ হওয়ার জন্য বিষয়ভিত্তিক নিখুঁত শর্টকাট, টাইপ সলভিং এবং নেগেটিভ মার্কিং কন্ট্রোলের মাধ্যমে সেরা সাফল্য নিশ্চিত করা সম্ভব।
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsSujaModalOpen(false);
+                  handlePreRegister();
+                }}
+                className="flex-1 py-3 rounded-xl font-bold text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white text-center transition-all shadow-md font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                প্রি-রেজিস্ট্রেশন করুন ➔
+              </button>
+              <button
+                onClick={() => setIsSujaModalOpen(false)}
+                className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 1.3 Mishkat Sharif Mithen Educational Profile Modal                       */}
+      {/* ========================================================================= */}
+      {isMithenModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button
+              onClick={() => setIsMithenModalOpen(false)}
+              id="close-mithen-modal-btn"
+              className="absolute top-4 right-4 p-2 rounded-xl bg-orange-50 text-zinc-500 hover:text-zinc-900 hover:bg-orange-100 transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header with Photo & Name */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-2xl p-1 bg-gradient-to-br from-blue-400 via-indigo-400 to-orange-500 shrink-0 shadow-md shadow-orange-500/20">
+                <img
+                  src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png"
+                  alt="মিশকাত শরীফ মিথেন"
+                  className="w-full h-full object-cover rounded-[12px]"
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                  মিশকাত শরীফ মিথেন
+                </h3>
+                <p className="text-xs text-orange-600 font-bold font-['Hind_Siliguri',sans-serif]">
+                  ফাউন্ডারঃ মিথেন প্রাইভেট হোম
+                </p>
+                <p className="text-[12px] text-zinc-700 font-bold mt-0.5 font-['Hind_Siliguri',sans-serif]">
+                  বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)
+                </p>
+              </div>
+            </div>
+
+            {/* Detailed Academic Credentials */}
+            <div className="space-y-3 mb-6">
+              <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                <GraduationCap size={16} className="text-orange-600" />
+                <span>বিস্তারিত শিক্ষাগত তথ্য ও ফলাফল:</span>
+              </h4>
+
+              {/* Current University */}
+              <div className="bg-blue-50/80 border border-blue-200 rounded-2xl p-4">
+                <div className="flex items-center justify-between text-xs font-bold text-blue-800 font-['Hind_Siliguri',sans-serif]">
+                  <span className="flex items-center gap-1.5">
+                    <School size={15} className="text-blue-600" />
+                    বিশ্ববিদ্যালয় (অধ্যয়নরত)
+                  </span>
+                  <span className="font-mono bg-white px-2 py-0.5 rounded border border-blue-200 text-zinc-700 text-xs">
+                    BRUR
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-2 font-['Hind_Siliguri',sans-serif]">
+                  বেগম রোকেয়া বিশ্ববিদ্যালয়, রংপুর
+                </p>
+              </div>
+
+              {/* Central University Opportunity */}
+              <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-amber-900 font-['Hind_Siliguri',sans-serif]">
+                  <span>ভর্তি পরীক্ষায় সুযোগপ্রাপ্ত বিভাগ</span>
+                  <span className="text-[11px] font-semibold text-amber-700 bg-white px-2 py-0.5 rounded border border-amber-200">
+                    সেশন: ২০২৪-২০২৫
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-1 font-['Hind_Siliguri',sans-serif]">
+                  ডিপার্টমেন্ট অব ম্যাথমেটিক্স (Mathematics)
+                </p>
+                <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif]">
+                  ঢাকা সেন্ট্রাল ইউনিভার্সিটি, বাংলা কলেজ ক্যাম্পাস
+                </p>
+              </div>
+
+              {/* HSC Result */}
+              <div className="bg-white border border-orange-200 rounded-2xl p-3.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif]">
+                  <span>উচ্চ মাধ্যমিক (HSC)</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-[11px] border border-emerald-300">
+                    জিপিএ ৫.০০ (GPA 5.00)
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-1 font-['Hind_Siliguri',sans-serif]">
+                  বিজ্ঞান বিভাগ • দিনাজপুর শিক্ষা বোর্ড
+                </p>
+                <p className="text-xs text-zinc-500 mt-0.5 font-mono">
+                  পাসের সন: ২০২৪
+                </p>
+              </div>
+
+              {/* SSC Result */}
+              <div className="bg-white border border-orange-200 rounded-2xl p-3.5 shadow-xs">
+                <div className="flex items-center justify-between text-xs font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif]">
+                  <span>মাধ্যমিক (SSC)</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-[11px] border border-emerald-300">
+                    জিপিএ ৫.০০ (GPA 5.00)
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-zinc-900 mt-1 font-['Hind_Siliguri',sans-serif]">
+                  বিজ্ঞান বিভাগ • দিনাজপুর শিক্ষা বোর্ড
+                </p>
+                <p className="text-xs text-zinc-500 mt-0.5 font-mono">
+                  পাসের সন: ২০২২
+                </p>
+              </div>
+            </div>
+
+            {/* Philosophy / Message */}
+            <div className="bg-orange-100/70 border border-orange-200 rounded-2xl p-4 mb-6">
+              <p className="text-xs text-zinc-800 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+                💡 <span className="font-bold text-orange-900">টিচিং ফিলোসফি:</span> গণিত ও বিজ্ঞানের কনসেপ্টগুলোকে জটিল নিয়মের মধ্যে সীমাবদ্ধ না রেখে প্র্যাকটিক্যাল লজিক ও সহজ ট্রিকসের মাধ্যমে শিক্ষার্থীদের কাছে আকর্ষণীয় করে তোলা।
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsMithenModalOpen(false);
+                  handlePreRegister();
+                }}
+                className="flex-1 py-3 rounded-xl font-bold text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white text-center transition-all shadow-md font-['Hind_Siliguri',sans-serif] cursor-pointer"
+              >
+                প্রি-রেজিস্ট্রেশন করুন ➔
+              </button>
+              <button
+                onClick={() => setIsMithenModalOpen(false)}
                 className="px-5 py-3 rounded-xl text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
               >
                 বন্ধ করুন

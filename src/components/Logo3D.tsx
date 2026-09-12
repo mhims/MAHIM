@@ -40,40 +40,42 @@ export const Logo3D: React.FC<Logo3DProps> = ({ size = 'md', className = '', src
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          /* Minimalist Vector Monogram "M" for Mahim fallback */
+          /* Minimalist Vector Monogram "M" for Mahim */
           <svg
-            viewBox="0 0 32 32"
-            className="w-5/6 h-5/6 transition-transform duration-300 group-hover:scale-105"
+            viewBox="0 0 100 100"
+            className="w-4/5 h-4/5 transition-transform duration-300 group-hover:scale-105"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              <linearGradient id="minimalGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="logo3dGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="40%" stopColor="#F59E0B" />
-                <stop offset="100%" stopColor="#D97706" />
+                <stop offset="35%" stopColor="#FDE047" />
+                <stop offset="70%" stopColor="#EAB308" />
+                <stop offset="100%" stopColor="#CA8A04" />
+              </linearGradient>
+              <linearGradient id="logo3dGoldMid" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FACC15" />
+                <stop offset="50%" stopColor="#EAB308" />
+                <stop offset="100%" stopColor="#A16207" />
+              </linearGradient>
+              <linearGradient id="logo3dGoldDeep" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#EAB308" />
+                <stop offset="50%" stopColor="#B45309" />
+                <stop offset="100%" stopColor="#78350F" />
               </linearGradient>
             </defs>
 
-            {/* Clean architectural Monogram lines */}
-            <path
-              d="M7 23V9L11 9V23H7Z"
-              fill="url(#minimalGoldGrad)"
-            />
-            <path
-              d="M21 23V9L25 9V23H21Z"
-              fill="url(#minimalGoldGrad)"
-            />
-            <path
-              d="M11 9L16 16.5L21 9H17.8L16 12L14.2 9H11Z"
-              fill="#FFFFFF"
-            />
-            <circle
-              cx="16"
-              cy="19"
-              r="1.75"
-              fill="#F59E0B"
-            />
+            {/* Precision Chiseled M Monogram */}
+            <polygon points="12,84 12,22 27,22 27,84" fill="url(#logo3dGoldMid)" />
+            <polygon points="12,22 16,22 16,84 12,84" fill="#FFFFFF" opacity="0.8" />
+            <polygon points="73,84 73,22 88,22 88,84" fill="url(#logo3dGoldDeep)" />
+            <polygon points="73,22 76,22 76,84 73,84" fill="#FEF08A" opacity="0.4" />
+            <polygon points="27,22 50,58 50,76 27,39" fill="url(#logo3dGoldLight)" />
+            <line x1="27" y1="22" x2="50" y2="58" stroke="#FFFFFF" strokeWidth="1.5" />
+            <polygon points="73,22 50,58 50,76 73,39" fill="url(#logo3dGoldDeep)" />
+            <polygon points="50,48 56,58 50,68 44,58" fill="url(#logo3dGoldMid)" />
+            <polygon points="50,15 53,20 50,24 47,20" fill="url(#logo3dGoldLight)" />
           </svg>
         )}
       </div>

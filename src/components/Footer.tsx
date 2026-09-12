@@ -97,13 +97,14 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick links & socials */}
-          <div className="md:col-span-6 flex flex-wrap items-center justify-center md:justify-end gap-6 text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400">
+          {/* Quick links & subpages for SEO & Navigation */}
+          <div className="md:col-span-6 flex flex-wrap items-center justify-center md:justify-end gap-x-5 gap-y-2 text-xs sm:text-sm font-bold text-zinc-600 dark:text-zinc-400">
             <a href="/" onClick={(e) => navigateTo('/', e)} className="hover:text-black dark:hover:text-white transition-colors">হোম</a>
+            <a href="/classroom" onClick={(e) => navigateTo('/classroom', e)} className="text-amber-600 dark:text-amber-400 hover:underline transition-colors">মাহিম’স ক্লাসরুম</a>
+            <a href="/chithi" onClick={(e) => navigateTo('/chithi', e)} className="hover:text-black dark:hover:text-white transition-colors">মাহিম চিঠি</a>
+            <a href="/salami" onClick={(e) => navigateTo('/salami', e)} className="hover:text-black dark:hover:text-white transition-colors">মাহিম সালামি</a>
+            <a href="/portfolio" onClick={(e) => navigateTo('/portfolio', e)} className="hover:text-black dark:hover:text-white transition-colors">পোর্টফোলিও</a>
             <a href="/about" onClick={(e) => navigateTo('/about', e)} className="hover:text-black dark:hover:text-white transition-colors">আমার সম্পর্কে</a>
-            <a href="/skills" onClick={(e) => navigateTo('/skills', e)} className="hover:text-black dark:hover:text-white transition-colors">দক্ষতা</a>
-            <a href="/experience" onClick={(e) => navigateTo('/experience', e)} className="hover:text-black dark:hover:text-white transition-colors">অভিজ্ঞতা</a>
-            <a href="/education" onClick={(e) => navigateTo('/education', e)} className="hover:text-black dark:hover:text-white transition-colors">শিক্ষা</a>
             <a href="/blog" onClick={(e) => navigateTo('/blog', e)} className="hover:text-black dark:hover:text-white transition-colors">ব্লগ</a>
             <a href="/contact" onClick={(e) => navigateTo('/contact', e)} className="hover:text-black dark:hover:text-white transition-colors">যোগাযোগ</a>
           </div>

@@ -1,0 +1,30 @@
+<svg width="128" height="128" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#FDE047" />
+      <stop offset="70%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#CA8A04" />
+    </linearGradient>
+    <linearGradient id="favGoldMid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FACC15" />
+      <stop offset="50%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#A16207" />
+    </linearGradient>
+    <linearGradient id="favGoldDeep" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EAB308" />
+      <stop offset="50%" stop-color="#B45309" />
+      <stop offset="100%" stop-color="#78350F" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="28" fill="#0c0b09" stroke="#f59e0b" stroke-width="2.5" stroke-opacity="0.6" />
+  <polygon points="12,84 12,22 27,22 27,84" fill="url(#favGoldMid)" />
+  <polygon points="12,22 16,22 16,84 12,84" fill="#FFFFFF" opacity="0.8" />
+  <polygon points="73,84 73,22 88,22 88,84" fill="url(#favGoldDeep)" />
+  <polygon points="73,22 76,22 76,84 73,84" fill="#FEF08A" opacity="0.4" />
+  <polygon points="27,22 50,58 50,76 27,39" fill="url(#favGoldLight)" />
+  <line x1="27" y1="22" x2="50" y2="58" stroke="#FFFFFF" stroke-width="1.5" />
+  <polygon points="73,22 50,58 50,76 73,39" fill="url(#favGoldDeep)" />
+  <polygon points="50,48 56,58 50,68 44,58" fill="url(#favGoldMid)" />
+  <polygon points="50,14 53,19 50,23 47,19" fill="url(#favGoldLight)" />
+</svg>

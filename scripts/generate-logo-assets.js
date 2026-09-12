@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import pngToIco from 'png-to-ico';
 
 // 1. Generate 800x800 Square Logo (for profile, logo.png, logo-square.jpg)
 const squareLogoSvg = `
@@ -332,20 +333,63 @@ async function generateAllAssets() {
     .png()
     .toFile(path.resolve('public/apple-touch-icon.png'));
 
-  await sharp(Buffer.from(squareLogoSvg))
-    .resize(48, 48)
-    .png()
-    .toFile(path.resolve('public/favicon-48x48.png'));
+  // Google Search Favicon must be multiples of 48px (48x48, 96x96, 144x144, 192x192)
+  const icon96Buf = await sharp(Buffer.from(squareLogoSvg)).resize(96, 96).png().toBuffer();
+  fs.writeFileSync(path.resolve('public/favicon-96x96.png'), icon96Buf);
 
-  await sharp(Buffer.from(squareLogoSvg))
-    .resize(32, 32)
-    .png()
-    .toFile(path.resolve('public/favicon-32x32.png'));
+  const icon48Buf = await sharp(Buffer.from(squareLogoSvg)).resize(48, 48).png().toBuffer();
+  fs.writeFileSync(path.resolve('public/favicon-48x48.png'), icon48Buf);
 
-  await sharp(Buffer.from(squareLogoSvg))
-    .resize(16, 16)
-    .png()
-    .toFile(path.resolve('public/favicon-16x16.png'));
+  const icon32Buf = await sharp(Buffer.from(squareLogoSvg)).resize(32, 32).png().toBuffer();
+  fs.writeFileSync(path.resolve('public/favicon-32x32.png'), icon32Buf);
+
+  const icon16Buf = await sharp(Buffer.from(squareLogoSvg)).resize(16, 16).png().toBuffer();
+  fs.writeFileSync(path.resolve('public/favicon-16x16.png'), icon16Buf);
+
+  const icon64Buf = await sharp(Buffer.from(squareLogoSvg)).resize(64, 64).png().toBuffer();
+  const icon128Buf = await sharp(Buffer.from(squareLogoSvg)).resize(128, 128).png().toBuffer();
+  const icon256Buf = await sharp(Buffer.from(squareLogoSvg)).resize(256, 256).png().toBuffer();
+
+  // Create real multi-size favicon.ico (including Google-required 48x48)
+  const icoBuffer = await pngToIco([icon16Buf, icon32Buf, icon48Buf, icon64Buf, icon96Buf, icon128Buf, icon256Buf]);
+  fs.writeFileSync(path.resolve('public/favicon.ico'), icoBuffer);
+  console.log('✓ public/favicon.ico (multi-size: 16, 32, 48, 64, 96, 128, 256) generated');
+
+  // SVG Favicon for modern browser tabs and Google Search SVG support
+  const faviconSvg = `
+<svg width="128" height="128" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favGoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#FDE047" />
+      <stop offset="70%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#CA8A04" />
+    </linearGradient>
+    <linearGradient id="favGoldMid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FACC15" />
+      <stop offset="50%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#A16207" />
+    </linearGradient>
+    <linearGradient id="favGoldDeep" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EAB308" />
+      <stop offset="50%" stop-color="#B45309" />
+      <stop offset="100%" stop-color="#78350F" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="28" fill="#0c0b09" stroke="#f59e0b" stroke-width="2.5" stroke-opacity="0.6" />
+  <polygon points="12,84 12,22 27,22 27,84" fill="url(#favGoldMid)" />
+  <polygon points="12,22 16,22 16,84 12,84" fill="#FFFFFF" opacity="0.8" />
+  <polygon points="73,84 73,22 88,22 88,84" fill="url(#favGoldDeep)" />
+  <polygon points="73,22 76,22 76,84 73,84" fill="#FEF08A" opacity="0.4" />
+  <polygon points="27,22 50,58 50,76 27,39" fill="url(#favGoldLight)" />
+  <line x1="27" y1="22" x2="50" y2="58" stroke="#FFFFFF" stroke-width="1.5" />
+  <polygon points="73,22 50,58 50,76 73,39" fill="url(#favGoldDeep)" />
+  <polygon points="50,48 56,58 50,68 44,58" fill="url(#favGoldMid)" />
+  <polygon points="50,14 53,19 50,23 47,19" fill="url(#favGoldLight)" />
+</svg>
+`.trim();
+  fs.writeFileSync(path.resolve('public/favicon.svg'), faviconSvg, 'utf8');
+  console.log('✓ public/favicon.svg generated');
 
   console.log('✓ All brand icons, favicons, and social cards generated successfully!');
 }

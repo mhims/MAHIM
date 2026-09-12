@@ -375,13 +375,14 @@ export const MahimsWorldHome: React.FC = () => {
               </div>
 
               <div className="pt-6">
-                <button
+                <a
+                  href="/portfolio"
                   onClick={(e) => navigateTo('/portfolio', e)}
                   className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all group-hover:shadow-indigo-600/40"
                 >
                   <span>সিভি ও পোর্টফোলিও দেখুন</span>
                   <ArrowRight size={15} className="group-hover:translate-x-1.5 transition-transform duration-200" />
-                </button>
+                </a>
               </div>
             </motion.div>
 

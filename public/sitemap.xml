@@ -22,6 +22,46 @@
     </image:image>
   </url>
   <url>
+    <loc>https://mahims.com/classroom/mahim</loc>
+    <lastmod>2026-09-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png</image:loc>
+      <image:title>মাহিম - ফাউন্ডার, মাহিম'স ক্লাসরুম</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/samiul</loc>
+    <lastmod>2026-09-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg</image:loc>
+      <image:title>সামিউল ইসলাম সোহরাব - মেন্টর, মাহিম'স ক্লাসরুম</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/suza</loc>
+    <lastmod>2026-09-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg</image:loc>
+      <image:title>আবু সালেহ সুজা - মেন্টর, মাহিম'স ক্লাসরুম</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/mithen</loc>
+    <lastmod>2026-09-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png</image:loc>
+      <image:title>মিশকাত শরীফ মিথেন - মেন্টর, মাহিম'স ক্লাসরুম</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://mahims.com/chithi</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>daily</changefreq>

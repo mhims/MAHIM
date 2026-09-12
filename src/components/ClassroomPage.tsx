@@ -757,14 +757,21 @@ export const ClassroomPage: React.FC = () => {
             </div>
 
             {/* "বিস্তারিত" Button strictly at the bottom */}
-            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
+              <button
+                onClick={() => navigateTo('/classroom/mahim')}
+                id="mahim-details-btn"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত প্রোফাইল</span>
+                <ChevronRight size={16} />
+              </button>
               <button
                 onClick={() => setIsProfileModalOpen(true)}
-                id="mahim-details-btn"
-                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                title="কুইক ভিউ"
+                className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
               >
-                <span>বিস্তারিত</span>
-                <ChevronRight size={16} />
+                <Sparkles size={16} />
               </button>
             </div>
           </div>
@@ -810,14 +817,21 @@ export const ClassroomPage: React.FC = () => {
             </div>
 
             {/* "বিস্তারিত" Button */}
-            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
+              <button
+                onClick={() => navigateTo('/classroom/samiul')}
+                id="samiul-details-btn"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত প্রোফাইল</span>
+                <ChevronRight size={16} />
+              </button>
               <button
                 onClick={() => setIsSamiulModalOpen(true)}
-                id="samiul-details-btn"
-                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                title="কুইক ভিউ"
+                className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
               >
-                <span>বিস্তারিত</span>
-                <ChevronRight size={16} />
+                <Sparkles size={16} />
               </button>
             </div>
           </div>
@@ -863,14 +877,21 @@ export const ClassroomPage: React.FC = () => {
             </div>
 
             {/* "বিস্তারিত" Button */}
-            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
+              <button
+                onClick={() => navigateTo('/classroom/suza')}
+                id="suja-details-btn"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত প্রোফাইল</span>
+                <ChevronRight size={16} />
+              </button>
               <button
                 onClick={() => setIsSujaModalOpen(true)}
-                id="suja-details-btn"
-                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                title="কুইক ভিউ"
+                className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
               >
-                <span>বিস্তারিত</span>
-                <ChevronRight size={16} />
+                <Sparkles size={16} />
               </button>
             </div>
           </div>
@@ -917,14 +938,21 @@ export const ClassroomPage: React.FC = () => {
             </div>
 
             {/* "বিস্তারিত" Button */}
-            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-orange-100 flex items-center justify-between gap-2">
+              <button
+                onClick={() => navigateTo('/classroom/mithen')}
+                id="mithen-details-btn"
+                className="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+              >
+                <span>বিস্তারিত প্রোফাইল</span>
+                <ChevronRight size={16} />
+              </button>
               <button
                 onClick={() => setIsMithenModalOpen(true)}
-                id="mithen-details-btn"
-                className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                title="কুইক ভিউ"
+                className="p-2.5 rounded-xl border border-orange-200 hover:bg-orange-50 text-orange-600 transition-colors cursor-pointer"
               >
-                <span>বিস্তারিত</span>
-                <ChevronRight size={16} />
+                <Sparkles size={16} />
               </button>
             </div>
           </div>

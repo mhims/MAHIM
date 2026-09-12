@@ -13,6 +13,10 @@ const routes = [
   'salami',
   'chithi',
   'classroom',
+  'classroom/mahim',
+  'classroom/samiul',
+  'classroom/suza',
+  'classroom/mithen',
   'portfolio'
 ];
 
@@ -186,6 +190,137 @@ const routeData = {
             </div>
           </section>
         </main>
+      </div>
+    `
+  },
+
+  'classroom/mahim': {
+    title: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
+    metaTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম | Mahim Profile",
+    description: "মাহিম - ঢাকা সেন্ট্রাল ইউনিভার্সিটি (অনার্স)। প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম। একাডেমি ও এডমিশন মেন্টরশিপ প্রোফাইল।",
+    keywords: "মাহিম, মাহিম ক্লাসরুম, Mahim Classroom, Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি, মাহিম শিক্ষক প্রোফাইল",
+    canonical: `${siteUrl}/classroom/mahim`,
+    ogTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | ফাউন্ডার, মাহিম'স ক্লাসরুম। শিক্ষক ও মেন্টর প্রোফাইল এবং কোর্সসমূহ।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
+    twitterTitle: "মাহিম — ফাউন্ডার, মাহিম'স ক্লাসরুম",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | ফাউন্ডার, মাহিম'স ক্লাসরুম। শিক্ষক ও মেন্টর প্রোফাইল।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "মাহিম (Mahim)",
+      "url": `${siteUrl}/classroom/mahim`,
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228470/mahim_classroom_avatar_pkyu0v.png",
+      "jobTitle": "ফাউন্ডার ও প্রধান মেন্টর",
+      "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Mahim's Classroom"
+      },
+      "alumniOf": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি"
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
+        <h1 class="text-3xl font-black text-zinc-900">মাহিম</h1>
+        <p class="text-base text-orange-600 font-bold">ফাউন্ডার ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম</p>
+        <p class="text-sm text-zinc-600 mt-2">ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
+      </div>
+    `
+  },
+
+  'classroom/samiul': {
+    title: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
+    metaTitle: "সামিউল ইসলাম সোহরাব — শিক্ষক প্রোফাইল | Mahim's Classroom",
+    description: "সামিউল ইসলাম সোহরাব - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং)। ফাউন্ডার, সামনাদ একাডেমি এবং মেন্টর, শেখার সিঁড়ি।",
+    keywords: "সামিউল ইসলাম সোহরাব, সামনাদ একাডেমি, ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি, সফটওয়্যার ইঞ্জিনিয়ারিং, শেখার সিঁড়ি, মাহিম ক্লাসরুম শিক্ষক",
+    canonical: `${siteUrl}/classroom/samiul`,
+    ogTitle: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম",
+    ogDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি | মেন্টর, শেখার সিঁড়ি।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
+    twitterTitle: "সামিউল ইসলাম সোহরাব — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)",
+      "url": `${siteUrl}/classroom/samiul`,
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
+      "jobTitle": "ফাউন্ডার, সামনাদ একাডেমি ও মেন্টর",
+      "worksFor": {
+        "@type": "EducationalOrganization",
+        "name": "Samnad Academy"
+      },
+      "alumniOf": "Daffodil International University"
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
+        <h1 class="text-3xl font-black text-zinc-900">সামিউল ইসলাম সোহরাব</h1>
+        <p class="text-base text-orange-600 font-bold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, মাহিম'স ক্লাসরুম</p>
+        <p class="text-sm text-zinc-600 mt-2">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি — সফটওয়্যার ইঞ্জিনিয়ারিং</p>
+        <p class="text-sm text-zinc-600">মেন্টর, শেখার সিঁড়ি</p>
+      </div>
+    `
+  },
+
+  'classroom/suza': {
+    title: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
+    metaTitle: "আবু সালেহ সুজা — শিক্ষক প্রোফাইল | Mahim's Classroom",
+    description: "আবু সালেহ সুজা - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষায় ৫১ তম স্থান অর্জনকারী।",
+    keywords: "আবু সালেহ সুজা, ফার্মেসি এমবিএসটিইউ, MBSTU Pharmacy, গুচ্ছ ভর্তি পরীক্ষা ৫১তম, Abu Saleh Suja, মাহিম ক্লাসরুম",
+    canonical: `${siteUrl}/classroom/suza`,
+    ogTitle: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম",
+    ogDescription: "ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
+    twitterTitle: "আবু সালেহ সুজা — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterDescription: "ফার্মেসি বিভাগ, MBSTU | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "আবু সালেহ সুজা (Abu Saleh Suja)",
+      "url": `${siteUrl}/classroom/suza`,
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
+      "jobTitle": "মেন্টর",
+      "alumniOf": "Mawlana Bhashani Science and Technology University"
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
+        <h1 class="text-3xl font-black text-zinc-900">আবু সালেহ সুজা</h1>
+        <p class="text-base text-orange-600 font-bold">ফার্মেসি বিভাগ — মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়</p>
+        <p class="text-sm text-zinc-700 mt-2">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫ ঃ ৫১ তম মেধা স্থান</p>
+        <p class="text-sm text-zinc-600">বোটানি, জগন্নাথ বিশ্ববিদ্যালয় (২০২৪-২০২৫) | এগ্রিকালচার, কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয় (২০২৪-২০২৫)</p>
+      </div>
+    `
+  },
+
+  'classroom/mithen': {
+    title: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম | শিক্ষক প্রোফাইল",
+    metaTitle: "মিশকাত শরীফ মিথেন — শিক্ষক প্রোফাইল | Mahim's Classroom",
+    description: "মিশকাত শরীফ মিথেন - বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)। প্রতিষ্ঠাতা: মিথেন প্রাইভেট হোম। দিনাজপুর বোর্ড এসএসসি ও এইচএসসি জিপিএ ৫.০০ প্রাপ্ত।",
+    keywords: "মিশকাত শরীফ মিথেন, বেগম রোকেয়া বিশ্ববিদ্যালয়, BRUR, মিথেন প্রাইভেট হোম, Mishkat Sharif Mithen, মাহিম ক্লাসরুম",
+    canonical: `${siteUrl}/classroom/mithen`,
+    ogTitle: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম",
+    ogDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম | ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
+    twitterTitle: "মিশকাত শরীফ মিথেন — মেন্টর, মাহিম'স ক্লাসরুম",
+    twitterDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)",
+      "url": `${siteUrl}/classroom/mithen`,
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
+      "jobTitle": "ফাউন্ডার, মিথেন প্রাইভেট হোম ও মেন্টর",
+      "alumniOf": "Begum Rokeya University, Rangpur"
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans">
+        <h1 class="text-3xl font-black text-zinc-900">মিশকাত শরীফ মিথেন</h1>
+        <p class="text-base text-orange-600 font-bold">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
+        <p class="text-sm text-zinc-700 mt-2">গণিত বিভাগ — ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
+        <p class="text-sm text-zinc-600">এসএসসি ও এইচএসসি: বিজ্ঞান বিভাগ (জিপিএ ৫.০০), দিনাজপুর বোর্ড</p>
       </div>
     `
   },

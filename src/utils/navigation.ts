@@ -15,11 +15,32 @@ export const SECTION_ROUTES: Record<string, string> = {
   '/contact': 'contact',
 };
 
-export const STANDALONE_ROUTES = new Set(['/portfolio', '/salami', '/wallet', '/admin', '/chithi', '/allf', '/allu', '/alll', '/classroom']);
+export const STANDALONE_ROUTES = new Set([
+  '/portfolio',
+  '/salami',
+  '/wallet',
+  '/admin',
+  '/chithi',
+  '/allf',
+  '/allu',
+  '/alll',
+  '/classroom',
+  '/classroom/mahim',
+  '/classroom/samiul',
+  '/classroom/suza',
+  '/classroom/mithen'
+]);
 
 export function isValidRoute(pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, '') || '/';
-  return Boolean(SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized));
+  if (SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized)) {
+    return true;
+  }
+  // Allow dynamic /classroom/:slug
+  if (normalized.startsWith('/classroom/')) {
+    return true;
+  }
+  return false;
 }
 
 export const navigateTo = (path: string, event?: MouseEvent) => {

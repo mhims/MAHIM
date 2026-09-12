@@ -10,6 +10,7 @@ import { WalletPage } from './components/WalletPage';
 import { ChithiPage } from './components/ChithiPage';
 import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { ClassroomPage } from './components/ClassroomPage';
+import { TeacherProfilePage } from './components/TeacherProfilePage';
 import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
@@ -44,6 +45,8 @@ export default function App() {
   const isAllU = currentPath === '/allu';
   const isAllL = currentPath === '/alll';
   const isClassroom = currentPath === '/classroom';
+  const isTeacherProfile = currentPath.startsWith('/classroom/');
+  const teacherSlug = isTeacherProfile ? currentPath.replace('/classroom/', '') : '';
   const isPortfolio =
     currentPath === '/portfolio' ||
     currentPath === '/about' ||
@@ -147,7 +150,7 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami, isWallet, isChithi, isAllF, isAllU, isAllL, isClassroom]);
+  }, [isSalami, isWallet, isChithi, isAllF, isAllU, isAllL, isClassroom, isTeacherProfile]);
 
   if (isSalami) {
     return <SalamiPage />;
@@ -171,6 +174,10 @@ export default function App() {
 
   if (isAllL) {
     return <DriveGatewayPage mode="alll" />;
+  }
+
+  if (isTeacherProfile) {
+    return <TeacherProfilePage slug={teacherSlug} />;
   }
 
   if (isClassroom) {

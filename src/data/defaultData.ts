@@ -5,7 +5,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   tagline: 'শিক্ষা, প্রযুক্তি, দর্শন ও সৃষ্টিশীল ডিজিটাল অঙ্গন',
   domain: 'mahims.com',
   primaryLang: 'bn',
-  logoUrl: '/logo.png',
+  logoUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789236304/mahims.com-Logo_ezjh1b.png',
 
   heroTitle: 'Mahim Ibne Khudi',
   heroSubtitle: "Mahim's World — Thoughts, Academy & Creative Ecosystem",

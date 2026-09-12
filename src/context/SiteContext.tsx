@@ -162,10 +162,16 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ? DEFAULT_SETTINGS.heroSubtitle
             : parsed.heroSubtitle;
 
+        const cleanLogoUrl =
+          !parsed.logoUrl || parsed.logoUrl === '/logo.png'
+            ? DEFAULT_SETTINGS.logoUrl
+            : parsed.logoUrl;
+
         return {
           ...DEFAULT_SETTINGS,
           ...parsed,
           siteName: "Mahim's World",
+          logoUrl: cleanLogoUrl,
           tagline: cleanTagline,
           heroSubtitle: cleanHeroSubtitle,
           seoDescription: cleanDescription,

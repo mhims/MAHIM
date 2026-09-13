@@ -115,8 +115,12 @@ export function saveClassroomRegistration(data: Omit<ClassroomRegistration, 'id'
     id: `cr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     name: data.name.trim(),
     phone: data.phone.trim(),
+    whatsapp: data.whatsapp?.trim() || data.phone.trim(),
     course: data.course.trim(),
     message: data.message?.trim() || '',
+    paymentMethod: data.paymentMethod?.trim() || '',
+    trxId: data.trxId?.trim() || '',
+    fee: data.fee?.trim() || '',
     timestamp: new Date().toISOString(),
     status: 'new',
   };
@@ -232,12 +236,16 @@ export function saveClassroomSettings(settings: ClassroomSettings): void {
 export function exportRegistrationsToCSV(list: ClassroomRegistration[]): void {
   if (!list.length) return;
 
-  const headers = ['Serial', 'Student Name', 'Phone', 'Target Course', 'Message', 'Date & Time', 'Status'];
+  const headers = ['Serial', 'Student Name', 'Phone', 'WhatsApp', 'Target Course', 'Fee', 'Payment Method', 'TrxID', 'Message', 'Date & Time', 'Status'];
   const rows = list.map((item, index) => [
     index + 1,
     `"${item.name.replace(/"/g, '""')}"`,
     `"${item.phone.replace(/"/g, '""')}"`,
+    `"${(item.whatsapp || item.phone).replace(/"/g, '""')}"`,
     `"${item.course.replace(/"/g, '""')}"`,
+    `"${(item.fee || '').replace(/"/g, '""')}"`,
+    `"${(item.paymentMethod || '').replace(/"/g, '""')}"`,
+    `"${(item.trxId || '').replace(/"/g, '""')}"`,
     `"${(item.message || '').replace(/"/g, '""')}"`,
     `"${new Date(item.timestamp).toLocaleString('en-US')}"`,
     `"${item.status || 'new'}"`,
@@ -269,7 +277,11 @@ export async function sendRegistrationToGoogleSheet(
       rawTimestamp: registration.timestamp,
       name: registration.name,
       phone: registration.phone,
+      whatsapp: registration.whatsapp || registration.phone,
       course: registration.course,
+      fee: registration.fee || '',
+      paymentMethod: registration.paymentMethod || '',
+      trxId: registration.trxId || '',
       message: registration.message || '',
       status: registration.status || 'new',
       platform: "Mahim's Classroom",

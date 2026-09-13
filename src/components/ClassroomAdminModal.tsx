@@ -26,6 +26,12 @@ import {
 } from 'lucide-react';
 import { ClassroomRegistration, ClassroomSettings } from '../types/classroom';
 import {
+  getAllEnrollments,
+  setEnrollmentStatus,
+  CourseEnrollmentRecord,
+  syncStudentEnrollmentsFromGoogleSheet,
+} from '../utils/studentAuth';
+import {
   getStoredClassroomRegistrations,
   updateRegistrationStatus,
   deleteClassroomRegistration,
@@ -55,11 +61,12 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
   const [isVerifying, setIsVerifying] = useState(false);
 
   // Tabs and filters
-  const [activeTab, setActiveTab] = useState<'students' | 'settings'>('students');
+  const [activeTab, setActiveTab] = useState<'students' | 'mentorship' | 'settings'>('students');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [registrations, setRegistrations] = useState<ClassroomRegistration[]>([]);
+  const [enrollments, setEnrollments] = useState<CourseEnrollmentRecord[]>([]);
 
   // Sync state
   const [isSyncing, setIsSyncing] = useState(false);
@@ -86,9 +93,21 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleEnrollUpdate = () => {
+      setEnrollments(getAllEnrollments());
+    };
+    window.addEventListener('student:enrollment_updated', handleEnrollUpdate);
+    return () => {
+      window.removeEventListener('student:enrollment_updated', handleEnrollUpdate);
+    };
+  }, []);
+
   const loadData = async (syncWithSheet = true) => {
     const local = getStoredClassroomRegistrations();
     setRegistrations(local);
+    const localEnrollments = getAllEnrollments();
+    setEnrollments(localEnrollments);
     const currentSettings = getClassroomSettings();
     setSettings(currentSettings);
 
@@ -100,6 +119,8 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
         if (fetched) {
           setRegistrations(fetched);
         }
+        await syncStudentEnrollmentsFromGoogleSheet();
+        setEnrollments(getAllEnrollments());
       } catch (err) {
         console.warn('Google Sheet sync warning:', err);
       } finally {
@@ -120,7 +141,9 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
     try {
       const fetched = await fetchRegistrationsFromGoogleSheet(effectiveUrl);
       setRegistrations(fetched);
-      setSyncStatusMsg(`✓ গুগল শিট থেকে সফলভাবে ${fetched.length} জন শিক্ষার্থীর তালিকা লোড হয়েছে!`);
+      await syncStudentEnrollmentsFromGoogleSheet();
+      setEnrollments(getAllEnrollments());
+      setSyncStatusMsg(`✓ গুগল শিট থেকে সফলভাবে ${fetched.length} জন শিক্ষার্থীর তথ্য ও মেন্টরশীপ এনরোলমেন্ট সিঙ্ক হয়েছে!`);
       setTimeout(() => setSyncStatusMsg(null), 5000);
     } catch {
       setSyncStatusMsg('⚠️ গুগল শিট থেকে ডাটা আনা যায়নি। Apps Script এর Web app পারমিশন (Who has access: Anyone) চেক করুন।');
@@ -359,7 +382,19 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                   }`}
                 >
                   <Users size={14} />
-                  <span>শিক্ষার্থীদের তালিকা ({totalCount})</span>
+                  <span>প্রি-রেজিস্ট্রেশন তালিকা ({totalCount})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('mentorship')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5 ${
+                    activeTab === 'mentorship'
+                      ? 'bg-orange-500 text-white shadow-xs'
+                      : 'bg-white text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
+                  }`}
+                >
+                  <Sparkles size={14} />
+                  <span>মেন্টরশীপ কোর্স ভর্তি ({enrollments.length})</span>
                 </button>
 
                 <button
@@ -535,8 +570,8 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                 ) : (
                   <div className="space-y-3">
                     {filteredRegistrations.map((item) => {
-                      const cleanPhone = item.phone.replace(/[^0-9]/g, '');
-                      const whatsappUrl = `https://wa.me/88${cleanPhone.startsWith('88') ? cleanPhone : cleanPhone.startsWith('0') ? cleanPhone : '0' + cleanPhone}`;
+                      const waNumber = (item.whatsapp || item.phone).replace(/[^0-9]/g, '');
+                      const whatsappUrl = `https://wa.me/88${waNumber.startsWith('88') ? waNumber : waNumber.startsWith('0') ? waNumber : '0' + waNumber}`;
 
                       return (
                         <div
@@ -549,11 +584,30 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                                 {item.name.charAt(0)}
                               </div>
                               <div>
-                                <h4 className="text-sm font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
-                                  {item.name}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-500">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h4 className="text-sm font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                                    {item.name}
+                                  </h4>
+                                  {item.fee && (
+                                    <span className="px-2 py-0.5 rounded-md bg-orange-100 text-orange-800 text-[10px] font-extrabold font-['Hind_Siliguri',sans-serif]">
+                                      ফি: {item.fee}
+                                    </span>
+                                  )}
+                                  {item.paymentMethod && (
+                                    <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[10px] font-bold font-['Hind_Siliguri',sans-serif]">
+                                      {item.paymentMethod === 'bkash' ? 'বিকাশ' : item.paymentMethod === 'nagad' ? 'নগদ' : item.paymentMethod}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-500 flex-wrap">
                                   <span className="font-mono font-bold text-zinc-700">{item.phone}</span>
+                                  {item.whatsapp && item.whatsapp !== item.phone && (
+                                    <>
+                                      <span>•</span>
+                                      <span className="font-mono text-emerald-700 text-[11px]">WA: {item.whatsapp}</span>
+                                    </>
+                                  )}
                                   <span>•</span>
                                   <span className="flex items-center gap-1 font-['Hind_Siliguri',sans-serif]">
                                     <Clock size={12} />
@@ -620,17 +674,256 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                             </div>
                           </div>
 
-                          {/* Course badge & Message */}
+                          {/* Course badge, TrxID & Message */}
                           <div className="bg-orange-50/50 border border-orange-100/80 rounded-xl p-2.5 text-xs text-zinc-700 flex flex-col gap-1.5">
-                            <div className="flex items-center gap-1.5 text-orange-700 font-bold font-['Hind_Siliguri',sans-serif]">
-                              <BookOpen size={13} />
-                              <span>কাঙ্ক্ষিত ব্যাচ: {item.course}</span>
+                            <div className="flex items-center justify-between gap-2 flex-wrap">
+                              <div className="flex items-center gap-1.5 text-orange-700 font-bold font-['Hind_Siliguri',sans-serif]">
+                                <BookOpen size={13} />
+                                <span>কাঙ্ক্ষিত ব্যাচ/কোর্স: {item.course}</span>
+                              </div>
+                              {item.trxId && (
+                                <span className="text-[11px] font-mono text-zinc-600 bg-white px-2 py-0.5 rounded border border-zinc-200">
+                                  TrxID: <b className="text-zinc-800">{item.trxId}</b>
+                                </span>
+                              )}
                             </div>
                             {item.message && (
                               <p className="text-zinc-600 italic bg-white p-2 rounded-lg border border-orange-100/60 font-['Hind_Siliguri',sans-serif]">
                                 "{item.message}"
                               </p>
                             )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* Tab: Mentorship Course Enrollments (99/- Gated Access Management)         */}
+            {/* ========================================================================= */}
+            {activeTab === 'mentorship' && (
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-left font-['Hind_Siliguri',sans-serif]">
+                {/* Stats row */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-orange-50/80 border border-orange-200 rounded-2xl p-3 sm:p-4">
+                    <p className="text-[11px] font-bold text-orange-600">মোট এনরোলমেন্ট</p>
+                    <p className="text-xl sm:text-2xl font-black text-zinc-900 font-mono mt-0.5">
+                      {enrollments.length}
+                    </p>
+                  </div>
+
+                  <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-3 sm:p-4">
+                    <p className="text-[11px] font-bold text-emerald-700">অনুমোদিত (এক্সেস প্রাপ্ত)</p>
+                    <p className="text-xl sm:text-2xl font-black text-emerald-700 font-mono mt-0.5">
+                      {enrollments.filter((e) => e.status === 'ok').length}
+                    </p>
+                  </div>
+
+                  <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-3 sm:p-4">
+                    <p className="text-[11px] font-bold text-amber-700">পেন্ডিং (যাচাই অপেক্ষমান)</p>
+                    <p className="text-xl sm:text-2xl font-black text-amber-800 font-mono mt-0.5">
+                      {enrollments.filter((e) => e.status === 'pending').length}
+                    </p>
+                  </div>
+
+                  <div className="bg-rose-50/80 border border-rose-200 rounded-2xl p-3 sm:p-4">
+                    <p className="text-[11px] font-bold text-rose-700">ভুয়া / বাতিল (Fake)</p>
+                    <p className="text-xl sm:text-2xl font-black text-rose-800 font-mono mt-0.5">
+                      {enrollments.filter((e) => e.status === 'fake').length}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Google Sheet OK / FAKE Instruction banner */}
+                <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/10 border border-orange-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md bg-orange-600 text-white text-[10px] font-bold">
+                        গুগল শিট কন্ট্রোল
+                      </span>
+                      <h4 className="text-sm font-bold text-zinc-900">
+                        গুগল শিট থেকে শিক্ষার্থীকে এক্সেস প্রদান বা বাতিল করার নিয়ম
+                      </h4>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      আপনার গুগল স্প্রেডশিটে যেকোনো শিক্ষার্থীর পাশে <b>Status</b> কলামে সরাসরি <b>OK</b> লিখে দিলে
+                      শিক্ষার্থী এখানে সাথে সাথে কোর্স এক্সেস পেয়ে যাবে। আর <b>FAKE</b> লিখলে বাতিল দেখাবে।
+                      এছাড়াও আপনি চাইলে নিচের তালিকা থেকেও সরাসরি বাটন চেপে অনুমোদন দিতে পারেন।
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleManualSync}
+                    disabled={isSyncing}
+                    className="shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-orange-50 text-orange-700 border border-orange-300 shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <RefreshCw size={13} className={isSyncing ? 'animate-spin' : ''} />
+                    <span>{isSyncing ? 'সিঙ্ক হচ্ছে...' : 'শিটের সাথে সিঙ্ক করুন'}</span>
+                  </button>
+                </div>
+
+                {/* Enrollments List */}
+                {enrollments.length === 0 ? (
+                  <div className="p-10 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-300">
+                    <Sparkles size={36} className="mx-auto text-orange-400 mb-2" />
+                    <p className="text-sm font-bold text-zinc-700">কোনো মেন্টরশীপ ভর্তি আবেদন পাওয়া যায়নি</p>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      শিক্ষার্থীরা ৯৯৳ পেমেন্ট করে ফরম পূরণ করলে তাদের ট্রাঞ্জেকশন তথ্য এখানে জমা হবে।
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {enrollments.map((record) => {
+                      const waNumber = (record.whatsapp || record.studentPhone).replace(/[^0-9]/g, '');
+                      const whatsappUrl = `https://wa.me/88${waNumber.startsWith('88') ? waNumber : waNumber.startsWith('0') ? waNumber : '0' + waNumber}`;
+
+                      return (
+                        <div
+                          key={record.id}
+                          className={`bg-white border rounded-2xl p-4 transition-all shadow-xs space-y-3 ${
+                            record.status === 'ok'
+                              ? 'border-emerald-300 bg-emerald-50/15'
+                              : record.status === 'fake'
+                              ? 'border-rose-300 bg-rose-50/15'
+                              : 'border-amber-300 bg-amber-50/15'
+                          }`}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="text-sm font-bold text-zinc-900">
+                                  {record.studentName}
+                                </h4>
+                                <span className="px-2 py-0.5 rounded-md bg-orange-100 text-orange-800 text-[11px] font-bold">
+                                  {record.courseTitle}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-md bg-zinc-100 text-zinc-700 text-[11px] font-mono font-bold">
+                                  {record.fee}
+                                </span>
+
+                                {/* Status badge */}
+                                {record.status === 'ok' && (
+                                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black flex items-center gap-1">
+                                    <CheckCircle2 size={12} />
+                                    <span>অনুমোদিত (OK)</span>
+                                  </span>
+                                )}
+                                {record.status === 'pending' && (
+                                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-black flex items-center gap-1">
+                                    <Clock size={12} />
+                                    <span>যাচাই অপেক্ষমান (Pending)</span>
+                                  </span>
+                                )}
+                                {record.status === 'fake' && (
+                                  <span className="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] font-black flex items-center gap-1">
+                                    <AlertCircle size={12} />
+                                    <span>ভুয়া / বাতিল (Fake)</span>
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-2 mt-1 text-xs text-zinc-600 flex-wrap">
+                                <span>শিক্ষার্থীর ফোন: <b className="font-mono text-zinc-800">{record.studentPhone}</b></span>
+                                <span>•</span>
+                                <span>পেমেন্ট মেথড: <b className="text-zinc-800">{record.paymentMethod}</b></span>
+                                <span>•</span>
+                                <span>প্রেরক নম্বর: <b className="font-mono text-zinc-800">{record.senderPhone}</b></span>
+                                <span>•</span>
+                                <span className="flex items-center gap-1 bg-zinc-100 px-2 py-0.5 rounded text-[11px] border border-zinc-200">
+                                  TrxID: <b className="font-mono text-zinc-900">{record.trxId}</b>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(record.trxId);
+                                      alert(`TrxID ${record.trxId} কপি হয়েছে!`);
+                                    }}
+                                    className="text-zinc-500 hover:text-zinc-900 ml-1 cursor-pointer"
+                                    title="TrxID কপি করুন"
+                                  >
+                                    <Copy size={11} />
+                                  </button>
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Contact buttons */}
+                            <div className="flex items-center gap-2 self-start sm:self-center">
+                              <a
+                                href={`tel:${record.studentPhone}`}
+                                className="px-2.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold flex items-center gap-1 transition-colors"
+                              >
+                                <PhoneCall size={13} className="text-emerald-600" />
+                                <span>কল</span>
+                              </a>
+                              <a
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1 transition-colors"
+                              >
+                                <MessageSquare size={13} className="text-emerald-600" />
+                                <span>হোয়াটসঅ্যাপ</span>
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* 1-Click Status Toggles */}
+                          <div className="pt-2 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-2">
+                            <span className="text-[11px] text-zinc-500">
+                              এক ক্লিকে স্ট্যাটাস সেট করুন:
+                            </span>
+
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEnrollmentStatus(record.id, 'ok');
+                                  setEnrollments(getAllEnrollments());
+                                }}
+                                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                                  record.status === 'ok'
+                                    ? 'bg-emerald-600 text-white shadow-xs'
+                                    : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800'
+                                }`}
+                              >
+                                <CheckCircle2 size={13} />
+                                <span>অনুমোদন দিন (OK)</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEnrollmentStatus(record.id, 'fake');
+                                  setEnrollments(getAllEnrollments());
+                                }}
+                                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                                  record.status === 'fake'
+                                    ? 'bg-rose-600 text-white shadow-xs'
+                                    : 'bg-rose-100 hover:bg-rose-200 text-rose-800'
+                                }`}
+                              >
+                                <AlertCircle size={13} />
+                                <span>ভুয়া চিহ্নিত করুন (FAKE)</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEnrollmentStatus(record.id, 'pending');
+                                  setEnrollments(getAllEnrollments());
+                                }}
+                                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                                  record.status === 'pending'
+                                    ? 'bg-amber-600 text-white shadow-xs'
+                                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700'
+                                }`}
+                              >
+                                <Clock size={13} />
+                                <span>পেন্ডিং রাখুন</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );

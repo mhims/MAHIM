@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
   GraduationCap,
   BookOpen,
@@ -22,22 +23,16 @@ import {
   FileText,
   Lock,
   ShieldCheck,
+  MessageSquare,
+  Video,
+  LogIn,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { ClassroomAdminModal } from './ClassroomAdminModal';
+import { StudentProfileModal, StudentHeaderMenu, ProfileModalTab } from './StudentProfileModal';
+import { getCurrentStudent, StudentUser } from '../utils/studentAuth';
 import { saveClassroomRegistration } from '../utils/classroomStorage';
-
-interface CourseItem {
-  id: string;
-  title: string;
-  category: 'admission' | 'hsc' | 'ssc' | 'junior' | 'skills';
-  categoryLabel: string;
-  targetBadge?: string;
-  description: string;
-  highlights: string[];
-  status: 'upcoming' | 'launching_soon' | 'planning';
-  isFeatured?: boolean;
-}
+import { ALL_COURSES, getMainPageCourses, type CourseItem } from '../data/courses';
 
 interface ArticleItem {
   id: string;
@@ -49,144 +44,7 @@ interface ArticleItem {
   content: string[];
 }
 
-const COURSES: CourseItem[] = [
-  // 1. Admission Top Priority
-  {
-    id: 'admission-exam',
-    title: 'ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ',
-    category: 'admission',
-    categoryLabel: 'এডমিশন এক্সাম সিরিজ',
-    description: 'অনলাইন লাইভ কুইজ, নেগেটিভ মার্কিং ট্র্যাকিং, ইনস্ট্যান্ট মেরিট লিস্ট এবং বিগত ২০ বছরের প্রশ্ন এনালাইসিস ভিত্তিক পূর্ণাঙ্গ এক্সাম সিরিজ।',
-    highlights: [
-      'স্মার্ট অনলাইন এক্সাম প্ল্যাটফর্ম',
-      'নেগেটিভ মার্কিং নির্ভুলতা ও টাইম কন্ট্রোল',
-      'টপিকভিত্তিক স্পেশাল ডেইলি কুইজ ও উইকলি টেস্ট',
-      'ইনস্ট্যান্ট মেরিট লিস্ট ও রিয়েলটাইম সল্যুশন শিট',
-    ],
-    status: 'launching_soon',
-    isFeatured: true,
-  },
-  {
-    id: 'admission-ka',
-    title: "ভার্সিটি এডমিশন 'ক' ইউনিট ব্যাচ",
-    category: 'admission',
-    categoryLabel: 'বিজ্ঞান এডমিশন',
-    description: 'পদার্থবিজ্ঞান, রসায়ন, উচ্চতর গণিত এবং জীববিজ্ঞানের কঠিন কনসেপ্টগুলোর সহজ ব্যাখ্যা ও এডমিশন হলে দ্রুত উত্তর করার শর্টকাট টেকনিক।',
-    highlights: [
-      'কনসেপ্ট ক্ল্যারিটি + টাইম-সেভিং শর্টকাট',
-      'অধ্যায়ভিত্তিক এডমিশন হ্যাকস ও টাইপ সলভিং',
-      'রিটেন ও এমসিকিউ সমন্বিত গোছানো প্রস্তুতি',
-    ],
-    status: 'upcoming',
-    isFeatured: true,
-  },
-  {
-    id: 'admission-kha',
-    title: "ভার্সিটি এডমিশন 'খ' ইউনিট ব্যাচ",
-    category: 'admission',
-    categoryLabel: 'মানবিক ও বিভাগ পরিবর্তন',
-    description: 'বাংলা ব্যাকরণ ও টেক্সটবুক এনালাইসিস, বেসিক থেকে এডভান্সড ইংরেজি গ্রামার ও সাম্প্রতিক-মৌলিক সাধারণ জ্ঞানের সম্পূর্ণ গোছানো প্রস্তুতি।',
-    highlights: [
-      'ইংরেজি গ্রামার ও ভোকাবুলারি স্পেশাল কেয়ার',
-      'বাংলা ১ম ও ২য় পত্রের গভীর প্রশ্ন বিশ্লেষণ',
-      'মৌলিক জিকে ও সাম্প্রতিক ঘটনাপ্রবাহ ডাইজেস্ট',
-    ],
-    status: 'upcoming',
-    isFeatured: true,
-  },
-
-  // 2. HSC Courses (ICT & Bangla Highlighted as requested)
-  {
-    id: 'hsc-ict',
-    title: 'এইচএসসি আইসিটি স্পেশাল মাস্টার ব্যাচ',
-    category: 'hsc',
-    categoryLabel: 'এইচএসসি (HSC)',
-    targetBadge: 'এইচএসসি ২০২৫ ও ২০২৬ (সকল বিভাগ)',
-    description: 'সি প্রোগ্রামিং, এইচটিএমএল, সংখ্যা পদ্ধতি ও লজিক গেইটের সম্পূর্ণ কনসেপ্ট ভিত্তিক সমাধান। সহজে ১০০% বোর্ড নম্বর তোলার বিশেষ টেকনিক।',
-    highlights: [
-      'প্রোগ্রামিং (C) ও অ্যালগরিদম হাতে-কলমে প্র্যাকটিস',
-      'ডিজিটাল ডিভাইস, লজিক গেইট ও বুলিয়ান অ্যালজেব্রা',
-      'এইচটিএমএল (HTML) কোডিং ও ওয়েব ডিজাইন',
-      'বোর্ড প্রশ্ন ও টেস্ট পেপারের সৃজনশীল সলভিং',
-    ],
-    status: 'launching_soon',
-    isFeatured: true,
-  },
-  {
-    id: 'hsc-bangla',
-    title: 'এইচএসসি বাংলা ও ইংরেজি স্পেশাল কেয়ার',
-    category: 'hsc',
-    categoryLabel: 'এইচএসসি (HSC)',
-    targetBadge: 'এইচএসসি ২০২৫ ও ২০২৬',
-    description: 'বাংলা ২য় পত্রের পূর্ণাঙ্গ ব্যাকরণ ও নির্মিতি, ১ম পত্রের গভীর সাহিত্য বিশ্লেষণ এবং ইংরেজি ১ম ও ২য় পত্রের রিটেন স্পেশাল প্র্যাকটিস।',
-    highlights: [
-      'বাংলা ব্যাকরণের সহজ নিয়ম ও পূর্ণাঙ্গ নির্মিতি প্রস্তুতি',
-      'ইংরেজি গ্রামার বেসিক থেকে বোর্ড স্ট্যান্ডার্ড',
-      'সৃজনশীল উত্তর উপস্থাপনা ও সময় নিয়ন্ত্রণ ফর্মুলা',
-    ],
-    status: 'upcoming',
-  },
-  {
-    id: 'hsc-science',
-    title: 'এইচএসসি বিজ্ঞান একাডেমিক ও টেস্ট পেপার ব্যাচ',
-    category: 'hsc',
-    categoryLabel: 'এইচএসসি (বিজ্ঞান)',
-    targetBadge: 'পদার্থ • রসায়ন • উচ্চতর গণিত',
-    description: 'এইচএসসি বিজ্ঞানের জটিল সূত্র ও গাণিতিক সমস্যার কনসেপ্ট ক্লিয়ারিং ক্লাস এবং শীর্ষ কলেজের টেস্ট পেপার স্পেশাল রিভিশন।',
-    highlights: [
-      'কনসেপ্ট নোট ও ম্যাথমেটিক্যাল প্রবলেম সলভিং',
-      'টপ কলেজ টেস্ট পেপার টাইপভিত্তিক এনালাইসিস',
-      'অধ্যায়ভিত্তিক চ্যাপ্টার ফাইনাল এক্সাম',
-    ],
-    status: 'upcoming',
-  },
-
-  // 3. SSC Courses
-  {
-    id: 'ssc-batch',
-    title: 'এসএসসি একাডেমিক ও স্মার্ট এক্সাম ব্যাচ',
-    category: 'ssc',
-    categoryLabel: 'এসএসসি (৯–১০)',
-    targetBadge: 'বিজ্ঞান ও সাধারণ বিভাগ',
-    description: 'বোর্ড সিলেবাসের প্রতিটি অধ্যায় নিখুঁতভাবে শেষ করা, টেস্ট পেপার সলভিং এবং অনলাইনে নিয়মিত টাইপভিত্তিক স্মার্ট এক্সাম প্র্যাকটিস।',
-    highlights: [
-      'গণিত ও বিজ্ঞান বিষয়ের স্পেশাল কনসেপ্ট ক্লাস',
-      'বোর্ড স্ট্যান্ডার্ড স্মার্ট অনলাইন এক্সাম',
-      'দুর্বলতা চিহ্নিত করে পারসোনাল রিভিশন কেয়ার',
-    ],
-    status: 'upcoming',
-  },
-
-  // 4. Junior & Skills (Placed below as requested)
-  {
-    id: 'junior-batch',
-    title: 'জুনিয়র ম্যাথ ও সাইন্স ফাউন্ডেশন',
-    category: 'junior',
-    categoryLabel: 'ক্লাস ৬ – ৮',
-    targetBadge: '৬ষ্ঠ, ৭ম ও ৮ম শ্রেণি',
-    description: 'ছোট থেকেই গণিত ও বিজ্ঞানের ভয় দূর করে ভবিষ্যৎ এসএসসি ও অলিম্পিয়াডের জন্য আত্মবিশ্বাসী ও মজবুত বেসিক গড়ে তোলা।',
-    highlights: [
-      'মজা করে গণিতের সূত্র ও লজিক শেখা',
-      'বিজ্ঞানের বাস্তবমুখী উদাহরণ ও প্রজেক্ট কনসেপ্ট',
-      'সাপ্তাহিক অনলাইন প্রগ্রেস কুইজ',
-    ],
-    status: 'upcoming',
-  },
-  {
-    id: 'future-skills',
-    title: 'ফিউচার স্কিলস (Future Skills)',
-    category: 'skills',
-    categoryLabel: 'স্কিল ডেভেলপমেন্ট',
-    targetBadge: 'গ্রাফিক্স ডিজাইন ও এআই টুলস',
-    description: 'পড়াশোনার পাশাপাশি ডিজিটাল দুনিয়ায় এগিয়ে থাকার জন্য ইন্ডাস্ট্রি স্ট্যান্ডার্ড গ্রাফিক্স ডিজাইন ও স্মার্ট এআই ওয়ার্কফ্লো প্রশিক্ষণ।',
-    highlights: [
-      'প্রফেশনাল গ্রাফিক্স ডিজাইনিং ফান্ডামেন্টালস',
-      'এআই টুলসের স্মার্ট প্রোডাক্টিভিটি ব্যবহার',
-      'হাতে-কলমে প্রজেক্ট ও পোর্টফোলিও মেকিং',
-    ],
-    status: 'planning',
-  },
-];
+// Courses on the main page are curated via getMainPageCourses() from src/data/courses.ts
 
 const ARTICLES: ArticleItem[] = [
   {
@@ -231,9 +89,8 @@ const ARTICLES: ArticleItem[] = [
 ];
 
 export const ClassroomPage: React.FC = () => {
-  // Navigation active tab for courses
-  // Focus priority: Admission & HSC are first
-  const [activeCourseTab, setActiveCourseTab] = useState<string>('admission');
+  // Main page displays only the curated courses (configured via showOnMainPage in src/data/courses.ts)
+  const mainCourses = getMainPageCourses();
 
   // State for Mahim's Profile Modal
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -252,6 +109,11 @@ export const ClassroomPage: React.FC = () => {
 
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+
+  // Student Auth & Profile State
+  const [currentStudent, setCurrentStudent] = useState<StudentUser | null>(null);
+  const [isStudentProfileOpen, setIsStudentProfileOpen] = useState(false);
+  const [studentProfileTab, setStudentProfileTab] = useState<ProfileModalTab>('my_courses');
 
   // State for Classroom Dedicated Admin Modal
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
@@ -358,10 +220,19 @@ export const ClassroomPage: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
 
+    // Initial student session load & listener
+    setCurrentStudent(getCurrentStudent());
+    const handleAuthChange = (e: Event) => {
+      const custom = e as CustomEvent<{ student: StudentUser | null }>;
+      setCurrentStudent(custom.detail?.student || null);
+    };
+    window.addEventListener('student:auth_changed', handleAuthChange);
+
     window.scrollTo({ top: 0, behavior: 'instant' });
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('student:auth_changed', handleAuthChange);
     };
   }, []);
 
@@ -394,12 +265,6 @@ export const ClassroomPage: React.FC = () => {
       setFormSubmitted(true);
     }
   };
-
-  // Filter courses based on active tab
-  const filteredCourses = COURSES.filter((c) => {
-    if (activeCourseTab === 'all') return true;
-    return c.category === activeCourseTab;
-  });
 
   return (
     <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-hidden pb-24 md:pb-0">
@@ -449,14 +314,14 @@ export const ClassroomPage: React.FC = () => {
           {/* Navigation Actions */}
           <div className="flex items-center gap-1 sm:gap-3">
             <button
-              onClick={() => scrollTo('courses')}
-              className="hidden md:inline-flex text-xs font-semibold text-zinc-700 hover:text-orange-600 transition-colors px-3 py-2 font-['Hind_Siliguri',sans-serif]"
+              onClick={() => navigateTo('/classroom/courses')}
+              className="hidden md:inline-flex text-xs font-semibold text-zinc-700 hover:text-orange-600 transition-colors px-3 py-2 font-['Hind_Siliguri',sans-serif] cursor-pointer"
             >
-              কোর্স ও ব্যাচ
+              কোর্সসমূহ
             </button>
             <button
-              onClick={() => scrollTo('faculty')}
-              className="hidden md:inline-flex text-xs font-semibold text-zinc-700 hover:text-orange-600 transition-colors px-3 py-2 font-['Hind_Siliguri',sans-serif]"
+              onClick={() => navigateTo('/classroom/instructor')}
+              className="hidden md:inline-flex text-xs font-semibold text-zinc-700 hover:text-orange-600 transition-colors px-3 py-2 font-['Hind_Siliguri',sans-serif] cursor-pointer"
             >
               শিক্ষক প্যানেল
             </button>
@@ -473,15 +338,14 @@ export const ClassroomPage: React.FC = () => {
               ব্লগ ও গাইডলাইন
             </button>
 
-            {/* Pre-Registration CTA */}
-            <button
-              onClick={() => handlePreRegister()}
-              id="nav-pre-register-btn"
-              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/25 hover:shadow-lg hover:shadow-orange-500/35 transition-all font-['Hind_Siliguri',sans-serif] active:scale-95 cursor-pointer"
-            >
-              <Sparkles size={14} className="text-amber-200" />
-              <span>প্রি-রেজিস্ট্রেশন</span>
-            </button>
+            {/* Student Profile Dropdown Menu (My Courses, Profile Update, Password Update, Transaction History) */}
+            <StudentHeaderMenu
+              currentStudent={currentStudent}
+              onOpenModal={(tab) => {
+                setStudentProfileTab(tab || 'my_courses');
+                setIsStudentProfileOpen(true);
+              }}
+            />
 
             {/* Back to main portfolio */}
             <button
@@ -496,6 +360,31 @@ export const ClassroomPage: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* ========================================================================= */}
+      {/* Top Launch Banner: Mentorship Course (mahims.com/classroom/courses/mentorship) */}
+      {/* Clean, Sharp Image with Animated Traveling Orange Light Beam Border */}
+      {/* ========================================================================= */}
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+        <div
+          onClick={() => navigateTo('/classroom/courses/mentorship')}
+          id="top-classroom-mentorship-banner"
+          className="relative group p-[3px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 active:scale-[0.99] orange-pulsing-glow"
+          title="Mentorship Course - mahims.com/classroom/courses/mentorship"
+        >
+          {/* Traveling Orange Light Beam traveling continuously around the border */}
+          <div className="absolute inset-[-150%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_300deg,#ea580c_320deg,#f97316_340deg,#fbbf24_355deg,#fff7ed_360deg)] pointer-events-none" />
+
+          {/* Inner container keeping the image clean and sharp */}
+          <div className="relative w-full h-full rounded-[13px] sm:rounded-[21px] overflow-hidden bg-zinc-950">
+            <img
+              src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg"
+              alt="Mentorship Course - Mahim's Classroom"
+              className="w-full h-auto object-cover block group-hover:scale-[1.01] transition-transform duration-500"
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Hero Section (Focus strictly on HSC, Admission & SSC as requested) */}
       <section id="hero" className="relative z-10 pt-10 sm:pt-16 pb-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
@@ -523,23 +412,24 @@ export const ClassroomPage: React.FC = () => {
         </p>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md mx-auto mb-14 font-['Hind_Siliguri',sans-serif]">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto mb-14 font-['Hind_Siliguri',sans-serif]">
           <button
-            onClick={() => handlePreRegister()}
-            id="hero-pre-register-btn"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+            onClick={() => navigateTo('/classroom/courses/mentorship')}
+            id="hero-mentorship-launch-btn"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer font-sans"
           >
-            <span>অগ্রিম আসন বুকিং (Pre-Register)</span>
+            <Sparkles size={16} className="text-amber-200" />
+            <span>Mentorship Course (Coming Soon)</span>
             <ArrowRight size={16} />
           </button>
 
           <button
-            onClick={() => scrollTo('courses')}
+            onClick={() => navigateTo('/classroom/courses')}
             id="hero-view-courses-btn"
             className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-white hover:bg-orange-50 text-orange-700 border border-orange-300 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <BookOpen size={16} className="text-orange-600" />
-            <span>কোর্স ও ব্যাচসমূহ দেখুন</span>
+            <span>সকল একাডেমিক কোর্স দেখুন ➔</span>
           </button>
         </div>
 
@@ -595,48 +485,24 @@ export const ClassroomPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Courses / Upcoming Batches Section with Class Filters (Admission & HSC prioritized) */}
+      {/* Courses Section (Only curated featured courses on main page as instructed) */}
       <section id="courses" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-8">
+        <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
             <BookOpen size={14} />
-            <span>Academic & Admission Programs</span>
+            <span>Featured Courses</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight font-['Hind_Siliguri',sans-serif]">
-            কোর্স ও ব্যাচসমূহ
+            নির্বাচিত কোর্স ও ব্যাচসমূহ
           </h2>
           <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
-            এডমিশন ও এইচএসসি ব্যাচের কারিকুলাম ও প্ল্যান চূড়ান্ত হচ্ছে। আপনার পছন্দের ব্যাচ নির্বাচন করে নাম এন্ট্রি করুন।
+            এইচএসসি, ভার্সিটি এডমিশন ও এসএসসি শিক্ষার্থীদের জন্য আমাদের নির্বাচিত বিশেষ কোর্স।
           </p>
         </div>
 
-        {/* Class Filter Tabs (Admission and HSC at top priority as requested) */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mb-10 font-['Hind_Siliguri',sans-serif]">
-          {[
-            { id: 'admission', label: '🎓 এডমিশন (Admission)' },
-            { id: 'hsc', label: '📘 এইচএসসি (HSC)' },
-            { id: 'ssc', label: '📗 এসএসসি (SSC)' },
-            { id: 'all', label: 'সব কোর্স' },
-            { id: 'junior', label: 'ক্লাস ৬–৮' },
-            { id: 'skills', label: 'স্কিলস' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveCourseTab(tab.id)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                activeCourseTab === tab.id
-                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20 scale-105'
-                  : 'bg-white hover:bg-orange-50 text-zinc-700 border border-orange-200/80 hover:border-orange-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Courses Grid */}
+        {/* Selected Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course) => (
+          {mainCourses.map((course) => (
             <div
               key={course.id}
               id={`course-card-${course.id}`}
@@ -646,24 +512,44 @@ export const ClassroomPage: React.FC = () => {
                 <div className="absolute -top-6 -right-6 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
               )}
 
+              {/* Course Thumbnail Image (if provided) */}
+              {course.imageUrl && (
+                <div 
+                  onClick={() => course.actionUrl && navigateTo(course.actionUrl)}
+                  className={`-mx-6 -mt-6 sm:-mx-7 sm:-mt-7 mb-5 overflow-hidden rounded-t-[22px] border-b border-orange-100 bg-zinc-950 aspect-[16/9] ${course.actionUrl ? 'cursor-pointer' : ''}`}
+                >
+                  <img
+                    src={course.imageUrl}
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 block"
+                  />
+                </div>
+              )}
+
               <div>
                 {/* Badge & Status */}
                 <div className="flex items-center justify-between gap-2 mb-4">
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200 font-['Hind_Siliguri',sans-serif]">
                     {course.categoryLabel}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-zinc-600 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                    <span>{course.status === 'launching_soon' ? 'Launching Soon' : 'Upcoming'}</span>
+                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-lg border ${
+                    course.status === 'active'
+                      ? 'text-emerald-700 bg-emerald-50 border-emerald-200 font-bold'
+                      : 'text-zinc-600 bg-orange-50 border-orange-200'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                      course.status === 'active' ? 'bg-emerald-500' : 'bg-orange-500'
+                    }`} />
+                    <span>{course.status === 'active' ? 'ভর্তি চলছে (Active)' : course.status === 'launching_soon' ? 'Launching Soon' : 'Upcoming'}</span>
                   </span>
                 </div>
 
                 {/* Course Title */}
-                <h3 className="text-xl font-bold text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif] mb-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif] mb-2">
                   {course.title}
                 </h3>
 
-                {course.category !== 'admission' && course.targetBadge && (
+                {course.targetBadge && (
                   <p className="text-xs text-orange-700 font-semibold mb-3 font-['Hind_Siliguri',sans-serif]">
                     {course.targetBadge}
                   </p>
@@ -686,14 +572,43 @@ export const ClassroomPage: React.FC = () => {
 
               {/* Action Button */}
               <button
-                onClick={() => handlePreRegister(course.title)}
-                className="w-full py-3 rounded-xl font-bold text-xs sm:text-sm bg-orange-50 hover:bg-orange-500 text-orange-700 hover:text-white border border-orange-300 hover:border-transparent transition-all flex items-center justify-center gap-2 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98"
+                onClick={() => {
+                  if (course.actionUrl) {
+                    navigateTo(course.actionUrl);
+                  } else {
+                    handlePreRegister(course.title);
+                  }
+                }}
+                className="w-full py-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 bg-orange-50 hover:bg-orange-500 text-orange-700 hover:text-white border border-orange-300 hover:border-transparent"
               >
-                <span>আগ্রহ প্রকাশ করুন (Pre-Register)</span>
+                <span>{course.actionText || 'আগ্রহ প্রকাশ করুন (Pre-Register)'}</span>
                 <ArrowRight size={14} />
               </button>
             </div>
           ))}
+        </div>
+
+        {/* View All Courses Banner linking to mahims.com/classroom/courses */}
+        <div className="mt-12 bg-white border-2 border-dashed border-orange-300 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-xs">
+          <div className="space-y-1 text-center sm:text-left">
+            <span className="inline-block px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-800 text-xs font-bold font-mono">
+              mahims.com/classroom/courses
+            </span>
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+              সকল একাডেমিক ও এডমিশন কোর্স দেখতে চান?
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-600 font-['Hind_Siliguri',sans-serif]">
+              বিজ্ঞান, মানবিক, বাংলা-ইংরেজি স্পেশাল কেয়ার, জুনিয়র ও স্কিলস সহ আমাদের সব কোর্স আলাদা পেজে সাজানো রয়েছে।
+            </p>
+          </div>
+          <button
+            onClick={() => navigateTo('/classroom/courses')}
+            id="view-all-courses-page-btn"
+            className="shrink-0 px-6 py-3.5 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95 font-['Hind_Siliguri',sans-serif]"
+          >
+            <BookOpen size={16} />
+            <span>সকল কোর্স দেখুন (View All Courses) ➔</span>
+          </button>
         </div>
       </section>
 
@@ -710,6 +625,16 @@ export const ClassroomPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
             সরাসরি অ্যাকাডেমিক এক্সিলেন্স ও সঠিক দিকনির্দেশনা দিয়ে শিক্ষার্থীদের পাশে আছি আমরা।
           </p>
+          <div className="mt-3">
+            <button
+              onClick={() => navigateTo('/classroom/instructor')}
+              id="view-instructor-page-link"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-colors cursor-pointer border border-orange-200"
+            >
+              <span>শিক্ষক প্যানেলের আলাদা পেজ (mahims.com/classroom/instructor) দেখুন</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -1240,16 +1165,16 @@ export const ClassroomPage: React.FC = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-orange-200/90 px-2 py-1.5 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-around">
           <button
-            onClick={() => scrollTo('courses')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors"
+            onClick={() => navigateTo('/classroom/courses')}
+            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors cursor-pointer"
           >
             <BookOpen size={18} className="text-orange-600" />
             <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">কোর্সসমূহ</span>
           </button>
 
           <button
-            onClick={() => scrollTo('faculty')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors"
+            onClick={() => navigateTo('/classroom/instructor')}
+            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors cursor-pointer"
           >
             <Users size={18} className="text-zinc-600" />
             <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">শিক্ষক</span>
@@ -1972,11 +1897,11 @@ export const ClassroomPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* 3. Pre-Registration Modal (NO WhatsApp, purely direct student form)        */}
+      {/* 3. Pre-Registration / Enrollment Modal (Dedicated 99/- Mentorship Support) */}
       {/* ========================================================================= */}
       {isRegisterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-md bg-white border-2 border-orange-300 rounded-3xl p-6 sm:p-8 shadow-2xl text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-7 shadow-2xl text-left my-8 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsRegisterModalOpen(false)}
               id="close-register-modal-btn"
@@ -1987,12 +1912,20 @@ export const ClassroomPage: React.FC = () => {
 
             {!formSubmitted ? (
               <div>
-                <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
-                  <Sparkles size={20} />
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                    <Sparkles size={20} />
+                  </div>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-700 text-[11px] font-bold font-['Hind_Siliguri',sans-serif]">
+                      অ্যাকাডেমিক ও এডমিশন
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif] mt-0.5">
+                      অগ্রিম প্রি-রেজিস্ট্রেশন
+                    </h3>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
-                  অগ্রিম প্রি-রেজিস্ট্রেশন
-                </h3>
+
                 <p className="text-xs text-zinc-600 mt-1 mb-5 font-['Hind_Siliguri',sans-serif]">
                   কোনো ফি ছাড়াই আপনার পছন্দের ব্যাচে নাম অন্তর্ভুক্ত করুন।
                 </p>
@@ -2000,7 +1933,7 @@ export const ClassroomPage: React.FC = () => {
                 <form onSubmit={submitRegistration} className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 mb-1.5 font-['Hind_Siliguri',sans-serif]">
-                      আপনার পূর্ণ নাম:
+                      আপনার পূর্ণ নাম: <span className="text-orange-600">*</span>
                     </label>
                     <div className="relative">
                       <User size={15} className="absolute left-3.5 top-3 text-zinc-400" />
@@ -2010,14 +1943,14 @@ export const ClassroomPage: React.FC = () => {
                         value={studentName}
                         onChange={(e) => setStudentName(e.target.value)}
                         placeholder="যেমন: সাকিব আহমেদ"
-                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-white border border-zinc-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none text-zinc-900 text-sm"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-white border border-zinc-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none text-zinc-900 text-sm font-['Hind_Siliguri',sans-serif]"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 mb-1.5 font-['Hind_Siliguri',sans-serif]">
-                      মোবাইল নম্বর:
+                      মোবাইল নম্বর: <span className="text-orange-600">*</span>
                     </label>
                     <div className="relative">
                       <Phone size={15} className="absolute left-3.5 top-3 text-zinc-400" />
@@ -2034,7 +1967,7 @@ export const ClassroomPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 mb-1.5 font-['Hind_Siliguri',sans-serif]">
-                      পছন্দের ব্যাচ বা ক্লাস:
+                      পছন্দের কোর্স বা ব্যাচ:
                     </label>
                     <div className="relative">
                       <select
@@ -2057,13 +1990,13 @@ export const ClassroomPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 mb-1.5 font-['Hind_Siliguri',sans-serif]">
-                      কোনো প্রশ্ন বা মেসেজ (ঐচ্ছিক):
+                      কোনো প্রশ্ন বা পরামর্শ থাকলে লিখুন (ঐচ্ছিক):
                     </label>
                     <textarea
-                      rows={2}
+                      rows={3}
                       value={studentMessage}
                       onChange={(e) => setStudentMessage(e.target.value)}
-                      placeholder="আপনার কোনো জিজ্ঞাসা থাকলে লিখতে পারেন..."
+                      placeholder="আপনার প্রশ্ন বা মতামত..."
                       className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-zinc-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none text-zinc-900 text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] resize-none"
                     />
                   </div>
@@ -2071,30 +2004,32 @@ export const ClassroomPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 disabled:opacity-75 text-white shadow-lg shadow-orange-500/25 transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-xl font-extrabold text-sm sm:text-base bg-orange-500 hover:bg-orange-600 disabled:opacity-75 text-white shadow-lg shadow-orange-500/25 transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>জমা হচ্ছে...</span>
+                        <span>তথ্য সংরক্ষণ হচ্ছে...</span>
                       </>
                     ) : (
-                      <span>নাম জমা দিন (Submit) ➔</span>
+                      <span>নাম জমা দিন (Pre-Register) ➔</span>
                     )}
                   </button>
                 </form>
               </div>
             ) : (
-              <div className="text-center py-4">
-                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center mx-auto mb-4">
+              <div className="text-center py-4 space-y-4">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center mx-auto">
                   <CheckCircle2 size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-2">
-                  তথ্য সফলভাবে জমা হয়েছে!
-                </h3>
-                <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] mb-6 leading-relaxed">
-                  ধন্যবাদ, <span className="font-bold text-zinc-900">{studentName}</span>। আপনার প্রি-রেজিস্ট্রেশন নথিভুক্ত করা হয়েছে। ব্যাচ চালুর সময় আপনার দেওয়া নম্বরে যোগাযোগ করে বিস্তারিত জানিয়ে দেওয়া হবে।
-                </p>
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                    রেজিস্ট্রেশন সফলভাবে সম্পন্ন হয়েছে!
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-600 font-['Hind_Siliguri',sans-serif] mt-2 leading-relaxed">
+                    ধন্যবাদ, <span className="font-bold text-zinc-900">{studentName}</span>! আপনার পছন্দের ব্যাচ <span className="font-semibold text-orange-600">({studentClass})</span> এর জন্য আপনার তথ্য সংরক্ষিত হয়েছে। ব্যাচ শুরু হওয়ার পূর্বে আপনার মোবাইল নম্বরে বিস্তারিত জানিয়ে দেওয়া হবে।
+                  </p>
+                </div>
 
                 <button
                   onClick={() => setIsRegisterModalOpen(false)}
@@ -2107,6 +2042,14 @@ export const ClassroomPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Student Profile & Auth Modal */}
+      <StudentProfileModal
+        isOpen={isStudentProfileOpen}
+        onClose={() => setIsStudentProfileOpen(false)}
+        initialTab={studentProfileTab}
+        onSuccessLogin={(student) => setCurrentStudent(student)}
+      />
 
       {/* ========================================================================= */}
       {/* 4. Dedicated Classroom Admin Modal (Completely separate from portfolio)   */}

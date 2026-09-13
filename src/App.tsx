@@ -10,7 +10,11 @@ import { WalletPage } from './components/WalletPage';
 import { ChithiPage } from './components/ChithiPage';
 import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { ClassroomPage } from './components/ClassroomPage';
+import { ClassroomCoursesPage } from './components/ClassroomCoursesPage';
+import { ClassroomInstructorPage } from './components/ClassroomInstructorPage';
 import { TeacherProfilePage } from './components/TeacherProfilePage';
+import { ClassroomMentorshipHubPage } from './components/ClassroomMentorshipHubPage';
+import { MentorshipCourseDetailPage } from './components/MentorshipCourseDetailPage';
 import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
@@ -45,7 +49,19 @@ export default function App() {
   const isAllU = currentPath === '/allu';
   const isAllL = currentPath === '/alll';
   const isClassroom = currentPath === '/classroom';
-  const isTeacherProfile = currentPath.startsWith('/classroom/');
+  const isClassroomInstructor = currentPath === '/classroom/instructor' || currentPath === '/classroom/instructors';
+  const isClassroomCourses = currentPath === '/classroom/courses';
+  const isMentorshipHub = currentPath === '/classroom/courses/mentorship';
+  const isMentorshipCourse =
+    currentPath.startsWith('/classroom/courses/mentorship/') &&
+    currentPath !== '/classroom/courses/mentorship';
+  const mentorSlug = isMentorshipCourse ? currentPath.replace('/classroom/courses/mentorship/', '') : '';
+  const isTeacherProfile =
+    currentPath.startsWith('/classroom/') &&
+    !isClassroomInstructor &&
+    !isClassroomCourses &&
+    !isMentorshipHub &&
+    !isMentorshipCourse;
   const teacherSlug = isTeacherProfile ? currentPath.replace('/classroom/', '') : '';
   const isPortfolio =
     currentPath === '/portfolio' ||
@@ -150,7 +166,20 @@ export default function App() {
       window.removeEventListener('scroll', handleScroll);
       window.clearTimeout(timeoutId);
     };
-  }, [isSalami, isWallet, isChithi, isAllF, isAllU, isAllL, isClassroom, isTeacherProfile]);
+  }, [
+    isSalami,
+    isWallet,
+    isChithi,
+    isAllF,
+    isAllU,
+    isAllL,
+    isClassroom,
+    isClassroomCourses,
+    isClassroomInstructor,
+    isMentorshipHub,
+    isMentorshipCourse,
+    isTeacherProfile,
+  ]);
 
   if (isSalami) {
     return <SalamiPage />;
@@ -174,6 +203,18 @@ export default function App() {
 
   if (isAllL) {
     return <DriveGatewayPage mode="alll" />;
+  }
+
+  if (isMentorshipCourse || isMentorshipHub) {
+    return <ClassroomMentorshipHubPage />;
+  }
+
+  if (isClassroomCourses) {
+    return <ClassroomCoursesPage />;
+  }
+
+  if (isClassroomInstructor) {
+    return <ClassroomInstructorPage />;
   }
 
   if (isTeacherProfile) {

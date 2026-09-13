@@ -33,7 +33,7 @@ const routeData = {
     metaTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
     description: "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। শিক্ষক প্যানেল: মাহিম (Mahim), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), আবু সালেহ সুজা (Abu Saleh Suza), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
     keywords: "Mahim's Classroom, মাহিম ক্লাসরুম, Mahims Classroom, Mahim Classroom, মাহিমস ক্লাসরুম, mahim classroom, mahims.com/classroom, মাহিম, Mahim Ibne Khudi, সামিউল ইসলাম সোহরাব, Samiul Islam Sohrab, আবু সালেহ সুজা, Abu Saleh Suza, মিশকাত শরীফ মিথেন, Mishkat Sharif Mithen, স্বচ্ছল কুমার কর্মকার, Swocchol Kumar Karmokar, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
-    canonical: `${siteUrl}/classroom`,
+    canonical: `${siteUrl}/classroom/`,
     ogTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
     ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
     ogImage: classroomOgImage,
@@ -47,7 +47,7 @@ const routeData = {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
-            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom" }
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" }
           ]
         },
         {
@@ -55,7 +55,7 @@ const routeData = {
           "@id": "https://mahims.com/classroom#organization",
           "name": "Mahim's Classroom",
           "alternateName": ["মাহিম ক্লাসরুম", "Mahims Classroom", "Mahim Classroom", "মাহিম’স ক্লাসরুম"],
-          "url": "https://mahims.com/classroom",
+          "url": "https://mahims.com/classroom/",
           "logo": "https://mahims.com/logo.png",
           "image": classroomOgImage,
           "description": "অনলাইন ভিত্তিক কনসেপ্ট ক্লাস, এইচএসসি আইসিটি, ভার্সিটি এডমিশন টেস্ট সিরিজ এবং নিয়মিত অ্যাকাডেমিক মেন্টরশিপ প্ল্যাটফর্ম।",
@@ -64,13 +64,13 @@ const routeData = {
             "name": "Mahim Ibne Khudi",
             "alternateName": ["মাহিম", "মাহিম ইবনে খুদি", "Mahim"],
             "alumniOf": "Dhaka Central University",
-            "url": "https://mahims.com/classroom/mahim"
+            "url": "https://mahims.com/classroom/mahim/"
           },
           "alumni": [
-            { "@type": "Person", "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "url": "https://mahims.com/classroom/suza" },
-            { "@type": "Person", "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)", "url": "https://mahims.com/classroom/samiul" },
-            { "@type": "Person", "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "url": "https://mahims.com/classroom/mithen" },
-            { "@type": "Person", "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)", "url": "https://mahims.com/classroom/swocchol" }
+            { "@type": "Person", "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "url": "https://mahims.com/classroom/suza/" },
+            { "@type": "Person", "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)", "url": "https://mahims.com/classroom/samiul/" },
+            { "@type": "Person", "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "url": "https://mahims.com/classroom/mithen/" },
+            { "@type": "Person", "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)", "url": "https://mahims.com/classroom/swocchol/" }
           ]
         },
         {
@@ -80,7 +80,7 @@ const routeData = {
           "provider": {
             "@type": "EducationalOrganization",
             "name": "Mahim's Classroom",
-            "url": "https://mahims.com/classroom"
+            "url": "https://mahims.com/classroom/"
           }
         },
         {
@@ -211,7 +211,7 @@ const routeData = {
     metaTitle: "Mahim Ibne Khudi (মাহিম ইবনে খুদি) — Founder & Mentor | Mahim's Classroom",
     description: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)। এইচএসসি ২০২৪ ও এসএসসি ২০২২ উভয় পরীক্ষায় বিজ্ঞান বিভাগে জিপিএ ৫.০০ (দিনাজপুর শিক্ষা বোর্ড)। প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম।",
     keywords: "মাহিম ইবনে খুদি, মাহিম, Mahim Ibne Khudi, Mahim, Mahim Khudi, Mahim's Classroom, মাহিম ক্লাসরুম, ঢাকা সেন্ট্রাল ইউনিভার্সিটি, Dhaka Central University, দিনাজপুর বোর্ড জিপিএ ৫, HSC 2024 GPA 5.00, SSC 2022 GPA 5.00, মাহিম শিক্ষক প্রোফাইল, Mahim Profile, এডমিশন মেন্টর মাহিম",
-    canonical: `${siteUrl}/classroom/mahim`,
+    canonical: `${siteUrl}/classroom/mahim/`,
     ogTitle: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) — প্রতিষ্ঠাতা ও প্রধান মেন্টর | মাহিম'স ক্লাসরুম",
     ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) | বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি উভয় পরীক্ষায় জিপিএ ৫.০০ (দিনাজপুর শিক্ষা বোর্ড) | প্রতিষ্ঠাতা ও প্রধান মেন্টর — মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
@@ -262,7 +262,7 @@ const routeData = {
     metaTitle: "Samiul Islam Sohrab (সামিউল ইসলাম সোহরাব) — Mentor | Mahim's Classroom",
     description: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং - DIU SWE)। ফাউন্ডার, সামনাদ একাডেমি (Samnad Academy) ও মেন্টর, শেখার সিঁড়ি। মেন্টর — মাহিম'স ক্লাসরুম।",
     keywords: "সামিউল ইসলাম সোহরাব, সামিউল ইসলাম, Samiul Islam Sohrab, Samiul Islam, Samiul Sohrab, সামনাদ একাডেমি, Samnad Academy, ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি, Daffodil International University, DIU SWE, সফটওয়্যার ইঞ্জিনিয়ারিং, শেখার সিঁড়ি, Sekhar Siri, মাহিম ক্লাসরুম শিক্ষক, Mahim's Classroom Mentor",
-    canonical: `${siteUrl}/classroom/samiul`,
+    canonical: `${siteUrl}/classroom/samiul/`,
     ogTitle: "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — মেন্টর | মাহিম'স ক্লাসরুম",
     ogDescription: "ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং) | ফাউন্ডার, সামনাদ একাডেমি | মেন্টর, শেখার সিঁড়ি ও মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
@@ -318,7 +318,7 @@ const routeData = {
     metaTitle: "Abu Saleh Suza (আবু সালেহ সুজা) — Mentor | Mahim's Classroom",
     description: "আবু সালেহ সুজা (Abu Saleh Suza) - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫ এ ৫১তম মেধাক্রম অর্জনকারী (GST Rank 51)। মেন্টর — মাহিম'স ক্লাসরুম।",
     keywords: "আবু সালেহ সুজা, আবু সালেহ, Abu Saleh Suza, Abu Saleh, Suza MBSTU, MBSTU Pharmacy, ফার্মেসি এমবিএসটিইউ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়, Mawlana Bhashani Science and Technology University, গুচ্ছ ভর্তি পরীক্ষা ৫১তম, GST Admission 51, জগন্নাথ বিশ্ববিদ্যালয় বোটানি, কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক",
-    canonical: `${siteUrl}/classroom/suza`,
+    canonical: `${siteUrl}/classroom/suza/`,
     ogTitle: "আবু সালেহ সুজা (Abu Saleh Suza) — মেন্টর | মাহিম'স ক্লাসরুম",
     ogDescription: "ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU) | গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২০২৫: ৫১ তম মেধা স্থান | মেন্টর — মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
@@ -369,7 +369,7 @@ const routeData = {
     metaTitle: "Mishkat Sharif Mithen (মিশকাত শরীফ মিথেন) — Mentor | Mahim's Classroom",
     description: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) - বেগম রোকেয়া বিশ্ববিদ্যালয় (Begum Rokeya University - BRUR)। প্রতিষ্ঠাতা: মিথেন প্রাইভেট হোম। গণিত বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি। মেন্টর — মাহিম'স ক্লাসরুম।",
     keywords: "মিশকাত শরীফ মিথেন, মিশকাত শরীফ, Mishkat Sharif Mithen, Mishkat Sharif, Mithen, মিথেন প্রাইভেট হোম, Mithen Private Home, বেগম রোকেয়া বিশ্ববিদ্যালয়, Begum Rokeya University, BRUR, ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত, Dhaka Central University Mathematics, দিনাজপুর বোর্ড জিপিএ ৫, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক",
-    canonical: `${siteUrl}/classroom/mithen`,
+    canonical: `${siteUrl}/classroom/mithen/`,
     ogTitle: "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — মেন্টর | মাহিম'স ক্লাসরুম",
     ogDescription: "বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম | ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত | মেন্টর — মাহিম'স ক্লাসরুম।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
@@ -426,7 +426,7 @@ const routeData = {
     metaTitle: "Swocchol Kumar Karmokar (স্বচ্ছল কুমার কর্মকার) — Mentor | Mahim's Classroom",
     description: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) - কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (Computer Science and Engineering - CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (United International University - UIU)। মেন্টর — মাহিম'স ক্লাসরুম।",
     keywords: "স্বচ্ছল কুমার কর্মকার, স্বচ্ছল কর্মকার, Swocchol Kumar Karmokar, Swocchol Karmakar, Swocchol Kumar, Swocchol, ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি, United International University, UIU CSE, কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং, Computer Science and Engineering, Mahim's Classroom, মাহিম ক্লাসরুম শিক্ষক, UIU Swocchol",
-    canonical: `${siteUrl}/classroom/swocchol`,
+    canonical: `${siteUrl}/classroom/swocchol/`,
     ogTitle: "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — মেন্টর | মাহিম'স ক্লাসরুম",
     ogDescription: "কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE) | ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
@@ -476,7 +476,7 @@ const routeData = {
     metaTitle: "Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল",
     description: "Mahim Salami (মাহিম সালামি) - Mahim Ibne Khudi এর অফিসিয়াল ডিজিটাল ঈদ সালামি ট্র্যাকার ও পোর্টাল। ঈদ সালামি পাঠান অথবা আপনার প্রাপ্ত সালামি ও শুভেচ্ছা বার্তা চেক করুন বিকাশ, নগদ বা রকেটের মাধ্যমে।",
     keywords: "Mahim Salami, মাহিম সালামি, Mahims Salami, mahim salami, eid salami mahim, ঈদ সালামি মাহিম, mahim salami tracker, mahims.com/salami, ডিজিটাল সালামি পোর্টাল, মাহিম ইবনে খুদি সালামি, বিকাশ নগদ সালামি",
-    canonical: `${siteUrl}/salami`,
+    canonical: `${siteUrl}/salami/`,
     ogTitle: "Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল",
     ogDescription: "ঈদের আনন্দ ছড়িয়ে দিতে মাহিমকে ঈদ সালামি পাঠান অথবা আপনার সালামি ট্র্যাক করুন ডিজিটাল পোর্টালে।",
     ogImage: salamiOgImage,
@@ -490,7 +490,7 @@ const routeData = {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
-            { "@type": "ListItem", "position": 2, "name": "মাহিম সালামি (Mahim Salami)", "item": "https://mahims.com/salami" }
+            { "@type": "ListItem", "position": 2, "name": "মাহিম সালামি (Mahim Salami)", "item": "https://mahims.com/salami/" }
           ]
         },
         {
@@ -498,7 +498,7 @@ const routeData = {
           "@id": "https://mahims.com/salami#app",
           "name": "Mahim Salami Portal",
           "alternateName": ["মাহিম সালামি", "Mahim Salami", "Mahims Salami", "Eid Salami Tracker"],
-          "url": "https://mahims.com/salami",
+          "url": "https://mahims.com/salami/",
           "image": salamiOgImage,
           "description": "ডিজিটাল ঈদ সালামি ট্র্যাকার এবং শুভেচ্ছা পোর্টাল। মাহিম ইবনে খুদিকে সালামি পাঠানোর অনলাইন মাধ্যম।",
           "applicationCategory": "EntertainmentApplication",
@@ -572,7 +572,7 @@ const routeData = {
     metaTitle: "Mahim Chithi | মাহিম চিঠি - চিঠি ডট মি (Mahims Chithi)",
     description: "Mahim Chithi (মাহিম চিঠি) - Mahim Ibne Khudi কে বেনামে চিঠি পাঠান। কোনো পরিচয় বা তথ্য ছাড়াই মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% গোপনে ও নিরাপদে।",
     keywords: "Mahim Chithi, মাহিম চিঠি, Mahims Chithi, মাহিমস চিঠি, Mahim Chithi me, মাহিম চিঠি মি, mahim anonymous letter, চিঠি ডট মি মাহিম, chithi mahims, mahims.com/chithi, বেনামে চিঠি মাহিম, সিক্রেট মেসেজ মাহিম, Mahim Ibne Khudi chithi",
-    canonical: `${siteUrl}/chithi`,
+    canonical: `${siteUrl}/chithi/`,
     ogTitle: "Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে",
     ogDescription: "মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।",
     ogImage: chithiOgImage,
@@ -586,7 +586,7 @@ const routeData = {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
-            { "@type": "ListItem", "position": 2, "name": "মাহিম চিঠি (Mahim Chithi)", "item": "https://mahims.com/chithi" }
+            { "@type": "ListItem", "position": 2, "name": "মাহিম চিঠি (Mahim Chithi)", "item": "https://mahims.com/chithi/" }
           ]
         },
         {
@@ -594,7 +594,7 @@ const routeData = {
           "@id": "https://mahims.com/chithi#app",
           "name": "Mahim Chithi — চিঠি ডট মি",
           "alternateName": ["মাহিম চিঠি", "Mahim Chithi", "Mahims Chithi", "Chithi Me Mahim"],
-          "url": "https://mahims.com/chithi",
+          "url": "https://mahims.com/chithi/",
           "image": chithiOgImage,
           "description": "মাহিম ইবনে খুদিকে সম্পূর্ণ বেনামে ও নিরাপদে চিঠি বা গোপন বার্তা পাঠানোর সুরক্ষিত প্ল্যাটফর্ম।",
           "applicationCategory": "SocialNetworkingApplication",
@@ -666,7 +666,7 @@ const routeData = {
     metaTitle: "Portfolio | মাহিম ইবনে খুদি — প্রজেক্ট ও সিভি",
     description: "Mahim Ibne Khudi (মাহিম) - ফুল-স্ট্যাক ওয়েব অ্যাপ্লিকেশন, নো-কোড ওয়ার্কফ্লো অটোমেশন, ব্র্যান্ড আইডেন্টিটি এবং ক্রিয়েটিভ প্রজেক্ট পোর্টফোলিও ও সিভি।",
     keywords: "Mahim portfolio, mahim cv, mahim ibne khudi portfolio, মাহিম পোর্টফোলিও, mahims.com/portfolio, ফুল-স্ট্যাক ডেভেলপার মাহিম, গ্রাফিক্স ডিজাইন মাহিম, ওয়েব প্রজেক্টস",
-    canonical: `${siteUrl}/portfolio`,
+    canonical: `${siteUrl}/portfolio/`,
     ogTitle: "Portfolio | মাহিম ইবনে খুদি — ফুল-স্ট্যাক ও ক্রিয়েটিভ প্রজেক্টস",
     ogDescription: "সফটওয়্যার ডেভেলপমেন্ট, কোডিং প্রজেক্টস, প্রযুক্তি স্ট্যাক ও কাজের ইতিহাস।",
     ogImage: defaultOgImage,
@@ -680,14 +680,14 @@ const routeData = {
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
-            { "@type": "ListItem", "position": 2, "name": "পোর্টফোলিও (Portfolio)", "item": "https://mahims.com/portfolio" }
+            { "@type": "ListItem", "position": 2, "name": "পোর্টফোলিও (Portfolio)", "item": "https://mahims.com/portfolio/" }
           ]
         },
         {
           "@type": "ProfilePage",
           "@id": "https://mahims.com/portfolio#profile",
           "name": "Mahim Ibne Khudi Professional Portfolio",
-          "url": "https://mahims.com/portfolio",
+          "url": "https://mahims.com/portfolio/",
           "description": "Mahim's full-stack development, software engineering, automation workflows and design projects.",
           "primaryImageOfPage": defaultOgImage
         }
@@ -741,7 +741,7 @@ const routeData = {
     metaTitle: "About Mahim | মাহিম ইবনে খুদি",
     description: "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - শিক্ষার্থী, রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি। গ্রাফিক ডিজাইনার, ওয়েব ডেভেলপার ও মাহিম’স ক্লাসরুমের প্রতিষ্ঠাতা।",
     keywords: "About Mahim, মাহিম ইবনে খুদি, Mahim Ibne Khudi, মাহিম গাইবান্ধা, ঢাকা সেন্ট্রাল ইউনিভার্সিটি মাহিম, mahims.com/about",
-    canonical: `${siteUrl}/about`,
+    canonical: `${siteUrl}/about/`,
     ogTitle: "About Mahim | মাহিম ইবনে খুদি",
     ogDescription: "মাহিম ইবনে খুদি এর ব্যক্তিগত জীবনী, শিক্ষাজীবন, দর্শন ও কর্মপ্রচেষ্টা।",
     ogImage: defaultOgImage,
@@ -752,7 +752,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "AboutPage",
       "name": "About Mahim Ibne Khudi",
-      "url": "https://mahims.com/about"
+      "url": "https://mahims.com/about/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -767,7 +767,7 @@ const routeData = {
     metaTitle: "Blog | মাহিম ইবনে খুদি — লেখালেখি ও ব্লগ",
     description: "মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, টেকনোলজি, দর্শন, ইসলাম ও সমকালীন সমাজ নিয়ে নিয়মিত ব্লগ ও বিশ্লেষণমূলক লেখালেখি।",
     keywords: "Mahim blog, মাহিম ব্লগ, mahims.com/blog, মাহিম ইবনে খুদি ব্লগ, প্রযুক্তি ও দর্শন",
-    canonical: `${siteUrl}/blog`,
+    canonical: `${siteUrl}/blog/`,
     ogTitle: "Blog | মাহিম ইবনে খুদি — চিন্তাভাবনা ও ব্লগ",
     ogDescription: "প্রযুক্তি, দর্শন ও সমকালীন সমাজ নিয়ে বিশ্লেষণমূলক লেখালেখি।",
     ogImage: defaultOgImage,
@@ -778,7 +778,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "Blog",
       "name": "Mahim's Blog",
-      "url": "https://mahims.com/blog"
+      "url": "https://mahims.com/blog/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -793,7 +793,7 @@ const routeData = {
     metaTitle: "Contact | মাহিম ইবনে খুদি",
     description: "মাহিম ইবনে খুদির সাথে সরাসরি যোগাযোগের উপায়। ইমেইল: mahimibnkhudi@gmail.com, হোয়াটসঅ্যাপ ও সোশ্যাল মিডিয়া প্রোফাইল লিঙ্ক।",
     keywords: "Contact Mahim, মাহিম যোগাযোগ, mahimibnkhudi@gmail.com, mahims.com/contact",
-    canonical: `${siteUrl}/contact`,
+    canonical: `${siteUrl}/contact/`,
     ogTitle: "Contact | মাহিম ইবনে খুদি",
     ogDescription: "সরাসরি যোগাযোগ করুন মাহিম ইবনে খুদির সাথে।",
     ogImage: defaultOgImage,
@@ -804,7 +804,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "ContactPage",
       "name": "Contact Mahim Ibne Khudi",
-      "url": "https://mahims.com/contact"
+      "url": "https://mahims.com/contact/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -819,7 +819,7 @@ const routeData = {
     metaTitle: "Skills | মাহিম ইবনে খুদি",
     description: "মাহিম ইবনে খুদির টেকনিক্যাল দক্ষতা: React, TypeScript, Tailwind CSS, Node.js, গ্রাফিক্স ডিজাইন, ব্র্যান্ডিং ও অটোমেশন।",
     keywords: "Mahim skills, mahim tech stack, মাহিম দক্ষতা, mahims.com/skills",
-    canonical: `${siteUrl}/skills`,
+    canonical: `${siteUrl}/skills/`,
     ogTitle: "Skills & Tech Stack | মাহিম ইবনে খুদি",
     ogDescription: "মাহিম ইবনে খুদির টেকনিক্যাল ও ক্রিয়েটিভ স্কিলস।",
     ogImage: defaultOgImage,
@@ -830,7 +830,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Skills — Mahim Ibne Khudi",
-      "url": "https://mahims.com/skills"
+      "url": "https://mahims.com/skills/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -845,7 +845,7 @@ const routeData = {
     metaTitle: "Experience | মাহিম ইবনে খুদি",
     description: "মাহিম ইবনে খুদির কাজের অভিজ্ঞতা, ফ্রিল্যান্সিং ক্যারিয়ার, ডিজাইন প্রজেক্ট ও অ্যাকাডেমিক মেন্টরশিপের ইতিহাস।",
     keywords: "Mahim experience, মাহিম অভিজ্ঞতা, mahims.com/experience",
-    canonical: `${siteUrl}/experience`,
+    canonical: `${siteUrl}/experience/`,
     ogTitle: "Experience | মাহিম ইবনে খুদি",
     ogDescription: "মাহিম ইবনে খুদির কাজের অভিজ্ঞতা ও প্রজেক্ট ইতিহাস।",
     ogImage: defaultOgImage,
@@ -856,7 +856,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Experience — Mahim Ibne Khudi",
-      "url": "https://mahims.com/experience"
+      "url": "https://mahims.com/experience/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -871,7 +871,7 @@ const routeData = {
     metaTitle: "Education | মাহিম ইবনে খুদি",
     description: "মাহিম ইবনে খুদির শিক্ষাগত পটভূমি: ঢাকা সেন্ট্রাল ইউনিভার্সিটি (রাষ্ট্রবিজ্ঞান বিভাগ), গাইবান্ধা সরকারি কলেজ (এইচএসসি) ও স্কুল জীবন।",
     keywords: "Mahim education, মাহিম শিক্ষাজীবন, ঢাকা সেন্ট্রাল ইউনিভার্সিটি মাহিম, mahims.com/education",
-    canonical: `${siteUrl}/education`,
+    canonical: `${siteUrl}/education/`,
     ogTitle: "Education | মাহিম ইবনে খুদি",
     ogDescription: "মাহিম ইবনে খুদির শিক্ষাগত যোগ্যতা ও অ্যাকাডেমিক ব্যাকগ্রাউন্ড।",
     ogImage: defaultOgImage,
@@ -882,7 +882,7 @@ const routeData = {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "Education — Mahim Ibne Khudi",
-      "url": "https://mahims.com/education"
+      "url": "https://mahims.com/education/"
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans p-8 max-w-4xl mx-auto">
@@ -975,6 +975,48 @@ if (fs.existsSync(distDir)) {
 
     fs.writeFileSync(path.join(routeDir, 'index.html'), htmlContent, 'utf8');
   });
+
+
+  // Enrich root dist/index.html with pre-rendered semantic navigation & classroom links for Googlebot crawler
+  const rootHomepagePrerender = `
+    <header class="sr-only">
+      <h1>Mahim's World | মাহিম ইবনে খুদি</h1>
+      <p>শিক্ষা, একাডেমি, প্রযুক্তি ও সৃষ্টিশীল ডিজিটাল অঙ্গন।</p>
+      <nav aria-label="প্রধান নেভিগেশন">
+        <ul>
+          <li><a href="https://mahims.com/">হোম (Home)</a></li>
+          <li><a href="https://mahims.com/classroom/">মাহিম ক্লাসরুম (Mahim's Classroom) — একাডেমি ও এডমিশন</a></li>
+          <li><a href="https://mahims.com/portfolio/">পোর্টফোলিও (Portfolio)</a></li>
+          <li><a href="https://mahims.com/blog/">ব্লগ (Blog)</a></li>
+          <li><a href="https://mahims.com/chithi/">মাহিম চিঠি (Chithi)</a></li>
+          <li><a href="https://mahims.com/salami/">মাহিম সালামি (Salami)</a></li>
+          <li><a href="https://mahims.com/about/">আমার সম্পর্কে (About)</a></li>
+          <li><a href="https://mahims.com/contact/">যোগাযোগ (Contact)</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="sr-only">
+      <section>
+        <h2>মাহিম’স ক্লাসরুম (Mahim's Classroom) — একাডেমি ও এডমিশন প্ল্যাটফর্ম</h2>
+        <p>এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।</p>
+        <p>শিক্ষক ও মেন্টর প্যানেল:</p>
+        <ul>
+          <li><a href="https://mahims.com/classroom/mahim/">মাহিম (Mahim) — প্রতিষ্ঠাতা ও আইসিটি মেন্টর</a></li>
+          <li><a href="https://mahims.com/classroom/suza/">আবু সালেহ সুজা (Abu Saleh Suza) — ইংরেজি মেন্টর</a></li>
+          <li><a href="https://mahims.com/classroom/samiul/">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — বাংলা মেন্টর</a></li>
+          <li><a href="https://mahims.com/classroom/mithen/">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — সাধারণ জ্ঞান মেন্টর</a></li>
+          <li><a href="https://mahims.com/classroom/swocchol/">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — বিজ্ঞান ও গণিত মেন্টর</a></li>
+        </ul>
+        <p><a href="https://mahims.com/classroom/">মাহিম’স ক্লাসরুমে প্রবেশ করুন</a></p>
+      </section>
+    </main>
+  `;
+  let enrichedRoot = rootIndexHtml.replace(
+    '<div id="root"></div>',
+    '<div id="root">' + rootHomepagePrerender.trim() + '</div>'
+  );
+  fs.writeFileSync(path.join(distDir, 'index.html'), enrichedRoot, 'utf8');
+  console.log('✅ Injected semantic pre-rendered links into root dist/index.html');
 
   console.log('✅ Clean route directories created in dist with pre-rendered semantic HTML and JSON-LD: ' + routes.join(', '));
 }

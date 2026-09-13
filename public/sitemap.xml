@@ -12,7 +12,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom</loc>
+    <loc>https://mahims.com/classroom/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.98</priority>
@@ -22,7 +22,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom/mahim</loc>
+    <loc>https://mahims.com/classroom/mahim/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -32,7 +32,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom/samiul</loc>
+    <loc>https://mahims.com/classroom/samiul/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -42,7 +42,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom/suza</loc>
+    <loc>https://mahims.com/classroom/suza/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -52,7 +52,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom/mithen</loc>
+    <loc>https://mahims.com/classroom/mithen/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -62,7 +62,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/classroom/swocchol</loc>
+    <loc>https://mahims.com/classroom/swocchol/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
@@ -72,7 +72,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/chithi</loc>
+    <loc>https://mahims.com/chithi/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
@@ -82,7 +82,7 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/salami</loc>
+    <loc>https://mahims.com/salami/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.92</priority>
@@ -92,43 +92,43 @@
     </image:image>
   </url>
   <url>
-    <loc>https://mahims.com/portfolio</loc>
+    <loc>https://mahims.com/portfolio/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://mahims.com/about</loc>
+    <loc>https://mahims.com/about/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://mahims.com/blog</loc>
+    <loc>https://mahims.com/blog/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://mahims.com/contact</loc>
+    <loc>https://mahims.com/contact/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://mahims.com/skills</loc>
+    <loc>https://mahims.com/skills/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://mahims.com/experience</loc>
+    <loc>https://mahims.com/experience/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
-    <loc>https://mahims.com/education</loc>
+    <loc>https://mahims.com/education/</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>

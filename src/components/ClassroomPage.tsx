@@ -277,13 +277,13 @@ export const ClassroomPage: React.FC = () => {
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
-    document.title = "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
+    document.title = "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
 
     const metaTags: Record<string, string> = {
       description:
-        "Mahim's Classroom (also known as Mahim Classroom or Mahims Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।",
+        "Mahim's Classroom (also known as Mahims Classroom or Mahim Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।",
       keywords:
-        "Mahim Classroom, Mahims Classroom, Mahim's Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, mahims classroom, mahim's classroom, এইচএসসি আইসিটি, এইচএসসি বাংলা, ভার্সিটি এডমিশন ক ইউনিট, ভার্সিটি এডমিশন খ ইউনিট, এডমিশন এক্সাম ব্যাচ, মাহিম ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+        "Mahims Classroom, mahims classroom, Mahim's Classroom, Mahim Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, mahim's classroom, এইচএসসি আইসিটি, এইচএসসি বাংলা, ভার্সিটি এডমিশন ক ইউনিট, ভার্সিটি এডমিশন খ ইউনিট, এডমিশন এক্সাম ব্যাচ, মাহিম ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
       robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
       author: 'Mahim (মাহিম)',
     };

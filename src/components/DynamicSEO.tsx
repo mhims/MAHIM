@@ -15,7 +15,7 @@ export const DynamicSEO: React.FC = () => {
 
     // 1. Dynamic Document Title
     if (isClassroom) {
-      document.title = "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
+      document.title = "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
     } else if (isChithi) {
       document.title = 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে';
     } else if (isSalami) {
@@ -44,7 +44,7 @@ export const DynamicSEO: React.FC = () => {
     let activeUrl = '';
 
     if (isClassroom) {
-      activeDescription = "Mahim's Classroom (also known as Mahim Classroom or Mahims Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।";
+      activeDescription = "Mahim's Classroom (also known as Mahims Classroom or Mahim Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।";
       activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-classroom.jpg`;
       activeUrl = `https://${settings.domain || 'mahims.com'}/classroom`;
     } else if (isChithi) {

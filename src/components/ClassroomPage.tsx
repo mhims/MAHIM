@@ -277,13 +277,13 @@ export const ClassroomPage: React.FC = () => {
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
-    document.title = "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম (Mahims Classroom)";
+    document.title = "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
 
     const metaTags: Record<string, string> = {
       description:
-        "Mahim's Classroom (মাহিম ক্লাসরুম / Mahims Classroom) - এইচএসসি, ভার্সিটি এডমিশন 'ক' ও 'খ' ইউনিট এবং এসএসসি স্মার্ট লার্নিং ও এক্সাম প্ল্যাটফর্ম। প্রতিষ্ঠাতা: মাহিম (ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।",
+        "Mahim's Classroom (also known as Mahim Classroom or Mahims Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।",
       keywords:
-        "Mahim's Classroom, Mahims Classroom, Mahim Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, এইচএসসি আইসিটি, এইচএসসি বাংলা, ভার্সিটি এডমিশন ক ইউনিট, ভার্সিটি এডমিশন খ ইউনিট, এডমিশন এক্সাম ব্যাচ, মাহিম ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+        "Mahim Classroom, Mahims Classroom, Mahim's Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, mahims classroom, mahim's classroom, এইচএসসি আইসিটি, এইচএসসি বাংলা, ভার্সিটি এডমিশন ক ইউনিট, ভার্সিটি এডমিশন খ ইউনিট, এডমিশন এক্সাম ব্যাচ, মাহিম ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
       robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
       author: 'Mahim (মাহিম)',
     };
@@ -300,9 +300,9 @@ export const ClassroomPage: React.FC = () => {
 
     // Open Graph
     const ogTags: Record<string, string> = {
-      'og:title': "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+      'og:title': "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
       'og:description':
-        "এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।",
+        "Official educational platform: Mahim's Classroom (Mahim Classroom / Mahims Classroom). এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।",
       'og:url': 'https://mahims.com/classroom',
       'og:site_name': "Mahim's Classroom",
       'og:image': 'https://mahims.com/assets/og-classroom.jpg',
@@ -323,9 +323,9 @@ export const ClassroomPage: React.FC = () => {
     // Twitter
     const twitterTags: Record<string, string> = {
       'twitter:card': 'summary_large_image',
-      'twitter:title': "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+      'twitter:title': "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
       'twitter:description':
-        "এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।",
+        "Official educational platform: Mahim's Classroom (Mahim Classroom / Mahims Classroom). এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।",
       'twitter:image': 'https://mahims.com/assets/og-classroom.jpg',
       'twitter:url': 'https://mahims.com/classroom',
     };
@@ -441,7 +441,7 @@ export const ClassroomPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] text-zinc-500 font-['Hind_Siliguri',sans-serif] font-medium leading-tight">
-                একাডেমিক ও এডমিশন লার্নিং প্ল্যাটফর্ম
+                Mahim Classroom • মাহিম ক্লাসরুম (একাডেমি ও এডমিশন)
               </p>
             </div>
           </div>
@@ -515,6 +515,9 @@ export const ClassroomPage: React.FC = () => {
 
         {/* Hero Subtitle */}
         <p className="text-base sm:text-lg lg:text-xl text-zinc-600 max-w-2xl mx-auto mb-8 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+          <span className="text-xs sm:text-sm font-bold text-orange-600 block mb-1.5 font-sans tracking-wide">
+            Mahim's Classroom • Mahim Classroom (Mahims Classroom) • মাহিম ক্লাসরুম
+          </span>
           এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য
           অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।
         </p>

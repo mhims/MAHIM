@@ -406,11 +406,12 @@ export const MahimsWorldHome: React.FC = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white font-['Hind_Siliguri',sans-serif]">
-                    মাহিম’স ক্লাসরুম
+                  <h4 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white font-['Hind_Siliguri',sans-serif] flex flex-col sm:flex-row sm:items-baseline gap-1">
+                    <span>মাহিম’স ক্লাসরুম</span>
+                    <span className="text-xs sm:text-sm font-bold text-orange-600 dark:text-orange-400 font-sans tracking-tight">Mahim's Classroom</span>
                   </h4>
                   <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-['Hind_Siliguri',sans-serif] mt-2 leading-relaxed">
-                    এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। স্মার্ট টেস্ট ইঞ্জিন, চ্যাপ্টারভিত্তিক পরীক্ষা ও নিয়মিত মেন্টরশিপ।
+                    এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম (Mahim Classroom)। স্মার্ট টেস্ট ইঞ্জিন, চ্যাপ্টারভিত্তিক পরীক্ষা ও নিয়মিত মেন্টরশিপ।
                   </p>
                 </div>
 
@@ -429,6 +430,8 @@ export const MahimsWorldHome: React.FC = () => {
               <div className="pt-6">
                 <a
                   href="/classroom"
+                  title="Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম"
+                  aria-label="Mahim's Classroom (Mahim Classroom)"
                   onClick={(e) => navigateTo('/classroom', e)}
                   className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all group-hover:shadow-orange-500/40"
                 >

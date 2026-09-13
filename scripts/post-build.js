@@ -29,16 +29,16 @@ const salamiOgImage = `${siteUrl}/assets/og-salami.jpg`;
 
 const routeData = {
   classroom: {
-    title: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি, কনসেপ্ট ক্লাস ও স্মার্ট এক্সাম",
-    metaTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
-    description: "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। শিক্ষক প্যানেল: মাহিম (Mahim), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), আবু সালেহ সুজা (Abu Saleh Suza), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
-    keywords: "Mahim's Classroom, মাহিম ক্লাসরুম, Mahims Classroom, Mahim Classroom, মাহিমস ক্লাসরুম, mahim classroom, mahims.com/classroom, মাহিম, Mahim Ibne Khudi, সামিউল ইসলাম সোহরাব, Samiul Islam Sohrab, আবু সালেহ সুজা, Abu Saleh Suza, মিশকাত শরীফ মিথেন, Mishkat Sharif Mithen, স্বচ্ছল কুমার কর্মকার, Swocchol Kumar Karmokar, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
+    title: "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন",
+    metaTitle: "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+    description: "Mahim's Classroom (also known as Mahim Classroom or Mahims Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ। শিক্ষক প্যানেল: মাহিম (Mahim), আবু সালেহ সুজা (Abu Saleh Suza), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
+    keywords: "Mahim Classroom, Mahims Classroom, Mahim's Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, mahims classroom, mahim's classroom, mahim academy, mahims.com/classroom, Mahim Ibne Khudi, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
     canonical: `${siteUrl}/classroom/`,
-    ogTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
-    ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
+    ogTitle: "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+    ogDescription: "Official educational platform: Mahim's Classroom (Mahim Classroom / Mahims Classroom). এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
     ogImage: classroomOgImage,
-    twitterTitle: "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
-    twitterDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট অনলাইন টেস্ট প্ল্যাটফর্ম ও একাডেমি।",
+    twitterTitle: "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম",
+    twitterDescription: "Official educational platform: Mahim's Classroom (Mahim Classroom / Mahims Classroom). এইচএসসি ও ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট অনলাইন টেস্ট ও একাডেমি।",
     twitterImage: classroomOgImage,
     jsonLd: {
       "@context": "https://schema.org",
@@ -55,8 +55,18 @@ const routeData = {
           "@type": "WebPage",
           "@id": "https://mahims.com/classroom/#webpage",
           "url": "https://mahims.com/classroom/",
-          "name": "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
-          "description": "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম।",
+          "name": "Mahim's Classroom (Mahim Classroom) | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+          "alternateName": [
+            "Mahim Classroom",
+            "Mahims Classroom",
+            "mahim classroom",
+            "mahims classroom",
+            "mahim's classroom",
+            "মাহিম ক্লাসরুম",
+            "মাহিমস ক্লাসরুম",
+            "মাহিম’স ক্লাসরুম"
+          ],
+          "description": "Mahim's Classroom (Mahim Classroom / Mahims Classroom / মাহিম ক্লাসরুম) - Official online academic learning and competitive exam platform by Mahim Ibne Khudi.",
           "isPartOf": {
             "@type": "WebSite",
             "@id": "https://mahims.com/#website",
@@ -66,28 +76,32 @@ const routeData = {
           "about": {
             "@id": "https://mahims.com/classroom#organization"
           },
-          "inLanguage": ["bn", "en"]
+          "inLanguage": ["en", "bn"]
         },
         {
           "@type": "EducationalOrganization",
           "@id": "https://mahims.com/classroom#organization",
           "name": "Mahim's Classroom",
           "alternateName": [
+            "Mahim Classroom",
+            "Mahims Classroom",
+            "mahim classroom",
+            "mahims classroom",
+            "mahim's classroom",
             "মাহিম ক্লাসরুম",
             "মাহিমস ক্লাসরুম",
-            "Mahims Classroom",
-            "Mahim Classroom",
             "মাহিম’স ক্লাসরুম"
           ],
-          "slogan": "স্মার্ট কনসেপ্ট ক্লাস ও লাইভ টেস্ট সিরিজ",
+          "slogan": "Smart Concept Classes & Live Test Series (স্মার্ট কনসেপ্ট ক্লাস ও লাইভ টেস্ট সিরিজ)",
           "url": "https://mahims.com/classroom/",
-          "logo": "https://mahims.com/logo.png",
+          "logo": "https://mahims.com/assets/og-classroom.jpg",
           "image": classroomOgImage,
-          "description": "অনলাইন ভিত্তিক কনসেপ্ট ক্লাস, এইচএসসি আইসিটি, ভার্সিটি এডমিশন টেস্ট সিরিজ এবং নিয়মিত অ্যাকাডেমিক মেন্টরশিপ প্ল্যাটফর্ম।",
+          "description": "Mahim's Classroom (also recognized as Mahim Classroom or Mahims Classroom) is an online academic learning, HSC ICT, and university admission test platform by Mahim Ibne Khudi.",
+          "disambiguatingDescription": "Mahim's Classroom is an educational platform and online exam engine in Bangladesh founded by Mahim Ibne Khudi, distinct from locations in Mahim Mumbai.",
           "founder": {
             "@type": "Person",
             "name": "Mahim Ibne Khudi",
-            "alternateName": ["মাহিম", "মাহিম ইবনে খুদি", "Mahim"],
+            "alternateName": ["মাহিম", "মাহিম ইবনে খুদি", "Mahim", "Mahim Khudi"],
             "jobTitle": "প্রতিষ্ঠাতা ও চিফ মেন্টর",
             "alumniOf": "Dhaka Central University",
             "url": "https://mahims.com/classroom/mahim/"
@@ -212,7 +226,7 @@ const routeData = {
               <span class="w-9 h-9 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-lg">M</span>
               <div>
                 <span class="font-black text-lg block leading-tight text-zinc-950">Mahim's Classroom</span>
-                <span class="text-xs text-orange-600 font-semibold">মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম</span>
+                <span class="text-xs text-orange-600 font-semibold">Mahim Classroom • মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম</span>
               </div>
             </a>
             <a href="/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-100">হোমে ফিরুন</a>
@@ -221,28 +235,36 @@ const routeData = {
         
         <main class="max-w-5xl mx-auto px-4 py-12">
           <section class="text-center space-y-4 mb-14">
-            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">এডমিশন ও একাডেমি স্পেশাল</span>
-            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">Mahim's Classroom (মাহিম ক্লাসরুম)</h1>
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">Official Educational Portal • এডমিশন ও একাডেমি স্পেশাল</span>
+            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">Mahim's Classroom — Mahim Classroom (মাহিম ক্লাসরুম)</h1>
             <p class="text-base sm:text-lg text-zinc-600 max-w-3xl mx-auto leading-relaxed">
-              এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি পরীক্ষার্থীদের জন্য নির্ভরযোগ্য শিক্ষা উদ্যোগ। কনসেপ্ট ভিত্তিক পাঠদান, স্মার্ট অনলাইন এক্সাম প্ল্যাটফর্ম ও নিয়মিত অ্যাকাডেমিক মেন্টরশিপ।
+              Welcome to <strong>Mahim's Classroom</strong> (commonly searched as <strong>Mahim Classroom</strong> or <strong>Mahims Classroom</strong>). এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি পরীক্ষার্থীদের জন্য নির্ভরযোগ্য শিক্ষা উদ্যোগ। কনসেপ্ট ভিত্তিক পাঠদান, স্মার্ট অনলাইন এক্সাম প্ল্যাটফর্ম ও নিয়মিত অ্যাকাডেমিক মেন্টরশিপ।
+            </p>
+          </section>
+
+          <!-- English About Section for Google Indexing -->
+          <section class="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-3 mb-12">
+            <h2 class="text-xl font-bold text-zinc-900">About Mahim's Classroom (Mahim Classroom)</h2>
+            <p class="text-sm text-zinc-600 leading-relaxed">
+              <strong>Mahim's Classroom</strong> (also known as <strong>Mahim Classroom</strong> or <strong>Mahims Classroom</strong> / মাহিম ক্লাসরুম) is an online academic learning and competitive test platform founded by <strong>Mahim Ibne Khudi</strong> (Department of Political Science, Dhaka Central University / Dhaka College Campus). The platform provides HSC ICT classes, university admission model tests, negative marking evaluations, and academic mentorship for students across Bangladesh.
             </p>
           </section>
 
           <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
             <article class="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-3">
-              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200">এক্সাম সিরিজ</span>
-              <h2 class="text-xl font-bold text-zinc-900">ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ</h2>
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200">এক্সাম সিরিজ • Exam Engine</span>
+              <h2 class="text-xl font-bold text-zinc-900">Mahim Classroom Smart Exam Series (ভার্সিটি এডমিশন এক্সাম ব্যাচ)</h2>
               <p class="text-sm text-zinc-600 leading-relaxed">অনলাইন লাইভ কুইজ, নেগেটিভ মার্কিং ট্র্যাকিং, ইনস্ট্যান্ট মেরিট লিস্ট এবং বিগত ২০ বছরের প্রশ্ন এনালাইসিস ভিত্তিক এক্সাম প্ল্যাটফর্ম।</p>
               <ul class="text-xs text-zinc-600 space-y-1 pt-2 list-disc pl-4">
-                <li>স্মার্ট অনলাইন এক্সাম ও টাইমার ইঞ্জিন</li>
-                <li>নেগেটিভ মার্কিং ও একিউরেসি অ্যানালাইসিস</li>
-                <li>চ্যাপ্টারভিত্তিক ও ফুল লেন্থ মডেল টেস্ট</li>
+                <li>স্মার্ট অনলাইন এক্সাম ও টাইমার ইঞ্জিন (Online Exam Engine with Timer)</li>
+                <li>নেগেটিভ মার্কিং ও একিউরেসি অ্যানালাইসিস (Negative Marking Analysis)</li>
+                <li>চ্যাপ্টারভিত্তিক ও ফুল লেন্থ মডেল টেস্ট (Chapter-wise Model Tests)</li>
               </ul>
             </article>
 
             <article class="p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs space-y-3">
-              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">কনসেপ্ট ক্লাস</span>
-              <h2 class="text-xl font-bold text-zinc-900">এইচএসসি আইসিটি ও বাংলা স্পেশাল</h2>
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">কনসেপ্ট ক্লাস • Concept Lectures</span>
+              <h2 class="text-xl font-bold text-zinc-900">HSC ICT & Special Concept Classes (এইচএসসি আইসিটি ও বাংলা স্পেশাল)</h2>
               <p class="text-sm text-zinc-600 leading-relaxed">এইচএসসি পরীক্ষার্থীদের জন্য আইসিটি (এইচটিএমএল, সি প্রোগ্রামিং, ডাটাবেস) ও বাংলা ব্যাকরণ সহজবোধ্য পাঠপরিকল্পনা।</p>
               <ul class="text-xs text-zinc-600 space-y-1 pt-2 list-disc pl-4">
                 <li>প্রোগ্রামিং ও আইসিটির জটিল কনসেপ্ট সহজ ব্যাখ্যা</li>
@@ -255,47 +277,47 @@ const routeData = {
           <section class="p-8 rounded-3xl bg-zinc-900 text-white space-y-6 mb-16">
             <div class="text-center space-y-2">
               <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">শিক্ষক ও মেন্টর প্যানেল</span>
-              <h2 class="text-2xl font-bold text-white">Classroom Faculty & Mentors</h2>
+              <h2 class="text-2xl font-bold text-white">Mahim's Classroom Faculty & Mentors</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
                 <a href="/classroom/mahim" class="text-lg font-bold text-orange-400 hover:underline">মাহিম ইবনে খুদি (Mahim Ibne Khudi)</a>
-                <p class="text-xs text-zinc-300 font-semibold">ঢাকা সেন্ট্রাল ইউনিভার্সিটি • প্রতিষ্ঠাতা, মাহিম'স ক্লাসরুম</p>
+                <p class="text-xs text-zinc-300 font-semibold">ঢাকা সেন্ট্রাল ইউনিভার্সিটি • প্রতিষ্ঠাতা, Mahim's Classroom (Mahim Classroom)</p>
                 <p class="text-xs text-zinc-400 leading-relaxed">রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা কলেজ ক্যাম্পাস। শিক্ষার্থীদের একাডেমিক প্রস্তুতি ও স্মার্ট এক্সাম পদ্ধতির উদ্ভাবক।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
                 <a href="/classroom/samiul" class="text-lg font-bold text-orange-400 hover:underline">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)</a>
-                <p class="text-xs text-zinc-300 font-semibold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, শেখার সিড়ি</p>
+                <p class="text-xs text-zinc-300 font-semibold">ফাউন্ডার, সামনাদ একাডেমি • মেন্টর, Mahim's Classroom</p>
                 <p class="text-xs text-zinc-400 leading-relaxed">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (সফটওয়্যার ইঞ্জিনিয়ারিং - DIU SWE)। স্কিল ও অ্যাকাডেমিক মেন্টরশিপ।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
-                <a href="/classroom/suza" class="text-lg font-bold text-orange-400 hover:underline">আবু সালেহ সুজা (Abu Saleh Suja)</a>
+                <a href="/classroom/suza" class="text-lg font-bold text-orange-400 hover:underline">আবু সালেহ সুজা (Abu Saleh Suza)</a>
                 <p class="text-xs text-zinc-300 font-semibold">ফার্মেসি বিভাগ • মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২৫ সেশনে ৫১তম মেধাক্রম (GST Rank 51)। জবি বোটানি ও কুড়িগ্রাম কৃষি বিশ্ববিদ্যালয়ে সুযোগপ্রাপ্ত।</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">গুচ্ছ ভর্তি পরীক্ষা ২০২৪-২৫ সেশনে ৫১তম মেধাক্রম (GST Rank 51)। ইংরেজি মেন্টর, Mahim Classroom।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
                 <a href="/classroom/mithen" class="text-lg font-bold text-orange-400 hover:underline">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</a>
-                <p class="text-xs text-zinc-300 font-semibold">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • ফাউন্ডারঃ মিথেন প্রাইভেট হোম</p>
+                <p class="text-xs text-zinc-300 font-semibold">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) • মেন্টর, Mahim's Classroom</p>
                 <p class="text-xs text-zinc-400 leading-relaxed">ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগ। এসএসসি ও এইচএসসি বিজ্ঞান বিভাগে জিপিএ ৫.০০ প্রাপ্ত।</p>
               </div>
               <div class="p-5 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-2">
                 <a href="/classroom/swocchol" class="text-lg font-bold text-orange-400 hover:underline">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)</a>
                 <p class="text-xs text-zinc-300 font-semibold">কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (UIU CSE) • ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি</p>
-                <p class="text-xs text-zinc-400 leading-relaxed">প্রোগ্রামিং, অ্যালগরিদম, কম্পিউটার সাইন্স ও উচ্চতর গণিতে শিক্ষার্থীদের দক্ষ করে গড়ে তুলতে নিবেদিত মেন্টর।</p>
+                <p class="text-xs text-zinc-400 leading-relaxed">প্রোগ্রামিং, অ্যালগরিদম ও উচ্চতর গণিত মেন্টর, Mahim's Classroom।</p>
               </div>
             </div>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-zinc-900 border-b pb-2">সাধারণ প্রশ্নোত্তর (FAQ)</h2>
+            <h2 class="text-xl font-bold text-zinc-900 border-b pb-2">সাধারণ প্রশ্নোত্তর (FAQ) — Mahim's Classroom</h2>
             <div class="space-y-3">
               <div class="p-4 rounded-xl bg-white border border-zinc-200">
-                <h3 class="font-bold text-sm text-zinc-900">মাহিম’স ক্লাসরুম কীভাবে কাজ করে?</h3>
-                <p class="text-xs text-zinc-600 mt-1">এটি একটি ইন্টারেক্টিভ লার্নিং পোর্টাল যেখানে শিক্ষার্থীরা অনলাইনে পরীক্ষা দেয়, নিজের প্রস্তুতি যাচাই করে এবং কনসেপ্ট বিশ্লেষণমূলক দিকনির্দেশনা পায়।</p>
+                <h3 class="font-bold text-sm text-zinc-900">What is Mahim's Classroom (Mahim Classroom / মাহিম ক্লাসরুম)?</h3>
+                <p class="text-xs text-zinc-600 mt-1">Mahim's Classroom (also searched as Mahim Classroom or Mahims Classroom) is an educational platform founded by Mahim Ibne Khudi for HSC, SSC, and university admission candidates in Bangladesh, featuring online smart exams, negative marking analysis, and concept lectures.</p>
               </div>
               <div class="p-4 rounded-xl bg-white border border-zinc-200">
-                <h3 class="font-bold text-sm text-zinc-900">পরীক্ষায় অংশ নেওয়ার নিয়ম কী?</h3>
-                <p class="text-xs text-zinc-600 mt-1">কোর্স সেকশনে দেওয়া এক্সাম লিঙ্কে ক্লিক করে নির্ধারিত সময়ে টেস্টে অংশ নেওয়া যাবে এবং সাথে সাথে ফলাফল ও ভুল উত্তরের সমাধান দেখা যাবে।</p>
+                <h3 class="font-bold text-sm text-zinc-900">How to participate in Mahim's Classroom tests?</h3>
+                <p class="text-xs text-zinc-600 mt-1">Visit mahims.com/classroom/ and select any live exam or model test batch to attempt timed online tests and view instant merit ranks and answer solutions.</p>
               </div>
             </div>
           </section>
@@ -1300,7 +1322,7 @@ if (fs.existsSync(distDir)) {
       <nav aria-label="প্রধান নেভিগেশন">
         <ul>
           <li><a href="https://mahims.com/">হোম (Home)</a></li>
-          <li><a href="https://mahims.com/classroom/">মাহিম ক্লাসরুম (Mahim's Classroom) — একাডেমি ও এডমিশন</a></li>
+          <li><a href="https://mahims.com/classroom/">Mahim's Classroom (Mahim Classroom / Mahims Classroom) — মাহিম ক্লাসরুম</a></li>
           <li><a href="https://mahims.com/portfolio/">পোর্টফোলিও (Portfolio)</a></li>
           <li><a href="https://mahims.com/blog/">ব্লগ (Blog)</a></li>
           <li><a href="https://mahims.com/chithi/">মাহিম চিঠি (Chithi)</a></li>
@@ -1312,17 +1334,17 @@ if (fs.existsSync(distDir)) {
     </header>
     <main class="sr-only">
       <section>
-        <h2>মাহিম’স ক্লাসরুম (Mahim's Classroom) — একাডেমি ও এডমিশন প্ল্যাটফর্ম</h2>
-        <p>এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।</p>
+        <h2>Mahim's Classroom (Mahim Classroom / Mahims Classroom / মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন</h2>
+        <p>Official academic and admission test platform: Mahim's Classroom (Mahim Classroom). এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।</p>
         <p>শিক্ষক ও মেন্টর প্যানেল:</p>
         <ul>
-          <li><a href="https://mahims.com/classroom/mahim/">মাহিম (Mahim) — প্রতিষ্ঠাতা ও আইসিটি মেন্টর</a></li>
-          <li><a href="https://mahims.com/classroom/suza/">আবু সালেহ সুজা (Abu Saleh Suza) — ইংরেজি মেন্টর</a></li>
-          <li><a href="https://mahims.com/classroom/samiul/">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — বাংলা মেন্টর</a></li>
-          <li><a href="https://mahims.com/classroom/mithen/">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — সাধারণ জ্ঞান মেন্টর</a></li>
-          <li><a href="https://mahims.com/classroom/swocchol/">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — বিজ্ঞান ও গণিত মেন্টর</a></li>
+          <li><a href="https://mahims.com/classroom/mahim/">মাহিম (Mahim) — প্রতিষ্ঠাতা ও আইসিটি মেন্টর, Mahim's Classroom (Mahim Classroom)</a></li>
+          <li><a href="https://mahims.com/classroom/suza/">আবু সালেহ সুজা (Abu Saleh Suza) — ইংরেজি মেন্টর, Mahim Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/samiul/">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — বাংলা মেন্টর, Mahim's Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/mithen/">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — সাধারণ জ্ঞান মেন্টর, Mahim's Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/swocchol/">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — বিজ্ঞান ও গণিত মেন্টর, Mahim's Classroom</a></li>
         </ul>
-        <p><a href="https://mahims.com/classroom/">মাহিম’স ক্লাসরুমে প্রবেশ করুন</a></p>
+        <p><a href="https://mahims.com/classroom/">Enter Mahim's Classroom (Mahim Classroom / মাহিম ক্লাসরুম)</a></p>
       </section>
     </main>
   `;

@@ -45,6 +45,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" }
@@ -320,6 +321,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "মাহিম ইবনে খুদি — মাহিম'স ক্লাসরুম",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
@@ -410,6 +412,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "সামিউল ইসলাম সোহরাব — মাহিম'স ক্লাসরুম",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
@@ -491,6 +494,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "আবু সালেহ সুজা — মাহিম'স ক্লাসরুম",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
@@ -567,6 +571,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "মিশকাত শরীফ মিথেন — মাহিম'স ক্লাসরুম",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
@@ -649,6 +654,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "স্বচ্ছল কুমার কর্মকার — মাহিম'স ক্লাসরুম",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
@@ -724,6 +730,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "মাহিম সালামি (Mahim Salami)",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম সালামি (Mahim Salami)", "item": "https://mahims.com/salami/" }
@@ -837,6 +844,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "চিঠি — বেনামী বার্তা পোর্টাল (Mahim Chithi)",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "মাহিম চিঠি (Mahim Chithi)", "item": "https://mahims.com/chithi/" }
@@ -948,6 +956,7 @@ const routeData = {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "name": "মাহিম ইবনে খুদি পোর্টফোলিও (Portfolio)",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
             { "@type": "ListItem", "position": 2, "name": "পোর্টফোলিও (Portfolio)", "item": "https://mahims.com/portfolio/" }

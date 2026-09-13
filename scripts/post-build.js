@@ -51,10 +51,34 @@ const routeData = {
           ]
         },
         {
+          "@type": "WebPage",
+          "@id": "https://mahims.com/classroom/#webpage",
+          "url": "https://mahims.com/classroom/",
+          "name": "Mahim's Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম",
+          "description": "Mahim's Classroom (মাহিম ক্লাসরুম) - এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য নিবেদিত অনলাইন শিক্ষা প্ল্যাটফর্ম।",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "about": {
+            "@id": "https://mahims.com/classroom#organization"
+          },
+          "inLanguage": ["bn", "en"]
+        },
+        {
           "@type": "EducationalOrganization",
           "@id": "https://mahims.com/classroom#organization",
           "name": "Mahim's Classroom",
-          "alternateName": ["মাহিম ক্লাসরুম", "Mahims Classroom", "Mahim Classroom", "মাহিম’স ক্লাসরুম"],
+          "alternateName": [
+            "মাহিম ক্লাসরুম",
+            "মাহিমস ক্লাসরুম",
+            "Mahims Classroom",
+            "Mahim Classroom",
+            "মাহিম’স ক্লাসরুম"
+          ],
+          "slogan": "স্মার্ট কনসেপ্ট ক্লাস ও লাইভ টেস্ট সিরিজ",
           "url": "https://mahims.com/classroom/",
           "logo": "https://mahims.com/logo.png",
           "image": classroomOgImage,
@@ -63,25 +87,98 @@ const routeData = {
             "@type": "Person",
             "name": "Mahim Ibne Khudi",
             "alternateName": ["মাহিম", "মাহিম ইবনে খুদি", "Mahim"],
+            "jobTitle": "প্রতিষ্ঠাতা ও চিফ মেন্টর",
             "alumniOf": "Dhaka Central University",
             "url": "https://mahims.com/classroom/mahim/"
           },
-          "alumni": [
-            { "@type": "Person", "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "url": "https://mahims.com/classroom/suza/" },
-            { "@type": "Person", "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)", "url": "https://mahims.com/classroom/samiul/" },
-            { "@type": "Person", "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "url": "https://mahims.com/classroom/mithen/" },
-            { "@type": "Person", "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)", "url": "https://mahims.com/classroom/swocchol/" }
+          "parentOrganization": {
+            "@type": "Organization",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "knowsAbout": [
+            "এইচএসসি আইসিটি (HSC ICT)",
+            "ভার্সিটি এডমিশন টেস্ট (University Admission)",
+            "মেডিকেল ভর্তি প্রস্তুতি",
+            "ইংরেজি গ্রামার (English Grammar)",
+            "বাংলা সাহিত্য ও ব্যাকরণ",
+            "সাধারণ জ্ঞান (General Knowledge)",
+            "বিজ্ঞান ও গণিত (Science & Math)"
+          ],
+          "member": [
+            { "@type": "Person", "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "jobTitle": "ইংরেজি মেন্টর", "alumniOf": "MBSTU Pharmacy & GST 51st", "url": "https://mahims.com/classroom/suza/" },
+            { "@type": "Person", "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)", "jobTitle": "বাংলা মেন্টর", "alumniOf": "Daffodil International University", "url": "https://mahims.com/classroom/samiul/" },
+            { "@type": "Person", "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "jobTitle": "সাধারণ জ্ঞান মেন্টর", "alumniOf": "Dhaka Central University", "url": "https://mahims.com/classroom/mithen/" },
+            { "@type": "Person", "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)", "jobTitle": "বিজ্ঞান ও গণিত মেন্টর", "alumniOf": "United International University", "url": "https://mahims.com/classroom/swocchol/" }
           ]
         },
         {
           "@type": "Course",
-          "name": "ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ",
+          "name": "ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ — Mahim's Classroom",
           "description": "অনলাইন লাইভ কুইজ, নেগেটিভ মার্কিং ট্র্যাকিং, ইনস্ট্যান্ট মেরিট লিস্ট এবং বিগত ২০ বছরের প্রশ্ন এনালাইসিস ভিত্তিক পূর্ণাঙ্গ এক্সাম সিরিজ।",
           "provider": {
             "@type": "EducationalOrganization",
             "name": "Mahim's Classroom",
-            "url": "https://mahims.com/classroom/"
-          }
+            "sameAs": "https://mahims.com/classroom/"
+          },
+          "offers": [
+            {
+              "@type": "Offer",
+              "category": "Free",
+              "price": "0",
+              "priceCurrency": "BDT",
+              "availability": "https://schema.org/InStock"
+            }
+          ],
+          "hasCourseInstance": [
+            {
+              "@type": "CourseInstance",
+              "courseMode": "Online",
+              "courseWorkload": "PT20H",
+              "instructor": [
+                {
+                  "@type": "Person",
+                  "name": "Mahim Ibne Khudi",
+                  "url": "https://mahims.com/classroom/mahim/"
+                },
+                {
+                  "@type": "Person",
+                  "name": "Abu Saleh Suza",
+                  "url": "https://mahims.com/classroom/suza/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "@type": "Course",
+          "name": "এইচএসসি আইসিটি কনসেপ্ট ক্লাস ও টেস্ট সিরিজ — Mahim's Classroom",
+          "description": "এইচএসসি পরীক্ষার্থীদের জন্য তথ্য ও যোগাযোগ প্রযুক্তি (ICT) বিষয়ের পূর্ণাঙ্গ অধ্যায়ভিত্তিক কনসেপ্ট ক্লাস, সৃজনশীল প্রশ্ন সমাধান ও অনলাইন টেস্ট সিরিজ।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "Mahim's Classroom",
+            "sameAs": "https://mahims.com/classroom/"
+          },
+          "offers": [
+            {
+              "@type": "Offer",
+              "category": "Free",
+              "price": "0",
+              "priceCurrency": "BDT",
+              "availability": "https://schema.org/InStock"
+            }
+          ],
+          "hasCourseInstance": [
+            {
+              "@type": "CourseInstance",
+              "courseMode": "Online",
+              "instructor": {
+                "@type": "Person",
+                "name": "Mahim Ibne Khudi",
+                "url": "https://mahims.com/classroom/mahim/"
+              }
+            }
+          ]
         },
         {
           "@type": "FAQPage",
@@ -99,7 +196,7 @@ const routeData = {
               "name": "এখানে কীভাবে রেজিস্ট্রেশন করা যাবে?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "mahims.com/classroom এ গিয়ে পছন্দসই কোর্স বা এক্সাম ব্যাচে 'রেজিস্ট্রেশন করুন' বাটনে ক্লিক করে নাম ও তথ্য দিয়ে সরাসরি যুক্ত হওয়া যায়।"
+                "text": "mahims.com/classroom/ এ গিয়ে পছন্দসই কোর্স বা এক্সাম ব্যাচে 'রেজিস্ট্রেশন করুন' বাটনে ক্লিক করে নাম ও তথ্য দিয়ে সরাসরি যুক্ত হওয়া যায়।"
               }
             }
           ]
@@ -220,23 +317,62 @@ const routeData = {
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "মাহিম ইবনে খুদি",
-      "alternateName": ["Mahim Ibne Khudi", "Mahim", "Mahim Khudi", "মাহিম"],
-      "url": `${siteUrl}/classroom/mahim`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
-      "jobTitle": "প্রতিষ্ঠাতা ও প্রধান মেন্টর (Founder & Lead Mentor)",
-      "worksFor": {
-        "@type": "EducationalOrganization",
-        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-        "url": `${siteUrl}/classroom`
-      },
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (Dhaka Central University, Dhaka College Campus)"
-      },
-      "description": "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - ঢাকা সেন্ট্রাল ইউনিভার্সিটির শিক্ষার্থী ও মাহিম'স ক্লাসরুমের প্রতিষ্ঠাতা। বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি উভয় পরীক্ষায় দিনাজপুর বোর্ড থেকে জিপিএ ৫.০০ প্রাপ্ত।",
-      "knowsAbout": ["HSC Preparation", "University Admission", "Political Science", "Online Exam Engines", "Dinajpur Board Science GPA 5.00"]
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "মাহিম ইবনে খুদি", "item": "https://mahims.com/classroom/mahim/" }
+          ]
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": `${siteUrl}/classroom/mahim/#webpage`,
+          "url": `${siteUrl}/classroom/mahim/`,
+          "name": "মাহিম ইবনে খুদি (Mahim Ibne Khudi) — শিক্ষক ও মেন্টর প্রোফাইল | মাহিম'স ক্লাসরুম",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "mainEntity": {
+            "@type": "Person",
+            "@id": `${siteUrl}/classroom/mahim/#person`,
+            "name": "মাহিম ইবনে খুদি",
+            "givenName": "Mahim",
+            "familyName": "Ibne Khudi",
+            "alternateName": ["Mahim Ibne Khudi", "Mahim", "Mahim Khudi", "মাহিম", "মাহিমস"],
+            "url": `${siteUrl}/classroom/mahim/`,
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1788708908/behance_pp_spfumh.jpg",
+            "jobTitle": "প্রতিষ্ঠাতা ও প্রধান মেন্টর (Founder & Lead Mentor)",
+            "worksFor": {
+              "@type": "EducationalOrganization",
+              "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+              "url": `${siteUrl}/classroom/`
+            },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (Dhaka Central University, Dhaka College Campus)"
+            },
+            "sameAs": [
+              "https://facebook.com/mahim2005",
+              "https://www.linkedin.com/in/mahimibnekhudi",
+              "https://mahims.com/"
+            ],
+            "description": "মাহিম ইবনে খুদি (Mahim Ibne Khudi) - ঢাকা সেন্ট্রাল ইউনিভার্সিটির শিক্ষার্থী ও মাহিম'স ক্লাসরুমের প্রতিষ্ঠাতা। বিজ্ঞান বিভাগ থেকে এসএসসি ও এইচএসসি উভয় পরীক্ষায় দিনাজপুর বোর্ড থেকে জিপিএ ৫.০০ প্রাপ্ত।",
+            "knowsAbout": [
+              "HSC ICT Preparation",
+              "University Admission Test",
+              "Political Science",
+              "Online Exam Engines",
+              "Dinajpur Board Science GPA 5.00",
+              "Academic Mentoring"
+            ]
+          }
+        }
+      ]
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
@@ -271,29 +407,54 @@ const routeData = {
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "সামিউল ইসলাম সোহরাব",
-      "alternateName": ["Samiul Islam Sohrab", "Samiul Islam", "Samiul Sohrab", "Samiul Samnad", "সামিউল ইসলাম"],
-      "url": `${siteUrl}/classroom/samiul`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
-      "jobTitle": "ফাউন্ডার ও মেন্টর (Founder & Mentor)",
-      "worksFor": [
+      "@graph": [
         {
-          "@type": "EducationalOrganization",
-          "name": "Samnad Academy (সামনাদ একাডেমি)"
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সামিউল ইসলাম সোহরাব", "item": "https://mahims.com/classroom/samiul/" }
+          ]
         },
         {
-          "@type": "EducationalOrganization",
-          "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-          "url": `${siteUrl}/classroom`
+          "@type": "ProfilePage",
+          "@id": `${siteUrl}/classroom/samiul/#webpage`,
+          "url": `${siteUrl}/classroom/samiul/`,
+          "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — মেন্টর প্রোফাইল | মাহিম'স ক্লাসরুম",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "mainEntity": {
+            "@type": "Person",
+            "@id": `${siteUrl}/classroom/samiul/#person`,
+            "name": "সামিউল ইসলাম সোহরাব",
+            "alternateName": ["Samiul Islam Sohrab", "Samiul Islam", "Samiul Sohrab", "Samiul Samnad", "সামিউল ইসলাম"],
+            "url": `${siteUrl}/classroom/samiul/`,
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789228263/763122727_1365661164992767_5907311244126216229_n_y5bajt.jpg",
+            "jobTitle": "ফাউন্ডার ও মেন্টর (Founder & Mentor)",
+            "worksFor": [
+              {
+                "@type": "EducationalOrganization",
+                "name": "Samnad Academy (সামনাদ একাডেমি)"
+              },
+              {
+                "@type": "EducationalOrganization",
+                "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+                "url": `${siteUrl}/classroom/`
+              }
+            ],
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Daffodil International University (DIU)"
+            },
+            "description": "সামিউল ইসলাম সোহরাব - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটির সফটওয়্যার ইঞ্জিনিয়ারিং শিক্ষার্থী ও সামনাদ একাডেমির প্রতিষ্ঠাতা।",
+            "knowsAbout": ["Software Engineering", "Programming", "Career Mentorship", "Web Development", "Academic Guidance"]
+          }
         }
-      ],
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "Daffodil International University (DIU)"
-      },
-      "description": "সামিউল ইসলাম সোহরাব - ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটির সফটওয়্যার ইঞ্জিনিয়ারিং শিক্ষার্থী ও সামনাদ একাডেমির প্রতিষ্ঠাতা।",
-      "knowsAbout": ["Software Engineering", "Programming", "Career Mentorship", "Web Development"]
+      ]
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
@@ -327,23 +488,48 @@ const routeData = {
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "আবু সালেহ সুজা",
-      "alternateName": ["Abu Saleh Suza", "Abu Saleh", "Md Abu Saleh Suza", "Suza"],
-      "url": `${siteUrl}/classroom/suza`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
-      "jobTitle": "মেন্টর (Faculty & Mentor)",
-      "worksFor": {
-        "@type": "EducationalOrganization",
-        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-        "url": `${siteUrl}/classroom`
-      },
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "Mawlana Bhashani Science and Technology University (MBSTU)"
-      },
-      "description": "আবু সালেহ সুজা - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষায় ৫১তম মেধাক্রম অর্জনকারী।",
-      "knowsAbout": ["Pharmacy", "Biology", "GST Admission Test", "Botany", "Agriculture Science"]
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "আবু সালেহ সুজা", "item": "https://mahims.com/classroom/suza/" }
+          ]
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": `${siteUrl}/classroom/suza/#webpage`,
+          "url": `${siteUrl}/classroom/suza/`,
+          "name": "আবু সালেহ সুজা (Abu Saleh Suza) — মেন্টর প্রোফাইল | মাহিম'স ক্লাসরুম",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "mainEntity": {
+            "@type": "Person",
+            "@id": `${siteUrl}/classroom/suza/#person`,
+            "name": "আবু সালেহ সুজা",
+            "alternateName": ["Abu Saleh Suza", "Abu Saleh", "Md Abu Saleh Suza", "Suza"],
+            "url": `${siteUrl}/classroom/suza/`,
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229348/518363223_1616327812659453_3831296542395096165_n_1_fak2cg.jpg",
+            "jobTitle": "মেন্টর — ফার্মেসি ও বায়োলজি (Faculty & Mentor)",
+            "worksFor": {
+              "@type": "EducationalOrganization",
+              "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+              "url": `${siteUrl}/classroom/`
+            },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Mawlana Bhashani Science and Technology University (MBSTU)"
+            },
+            "description": "আবু সালেহ সুজা - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)। গুচ্ছ ভর্তি পরীক্ষায় ৫১তম মেধাক্রম অর্জনকারী।",
+            "knowsAbout": ["Pharmacy", "Biology", "GST Admission Test", "Botany", "Agriculture Science", "Competitive Exam Strategy"]
+          }
+        }
+      ]
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
@@ -378,29 +564,54 @@ const routeData = {
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "মিশকাত শরীফ মিথেন",
-      "alternateName": ["Mishkat Sharif Mithen", "Mishkat Sharif", "Mithen", "মিশকাত শরীফ"],
-      "url": `${siteUrl}/classroom/mithen`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
-      "jobTitle": "ফাউন্ডার ও মেন্টর (Founder & Mentor)",
-      "worksFor": [
+      "@graph": [
         {
-          "@type": "EducationalOrganization",
-          "name": "Mithen Private Home (মিথেন প্রাইভেট হোম)"
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "মিশকাত শরীফ মিথেন", "item": "https://mahims.com/classroom/mithen/" }
+          ]
         },
         {
-          "@type": "EducationalOrganization",
-          "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-          "url": `${siteUrl}/classroom`
+          "@type": "ProfilePage",
+          "@id": `${siteUrl}/classroom/mithen/#webpage`,
+          "url": `${siteUrl}/classroom/mithen/`,
+          "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — মেন্টর প্রোফাইল | মাহিম'স ক্লাসরুম",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "mainEntity": {
+            "@type": "Person",
+            "@id": `${siteUrl}/classroom/mithen/#person`,
+            "name": "মিশকাত শরীফ মিথেন",
+            "alternateName": ["Mishkat Sharif Mithen", "Mishkat Sharif", "Mithen", "মিশকাত শরীফ"],
+            "url": `${siteUrl}/classroom/mithen/`,
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789229549/mithen10_nrizvj.png",
+            "jobTitle": "ফাউন্ডার ও গণিত মেন্টর (Founder & Math Mentor)",
+            "worksFor": [
+              {
+                "@type": "EducationalOrganization",
+                "name": "Mithen Private Home (মিথেন প্রাইভেট হোম)"
+              },
+              {
+                "@type": "EducationalOrganization",
+                "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+                "url": `${siteUrl}/classroom/`
+              }
+            ],
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Begum Rokeya University, Rangpur (BRUR)"
+            },
+            "description": "মিশকাত শরীফ মিথেন - বেগম রোকেয়া বিশ্ববিদ্যালয় ও ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগের শিক্ষার্থী এবং মিথেন প্রাইভেট হোমের প্রতিষ্ঠাতা।",
+            "knowsAbout": ["Mathematics", "Physics", "SSC & HSC Science", "Board Exam Preparation", "Analytical Problem Solving"]
+          }
         }
-      ],
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "Begum Rokeya University, Rangpur (BRUR)"
-      },
-      "description": "মিশকাত শরীফ মিথেন - বেগম রোকেয়া বিশ্ববিদ্যালয় ও ঢাকা সেন্ট্রাল ইউনিভার্সিটি গণিত বিভাগের শিক্ষার্থী এবং মিথেন প্রাইভেট হোমের প্রতিষ্ঠাতা।",
-      "knowsAbout": ["Mathematics", "Physics", "SSC & HSC Science", "Board Exam Preparation"]
+      ]
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
@@ -435,23 +646,48 @@ const routeData = {
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "স্বচ্ছল কুমার কর্মকার",
-      "alternateName": ["Swocchol Kumar Karmokar", "Swocchol Karmakar", "Swocchol Kumar", "Swocchol", "স্বচ্ছল কর্মকার"],
-      "url": `${siteUrl}/classroom/swocchol`,
-      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
-      "jobTitle": "মেন্টর — কম্পিউটার সাইন্স ও ম্যাথমেটিক্স (Mentor)",
-      "worksFor": {
-        "@type": "EducationalOrganization",
-        "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-        "url": `${siteUrl}/classroom`
-      },
-      "alumniOf": {
-        "@type": "CollegeOrUniversity",
-        "name": "United International University (UIU)"
-      },
-      "description": "স্বচ্ছল কুমার কর্মকার - কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)। মেন্টর — মাহিম'স ক্লাসরুম।",
-      "knowsAbout": ["Computer Science", "CSE", "Data Structures", "Algorithms", "Mathematics", "Programming"]
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম’স ক্লাসরুম (Mahim's Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "স্বচ্ছল কুমার কর্মকার", "item": "https://mahims.com/classroom/swocchol/" }
+          ]
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": `${siteUrl}/classroom/swocchol/#webpage`,
+          "url": `${siteUrl}/classroom/swocchol/`,
+          "name": "স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — মেন্টর প্রোফাইল | মাহিম'স ক্লাসরুম",
+          "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://mahims.com/#website",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "mainEntity": {
+            "@type": "Person",
+            "@id": `${siteUrl}/classroom/swocchol/#person`,
+            "name": "স্বচ্ছল কুমার কর্মকার",
+            "alternateName": ["Swocchol Kumar Karmokar", "Swocchol Karmakar", "Swocchol Kumar", "Swocchol", "স্বচ্ছল কর্মকার"],
+            "url": `${siteUrl}/classroom/swocchol/`,
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789231884/swocchol_uxtt4r.png",
+            "jobTitle": "মেন্টর — কম্পিউটার সাইন্স ও ম্যাথমেটিক্স (Mentor)",
+            "worksFor": {
+              "@type": "EducationalOrganization",
+              "name": "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
+              "url": `${siteUrl}/classroom/`
+            },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "United International University (UIU)"
+            },
+            "description": "স্বচ্ছল কুমার কর্মকার - কম্পিউটার সাইন্স এন্ড ইঞ্জিনিয়ারিং (CSE), ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)। মেন্টর — মাহিম'স ক্লাসরুম।",
+            "knowsAbout": ["Computer Science", "CSE", "Data Structures", "Algorithms", "Mathematics", "Programming", "Problem Solving"]
+          }
+        }
+      ]
     },
     prerenderHtml: `
       <div class="min-h-screen bg-[#fafaf9] p-8 max-w-4xl mx-auto font-sans text-zinc-900">
@@ -502,7 +738,24 @@ const routeData = {
           "image": salamiOgImage,
           "description": "ডিজিটাল ঈদ সালামি ট্র্যাকার এবং শুভেচ্ছা পোর্টাল। মাহিম ইবনে খুদিকে সালামি পাঠানোর অনলাইন মাধ্যম।",
           "applicationCategory": "EntertainmentApplication",
-          "operatingSystem": "All"
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BDT"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Mahim Ibne Khudi",
+            "url": "https://mahims.com/"
+          },
+          "featureList": [
+            "ডিজিটাল ঈদ সালামি ট্র্যাকিং",
+            "বিকাশ, নগদ ও রকেট সাপোর্ট",
+            "ইনস্ট্যান্ট শুভেচ্ছা বার্তা প্রদর্শন",
+            "রিয়েলটাইম স্ট্যাটাস"
+          ]
         },
         {
           "@type": "FAQPage",
@@ -598,7 +851,24 @@ const routeData = {
           "image": chithiOgImage,
           "description": "মাহিম ইবনে খুদিকে সম্পূর্ণ বেনামে ও নিরাপদে চিঠি বা গোপন বার্তা পাঠানোর সুরক্ষিত প্ল্যাটফর্ম।",
           "applicationCategory": "SocialNetworkingApplication",
-          "operatingSystem": "All"
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BDT"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Mahim Ibne Khudi",
+            "url": "https://mahims.com/"
+          },
+          "featureList": [
+            "১০০% পরিচয়হীন বেনামী বার্তা প্রেরণ",
+            "কাগজ ও কালির ক্লাসিক থিম সিলেকশন",
+            "এনক্রিপ্টেড ও সম্পূর্ণ ব্যক্তিগত ইনবক্স ডেলিভারি",
+            "কোনো রেজিস্ট্রেশন বা লগইন ছাড়াই বার্তা প্রেরণ"
+          ]
         },
         {
           "@type": "FAQPage",
@@ -686,10 +956,44 @@ const routeData = {
         {
           "@type": "ProfilePage",
           "@id": "https://mahims.com/portfolio#profile",
-          "name": "Mahim Ibne Khudi Professional Portfolio",
+          "name": "Mahim Ibne Khudi Professional Portfolio | পোর্টফোলিও ও সিভি",
           "url": "https://mahims.com/portfolio/",
           "description": "Mahim's full-stack development, software engineering, automation workflows and design projects.",
-          "primaryImageOfPage": defaultOgImage
+          "primaryImageOfPage": defaultOgImage,
+          "mainEntity": {
+            "@type": "Person",
+            "@id": "https://mahims.com/portfolio#person",
+            "name": "Mahim Ibne Khudi",
+            "alternateName": ["মাহিম ইবনে খুদি", "Mahim", "Mahim Khudi", "মাহিম"],
+            "url": "https://mahims.com/portfolio/",
+            "image": defaultOgImage,
+            "jobTitle": "Full-Stack Web Developer & Creative Designer",
+            "worksFor": {
+              "@type": "Organization",
+              "name": "Mahim's World",
+              "url": "https://mahims.com/"
+            },
+            "alumniOf": {
+              "@type": "CollegeOrUniversity",
+              "name": "Dhaka Central University"
+            },
+            "sameAs": [
+              "https://github.com/mahim2005",
+              "https://facebook.com/mahim2005",
+              "https://www.linkedin.com/in/mahimibnekhudi",
+              "https://mahims.com/"
+            ],
+            "knowsAbout": [
+              "React",
+              "TypeScript",
+              "Node.js",
+              "Next.js",
+              "Tailwind CSS",
+              "REST APIs",
+              "UI/UX Design",
+              "Automation Workflows"
+            ]
+          }
         }
       ]
     },
@@ -961,6 +1265,8 @@ if (fs.existsSync(distDir)) {
         .replace(/<meta property="twitter:image" content=".*?" \/>/, `<meta property="twitter:image" content="${data.twitterImage}" />`);
 
       // 7. Inject Route-Specific JSON-LD
+      // Strip any existing root JSON-LD structured data from root index.html so it doesn't leak into sub-routes
+      htmlContent = htmlContent.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, '');
       const jsonLdString = `<script type="application/ld+json">\n${JSON.stringify(data.jsonLd, null, 2)}\n</script>`;
       htmlContent = htmlContent.replace('</head>', `${jsonLdString}\n</head>`);
 

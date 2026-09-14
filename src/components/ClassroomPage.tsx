@@ -222,7 +222,7 @@ export const ClassroomPage: React.FC = () => {
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
-    document.title = "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
+    document.title = "Mahims Classroom | Mahim's Classroom (মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
 
     const metaTags: Record<string, string> = {
       description:

@@ -15,7 +15,7 @@ export const DynamicSEO: React.FC = () => {
 
     // 1. Dynamic Document Title
     if (isClassroom) {
-      document.title = "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
+      document.title = "Mahims Classroom | Mahim's Classroom (মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
     } else if (isChithi) {
       document.title = 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে';
     } else if (isSalami) {
@@ -25,7 +25,7 @@ export const DynamicSEO: React.FC = () => {
     } else if (selectedPostForView) {
       document.title = `${selectedPostForView.title} | ${settings.siteName || "Mahim's World"}`;
     } else {
-      document.title = "Mahim's World | মাহিম’স ওয়ার্ল্ড — ডিজিটাল ইকোসিস্টেম ও ভাবনা ভুবন";
+      document.title = "Mahims | Mahim's World — মাহিম’স ওয়ার্ল্ড (মাহিম ইবনে খুদি)";
     }
 
     // Helper to safely set or create meta tag
@@ -151,7 +151,16 @@ export const DynamicSEO: React.FC = () => {
         '@type': 'WebSite',
         '@id': `${siteUrl}/#website`,
         url: siteUrl,
-        name: settings.siteName || 'Mahim',
+        name: 'Mahims',
+        alternateName: [
+          'mahims.com',
+          "Mahim's World",
+          'Mahims World',
+          'মাহিমস',
+          'মাহিম’স ওয়ার্ল্ড',
+          'Mahim',
+          'মাহিম',
+        ],
         description: settings.seoDescription || settings.heroBio,
         publisher: { '@id': `${siteUrl}/#person` },
       },
@@ -164,6 +173,27 @@ export const DynamicSEO: React.FC = () => {
         mainEntity: { '@id': `${siteUrl}/#person` },
       },
     ];
+
+    if (isClassroom) {
+      dynamicGraph.push({
+        '@type': 'EducationalOrganization',
+        '@id': `${siteUrl}/classroom/#organization`,
+        name: 'Mahims Classroom',
+        alternateName: [
+          "Mahim's Classroom",
+          'Mahim Classroom',
+          'mahims classroom',
+          'মাহিম ক্লাসরুম',
+          'মাহিমস ক্লাসরুম',
+        ],
+        url: `${siteUrl}/classroom/`,
+        logo: `${siteUrl}/assets/og-classroom.jpg`,
+        image: `${siteUrl}/assets/og-classroom.jpg`,
+        description:
+          "Mahims Classroom (also known as Mahim's Classroom or Mahim Classroom) is an online academic learning, HSC ICT, and university admission test platform founded by Mahim Ibne Khudi in Bangladesh.",
+        founder: { '@id': `${siteUrl}/#person` },
+      });
+    }
 
     // Add BlogPosting schema for each published blog post
     publicPosts.forEach(post => {

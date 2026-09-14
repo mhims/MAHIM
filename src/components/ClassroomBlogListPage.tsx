@@ -493,20 +493,31 @@ export const ClassroomBlogListPage: React.FC = () => {
           <div className="text-center py-16 px-4 bg-white rounded-3xl border border-orange-200/80 max-w-lg mx-auto">
             <BookOpen size={36} className="mx-auto text-orange-400 mb-3" />
             <h4 className="text-base font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-1">
-              কোনো আর্টিকেল পাওয়া যায়নি
+              {blogs.length === 0 ? 'এখনো কোনো আর্টিকেল পোস্ট করা হয়নি' : 'কোনো আর্টিকেল পাওয়া যায়নি'}
             </h4>
             <p className="text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif] mb-4">
-              আপনার ফিল্টার বা সার্চ কি-ওয়ার্ড পরিবর্তন করে আবার চেষ্টা করুন।
+              {blogs.length === 0
+                ? 'ক্লাসরুম ব্লগে শিক্ষা বিষয়ক আর্টিকেল পোস্ট করতে অ্যাডমিন প্যানেল ব্যবহার করুন।'
+                : 'আপনার ফিল্টার বা সার্চ কি-ওয়ার্ড পরিবর্তন করে আবার চেষ্টা করুন।'}
             </p>
-            <button
-              onClick={() => {
-                setSelectedTopic('all');
-                setSearchQuery('');
-              }}
-              className="px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif]"
-            >
-              সকল আর্টিকেল দেখুন
-            </button>
+            {blogs.length === 0 ? (
+              <button
+                onClick={() => setIsAdminModalOpen(true)}
+                className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-colors cursor-pointer shadow-sm"
+              >
+                নতুন আর্টিকেল লিখুন (অ্যাডমিন)
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setSelectedTopic('all');
+                  setSearchQuery('');
+                }}
+                className="px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif]"
+              >
+                সকল আর্টিকেল দেখুন
+              </button>
+            )}
           </div>
         )}
       </main>

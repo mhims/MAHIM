@@ -21,12 +21,14 @@ import {
   Newspaper,
   ThumbsUp,
   Bookmark,
+  Trash2,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { ClassroomBlogPost } from '../data/classroomBlogs';
 import {
   getClassroomBlogBySlug,
   getClassroomBlogs,
+  deleteClassroomBlog,
   incrementClassroomBlogView,
   toggleClassroomBlogLike,
   isClassroomBlogLiked,
@@ -368,21 +370,37 @@ export const ClassroomBlogDetailPage: React.FC<ClassroomBlogDetailPageProps> = (
 
       {/* Main Reading Container */}
       <article className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-xs font-['Hind_Siliguri',sans-serif] text-zinc-500 mb-6 flex-wrap">
-          <button onClick={() => navigateTo('/')} className="hover:text-orange-600 transition-colors">
-            হোম
+        {/* Breadcrumb Navigation & Admin Actions */}
+        <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
+          <div className="flex items-center gap-2 text-xs font-['Hind_Siliguri',sans-serif] text-zinc-500 flex-wrap">
+            <button onClick={() => navigateTo('/')} className="hover:text-orange-600 transition-colors">
+              হোম
+            </button>
+            <span>/</span>
+            <button onClick={() => navigateTo('/classroom')} className="hover:text-orange-600 transition-colors">
+              ক্লাসরুম
+            </button>
+            <span>/</span>
+            <button onClick={() => navigateTo('/classroom/blog')} className="hover:text-orange-600 transition-colors">
+              ব্লগ
+            </button>
+            <span>/</span>
+            <span className="text-orange-600 font-bold">{post.topic}</span>
+          </div>
+
+          <button
+            onClick={() => {
+              if (window.confirm(`আপনি কি "${post.title}" আর্টিকেলটি স্থায়ীভাবে মুছে ফেলতে চান?`)) {
+                deleteClassroomBlog(post.id);
+                navigateTo('/classroom/blog');
+              }
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer shadow-xs"
+            title="এই আর্টিকেলটি স্থায়ীভাবে মুছে ফেলুন"
+          >
+            <Trash2 size={13} />
+            <span>পোস্টটি ডিলিট করুন</span>
           </button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/classroom')} className="hover:text-orange-600 transition-colors">
-            ক্লাসরুম
-          </button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/classroom/blog')} className="hover:text-orange-600 transition-colors">
-            ব্লগ
-          </button>
-          <span>/</span>
-          <span className="text-orange-600 font-bold">{post.topic}</span>
         </div>
 
         {/* Topic Badge & Title */}

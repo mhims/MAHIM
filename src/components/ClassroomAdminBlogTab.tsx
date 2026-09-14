@@ -30,6 +30,7 @@ import {
   getClassroomBlogs,
   saveClassroomBlog,
   deleteClassroomBlog,
+  clearAllClassroomBlogs,
   generateSlugFromTitle,
   getAllBlogTopics,
   generateClassroomBlogsGitHubCode,
@@ -329,6 +330,21 @@ export const ClassroomAdminBlogTab: React.FC = () => {
                     লাইভ প্রিভিউ
                   </button>
                 </div>
+
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleDeletePost(editingId, title);
+                      setMode('list');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 text-xs font-bold font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="এই পোস্টটি মুছে ফেলুন"
+                  >
+                    <Trash2 size={13} />
+                    <span>ডিলিট করুন</span>
+                  </button>
+                )}
 
                 <button
                   type="submit"
@@ -711,22 +727,40 @@ export const ClassroomAdminBlogTab: React.FC = () => {
                 </div>
 
                 {/* Bottom Submit Actions */}
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setMode('list')}
-                    className="px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold font-['Hind_Siliguri',sans-serif]"
-                  >
-                    বাতিল
-                  </button>
+                <div className="flex items-center justify-between gap-3 pt-2">
+                  {editingId ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleDeletePost(editingId, title);
+                        setMode('list');
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 text-xs font-bold font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={15} />
+                      <span>এই পোস্টটি ডিলিট করুন</span>
+                    </button>
+                  ) : (
+                    <div />
+                  )}
 
-                  <button
-                    type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md shadow-orange-500/25 font-['Hind_Siliguri',sans-serif] flex items-center gap-2"
-                  >
-                    <CheckCircle2 size={16} />
-                    <span>{editingId ? 'পোস্ট আপডেট করুন' : 'নতুন পোস্ট প্রকাশ করুন'}</span>
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setMode('list')}
+                      className="px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold font-['Hind_Siliguri',sans-serif]"
+                    >
+                      বাতিল
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md shadow-orange-500/25 font-['Hind_Siliguri',sans-serif] flex items-center gap-2"
+                    >
+                      <CheckCircle2 size={16} />
+                      <span>{editingId ? 'পোস্ট আপডেট করুন' : 'নতুন পোস্ট প্রকাশ করুন'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -766,6 +800,23 @@ export const ClassroomAdminBlogTab: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              {blogs.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`আপনি কি সব (${blogs.length}টি) পোস্ট স্থায়ীভাবে মুছে ফেলতে চান?`)) {
+                      clearAllClassroomBlogs();
+                      refreshList();
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 text-xs font-bold font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="সকল পোস্ট এক ক্লিকে মুছে ফেলুন"
+                >
+                  <Trash2 size={13} />
+                  <span>সব মুছুন</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => setMode('github_code')}
@@ -876,24 +927,26 @@ export const ClassroomAdminBlogTab: React.FC = () => {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => navigateTo(`/classroom/blog/${post.slug}`)}
-                                className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                className="p-1.5 text-zinc-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
                                 title="ওয়েবসাইটে দেখুন"
                               >
                                 <ExternalLink size={14} />
                               </button>
                               <button
                                 onClick={() => handleStartEdit(post)}
-                                className="p-1.5 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="px-2.5 py-1 text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg text-xs font-bold font-['Hind_Siliguri',sans-serif] flex items-center gap-1 transition-colors cursor-pointer"
                                 title="এডিট করুন"
                               >
-                                <Edit size={14} />
+                                <Edit size={12} />
+                                <span>এডিট</span>
                               </button>
                               <button
                                 onClick={() => handleDeletePost(post.id, post.title)}
-                                className="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="মুছে ফেলুন"
+                                className="px-2.5 py-1 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white border border-red-200 rounded-lg text-xs font-bold font-['Hind_Siliguri',sans-serif] flex items-center gap-1 transition-colors cursor-pointer"
+                                title="পোস্টটি মুছে ফেলুন"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={12} />
+                                <span>ডিলিট</span>
                               </button>
                             </div>
                           </td>

@@ -1287,56 +1287,65 @@ export const ClassroomPage: React.FC = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {getClassroomBlogs(false).slice(0, 3).map((post, idx) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.45, delay: idx * 0.1, ease: 'easeOut' }}
-              whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
-              onClick={() => navigateTo(`/classroom/blog/${post.slug}`)}
-              className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl overflow-hidden flex flex-col justify-between transition-shadow duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer group"
-            >
-              {post.coverImage && (
-                <div className="relative aspect-video overflow-hidden bg-zinc-100">
-                  <img
-                    src={post.coverImage}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/60 text-white backdrop-blur-md font-['Hind_Siliguri',sans-serif]">
-                    {post.topic}
-                  </span>
-                </div>
-              )}
+        {getClassroomBlogs(false).length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {getClassroomBlogs(false).slice(0, 3).map((post, idx) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.45, delay: idx * 0.1, ease: 'easeOut' }}
+                whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+                onClick={() => navigateTo(`/classroom/blog/${post.slug}`)}
+                className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl overflow-hidden flex flex-col justify-between transition-shadow duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer group"
+              >
+                {post.coverImage && (
+                  <div className="relative aspect-video overflow-hidden bg-zinc-100">
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-bold bg-black/60 text-white backdrop-blur-md font-['Hind_Siliguri',sans-serif]">
+                      {post.topic}
+                    </span>
+                  </div>
+                )}
 
-              <div className="p-6 flex flex-col justify-between flex-1">
-                <div>
-                  <div className="flex items-center justify-between text-[11px] font-bold text-orange-700 mb-2 font-['Hind_Siliguri',sans-serif]">
-                    <span>{post.date}</span>
-                    <span className="text-zinc-400 font-normal">{post.readTime}</span>
+                <div className="p-6 flex flex-col justify-between flex-1">
+                  <div>
+                    <div className="flex items-center justify-between text-[11px] font-bold text-orange-700 mb-2 font-['Hind_Siliguri',sans-serif]">
+                      <span>{post.date}</span>
+                      <span className="text-zinc-400 font-normal">{post.readTime}</span>
+                    </div>
+
+                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif] mb-2 leading-snug line-clamp-2">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] leading-relaxed mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-bold text-zinc-900 group-hover:text-orange-600 transition-colors font-['Hind_Siliguri',sans-serif] mb-2 leading-snug line-clamp-2">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif] leading-relaxed mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
+                  <div className="pt-4 border-t border-orange-100 flex items-center justify-between text-xs font-bold text-orange-600 font-['Hind_Siliguri',sans-serif]">
+                    <span>সম্পূর্ণ আর্টিকেল পড়ুন</span>
+                    <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-
-                <div className="pt-4 border-t border-orange-100 flex items-center justify-between text-xs font-bold text-orange-600 font-['Hind_Siliguri',sans-serif]">
-                  <span>সম্পূর্ণ আর্টিকেল পড়ুন</span>
-                  <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 px-6 bg-orange-50/50 rounded-3xl border border-orange-200/80 max-w-lg mx-auto">
+            <FileText size={32} className="mx-auto text-orange-400 mb-2" />
+            <p className="text-sm font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif]">
+              এডমিশন ও একাডেমিক নতুন আর্টিকেল শীঘ্রই প্রকাশিত হচ্ছে!
+            </p>
+          </div>
+        )}
 
         {/* View All Blogs Button */}
         <div className="mt-8 text-center">

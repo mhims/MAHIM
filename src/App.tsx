@@ -12,6 +12,8 @@ import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { ClassroomPage } from './components/ClassroomPage';
 import { ClassroomCoursesPage } from './components/ClassroomCoursesPage';
 import { ClassroomInstructorPage } from './components/ClassroomInstructorPage';
+import { ClassroomBlogListPage } from './components/ClassroomBlogListPage';
+import { ClassroomBlogDetailPage } from './components/ClassroomBlogDetailPage';
 import { TeacherProfilePage } from './components/TeacherProfilePage';
 import { ClassroomMentorshipHubPage } from './components/ClassroomMentorshipHubPage';
 import { MentorshipCourseDetailPage } from './components/MentorshipCourseDetailPage';
@@ -52,6 +54,11 @@ export default function App() {
   const isAllU = currentPath === '/allu';
   const isAllL = currentPath === '/alll';
   const isClassroom = currentPath === '/classroom';
+  const isClassroomBlogList = currentPath === '/classroom/blog';
+  const isClassroomBlogDetail =
+    currentPath.startsWith('/classroom/blog/') &&
+    currentPath !== '/classroom/blog';
+  const classroomBlogSlug = isClassroomBlogDetail ? currentPath.replace('/classroom/blog/', '') : '';
   const isClassroomInstructor = currentPath === '/classroom/instructor' || currentPath === '/classroom/instructors';
   const isClassroomCourses = currentPath === '/classroom/courses';
   const isMentorshipHub = currentPath === '/classroom/courses/mentorship';
@@ -66,6 +73,8 @@ export default function App() {
     currentPath.startsWith('/classroom/') &&
     !isClassroomInstructor &&
     !isClassroomCourses &&
+    !isClassroomBlogList &&
+    !isClassroomBlogDetail &&
     !isMentorshipHub &&
     !isMentorshipCourse &&
     !isExternalCourse;
@@ -262,6 +271,24 @@ export default function App() {
     return (
       <>
         <ClassroomInstructorPage />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
+  }
+
+  if (isClassroomBlogDetail) {
+    return (
+      <>
+        <ClassroomBlogDetailPage slug={classroomBlogSlug} />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
+  }
+
+  if (isClassroomBlogList) {
+    return (
+      <>
+        <ClassroomBlogListPage />
         <ClassroomMobileDock currentPath={currentPath} />
       </>
     );

@@ -23,8 +23,10 @@ import {
   PhoneCall,
   Send,
   Sparkles,
+  Newspaper,
 } from 'lucide-react';
 import { ClassroomRegistration, ClassroomSettings } from '../types/classroom';
+import { ClassroomAdminBlogTab } from './ClassroomAdminBlogTab';
 import {
   getAllEnrollments,
   setEnrollmentStatus,
@@ -61,7 +63,7 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
   const [isVerifying, setIsVerifying] = useState(false);
 
   // Tabs and filters
-  const [activeTab, setActiveTab] = useState<'students' | 'mentorship' | 'settings'>('students');
+  const [activeTab, setActiveTab] = useState<'students' | 'mentorship' | 'blog' | 'settings'>('students');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -395,6 +397,18 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                 >
                   <Sparkles size={14} />
                   <span>মেন্টরশীপ কোর্স ভর্তি ({enrollments.length})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('blog')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer font-['Hind_Siliguri',sans-serif] flex items-center gap-1.5 ${
+                    activeTab === 'blog'
+                      ? 'bg-orange-500 text-white shadow-xs'
+                      : 'bg-white text-zinc-700 hover:bg-zinc-100 border border-zinc-200'
+                  }`}
+                >
+                  <Newspaper size={14} />
+                  <span>ব্লগ ও আর্টিকেল পোস্ট</span>
                 </button>
 
                 <button
@@ -932,6 +946,9 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
                 )}
               </div>
             )}
+
+            {/* Tab: Blog Management & WordPress Style Post Editor */}
+            {activeTab === 'blog' && <ClassroomAdminBlogTab />}
 
             {/* Tab: Settings & Google Sheets Sync */}
             {activeTab === 'settings' && (

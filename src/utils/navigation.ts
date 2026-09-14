@@ -25,6 +25,7 @@ export const STANDALONE_ROUTES = new Set([
   '/allu',
   '/alll',
   '/classroom',
+  '/classroom/blog',
   '/classroom/instructor',
   '/classroom/instructors',
   '/classroom/courses',

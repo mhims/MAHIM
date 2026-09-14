@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, BookOpen, LogIn, Users, Calendar, User } from 'lucide-react';
+import { Home, BookOpen, LogIn, Users, Newspaper, User } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { getCurrentStudent, StudentUser } from '../utils/studentAuth';
 import { StudentProfileModal, ProfileModalTab } from './StudentProfileModal';
@@ -59,37 +59,12 @@ export const ClassroomMobileDock: React.FC<ClassroomMobileDockProps> = ({ curren
 
   // Compute active tab status
   const isCoursesActive = currentPath.startsWith('/classroom/courses');
+  const isBlogActive = currentPath.startsWith('/classroom/blog');
   const isFacultyActive =
     currentPath === '/classroom/instructor' ||
     currentPath === '/classroom/instructors' ||
-    (currentPath.startsWith('/classroom/') && !isCoursesActive && currentPath !== '/classroom');
-  const isHomeActive = currentPath === '/' || currentPath.startsWith('/portfolio');
-  const isCalendarActive =
-    (currentPath === '/classroom' && typeof window !== 'undefined' && window.location.hash === '#calendar');
-
-  const handleCalendarClick = () => {
-    if (currentPath === '/classroom') {
-      const el = document.getElementById('calendar');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-        if (window.history.replaceState) {
-          window.history.replaceState(null, '', '/classroom#calendar');
-        }
-        return;
-      }
-    }
-
-    navigateTo('/classroom');
-    setTimeout(() => {
-      const el = document.getElementById('calendar');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-        if (window.history.replaceState) {
-          window.history.replaceState(null, '', '/classroom#calendar');
-        }
-      }
-    }, 250);
-  };
+    (currentPath.startsWith('/classroom/') && !isCoursesActive && !isBlogActive && currentPath !== '/classroom');
+  const isHomeActive = currentPath === '/' || currentPath === '/classroom' || currentPath.startsWith('/portfolio');
 
   const handleAuthButtonClick = () => {
     if (currentStudent) {
@@ -186,23 +161,23 @@ export const ClassroomMobileDock: React.FC<ClassroomMobileDockProps> = ({ curren
             </span>
           </button>
 
-          {/* Tab 5: Calendar */}
+          {/* Tab 5: Blog */}
           <button
-            onClick={handleCalendarClick}
-            id="mobile-dock-calendar-btn"
+            onClick={() => navigateTo('/classroom/blog')}
+            id="mobile-dock-blog-btn"
             className={`flex flex-col items-center justify-center py-1 px-2.5 transition-colors cursor-pointer group ${
-              isCalendarActive ? 'text-orange-600 font-bold' : 'text-zinc-600 hover:text-orange-600'
+              isBlogActive ? 'text-orange-600 font-bold' : 'text-zinc-600 hover:text-orange-600'
             }`}
-            title="এডমিশন ক্যালেন্ডার"
+            title="শিক্ষা ও এডমিশন ব্লগ"
           >
             <div className="relative">
-              <Calendar size={19} className={isCalendarActive ? 'text-orange-600 stroke-[2.4]' : 'text-zinc-600 group-hover:text-orange-600'} />
-              {isCalendarActive && (
+              <Newspaper size={19} className={isBlogActive ? 'text-orange-600 stroke-[2.4]' : 'text-zinc-600 group-hover:text-orange-600'} />
+              {isBlogActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-600" />
               )}
             </div>
             <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5 tracking-tight">
-              ক্যালেন্ডার
+              ব্লগ
             </span>
           </button>
         </div>

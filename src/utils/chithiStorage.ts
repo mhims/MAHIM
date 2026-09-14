@@ -78,13 +78,27 @@ export function getStoredLetters(): ChithiLetter[] {
 }
 
 // User's configured Google Apps Script Webhook URL
-export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
+export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
 
 // Effective Google Sheet webhook URL resolver
 export function getEffectiveGoogleSheetWebhookUrl(): string {
   if (typeof window !== 'undefined') {
     const fromSettings = getChithiSettings().googleSheetWebhookUrl?.trim();
     if (fromSettings) return fromSettings;
+
+    // Check main site settings
+    try {
+      const siteSettingsRaw = localStorage.getItem('mahims_site_settings_v1');
+      if (siteSettingsRaw) {
+        const parsed = JSON.parse(siteSettingsRaw);
+        if (parsed.googleSheetWebhookUrl && typeof parsed.googleSheetWebhookUrl === 'string' && parsed.googleSheetWebhookUrl.trim()) {
+          return parsed.googleSheetWebhookUrl.trim();
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     const fromLocal = localStorage.getItem('chithi_global_webhook_url')?.trim();
     if (fromLocal) return fromLocal;
   }

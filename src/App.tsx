@@ -20,6 +20,7 @@ import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { ClassroomMobileDock } from './components/ClassroomMobileDock';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
+import { trackPageView, getActiveWebhookUrl } from './utils/visitorTracker';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() => {
@@ -77,6 +78,14 @@ export default function App() {
     currentPath === '/education' ||
     currentPath === '/blog' ||
     currentPath === '/contact';
+
+  // Live Visitor Analytics (Tracks IP, device, OS, browser, duration to Google Sheets)
+  useEffect(() => {
+    const webhookUrl = getActiveWebhookUrl();
+    if (!webhookUrl) return;
+    const cleanup = trackPageView(webhookUrl, currentPath);
+    return cleanup;
+  }, [currentPath]);
 
   useEffect(() => {
     const handleUrlChange = () => {

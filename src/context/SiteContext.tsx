@@ -167,6 +167,11 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ? DEFAULT_SETTINGS.logoUrl
             : parsed.logoUrl;
 
+        const cleanWebhookUrl =
+          parsed.googleSheetWebhookUrl && typeof parsed.googleSheetWebhookUrl === 'string' && parsed.googleSheetWebhookUrl.trim()
+            ? parsed.googleSheetWebhookUrl.trim()
+            : DEFAULT_SETTINGS.googleSheetWebhookUrl;
+
         return {
           ...DEFAULT_SETTINGS,
           ...parsed,
@@ -178,6 +183,8 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
           seoKeywords: cleanedKw,
           whatsappLink: 'https://wa.me/@mahim.wp',
           heroImage: heroImageVal,
+          googleSheetWebhookUrl: cleanWebhookUrl,
+          googleSheetSyncEnabled: true,
         };
       }
       return DEFAULT_SETTINGS;

@@ -4,6 +4,15 @@ import { BlogPost, CertificationItem, EducationItem, ExperienceItem, PostVisibil
 import { downloadTextFile, generateLlmsTxt, generateRobotsTxt, generateSitemapXml } from '../utils/sitemap';
 import { GOOGLE_APPS_SCRIPT_TEMPLATE } from '../utils/googleSheets';
 import { 
+  sendTestVisitorPing, 
+  fetchVisitorsFromGoogleSheet, 
+  getStoredVisitors, 
+  clearStoredVisitors, 
+  exportVisitorsToCSV, 
+  getActiveWebhookUrl,
+  VisitorRecord 
+} from '../utils/visitorTracker';
+import { 
   X, 
   Lock, 
   Key, 
@@ -30,7 +39,13 @@ import {
   Eye, 
   ShieldCheck, 
   LogOut,
-  AlertCircle
+  AlertCircle,
+  Monitor,
+  Smartphone,
+  Globe,
+  Clock,
+  Compass,
+  ExternalLink
 } from 'lucide-react';
 
 export const AdminModal: React.FC = () => {
@@ -147,6 +162,7 @@ export const AdminModal: React.FC = () => {
 
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState(false);
+  const [isTestingVisitorPing, setIsTestingVisitorPing] = useState(false);
   const [copiedSitemap, setCopiedSitemap] = useState(false);
   const [copiedRobots, setCopiedRobots] = useState(false);
   const [copiedLlms, setCopiedLlms] = useState(false);
@@ -155,6 +171,35 @@ export const AdminModal: React.FC = () => {
   // Password change state
   const [newAdminPass, setNewAdminPass] = useState('');
   const [passChangeSuccess, setPassChangeSuccess] = useState('');
+
+  // Google Sheets Live Visitors State
+  const [visitorsList, setVisitorsList] = useState<VisitorRecord[]>(() => getStoredVisitors());
+  const [isSyncingVisitors, setIsSyncingVisitors] = useState(false);
+  const [visitorSyncMsg, setVisitorSyncMsg] = useState<string | null>(null);
+  const [visitorSearchTerm, setVisitorSearchTerm] = useState('');
+  const [visitorDeviceFilter, setVisitorDeviceFilter] = useState<'all' | 'Mobile' | 'Desktop'>('all');
+
+  const handleSyncVisitorsFromSheet = async () => {
+    const url = settings.googleSheetWebhookUrl?.trim() || getActiveWebhookUrl();
+    if (!url) {
+      showNotification('অনুগ্রহ করে আগে Google Sheet Webhook URL সেভ করুন।');
+      return;
+    }
+    setIsSyncingVisitors(true);
+    setVisitorSyncMsg('গুগল শিট থেকে ভিজিটর ডাটা লোড ও সিঙ্ক হচ্ছে...');
+    try {
+      const res = await fetchVisitorsFromGoogleSheet(url);
+      setVisitorsList(res.visitors);
+      setVisitorSyncMsg(res.message);
+      showNotification(res.message);
+    } catch (err) {
+      const msg = 'সিঙ্ক করতে সমস্যা হয়েছে: ' + String(err);
+      setVisitorSyncMsg(msg);
+      showNotification(msg);
+    } finally {
+      setIsSyncingVisitors(false);
+    }
+  };
 
   if (!isAdminModalOpen) return null;
 
@@ -551,7 +596,7 @@ export const AdminModal: React.FC = () => {
               { id: 'users', label: 'ইউজার ও মেম্বারস', icon: Users },
               { id: 'experience', label: 'অভিজ্ঞতা ও শিক্ষা', icon: Briefcase },
               { id: 'skills', label: 'স্কিল ও সার্টিফিকেট', icon: Wrench },
-              { id: 'sheets', label: 'গুগল শিট ডাটাবেজ', icon: FileSpreadsheet },
+              { id: 'sheets', label: `গুগল শিট ডাটাবেজ${visitorsList.length > 0 ? ` (${visitorsList.length})` : ''}`, icon: FileSpreadsheet },
               { id: 'seo', label: 'এসইও ও সাইটম্যাপ', icon: Search },
               { id: 'messages', label: `ইনবক্স (${contactMessages.length})`, icon: Sparkles },
               { id: 'backup', label: 'ব্যাকআপ ও নিরাপত্তা', icon: Database },
@@ -1963,10 +2008,30 @@ export const AdminModal: React.FC = () => {
             {activeTab === 'sheets' && (
               <div className="space-y-6 max-w-4xl">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-1">গুগল শিট (Google Sheets) লাইভ ডাটাবেজ ইন্টিগ্রেশন</h3>
+                  <h3 className="text-lg font-bold text-white mb-1">গুগল শিট (Google Sheets) লাইভ ভিজিটর ট্র্যাকিং ও ডাটাবেজ</h3>
                   <p className="text-xs text-slate-400">
-                    ওয়েবসাইটের সকল ইউজার রেজিস্ট্রেশন ও যোগাযোগের মেসেজ সরাসরি আপনার গুগল শিটে সংরক্ষণ করতে এই ফিচারটি ব্যবহার করুন।
+                    ওয়েবসাইটে কেউ আসলে তার ভিজিটের সময়, পেজ, আইপি, শহর, ডিভাইস, ব্রাউজার, ওএস ও সাইটে থাকার সময় স্বয়ংক্রিয়ভাবে আপনার গুগল শিটে সেভ হবে।
                   </p>
+                </div>
+
+                {/* Features Pill Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-3 rounded-2xl bg-slate-950/70 border border-emerald-500/20 text-center">
+                    <p className="text-[11px] text-slate-400 font-medium">লাইভ ভিজিটর ট্র্যাকিং</p>
+                    <p className="text-xs text-emerald-400 font-bold mt-0.5">আইপি, শহর ও সময়</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/70 border border-emerald-500/20 text-center">
+                    <p className="text-[11px] text-slate-400 font-medium">ডিভাইস ডিটেকশন</p>
+                    <p className="text-xs text-emerald-400 font-bold mt-0.5">মোবাইল, পিসি ও ওএস</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/70 border border-emerald-500/20 text-center">
+                    <p className="text-[11px] text-slate-400 font-medium">স্থায়িত্ব ট্র্যাকিং</p>
+                    <p className="text-xs text-emerald-400 font-bold mt-0.5">কত মিনিট/সেকেন্ড ছিল</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-950/70 border border-emerald-500/20 text-center">
+                    <p className="text-[11px] text-slate-400 font-medium">মেসেজ ও ইউজার ডাটা</p>
+                    <p className="text-xs text-emerald-400 font-bold mt-0.5">স্বয়ংক্রিয় সিঙ্ক</p>
+                  </div>
                 </div>
 
                 <div className="p-5 rounded-3xl bg-slate-950 border border-emerald-500/30 space-y-4">
@@ -1990,20 +2055,283 @@ export const AdminModal: React.FC = () => {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-xs text-slate-400">
-                      স্ট্যাটাস: {settings.googleSheetWebhookUrl ? (
-                        <span className="text-emerald-400 font-bold">✓ কানেক্টেড</span>
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      স্ট্যাটাস:{' '}
+                      {settings.googleSheetWebhookUrl ? (
+                        <span className="text-emerald-400 font-bold">কানেক্টেড (ভিজিটর ও ফর্ম সিঙ্ক সক্রিয়)</span>
                       ) : (
                         <span className="text-amber-400">অপেক্ষমাণ (লিংক দিন)</span>
                       )}
                     </span>
-                    <button
-                      onClick={() => showNotification('গুগল শিট সেভ হয়েছে!')}
-                      className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400"
-                    >
-                      সংরক্ষণ করুন
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={isSyncingVisitors || !settings.googleSheetWebhookUrl}
+                        onClick={handleSyncVisitorsFromSheet}
+                        className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
+                        title="গুগল শিট থেকে সরাসরি ওয়েবসাইটে ডাটা সিঙ্ক করুন"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSyncingVisitors ? 'animate-spin' : ''}`} />
+                        <span>{isSyncingVisitors ? 'সিঙ্ক হচ্ছে...' : 'শিট থেকে সিঙ্ক করুন'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isTestingVisitorPing || !settings.googleSheetWebhookUrl}
+                        onClick={async () => {
+                          if (!settings.googleSheetWebhookUrl) {
+                            showNotification('প্রথমে Webhook URL দিন!');
+                            return;
+                          }
+                          setIsTestingVisitorPing(true);
+                          const res = await sendTestVisitorPing(settings.googleSheetWebhookUrl);
+                          setIsTestingVisitorPing(false);
+                          setVisitorsList(getStoredVisitors());
+                          showNotification(res.message);
+                        }}
+                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-medium text-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isTestingVisitorPing ? 'animate-spin' : ''}`} />
+                        <span>{isTestingVisitorPing ? 'পাঠানো হচ্ছে...' : 'টেস্ট ভিজিটর ডাটা পাঠান'}</span>
+                      </button>
+                      <button
+                        onClick={() => showNotification('গুগল শিট সেটিংস সেভ হয়েছে!')}
+                        className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400"
+                      >
+                        সংরক্ষণ করুন
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Google Sheet Live Visitors Monitor & Table Section */}
+                <div className="p-5 rounded-3xl bg-slate-950 border border-amber-500/30 space-y-4 shadow-xl">
+                  {/* Section Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                        <Eye className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-white">লাইভ ভিজিটর ডাটা ও শিট প্রিভিউ</h4>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                            {visitorsList.length} জন ভিজিটর
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          গুগল শিট থেকে সংগৃহীত ভিজিটর আইপি, লোকেশন, ডিভাইস, ব্রাউজার ও সাইটে থাকার সময়
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={isSyncingVisitors || !settings.googleSheetWebhookUrl}
+                        onClick={handleSyncVisitorsFromSheet}
+                        className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
+                        title="গুগল শিট থেকে সর্বশেষ ভিজিটর ডাটা সিঙ্ক করুন"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSyncingVisitors ? 'animate-spin' : ''}`} />
+                        <span>{isSyncingVisitors ? 'সিঙ্ক হচ্ছে...' : 'শিট থেকে সিঙ্ক করুন'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={visitorsList.length === 0}
+                        onClick={() => exportVisitorsToCSV(visitorsList)}
+                        className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-40"
+                        title="ভিজিটর লগ CSV ফাইলে ডাউনলোড করুন"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>CSV</span>
+                      </button>
+                      {visitorsList.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm('আপনি কি লোকাল ভিজিটর ক্যাশ মুছে ফেলতে চান? (গুগল শিটের ডাটা অক্ষত থাকবে)')) {
+                              clearStoredVisitors();
+                              setVisitorsList([]);
+                              showNotification('লোকাল ভিজিটর লগ মুছে ফেলা হয়েছে।');
+                            }
+                          }}
+                          className="p-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-800/40 text-xs transition-colors"
+                          title="লোকাল ক্যাশ মুছুন"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Sync Status Banner */}
+                  {visitorSyncMsg && (
+                    <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>{visitorSyncMsg}</span>
+                      </span>
+                      <button
+                        onClick={() => setVisitorSyncMsg(null)}
+                        className="text-emerald-400 hover:text-white text-xs px-1"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Quick Analytics Counters */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div className="p-3 rounded-2xl bg-slate-900/80 border border-white/5 text-center">
+                      <p className="text-[11px] text-slate-400">মোট ভিজিট</p>
+                      <p className="text-lg font-bold text-white font-mono mt-0.5">{visitorsList.length}</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-900/80 border border-white/5 text-center">
+                      <p className="text-[11px] text-slate-400">ইউনিক আইপি</p>
+                      <p className="text-lg font-bold text-emerald-400 font-mono mt-0.5">
+                        {new Set(visitorsList.map(v => v.ip).filter(ip => ip && ip !== 'Unknown')).size}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-900/80 border border-white/5 text-center">
+                      <p className="text-[11px] text-slate-400">মোবাইল ভিজিটর</p>
+                      <p className="text-lg font-bold text-amber-400 font-mono mt-0.5">
+                        {visitorsList.filter(v => (v.device || '').toLowerCase().includes('mobile')).length}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-900/80 border border-white/5 text-center">
+                      <p className="text-[11px] text-slate-400">কম্পিউটার ভিজিটর</p>
+                      <p className="text-lg font-bold text-sky-400 font-mono mt-0.5">
+                        {visitorsList.filter(v => !(v.device || '').toLowerCase().includes('mobile')).length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Search and Filters */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-1">
+                    <div className="relative w-full sm:w-72">
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={visitorSearchTerm}
+                        onChange={e => setVisitorSearchTerm(e.target.value)}
+                        placeholder="পেজ, আইপি, শহর বা ব্রাউজার..."
+                        className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1.5 self-start sm:self-auto text-xs">
+                      <span className="text-slate-400 text-[11px] mr-1">ডিভাইস:</span>
+                      {(['all', 'Mobile', 'Desktop'] as const).map(dev => (
+                        <button
+                          key={dev}
+                          type="button"
+                          onClick={() => setVisitorDeviceFilter(dev)}
+                          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                            visitorDeviceFilter === dev
+                              ? 'bg-amber-500 text-slate-950 font-bold'
+                              : 'bg-slate-900 text-slate-300 hover:text-white border border-white/5'
+                          }`}
+                        >
+                          {dev === 'all' ? 'সব' : dev === 'Mobile' ? 'মোবাইল' : 'কম্পিউটার'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Visitor Records Table */}
+                  <div className="overflow-x-auto rounded-2xl border border-white/10 max-h-[380px] overflow-y-auto scrollbar-thin">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead className="bg-slate-900 sticky top-0 z-10 text-slate-300 font-semibold border-b border-white/10">
+                        <tr>
+                          <th className="py-2.5 px-3 whitespace-nowrap">তারিখ ও সময়</th>
+                          <th className="py-2.5 px-3 whitespace-nowrap">পেজ (Page)</th>
+                          <th className="py-2.5 px-3 whitespace-nowrap">আইপি ও শহর</th>
+                          <th className="py-2.5 px-3 whitespace-nowrap">ডিভাইস ও ব্রাউজার</th>
+                          <th className="py-2.5 px-3 whitespace-nowrap">সময় ছিল (Duration)</th>
+                          <th className="py-2.5 px-3 whitespace-nowrap">রেফারার</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {visitorsList
+                          .filter(v => {
+                            if (visitorDeviceFilter === 'Mobile') {
+                              if (!v.device?.toLowerCase().includes('mobile')) return false;
+                            }
+                            if (visitorDeviceFilter === 'Desktop') {
+                              if (v.device?.toLowerCase().includes('mobile')) return false;
+                            }
+                            if (!visitorSearchTerm.trim()) return true;
+                            const q = visitorSearchTerm.toLowerCase();
+                            return (
+                              v.page?.toLowerCase().includes(q) ||
+                              v.ip?.toLowerCase().includes(q) ||
+                              v.location?.toLowerCase().includes(q) ||
+                              v.browser?.toLowerCase().includes(q) ||
+                              v.os?.toLowerCase().includes(q) ||
+                              v.referrer?.toLowerCase().includes(q)
+                            );
+                          })
+                          .map((item, idx) => (
+                            <tr key={item.sessionId || item.id || idx} className="hover:bg-white/[0.03] transition-colors">
+                              <td className="py-2 px-3 whitespace-nowrap font-mono text-[11px] text-slate-300 flex items-center gap-1.5">
+                                <Clock className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                <span>{item.timestamp}</span>
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap font-medium text-amber-300">
+                                {item.page}
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap">
+                                <div className="flex items-center gap-1.5 font-mono text-emerald-400">
+                                  <Globe className="w-3 h-3 text-emerald-400/70 shrink-0" />
+                                  <span>{item.ip}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400">{item.location}</div>
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap text-slate-300">
+                                <div className="flex items-center gap-1.5">
+                                  {item.device?.toLowerCase().includes('mobile') ? (
+                                    <Smartphone className="w-3 h-3 text-amber-400 shrink-0" />
+                                  ) : (
+                                    <Monitor className="w-3 h-3 text-sky-400 shrink-0" />
+                                  )}
+                                  <span>{item.device} ({item.os})</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400">{item.browser}</div>
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap">
+                                <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium text-[11px]">
+                                  {item.timeSpent}
+                                </span>
+                              </td>
+                              <td className="py-2 px-3 whitespace-nowrap text-[11px] text-slate-400">
+                                {item.referrer || 'Direct'}
+                              </td>
+                            </tr>
+                          ))}
+                        {visitorsList.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="py-8 text-center text-slate-400 space-y-2">
+                              <Eye className="w-8 h-8 mx-auto text-slate-600 mb-1" />
+                              <p className="text-xs font-medium">কোনো ভিজিটর ডাটা এখনও ক্যাশে নেই</p>
+                              <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
+                                উপরের <strong>"শিট থেকে সিঙ্ক করুন"</strong> বাটনে ক্লিক করে গুগল শিট থেকে সকল ভিজিটরের ডাটা লোড করুন অথবা <strong>"টেস্ট ভিজিটর ডাটা পাঠান"</strong> বাটনে ক্লিক করে লাইভ ট্র্যাকিং পরীক্ষা করুন।
+                              </p>
+                              <button
+                                type="button"
+                                disabled={isSyncingVisitors || !settings.googleSheetWebhookUrl}
+                                onClick={handleSyncVisitorsFromSheet}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs mt-2 transition-all cursor-pointer"
+                              >
+                                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingVisitors ? 'animate-spin' : ''}`} />
+                                <span>শিট থেকে সিঙ্ক করুন</span>
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
@@ -2028,11 +2356,11 @@ export const AdminModal: React.FC = () => {
                   </div>
 
                   <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed">
-                    <li>আপনার Google Drive-এ গিয়ে একটি নতুন <strong>Google Sheet</strong> তৈরি করুন।</li>
+                    <li>আপনার Google Drive-এ গিয়ে একটি নতুন <strong>Google Sheet</strong> তৈরি করুন (নাম দিন: Mahims Analytics & Database)।</li>
                     <li>শীটের মেনু থেকে <strong>Extensions &gt; Apps Script</strong>-এ যান।</li>
-                    <li>উপরের <strong>কোড কপি করুন</strong> বাটনে ক্লিক করে পুরো কোডটি Apps Script-এ পেস্ট করে Save দিন।</li>
-                    <li>উপরে ডানে <strong>Deploy &gt; New deployment</strong> এ ক্লিক করুন (Type: Web app, Access: Anyone)।</li>
-                    <li>প্রাপ্ত Web App URL টি কপি করে উপরের বক্সে বসিয়ে দিন। ব্যাস! স্বয়ংক্রিয়ভাবে ডাটা সেভ হতে থাকবে।</li>
+                    <li>উপরের <strong>কোড কপি করুন</strong> বাটনে ক্লিক করে পুরো কোডটি Apps Script-এ পেস্ট করে Save (Ctrl+S) দিন।</li>
+                    <li>উপরে ডানে <strong>Deploy &gt; New deployment</strong>-এ ক্লিক করুন (Type: Web app, Execute as: Me, Access: Anyone)।</li>
+                    <li>প্রাপ্ত Web App URL টি কপি করে উপরের বক্সে বসিয়ে দিন। ব্যাস! স্বয়ংক্রিয়ভাবে ভিজিটরদের তথ্য শিটে জমা হবে।</li>
                   </ol>
 
                   <pre className="p-4 rounded-xl bg-slate-900 border border-white/5 text-[11px] font-mono text-slate-400 overflow-x-auto max-h-48">

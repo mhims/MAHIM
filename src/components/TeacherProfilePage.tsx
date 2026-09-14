@@ -119,9 +119,9 @@ export const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ slug }) 
   };
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans selection:bg-orange-500 selection:text-white pb-24">
+    <div className="min-h-screen bg-[#fafaf9] text-zinc-900 font-sans selection:bg-orange-500 selection:text-white overflow-x-clip pb-28 sm:pb-24">
       {/* Top Sticky Bar */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-zinc-200">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-orange-200/70 shadow-xs">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <button
             onClick={() => navigateTo('/classroom')}

@@ -12,7 +12,8 @@ import {
   X,
   Users,
   Award,
-  ExternalLink
+  ExternalLink,
+  Home
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { TEACHERS, type TeacherProfile } from '../data/teachers';
@@ -46,7 +47,7 @@ export const ClassroomInstructorPage: React.FC = () => {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-hidden pb-20">
+    <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-clip pb-28 sm:pb-20">
       {/* Background Decorative Gradients */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-gradient-to-b from-orange-200/50 via-amber-100/30 to-transparent blur-[120px]" />
@@ -62,7 +63,7 @@ export const ClassroomInstructorPage: React.FC = () => {
 
       {/* Navigation Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-orange-200/70 shadow-xs transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <div
             className="flex items-center gap-3 cursor-pointer select-none"
             onClick={() => navigateTo('/classroom')}
@@ -103,13 +104,6 @@ export const ClassroomInstructorPage: React.FC = () => {
             >
               <BookOpen size={14} className="text-orange-600" />
               <span>কোর্সসমূহ</span>
-            </button>
-
-            <button
-              onClick={() => navigateTo('/')}
-              className="hidden sm:inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium text-zinc-600 hover:text-zinc-900 bg-orange-50 hover:bg-orange-100 border border-orange-200/80 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
-            >
-              <span>পোর্টফোলিও</span>
             </button>
           </div>
         </div>
@@ -529,6 +523,54 @@ export const ClassroomInstructorPage: React.FC = () => {
           </button>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-orange-200/80 bg-white py-10 px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3 text-left">
+            <div className="w-9 h-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center border border-orange-200">
+              <GraduationCap size={18} />
+            </div>
+            <div>
+              <p className="font-extrabold text-sm text-zinc-900">
+                Mahim's <span className="text-orange-600">Classroom</span>
+              </p>
+              <p className="text-[11px] text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+                একাডেমিক ও এডমিশন লার্নিং প্ল্যাটফর্ম
+              </p>
+            </div>
+          </div>
+
+          <p className="text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+            © {new Date().getFullYear()} Mahim's Classroom. সর্বস্বত্ব সংরক্ষিত।
+          </p>
+
+          <div className="flex items-center gap-3 text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif]">
+            <button
+              onClick={() => navigateTo('/')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-orange-700 bg-orange-100/80 hover:bg-orange-200 border border-orange-300 transition-all hover:shadow-xs active:scale-95 cursor-pointer"
+              title="মূল ওয়েবসাইটে ফিরে যান"
+            >
+              <Home size={14} className="text-orange-600" />
+              <span>হোম</span>
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => navigateTo('/classroom')}
+              className="hover:text-orange-600 transition-colors cursor-pointer"
+            >
+              মূল ক্লাসরুম
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => navigateTo('/classroom/courses')}
+              className="hover:text-orange-600 transition-colors cursor-pointer"
+            >
+              কোর্সসমূহ
+            </button>
+          </div>
+        </div>
+      </footer>
 
       {/* Quick View Modal */}
       {activeModalTeacher && (

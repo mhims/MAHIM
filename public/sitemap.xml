@@ -10,6 +10,14 @@
       <image:loc>https://mahims.com/assets/og-main.png</image:loc>
       <image:title>Mahims - Minimalist Luxury M Monogram Logo &amp; Official Platform</image:title>
     </image:image>
+    <image:image>
+      <image:loc>https://mahims.com/logo.png</image:loc>
+      <image:title>Mahims Official Brand Logo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mahims.com/favicon-48x48.png</image:loc>
+      <image:title>Mahims Official Favicon</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://mahims.com/classroom/</loc>

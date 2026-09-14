@@ -18,6 +18,7 @@ import { MentorshipCourseDetailPage } from './components/MentorshipCourseDetailP
 import { ExternalCourseDetailPage } from './components/ExternalCourseDetailPage';
 import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
+import { ClassroomMobileDock } from './components/ClassroomMobileDock';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 
 export default function App() {
@@ -213,31 +214,66 @@ export default function App() {
   }
 
   if (isOctalCourse) {
-    return <ExternalCourseDetailPage courseId="octal-1-hsc-ict" />;
+    return (
+      <>
+        <ExternalCourseDetailPage courseId="octal-1-hsc-ict" />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isBanglaBossCourse) {
-    return <ExternalCourseDetailPage courseId="bangla-boss-2-course" />;
+    return (
+      <>
+        <ExternalCourseDetailPage courseId="bangla-boss-2-course" />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isMentorshipCourse || isMentorshipHub) {
-    return <ClassroomMentorshipHubPage />;
+    return (
+      <>
+        <ClassroomMentorshipHubPage />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isClassroomCourses) {
-    return <ClassroomCoursesPage />;
+    return (
+      <>
+        <ClassroomCoursesPage />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isClassroomInstructor) {
-    return <ClassroomInstructorPage />;
+    return (
+      <>
+        <ClassroomInstructorPage />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isTeacherProfile) {
-    return <TeacherProfilePage slug={teacherSlug} />;
+    return (
+      <>
+        <TeacherProfilePage slug={teacherSlug} />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
-  if (isClassroom) {
-    return <ClassroomPage />;
+  if (isClassroom || currentPath.startsWith('/classroom')) {
+    return (
+      <>
+        <ClassroomPage />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
   }
 
   if (isPortfolio) {

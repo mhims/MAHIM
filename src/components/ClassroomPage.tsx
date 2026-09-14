@@ -27,6 +27,7 @@ import {
   Video,
   LogIn,
   ExternalLink,
+  Home,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 import { ClassroomAdminModal } from './ClassroomAdminModal';
@@ -268,7 +269,7 @@ export const ClassroomPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-hidden pb-24 md:pb-0">
+    <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-clip pb-28 md:pb-0">
       {/* Background Decorative Warm Orange Gradients (Light Theme) */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] sm:w-[1000px] h-[550px] rounded-full bg-gradient-to-b from-orange-200/50 via-amber-100/30 to-transparent blur-[120px]" />
@@ -285,7 +286,7 @@ export const ClassroomPage: React.FC = () => {
 
       {/* Top Header / Navigation */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-orange-200/70 shadow-xs transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           {/* Dedicated Logo & Name for Mahim's Classroom (No 'অফিসিয়াল' badge as requested) */}
           <div
             className="flex items-center gap-3 cursor-pointer select-none"
@@ -347,17 +348,6 @@ export const ClassroomPage: React.FC = () => {
                 setIsStudentProfileOpen(true);
               }}
             />
-
-            {/* Back to main portfolio */}
-            <button
-              onClick={() => navigateTo('/')}
-              id="back-to-portfolio-btn"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-zinc-600 hover:text-zinc-900 bg-orange-50 hover:bg-orange-100 border border-orange-200/80 transition-colors font-['Hind_Siliguri',sans-serif] cursor-pointer"
-              title="মাহিমের মূল পোর্টফোলিওতে যান"
-            >
-              <ArrowLeft size={14} className="text-orange-600" />
-              <span>পোর্টফোলিও</span>
-            </button>
           </div>
         </div>
       </header>
@@ -366,7 +356,12 @@ export const ClassroomPage: React.FC = () => {
       {/* Top Launch Banner: Mentorship Course (mahims.com/classroom/courses/mentorship) */}
       {/* Clean, Sharp Image with Animated Traveling Orange Light Beam Border */}
       {/* ========================================================================= */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6"
+      >
         <div
           onClick={() => navigateTo('/classroom/courses/mentorship')}
           id="top-classroom-mentorship-banner"
@@ -385,35 +380,55 @@ export const ClassroomPage: React.FC = () => {
             />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Hero Section (Focus strictly on HSC, Admission & SSC as requested) */}
       <section id="hero" className="relative z-10 pt-10 sm:pt-16 pb-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
         {/* Top Tag */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-100/90 border border-orange-300 text-orange-800 text-xs sm:text-sm font-semibold mb-6 font-['Hind_Siliguri',sans-serif] shadow-xs">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-100/90 border border-orange-300 text-orange-800 text-xs sm:text-sm font-semibold mb-6 font-['Hind_Siliguri',sans-serif] shadow-xs"
+        >
           <span className="w-2 h-2 rounded-full bg-orange-600 animate-ping" />
           <span>এইচএসসি, এডমিশন ও এসএসসি স্মার্ট লার্নিং হাব</span>
-        </div>
+        </motion.div>
 
         {/* Hero Title */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight leading-[1.25] mb-5 max-w-4xl mx-auto font-['Hind_Siliguri',sans-serif]">
+        <motion.h1
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+          className="text-3xl sm:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight leading-[1.25] mb-5 max-w-4xl mx-auto font-['Hind_Siliguri',sans-serif]"
+        >
           কনসেপ্ট ক্লিয়ারিং থেকে বোর্ড ও এডমিশন জয় —{' '}
           <span className="text-orange-600">
             Mahim's Classroom
           </span>
-        </h1>
+        </motion.h1>
 
         {/* Hero Subtitle */}
-        <p className="text-base sm:text-lg lg:text-xl text-zinc-600 max-w-2xl mx-auto mb-8 font-['Hind_Siliguri',sans-serif] leading-relaxed">
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+          className="text-base sm:text-lg lg:text-xl text-zinc-600 max-w-2xl mx-auto mb-8 font-['Hind_Siliguri',sans-serif] leading-relaxed"
+        >
           <span className="text-xs sm:text-sm font-bold text-orange-600 block mb-1.5 font-sans tracking-wide">
             Mahim's Classroom • Mahim Classroom (Mahims Classroom) • মাহিম ক্লাসরুম
           </span>
           এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য
           অনলাইন ভিত্তিক কনসেপ্ট ক্লাস এবং স্মার্ট এক্সাম সিস্টেম।
-        </p>
+        </motion.p>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto mb-14 font-['Hind_Siliguri',sans-serif]">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-lg mx-auto mb-14 font-['Hind_Siliguri',sans-serif]"
+        >
           <button
             onClick={() => navigateTo('/classroom/courses/mentorship')}
             id="hero-mentorship-launch-btn"
@@ -427,16 +442,22 @@ export const ClassroomPage: React.FC = () => {
           <button
             onClick={() => navigateTo('/classroom/courses')}
             id="hero-view-courses-btn"
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-white hover:bg-orange-50 text-orange-700 border border-orange-300 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold text-sm bg-white hover:bg-orange-50 text-orange-700 border border-orange-300 shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
           >
             <BookOpen size={16} className="text-orange-600" />
             <span>সকল একাডেমিক কোর্স দেখুন ➔</span>
           </button>
-        </div>
+        </motion.div>
 
         {/* Feature Cards (Smart Exam System featured, OMR removed as requested) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-4 max-w-4xl mx-auto text-left">
-          <div className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.3 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all"
+          >
             <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
               <BrainCircuit size={20} />
             </div>
@@ -446,9 +467,15 @@ export const ClassroomPage: React.FC = () => {
             <p className="text-xs text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif] leading-relaxed">
               আইসিটি, গণিত ও বিজ্ঞানের প্রতিটি বিষয়ের গভীর ও স্পষ্ট বোধগম্যতা।
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.38 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all"
+          >
             <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
               <Target size={20} />
             </div>
@@ -458,9 +485,15 @@ export const ClassroomPage: React.FC = () => {
             <p className="text-xs text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif] leading-relaxed">
               অনলাইন লাইভ টেস্ট, নেগেটিভ মার্কিং ট্র্যাকিং এবং ইনস্ট্যান্ট মেরিট লিস্ট।
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.46 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all"
+          >
             <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
               <Sparkles size={20} />
             </div>
@@ -470,9 +503,15 @@ export const ClassroomPage: React.FC = () => {
             <p className="text-xs text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif] leading-relaxed">
               বিগত ২০ বছরের প্রশ্ন বিশ্লেষণ এবং কম সময়ে সঠিক উত্তর বাছাইয়ের কৌশল।
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.54 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all"
+          >
             <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
               <Compass size={20} />
             </div>
@@ -482,13 +521,19 @@ export const ClassroomPage: React.FC = () => {
             <p className="text-xs text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif] leading-relaxed">
               শিক্ষার্থীদের দুর্বলতা চিহ্নিত করে অধ্যায়ভিত্তিক রিভিশন প্ল্যানিং।
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Courses Section (Only curated featured courses on main page as instructed) */}
       <section id="courses" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="text-center max-w-2xl mx-auto mb-10"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
             <BookOpen size={14} />
             <span>Featured Courses</span>
@@ -499,15 +544,20 @@ export const ClassroomPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
             এইচএসসি, ভার্সিটি এডমিশন ও এসএসসি শিক্ষার্থীদের জন্য আমাদের নির্বাচিত বিশেষ কোর্স।
           </p>
-        </div>
+        </motion.div>
 
         {/* Selected Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mainCourses.map((course) => (
-            <div
+          {mainCourses.map((course, idx) => (
+            <motion.div
               key={course.id}
               id={`course-card-${course.id}`}
-              className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 group relative overflow-hidden"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: idx * 0.1, ease: 'easeOut' }}
+              whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+              className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-shadow duration-300 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 group relative overflow-hidden"
             >
               {course.isFeatured && (
                 <div className="absolute -top-6 -right-6 w-16 h-16 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
@@ -614,12 +664,18 @@ export const ClassroomPage: React.FC = () => {
                   <ArrowRight size={14} />
                 </button>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* View All Courses Banner linking to mahims.com/classroom/courses */}
-        <div className="mt-12 bg-white border-2 border-dashed border-orange-300 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-xs">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="mt-12 bg-white border-2 border-dashed border-orange-300 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-xs"
+        >
           <div className="space-y-1 text-center sm:text-left">
             <span className="inline-block px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-800 text-xs font-bold font-mono">
               mahims.com/classroom/courses
@@ -639,12 +695,18 @@ export const ClassroomPage: React.FC = () => {
             <BookOpen size={16} />
             <span>সকল কোর্স দেখুন (View All Courses) ➔</span>
           </button>
-        </div>
+        </motion.div>
       </section>
 
       {/* Faculty Section (Strictly as requested: Dhaka Central University + Founder + 'বিস্তারিত' Button) */}
       <section id="faculty" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="text-center max-w-2xl mx-auto mb-10"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
             <GraduationCap size={15} />
             <span>Faculty & Mentors</span>
@@ -659,13 +721,13 @@ export const ClassroomPage: React.FC = () => {
             <button
               onClick={() => navigateTo('/classroom/instructor')}
               id="view-instructor-page-link"
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-colors cursor-pointer border border-orange-200"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-colors cursor-pointer border border-orange-200 active:scale-95"
             >
               <span>শিক্ষক প্যানেলের আলাদা পেজ (mahims.com/classroom/instructor) দেখুন</span>
               <ArrowRight size={13} />
             </button>
           </div>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Mahim's Card */}
@@ -675,9 +737,14 @@ export const ClassroomPage: React.FC = () => {
               - Below that: ফাউন্ডার, মাহিম'স ক্লাসরুম
               - Below that: 'বিস্তারিত' Button
           */}
-          <div
+          <motion.div
             id="mentor-card-mahim"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.05, ease: 'easeOut' }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-shadow duration-300 flex flex-col justify-between"
           >
             <div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -736,12 +803,17 @@ export const ClassroomPage: React.FC = () => {
                 <Sparkles size={16} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Samiul Islam Sohrab's Card */}
-          <div
+          <motion.div
             id="mentor-card-samiul"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.12, ease: 'easeOut' }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-shadow duration-300 flex flex-col justify-between"
           >
             <div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -796,12 +868,17 @@ export const ClassroomPage: React.FC = () => {
                 <Sparkles size={16} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Abu Saleh Suja's Card */}
-          <div
+          <motion.div
             id="mentor-card-suja"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.18, ease: 'easeOut' }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-shadow duration-300 flex flex-col justify-between"
           >
             <div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -856,12 +933,17 @@ export const ClassroomPage: React.FC = () => {
                 <Sparkles size={16} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Mishkat Sharif Mithen's Card */}
-          <div
+          <motion.div
             id="mentor-card-mithen"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.24, ease: 'easeOut' }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-shadow duration-300 flex flex-col justify-between"
           >
             <div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -917,14 +999,19 @@ export const ClassroomPage: React.FC = () => {
                 <Sparkles size={16} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* ========================================================================= */}
           {/* Card 5: Swocchol Kumar Karmokar (UIU CSE)                                  */}
           {/* ========================================================================= */}
-          <div
+          <motion.div
             id="mentor-card-swocchol"
-            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.3, ease: 'easeOut' }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="group relative bg-white border-2 border-orange-300 hover:border-orange-500 rounded-3xl p-6 shadow-md hover:shadow-xl hover:shadow-orange-500/10 transition-shadow duration-300 flex flex-col justify-between"
           >
             <div>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
@@ -980,10 +1067,17 @@ export const ClassroomPage: React.FC = () => {
                 <Sparkles size={16} />
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Upcoming Faculty Expansion Card */}
-          <div className="bg-white/80 border-2 border-dashed border-orange-300 hover:border-orange-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center transition-all shadow-xs">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.45, delay: 0.36, ease: 'easeOut' }}
+            whileHover={{ y: -4, transition: { duration: 0.25, ease: 'easeOut' } }}
+            className="bg-white/80 border-2 border-dashed border-orange-300 hover:border-orange-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center transition-all shadow-xs"
+          >
             <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center mb-3">
               <Users size={24} />
             </div>
@@ -997,13 +1091,19 @@ export const ClassroomPage: React.FC = () => {
             <p className="text-xs text-zinc-600 max-w-xs font-['Hind_Siliguri',sans-serif] leading-relaxed">
               শীর্ষস্থানীয় পাবলিক বিশ্ববিদ্যালয় এবং প্রযুক্তি বিশ্ববিদ্যালয়ের অভিজ্ঞ মেন্টরদের নিয়ে মাহিম’স ক্লাসরুমের প্যানেল প্রতিনিয়ত সমৃদ্ধ হচ্ছে।
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Admission Calendar Section (New section as requested) */}
       <section id="calendar" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="bg-gradient-to-br from-white via-orange-50/50 to-white border-2 border-orange-300 rounded-3xl p-6 sm:p-10 shadow-md">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="bg-gradient-to-br from-white via-orange-50/50 to-white border-2 border-orange-300 rounded-3xl p-6 sm:p-10 shadow-md"
+        >
           <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
             <div className="flex-1 text-center sm:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-bold font-['Hind_Siliguri',sans-serif] mb-3">
@@ -1041,18 +1141,24 @@ export const ClassroomPage: React.FC = () => {
               </p>
               <button
                 onClick={() => handlePreRegister('এডমিশন ক্যালেন্ডার আপডেট নোটিফিকেশন')}
-                className="mt-3 px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer"
+                className="mt-3 px-4 py-2 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white shadow-sm transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-95"
               >
                 রিমাইন্ডার পেতে যুক্ত থাকুন
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Blog & Study Articles Section (New section as requested) */}
       <section id="articles" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="text-center max-w-2xl mx-auto mb-10"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
             <FileText size={14} />
             <span>Academic & Admission Blog</span>
@@ -1063,14 +1169,19 @@ export const ClassroomPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
             এডমিশন হ্যাকস, এইচএসসি আইসিটি টিপস এবং পরীক্ষার হলের সেরা কৌশলের প্রয়োজনীয় আর্টিকেলসমূহ।
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {ARTICLES.map((art) => (
-            <div
+          {ARTICLES.map((art, idx) => (
+            <motion.div
               key={art.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.45, delay: idx * 0.1, ease: 'easeOut' }}
+              whileHover={{ y: -6, transition: { duration: 0.25, ease: 'easeOut' } }}
               onClick={() => setSelectedArticle(art)}
-              className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-xs hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer group"
+              className="bg-white border border-orange-200/90 hover:border-orange-400 rounded-3xl p-6 flex flex-col justify-between transition-shadow duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer group"
             >
               <div>
                 <div className="flex items-center justify-between text-[11px] font-bold text-orange-700 mb-3 font-['Hind_Siliguri',sans-serif]">
@@ -1093,14 +1204,20 @@ export const ClassroomPage: React.FC = () => {
                 <span>সম্পূর্ণ আর্টিকেল পড়ুন</span>
                 <ChevronRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
       {/* Pre-Registration Banner (NO WhatsApp, 100% focused direct registration) */}
       <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-3xl p-8 sm:p-12 text-center shadow-xl shadow-orange-500/20 text-white relative overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+          className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 rounded-3xl p-8 sm:p-12 text-center shadow-xl shadow-orange-500/20 text-white relative overflow-hidden"
+        >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 mb-4 font-['Hind_Siliguri',sans-serif]">
@@ -1126,7 +1243,7 @@ export const ClassroomPage: React.FC = () => {
               <ArrowRight size={16} className="text-orange-600" />
             </button>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer (Light Theme) */}
@@ -1161,12 +1278,15 @@ export const ClassroomPage: React.FC = () => {
             <span>সর্বস্বত্ব সংরক্ষিত</span>
           </p>
 
-          <div className="flex items-center gap-4 text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif]">
+          <div className="flex items-center gap-3 text-xs text-zinc-600 font-['Hind_Siliguri',sans-serif]">
             <button
               onClick={() => navigateTo('/')}
-              className="hover:text-orange-600 transition-colors cursor-pointer"
+              id="classroom-footer-home-btn"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-orange-700 bg-orange-100/80 hover:bg-orange-200 border border-orange-300 transition-all hover:shadow-xs active:scale-95 cursor-pointer"
+              title="মূল ওয়েবসাইটে ফিরে যান"
             >
-              মূল ওয়েবসাইট (mahims.com)
+              <Home size={14} className="text-orange-600" />
+              <span>হোম</span>
             </button>
             <span>•</span>
             <button
@@ -1189,53 +1309,6 @@ export const ClassroomPage: React.FC = () => {
         </div>
       </footer>
 
-      {/* ========================================================================= */}
-      {/* MOBILE APP-STYLE BOTTOM DOCK (Clean, modern native app experience)         */}
-      {/* ========================================================================= */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-orange-200/90 px-2 py-1.5 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
-        <div className="flex items-center justify-around">
-          <button
-            onClick={() => navigateTo('/classroom/courses')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors cursor-pointer"
-          >
-            <BookOpen size={18} className="text-orange-600" />
-            <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">কোর্সসমূহ</span>
-          </button>
-
-          <button
-            onClick={() => navigateTo('/classroom/instructor')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors cursor-pointer"
-          >
-            <Users size={18} className="text-zinc-600" />
-            <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">শিক্ষক</span>
-          </button>
-
-          {/* Center Elevated Action Button */}
-          <button
-            onClick={() => handlePreRegister()}
-            className="flex flex-col items-center justify-center -mt-5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 active:scale-95 transition-transform"
-          >
-            <Sparkles size={20} className="animate-spin-slow" />
-            <span className="text-[10px] font-black font-['Hind_Siliguri',sans-serif] mt-0.5">রেজিস্ট্রেশন</span>
-          </button>
-
-          <button
-            onClick={() => scrollTo('calendar')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors"
-          >
-            <Calendar size={18} className="text-zinc-600" />
-            <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">ক্যালেন্ডার</span>
-          </button>
-
-          <button
-            onClick={() => scrollTo('articles')}
-            className="flex flex-col items-center justify-center py-1 px-2 text-zinc-600 hover:text-orange-600 transition-colors"
-          >
-            <FileText size={18} className="text-zinc-600" />
-            <span className="text-[10px] font-bold font-['Hind_Siliguri',sans-serif] mt-0.5">ব্লগ</span>
-          </button>
-        </div>
-      </div>
 
       {/* ========================================================================= */}
       {/* 1. Mahim Educational Profile Modal (Full Details on Click)                */}

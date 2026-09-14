@@ -5,19 +5,31 @@ export interface CourseItem {
   categoryLabel: string;
   targetBadge?: string;
   description: string;
+  fullDescription?: string;
   highlights: string[];
+  courseFeatures?: string[];
+  whyThisCourse?: {
+    title: string;
+    text: string;
+    tagline?: string;
+  };
+  instructors?: {
+    main: string;
+    co: string;
+  };
   status: 'active' | 'launching_soon' | 'upcoming' | 'planning';
   isFeatured?: boolean;
   showOnMainPage?: boolean; // Controls whether it shows on the main /classroom page
   actionText?: string;
   actionUrl?: string; // Optional direct navigation link
+  externalBuyUrl?: string; // Link to external academy purchase page
   imageUrl?: string; // Optional thumbnail
   price?: string;
   originalPrice?: string;
 }
 
 export const ALL_COURSES: CourseItem[] = [
-  // 0. Mentorship Course (Featured on main page and all courses)
+  // 1. Mentorship Course (Featured on main page and all courses)
   {
     id: 'mentorship-program',
     title: 'স্পেশাল মেন্টরশীপ কোর্স (Mentorship Course)',
@@ -33,13 +45,106 @@ export const ALL_COURSES: CourseItem[] = [
     ],
     status: 'launching_soon',
     isFeatured: true,
-    showOnMainPage: true, // Shown in featured courses on /classroom
+    showOnMainPage: true, // Only this & 2 external courses shown on main page
     actionText: 'বিস্তারিত দেখুন (Coming Soon)',
     actionUrl: '/classroom/courses/mentorship',
     imageUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg',
   },
 
-  // 1. Admission Top Priority
+  // 2. Octal 1.0 | HSC ICT Course
+  {
+    id: 'octal-1-hsc-ict',
+    title: 'Octal 1.0 | HSC ICT Course',
+    category: 'hsc',
+    categoryLabel: 'এইচএসসি আইসিটি (HSC ICT)',
+    targetBadge: 'HSC সকল বিভাগ • Samnad Academy কোলাবোরেশন',
+    description: 'Octal 1.0 হলো HSC শিক্ষার্থীদের জন্য সাজানো একটি পূর্ণাঙ্গ ICT কোর্স, যেখানে HSC ICT-এর গুরুত্বপূর্ণ অধ্যায় ও টপিকগুলো সহজ ভাষায়, ধারণাভিত্তিক ও পরীক্ষামুখী পদ্ধতিতে শেখানো হবে।',
+    fullDescription: `Octal 1.0 হলো HSC শিক্ষার্থীদের জন্য সাজানো একটি পূর্ণাঙ্গ ICT কোর্স, যেখানে HSC ICT-এর গুরুত্বপূর্ণ অধ্যায় ও টপিকগুলো সহজ ভাষায়, ধারণাভিত্তিক ও পরীক্ষামুখী পদ্ধতিতে শেখানো হবে।
+
+এই কোর্সে শুধু মুখস্থ নয়—Concept Clear, Board Question Practice, MCQ ও CQ প্রস্তুতি এবং নিয়মিত অনুশীলনের মাধ্যমে ICT-তে ভালো ফলাফল করার জন্য প্রয়োজনীয় প্রস্তুতি দেওয়া হবে।`,
+    instructors: {
+      main: 'মাহিম',
+      co: 'সামিউল সোহরাব',
+    },
+    highlights: [
+      'Instructor - মাহিম • Co-Instructor - সামিউল সোহরাব',
+      'প্রতিটি টপিকের সহজ ও পরিষ্কার Concept',
+      'CQ ও সৃজনশীল প্রশ্নের প্রস্তুতি + MCQ Practice',
+      'HTML ও Programming-এর প্রয়োজনীয় বিষয় হাতে-কলমে শেখানো',
+    ],
+    courseFeatures: [
+      'HSC ICT-এর গুরুত্বপূর্ণ সকল অধ্যায়ের আলোচনা',
+      'প্রতিটি টপিকের সহজ ও পরিষ্কার Concept',
+      'CQ ও সৃজনশীল প্রশ্নের প্রস্তুতি',
+      'গুরুত্বপূর্ণ MCQ ও MCQ Practice',
+      'HTML ও Programming-এর প্রয়োজনীয় বিষয়গুলো হাতে-কলমে শেখানো',
+      'বোর্ড প্রশ্ন ও গুরুত্বপূর্ণ প্রশ্নের বিশ্লেষণ',
+      'পরীক্ষায় কমন পড়ার সম্ভাবনাময় গুরুত্বপূর্ণ টপিক',
+      'অধ্যায়ভিত্তিক Practice ও Revision',
+      'HSC পরীক্ষায় ভালো ফলাফলের জন্য সম্পূর্ণ Exam-Oriented Preparation',
+    ],
+    whyThisCourse: {
+      title: 'কেন Octal 1.0?',
+      text: 'ICT-কে কঠিন মনে না করে সহজভাবে বুঝে শেখা এবং পরীক্ষায় প্রয়োগ করাই এই কোর্সের মূল লক্ষ্য। Basic থেকে Advanced—ধাপে ধাপে এগিয়ে HSC ICT-তে নিজের প্রস্তুতিকে আরও শক্তিশালী করার জন্য Octal 1.0 হতে পারে আপনার নির্ভরযোগ্য সঙ্গী।',
+      tagline: 'আজ থেকেই শুরু করুন আপনার HSC ICT প্রস্তুতির নতুন যাত্রা। 💻📚',
+    },
+    status: 'active',
+    isFeatured: true,
+    showOnMainPage: true, // Only this & Mentorship & Bangla Boss 2.0 on main page
+    actionText: 'বিস্তারিত দেখুন',
+    actionUrl: '/classroom/courses/octal-1-hsc-ict',
+    externalBuyUrl: 'https://samnadacademy.com/courses/octal-1-hsc-ict/',
+    imageUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789311111/OCTAL-1.0-Samnad-Academy-mahims.com_srlast.jpg',
+  },
+
+  // 3. বাংলা বস ২.০ কোর্স
+  {
+    id: 'bangla-boss-2-course',
+    title: 'বাংলা বস ২.০ কোর্স',
+    category: 'hsc',
+    categoryLabel: 'বাংলা ১ম ও ২য় পত্র (Bangla)',
+    targetBadge: 'Academic & Admission • Samnad Academy কোলাবোরেশন',
+    description: 'বাংলা বস ২.০ হলো বাংলা বিষয়ের গুরুত্বপূর্ণ অংশগুলোকে সহজ, গোছানো ও পরীক্ষামুখীভাবে শেখার জন্য তৈরি একটি পূর্ণাঙ্গ কোর্স।',
+    fullDescription: `বাংলা বস ২.০ হলো বাংলা বিষয়ের গুরুত্বপূর্ণ অংশগুলোকে সহজ, গোছানো ও পরীক্ষামুখীভাবে শেখার জন্য তৈরি একটি পূর্ণাঙ্গ কোর্স। বাংলা বিষয়ে ভালো করতে হলে শুধু মুখস্থ করলেই হয় না—প্রতিটি বিষয় বুঝে সঠিকভাবে প্রয়োগ করার দক্ষতাও প্রয়োজন। এই কোর্সে সেই বিষয়টিকেই গুরুত্ব দেওয়া হয়েছে।
+
+কোর্সটিতে বাংলা ব্যাকরণ, সাহিত্য, গুরুত্বপূর্ণ প্রশ্ন, MCQ এবং পরীক্ষায় প্রয়োজনীয় বিষয়গুলো ধাপে ধাপে আলোচনা করা হবে, যাতে শিক্ষার্থীরা নিজের প্রস্তুতিকে আরও শক্তিশালী করতে পারে।`,
+    instructors: {
+      main: 'মাহিম',
+      co: 'সামিউল সোহরাব',
+    },
+    highlights: [
+      'Instructor - মাহিম • Co-Instructor - সামিউল সোহরাব',
+      'বাংলা ব্যাকরণের প্রয়োজনীয় বিষয়গুলো গুছিয়ে শেখানো',
+      'সাহিত্যভিত্তিক গুরুত্বপূর্ণ তথ্য ও প্রশ্নের আলোচনা',
+      'Academic ও Admission Exam-কেন্দ্রিক পূর্ণাঙ্গ প্রস্তুতি',
+    ],
+    courseFeatures: [
+      'বাংলা বিষয়ের গুরুত্বপূর্ণ টপিকগুলোর বিস্তারিত আলোচনা',
+      'সহজ ভাষায় Concept ও বিষয়ভিত্তিক ব্যাখ্যা',
+      'গুরুত্বপূর্ণ MCQ ও প্রশ্নের অনুশীলন',
+      'Academic ও Admission Exam-কেন্দ্রিক প্রস্তুতি',
+      'বাংলা ব্যাকরণের প্রয়োজনীয় বিষয়গুলো গুছিয়ে শেখানো',
+      'সাহিত্যভিত্তিক গুরুত্বপূর্ণ তথ্য ও প্রশ্নের আলোচনা',
+      'গুরুত্বপূর্ণ ও বারবার আসা প্রশ্নের বিশ্লেষণ',
+      'ভুল হওয়ার সম্ভাবনাময় জায়গাগুলো আলাদাভাবে চিহ্নিত করা',
+      'নিয়মিত Revision ও Practice',
+      'পরীক্ষার আগে প্রস্তুতি ঝালিয়ে নেওয়ার জন্য প্রয়োজনীয় দিকনির্দেশনা',
+    ],
+    whyThisCourse: {
+      title: 'কেন বাংলা বস ২.০?',
+      text: 'বাংলা বিষয়ে ভালো নম্বর পেতে হলে কী পড়তে হবে, কীভাবে পড়তে হবে এবং কোন বিষয়গুলো বেশি গুরুত্বপূর্ণ—এই তিনটি বিষয় পরিষ্কার থাকা জরুরি। বাংলা বস ২.০-তে সেই প্রস্তুতিটাই আরও সহজ ও গোছানোভাবে নেওয়ার চেষ্টা করা হয়েছে।',
+      tagline: 'বাংলা শিখুন বুঝে, প্রস্তুতি নিন পরিকল্পনা করে, আর পরীক্ষায় নিজের সেরাটা দিন। ✍️📖',
+    },
+    status: 'active',
+    isFeatured: true,
+    showOnMainPage: true, // Only this & Mentorship & Octal 1.0 on main page
+    actionText: 'বিস্তারিত দেখুন',
+    actionUrl: '/classroom/courses/bangla-boss-2-course',
+    externalBuyUrl: 'https://samnadacademy.com/courses/bangla-boss-2-course/',
+    imageUrl: 'https://samnadacademy.com/wp-content/uploads/2026/09/bangla-boss-course-mahim.png',
+  },
+
+  // 4. Admission Top Priority (Only shown on /classroom/courses catalog, hidden from main page)
   {
     id: 'admission-exam',
     title: 'ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ',
@@ -54,8 +159,8 @@ export const ALL_COURSES: CourseItem[] = [
       'ইনস্ট্যান্ট মেরিট লিস্ট ও রিয়েলটাইম সল্যুশন শিট',
     ],
     status: 'launching_soon',
-    isFeatured: true,
-    showOnMainPage: true, // Shown on main /classroom page
+    isFeatured: false,
+    showOnMainPage: false, // Hidden from main /classroom page as requested
   },
   {
     id: 'admission-ka',
@@ -70,7 +175,7 @@ export const ALL_COURSES: CourseItem[] = [
       'রিটেন ও এমসিকিউ সমন্বিত গোছানো প্রস্তুতি',
     ],
     status: 'upcoming',
-    isFeatured: true,
+    isFeatured: false,
     showOnMainPage: false,
   },
   {
@@ -86,11 +191,11 @@ export const ALL_COURSES: CourseItem[] = [
       'মৌলিক জিকে ও সাম্প্রতিক ঘটনাপ্রবাহ ডাইজেস্ট',
     ],
     status: 'upcoming',
-    isFeatured: true,
+    isFeatured: false,
     showOnMainPage: false,
   },
 
-  // 2. HSC Courses (ICT & Bangla Highlighted as requested)
+  // 5. HSC Other Courses
   {
     id: 'hsc-ict',
     title: 'এইচএসসি আইসিটি স্পেশাল মাস্টার ব্যাচ',
@@ -104,9 +209,9 @@ export const ALL_COURSES: CourseItem[] = [
       'এইচটিএমএল (HTML) কোডিং ও ওয়েব ডিজাইন',
       'বোর্ড প্রশ্ন ও টেস্ট পেপারের সৃজনশীল সলভিং',
     ],
-    status: 'launching_soon',
-    isFeatured: true,
-    showOnMainPage: true, // Shown on main /classroom page
+    status: 'upcoming',
+    isFeatured: false,
+    showOnMainPage: false, // Hidden from main /classroom page
   },
   {
     id: 'hsc-bangla',
@@ -139,7 +244,7 @@ export const ALL_COURSES: CourseItem[] = [
     showOnMainPage: false,
   },
 
-  // 3. SSC Courses
+  // 6. SSC Courses
   {
     id: 'ssc-batch',
     title: 'এসএসসি একাডেমিক ও স্মার্ট এক্সাম ব্যাচ',
@@ -153,11 +258,11 @@ export const ALL_COURSES: CourseItem[] = [
       'দুর্বলতা চিহ্নিত করে পারসোনাল রিভিশন কেয়ার',
     ],
     status: 'upcoming',
-    isFeatured: true,
-    showOnMainPage: true, // Shown on main /classroom page
+    isFeatured: false,
+    showOnMainPage: false, // Hidden from main /classroom page
   },
 
-  // 4. Junior & Skills
+  // 7. Junior & Skills
   {
     id: 'junior-batch',
     title: 'জুনিয়র ম্যাথ ও সাইন্স ফাউন্ডেশন',

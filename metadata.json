@@ -1,6 +1,6 @@
 {
   "name": "Mahim",
-  "description": "Mahim's World - মাহিম ইবনে খুদি এর ডিজিটাল ইকোসিস্টেম, ক্লাসরুম, প্রযুক্তি ও ভাবনার জগত (mahims.com)",
+  "description": "Mahims - মাহিম ইবনে খুদির অফিসিয়াল প্ল্যাটফর্ম, ক্লাসরুম, প্রযুক্তি ও পোর্টফোলিও (mahims.com)",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

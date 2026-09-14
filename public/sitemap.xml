@@ -3,22 +3,72 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://mahims.com/</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://mahims.com/assets/og-main.png</image:loc>
-      <image:title>Mahim's World - Minimalist Luxury M Monogram Logo</image:title>
+      <image:title>Mahims - Minimalist Luxury M Monogram Logo &amp; Official Platform</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://mahims.com/classroom/</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.98</priority>
+    <priority>0.99</priority>
     <image:image>
       <image:loc>https://mahims.com/assets/og-classroom.jpg</image:loc>
-      <image:title>Mahim's Classroom - Academic &amp; Admission Learning Platform</image:title>
+      <image:title>Mahims Classroom | Mahim Classroom - Academic &amp; Admission Learning Platform</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://mahims.com/assets/og-classroom.jpg</image:loc>
+      <image:title>সকল কোর্স ও ব্যাচসমূহ - Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/octal-1-hsc-ict/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.94</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789311111/OCTAL-1.0-Samnad-Academy-mahims.com_srlast.jpg</image:loc>
+      <image:title>Octal 1.0 | HSC ICT Course - Mahims Classroom &amp; Samnad Academy</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/bangla-boss-2-course/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789311109/Bangla-Boss-2.0-Samnad-Academy-mahims.com_ndkpt8.jpg</image:loc>
+      <image:title>Bangla Boss 2.0 Course - Mahims Classroom &amp; Samnad Academy</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/instructor/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://mahims.com/assets/og-classroom.jpg</image:loc>
+      <image:title>শিক্ষক ও মেন্টর প্যানেল - Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg</image:loc>
+      <image:title>Mentorship Course - Mahims Classroom</image:title>
     </image:image>
   </url>
   <url>
@@ -93,9 +143,13 @@
   </url>
   <url>
     <loc>https://mahims.com/portfolio/</loc>
-    <lastmod>2026-09-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+    <image:image>
+      <image:loc>https://mahims.com/assets/og-main.png</image:loc>
+      <image:title>Mahim Portfolio | Mahims Portfolio - Web Development &amp; Creative Projects</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://mahims.com/about/</loc>

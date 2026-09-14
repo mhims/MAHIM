@@ -28,6 +28,8 @@ export const STANDALONE_ROUTES = new Set([
   '/classroom/instructor',
   '/classroom/instructors',
   '/classroom/courses',
+  '/classroom/courses/octal-1-hsc-ict',
+  '/classroom/courses/bangla-boss-2-course',
   '/classroom/courses/mentorship',
   '/classroom/courses/mentorship/suza',
   '/classroom/courses/mentorship/mithen',

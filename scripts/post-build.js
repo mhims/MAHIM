@@ -13,6 +13,17 @@ const routes = [
   'salami',
   'chithi',
   'classroom',
+  'classroom/courses',
+  'classroom/courses/octal-1-hsc-ict',
+  'classroom/courses/bangla-boss-2-course',
+  'classroom/instructor',
+  'classroom/instructors',
+  'classroom/courses/mentorship',
+  'classroom/courses/mentorship/suza',
+  'classroom/courses/mentorship/mithen',
+  'classroom/courses/mentorship/samiul',
+  'classroom/courses/mentorship/mahim',
+  'classroom/courses/mentorship/swocchol',
   'classroom/mahim',
   'classroom/samiul',
   'classroom/suza',
@@ -29,16 +40,16 @@ const salamiOgImage = `${siteUrl}/assets/og-salami.jpg`;
 
 const routeData = {
   classroom: {
-    title: "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম — একাডেমি ও এডমিশন",
-    metaTitle: "Mahim's Classroom | Mahims Classroom (Mahim Classroom) | মাহিম ক্লাসরুম",
-    description: "Mahim's Classroom (also known as Mahims Classroom or Mahim Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ। শিক্ষক প্যানেল: মাহিম (Mahim), আবু সালেহ সুজা (Abu Saleh Suza), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
-    keywords: "Mahims Classroom, mahims classroom, Mahim's Classroom, Mahim Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim classroom, mahim's classroom, mahim academy, mahims.com/classroom, Mahim Ibne Khudi, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
+    title: "Mahims Classroom | Mahim Classroom (Mahim's Classroom) — মাহিম ক্লাসরুম | একাডেমি ও এডমিশন",
+    metaTitle: "Mahims Classroom | Mahim Classroom — মাহিম ক্লাসরুম",
+    description: "Mahims Classroom (Mahim Classroom / Mahim's Classroom) - মাহিম ইবনে খুদি এর অফিসিয়াল অ্যাকাডেমিক লার্নিং ও এডমিশন টেস্ট প্ল্যাটফর্ম। এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, লাইভ কুইজ ও কনসেপ্ট ক্লাস। শিক্ষক প্যানেল: মাহিম (Mahim), আবু সালেহ সুজা (Abu Saleh Suza), সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab), মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen), স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)।",
+    keywords: "Mahims Classroom, Mahim Classroom, mahims classroom, mahim classroom, Mahim's Classroom, মাহিম ক্লাসরুম, মাহিমস ক্লাসরুম, mahim academy, mahims.com/classroom, Mahim Ibne Khudi, এইচএসসি আইসিটি, ভার্সিটি এডমিশন এক্সাম ব্যাচ, এসএসসি স্মার্ট এক্সাম",
     canonical: `${siteUrl}/classroom/`,
-    ogTitle: "Mahim's Classroom | Mahims Classroom (Mahim Classroom) | মাহিম ক্লাসরুম",
-    ogDescription: "Official educational platform: Mahim's Classroom (Mahims Classroom / Mahim Classroom). এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
+    ogTitle: "Mahims Classroom | Mahim Classroom (Mahim's Classroom) | মাহিম ক্লাসরুম",
+    ogDescription: "Official educational platform: Mahims Classroom (Mahim Classroom / Mahim's Classroom). এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট টেস্ট ইঞ্জিন, নিয়মিত কুইজ ও কনসেপ্ট ক্লাস।",
     ogImage: classroomOgImage,
-    twitterTitle: "Mahim's Classroom | Mahims Classroom | মাহিম ক্লাসরুম",
-    twitterDescription: "Official educational platform: Mahim's Classroom (Mahims Classroom / Mahim Classroom). এইচএসসি ও ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট অনলাইন টেস্ট ও একাডেমি।",
+    twitterTitle: "Mahims Classroom | Mahim Classroom | মাহিম ক্লাসরুম",
+    twitterDescription: "Official educational platform: Mahims Classroom (Mahim Classroom / Mahim's Classroom). এইচএসসি ও ভর্তি পরীক্ষার্থীদের জন্য স্মার্ট অনলাইন টেস্ট ও একাডেমি।",
     twitterImage: classroomOgImage,
     jsonLd: {
       "@context": "https://schema.org",
@@ -736,6 +747,489 @@ const routeData = {
     `
   },
 
+  'classroom/courses': {
+    title: "সকল কোর্স ও ব্যাচসমূহ | Mahims Classroom (মাহিম ক্লাসরুম)",
+    metaTitle: "সকল কোর্স ও ব্যাচসমূহ | Mahims Classroom",
+    description: "মাহিম'স ক্লাসরুমের সকল একাডেমিক ও এডমিশন কোর্স। এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি, এসএসসি এবং জুনিয়র ফাউন্ডেশন ব্যাচের সম্পূর্ণ তালিকা, মেন্টর প্যানেল ও রেজিস্ট্রেশন।",
+    keywords: "Mahims Classroom Courses, Mahim's Classroom Courses, মাহিম ক্লাসরুম কোর্স, এইচএসসি কোর্স, এডমিশন কোর্স, এসএসসি ব্যাচ, আইসিটি কোর্স, মাহিম ইবনে খুদি",
+    canonical: `${siteUrl}/classroom/courses/`,
+    ogTitle: "সকল কোর্স ও ব্যাচসমূহ | Mahims Classroom (মাহিম ক্লাসরুম)",
+    ogDescription: "এইচএসসি ও এডমিশন প্রস্তুতির প্রিমিয়াম ব্যাচসমূহ, লাইভ সলভিং ও মেন্টরশীপ।",
+    ogImage: classroomOgImage,
+    twitterTitle: "সকল কোর্স ও ব্যাচসমূহ | Mahims Classroom",
+    twitterDescription: "এইচএসসি ও এডমিশন প্রস্তুতির প্রিমিয়াম ব্যাচসমূহ, লাইভ সলভিং ও মেন্টরশীপ।",
+    twitterImage: classroomOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "সকল কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${siteUrl}/classroom/courses/#webpage`,
+          "url": `${siteUrl}/classroom/courses/`,
+          "name": "সকল কোর্স ও ব্যাচসমূহ — Mahims Classroom",
+          "description": "মাহিম ক্লাসরুমের সকল একাডেমিক ও এডমিশন কোর্সের তালিকা ও বিস্তারিত।"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mahims Classroom</span>
+                <span class="text-xs text-orange-600 font-semibold">সকল কোর্স ও এডমিশন ব্যাচসমূহ</span>
+              </div>
+            </a>
+            <a href="/classroom/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">ক্লাসরুম হোম</a>
+          </div>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-4 py-12">
+          <section class="text-center space-y-4 mb-12">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">একাডেমিক ও এডমিশন কোর্স</span>
+            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">সকল কোর্স ও ব্যাচসমূহ — Mahims Classroom</h1>
+            <p class="text-base sm:text-lg text-zinc-600 max-w-2xl mx-auto leading-relaxed">
+              এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি, এসএসসি এবং জুনিয়র ফাউন্ডেশন ব্যাচের সম্পূর্ণ তালিকা, মেন্টর প্যানেল ও রেজিস্ট্রেশন।
+            </p>
+          </section>
+
+          <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm">
+              <h2 class="text-xl font-bold text-zinc-900">ভার্সিটি এডমিশন স্মার্ট এক্সাম ব্যাচ</h2>
+              <p class="text-sm text-zinc-600 mt-2">ঢাকা বিশ্ববিদ্যালয়, জিএসটি গুচ্ছ ও পাবলিক বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য পূর্ণাঙ্গ মডেল টেস্ট ও লাইভ সলভিং ক্লাস।</p>
+              <a href="/classroom/courses/mentorship/" class="inline-block mt-4 text-xs font-bold text-orange-600 underline">মেন্টরশীপ প্রোগ্রাম দেখুন &rarr;</a>
+            </div>
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm">
+              <h2 class="text-xl font-bold text-zinc-900">এইচএসসি আইসিটি ফুল কোর্স</h2>
+              <p class="text-sm text-zinc-600 mt-2">তথ্য ও যোগাযোগ প্রযুক্তি বিষয়ের সি প্রোগ্রামিং, এইচটিএমএল, ডাটাবেজ ও লজিক গেইট এর অধ্যায়ভিত্তিক বেসিক টু অ্যাডভান্সড কোর্স।</p>
+              <a href="/classroom/mahim/" class="inline-block mt-4 text-xs font-bold text-orange-600 underline">ইন্সট্রাক্টর প্রোফাইল দেখুন &rarr;</a>
+            </div>
+          </section>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/instructor': {
+    title: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom (মাহিম ক্লাসরুম)",
+    metaTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom",
+    description: "মাহিম'স ক্লাসরুমের শিক্ষক ও মেন্টর প্যানেল। ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ ইন্সট্রাক্টরদের পরিচিতি ও শিক্ষাগত প্রোফাইল।",
+    keywords: "Mahims Classroom Instructors, শিক্ষক প্যানেল, মাহিম ইবনে খুদি, সামিউল ইসলাম সোহরাব, আবু সালেহ সুজা, মিশকাত শরীফ মিথেন, স্বচ্ছল কুমার কর্মকার",
+    canonical: `${siteUrl}/classroom/instructor/`,
+    ogTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom (মাহিম ক্লাসরুম)",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ শিক্ষক প্যানেল।",
+    ogImage: classroomOgImage,
+    twitterTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ শিক্ষক প্যানেল।",
+    twitterImage: classroomOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "শিক্ষক ও মেন্টর প্যানেল — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "শিক্ষক প্যানেল (Instructors)", "item": "https://mahims.com/classroom/instructor/" }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${siteUrl}/classroom/instructor/#webpage`,
+          "url": `${siteUrl}/classroom/instructor/`,
+          "name": "শিক্ষক ও মেন্টর প্যানেল — Mahims Classroom",
+          "description": "মাহিম ক্লাসরুমের সকল মেন্টর ও অভিজ্ঞ শিক্ষকবৃন্দের তালিকা ও প্রোফাইল।"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mahims Classroom</span>
+                <span class="text-xs text-orange-600 font-semibold">শিক্ষক ও মেন্টর প্যানেল</span>
+              </div>
+            </a>
+            <a href="/classroom/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">ক্লাসরুম হোম</a>
+          </div>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-4 py-12">
+          <section class="text-center space-y-4 mb-12">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">এক্সপার্ট ফ্যাকাল্টি</span>
+            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">শিক্ষক ও মেন্টর প্যানেল — Mahims Classroom</h1>
+            <p class="text-base sm:text-lg text-zinc-600 max-w-2xl mx-auto leading-relaxed">
+              ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ ইন্সট্রাক্টরদের পরিচিতি ও শিক্ষাগত প্রোফাইল।
+            </p>
+          </section>
+
+          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm text-center">
+              <h2 class="text-lg font-bold text-zinc-900">মাহিম (Mahim)</h2>
+              <p class="text-xs text-orange-600 font-semibold">প্রতিষ্ঠাতা ও আইসিটি মেন্টর</p>
+              <p class="text-xs text-zinc-500 mt-1">ঢাকা সেন্ট্রাল ইউনিভার্সিটি</p>
+              <a href="/classroom/mahim/" class="inline-block mt-3 text-xs font-bold text-orange-600 underline">পূর্ণাঙ্গ প্রোফাইল &rarr;</a>
+            </div>
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm text-center">
+              <h2 class="text-lg font-bold text-zinc-900">আবু সালেহ সুজা (Abu Saleh Suza)</h2>
+              <p class="text-xs text-orange-600 font-semibold">ইংরেজি মেন্টর</p>
+              <p class="text-xs text-zinc-500 mt-1">ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি</p>
+              <a href="/classroom/suza/" class="inline-block mt-3 text-xs font-bold text-orange-600 underline">পূর্ণাঙ্গ প্রোফাইল &rarr;</a>
+            </div>
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm text-center">
+              <h2 class="text-lg font-bold text-zinc-900">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)</h2>
+              <p class="text-xs text-orange-600 font-semibold">বাংলা মেন্টর</p>
+              <p class="text-xs text-zinc-500 mt-1">মাওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)</p>
+              <a href="/classroom/samiul/" class="inline-block mt-3 text-xs font-bold text-orange-600 underline">পূর্ণাঙ্গ প্রোফাইল &rarr;</a>
+            </div>
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm text-center">
+              <h2 class="text-lg font-bold text-zinc-900">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</h2>
+              <p class="text-xs text-orange-600 font-semibold">সাধারণ জ্ঞান মেন্টর</p>
+              <p class="text-xs text-zinc-500 mt-1">বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)</p>
+              <a href="/classroom/mithen/" class="inline-block mt-3 text-xs font-bold text-orange-600 underline">পূর্ণাঙ্গ প্রোফাইল &rarr;</a>
+            </div>
+            <div class="p-6 rounded-2xl bg-white border border-orange-200 shadow-sm text-center">
+              <h2 class="text-lg font-bold text-zinc-900">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)</h2>
+              <p class="text-xs text-orange-600 font-semibold">বিজ্ঞান ও গণিত মেন্টর</p>
+              <p class="text-xs text-zinc-500 mt-1">ইউনাইটেড ইন্টারন্যাশনাল ইউনিভার্সিটি (UIU)</p>
+              <a href="/classroom/swocchol/" class="inline-block mt-3 text-xs font-bold text-orange-600 underline">পূর্ণাঙ্গ প্রোফাইল &rarr;</a>
+            </div>
+          </section>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/instructors': {
+    title: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom (মাহিম ক্লাসরুম)",
+    metaTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom",
+    description: "মাহিম'স ক্লাসরুমের শিক্ষক ও মেন্টর প্যানেল। ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ ইন্সট্রাক্টরদের পরিচিতি ও শিক্ষাগত প্রোফাইল।",
+    keywords: "Mahims Classroom Instructors, শিক্ষক প্যানেল, মাহিম ইবনে খুদি, সামিউল ইসলাম সোহরাব, আবু সালেহ সুজা, মিশকাত শরীফ মিথেন, স্বচ্ছল কুমার কর্মকার",
+    canonical: `${siteUrl}/classroom/instructor/`,
+    ogTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom (মাহিম ক্লাসরুম)",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ শিক্ষক প্যানেল।",
+    ogImage: classroomOgImage,
+    twitterTitle: "শিক্ষক ও মেন্টর প্যানেল | Mahims Classroom",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, ড্যাফোডিল, এমবিএসটিইউ, বেরোবি ও ইউআইইউ-এর অভিজ্ঞ শিক্ষক প্যানেল।",
+    twitterImage: classroomOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "শিক্ষক ও মেন্টর প্যানেল — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "শিক্ষক প্যানেল (Instructors)", "item": "https://mahims.com/classroom/instructor/" }
+          ]
+        }
+      ]
+    }
+  },
+
+  'classroom/courses/mentorship': {
+    title: "Mentorship Course | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
+    metaTitle: "Mentorship Course — Coming Soon | Mahims Classroom",
+    description: "Mahims Classroom Mentorship Course — এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য বিশেষ মেন্টরশীপ ও পারসোনালাইজড গাইডলাইন।",
+    keywords: "Mahims Classroom Mentorship, Mentorship Course Mahims, মাহিম ক্লাসরুম মেন্টরশীপ, ভর্তি মেন্টরশীপ, এইচএসসি গাইডলাইন",
+    canonical: `${siteUrl}/classroom/courses/mentorship/`,
+    ogTitle: "Mentorship Course | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
+    ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতির বিশেষ মেন্টরশীপ কোর্স।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
+    twitterTitle: "Mentorship Course | Mahims Classroom",
+    twitterDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতির বিশেষ মেন্টরশীপ কোর্স।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/#course`,
+          "name": "Mentorship Course — Mahims Classroom",
+          "description": "এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম — এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি।"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mentorship Course</span>
+                <span class="text-xs text-orange-600 font-semibold">Mahims Classroom Exclusive Program</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">সকল কোর্স</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-12 text-center">
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-4">Official Program Announcement</span>
+          <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 mb-3 tracking-tight">Mentorship Course — Mahims Classroom</h1>
+          <p class="text-xl font-bold text-orange-600 tracking-wide uppercase mb-6">Coming Soon</p>
+          <p class="text-base sm:text-lg text-zinc-600 max-w-xl mx-auto leading-relaxed mb-8">
+            আমাদের এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রামের পূর্ণাঙ্গ গাইডলাইন, মেন্টরদের সেশন প্ল্যান ও ভর্তি প্রক্রিয়া খুব শীঘ্রই প্রকাশিত হতে যাচ্ছে। সাথে থাকুন!
+          </p>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm text-left max-w-2xl mx-auto space-y-4">
+            <h2 class="text-lg font-bold text-zinc-900 border-b pb-2">মেন্টর প্যানেল:</h2>
+            <ul class="space-y-2 text-sm text-zinc-700">
+              <li>• <a href="/classroom/mahim/" class="text-orange-600 font-bold hover:underline">মাহিম (Mahim)</a> — আইসিটি ও এডমিশন গাইডলাইন</li>
+              <li>• <a href="/classroom/suza/" class="text-orange-600 font-bold hover:underline">আবু সালেহ সুজা (Abu Saleh Suza)</a> — ইংরেজি</li>
+              <li>• <a href="/classroom/samiul/" class="text-orange-600 font-bold hover:underline">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)</a> — বাংলা</li>
+              <li>• <a href="/classroom/mithen/" class="text-orange-600 font-bold hover:underline">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</a> — সাধারণ জ্ঞান</li>
+              <li>• <a href="/classroom/swocchol/" class="text-orange-600 font-bold hover:underline">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)</a> — বিজ্ঞান ও গণিত</li>
+            </ul>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/octal-1-hsc-ict': {
+    title: "Octal 1.0 | HSC ICT Course — Mahims Classroom & Samnad Academy",
+    metaTitle: "Octal 1.0 (এইচএসসি আইসিটি ফুল কোর্স) | Mahims Classroom",
+    description: "Octal 1.0 হলো HSC শিক্ষার্থীদের জন্য সাজানো একটি পূর্ণাঙ্গ ICT কোর্স। ইন্সট্রাক্টর: মাহিম (Mahim) ও সামিউল সোহরাব (Samiul Sohrab)। Concept Clear, CQ, MCQ ও বিগত ১০ বছরের বোর্ড প্রশ্ন সমাধান। Samnad Academy কোলাবোরেশন।",
+    keywords: "Octal 1.0, HSC ICT, Octal 1.0 ICT Course, mahims classroom, samnad academy, মাহিম ক্লাসরুম, এইচএসসি আইসিটি, মাহিম আইসিটি, সামিউল সোহরাব, octal-1-hsc-ict, mahims.com/classroom/courses/octal-1-hsc-ict/, ICT Board Question Solution, সি প্রোগ্রামিং, এইচটিএমএল, ডাটাবেজ",
+    canonical: `${siteUrl}/classroom/courses/octal-1-hsc-ict/`,
+    ogTitle: "Octal 1.0 | HSC ICT Course — Mahims Classroom & Samnad Academy",
+    ogDescription: "HSC ICT প্রস্তুতিতে শতভাগ কনফিডেন্স আনতে Octal 1.0 কোর্স। ইন্সট্রাক্টর: মাহিম ও সামিউল সোহরাব। কিনুন Samnad Academy থেকে।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789311111/OCTAL-1.0-Samnad-Academy-mahims.com_srlast.jpg",
+    twitterTitle: "Octal 1.0 | HSC ICT Course — Mahims Classroom",
+    twitterDescription: "HSC ICT প্রস্তুতিতে শতভাগ কনফিডেন্স আনতে Octal 1.0 কোর্স। ইন্সট্রাক্টর: মাহিম ও সামিউল সোহরাব।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789311111/OCTAL-1.0-Samnad-Academy-mahims.com_srlast.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "Octal 1.0 Course — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "কোর্সসমূহ (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "Octal 1.0 (HSC ICT)", "item": "https://mahims.com/classroom/courses/octal-1-hsc-ict/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/octal-1-hsc-ict/#course`,
+          "name": "Octal 1.0 | HSC ICT Course",
+          "description": "Octal 1.0 হলো HSC শিক্ষার্থীদের জন্য সাজানো একটি পূর্ণাঙ্গ ICT কোর্স। যেখানে একদম বেসিক থেকে এডভান্স লেভেল পর্যন্ত প্রতিটি অধ্যায় ধরে ধরে শেখানো হবে।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "Mahim's Classroom & Samnad Academy",
+            "url": "https://mahims.com/classroom/"
+          },
+          "instructor": [
+            {
+              "@type": "Person",
+              "name": "Mahim Ibne Khudi",
+              "url": "https://mahims.com/classroom/mahim/"
+            },
+            {
+              "@type": "Person",
+              "name": "Samiul Islam Sohrab",
+              "url": "https://mahims.com/classroom/samiul/"
+            }
+          ],
+          "offers": {
+            "@type": "Offer",
+            "url": "https://samnadacademy.com/courses/octal-1-hsc-ict/",
+            "availability": "https://schema.org/InStock",
+            "category": "HSC ICT Course"
+          }
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mahims Classroom</span>
+                <span class="text-xs text-orange-600 font-semibold">mahims.com/classroom/courses/octal-1-hsc-ict</span>
+              </div>
+            </a>
+            <div class="flex items-center gap-3">
+              <a href="/classroom/courses/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">সকল কোর্স</a>
+              <a href="/classroom/" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600">ক্লাসরুম হোম</a>
+            </div>
+          </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 py-10">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-7 space-y-6">
+              <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+                <div class="flex items-center gap-2">
+                  <span class="px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-300">এইচএসসি আইসিটি (HSC ICT)</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-700">HSC সকল বিভাগ • Samnad Academy কোলাবোরেশন</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-zinc-950">Octal 1.0 | HSC ICT Course</h1>
+                
+                <div class="p-4 rounded-2xl bg-orange-50 border border-orange-200 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <span class="text-xs text-zinc-500 block">Instructor</span>
+                    <a href="/classroom/mahim/" class="font-bold text-orange-600 hover:underline">মাহিম (Mahim) &rarr;</a>
+                  </div>
+                  <div>
+                    <span class="text-xs text-zinc-500 block">Co-Instructor</span>
+                    <a href="/classroom/samiul/" class="font-bold text-orange-600 hover:underline">সামিউল সোহরাব (Samiul Sohrab) &rarr;</a>
+                  </div>
+                </div>
+
+                <div class="text-sm sm:text-base text-zinc-700 leading-relaxed space-y-3 pt-3 border-t border-orange-100">
+                  <p><strong>Octal 1.0</strong> হলো HSC শিক্ষার্থীদের জন্য সাজানো একটি পূর্ণাঙ্গ ICT কোর্স। যেখানে একদম বেসিক থেকে এডভান্স লেভেল পর্যন্ত প্রতিটি অধ্যায় ধরে ধরে শেখানো হবে।</p>
+                  <p>বিশেষ করে প্রোগ্রামিং (C Language), এইচটিএমএল (HTML) এবং ডাটাবেজ ম্যানেজমেন্ট সিস্টেম (DBMS)-এর জটিল কনসেপ্টগুলো ভিজ্যুয়াল ও রিয়েল-লাইফ এক্সাম্পলের মাধ্যমে সহজে ক্লিয়ার করা হবে যাতে বোর্ড পরীক্ষা ও এডমিশনে তুমি শতভাগ এগিয়ে থাকো।</p>
+                </div>
+              </div>
+
+              <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+                <h2 class="text-xl font-bold text-zinc-900">🎯 কোর্সে যা থাকছে:</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-800">
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ সম্পূর্ণ সিলেবাস কভার (Full Syllabus Coverage)</div>
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ অধ্যায়ভিত্তিক বেসিক টু প্রো ক্লাস</div>
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ বোর্ড প্রশ্ন বিশ্লেষণ ও হ্যান্ডনোট প্রদান</div>
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ CQ ও MCQ স্পেশাল হ্যাকস ও শর্টকাট কৌশল</div>
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ সি প্রোগ্রামিং ও এইচটিএমএল প্র্যাকটিক্যাল কোডিং</div>
+                  <div class="p-3 rounded-xl bg-orange-50/60 border border-orange-100 font-medium">✓ নিয়মিত পরীক্ষা ও পারফরম্যান্স রিভিউ</div>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-orange-100/60 to-white border border-orange-300 rounded-3xl p-6 sm:p-8 space-y-2">
+                <h2 class="text-lg font-bold text-zinc-900">🚀 কেন Octal 1.0 কোর্সটি করবেন?</h2>
+                <p class="text-sm text-zinc-700 leading-relaxed">আইসিটি কোনো মুখস্থের বিষয় নয়, এটি বোঝার ও প্র্যাকটিসের বিষয়। গতানুগতিক ধারার বাইরে এসে সহজ ব্যাখ্যা ও স্মার্ট নোটের সাহায্যে আইসিটিতে A+ নিশ্চিত করার লক্ষ্যেই এই কোর্স।</p>
+                <p class="text-sm font-bold text-orange-800 pt-2 border-t border-orange-200">তোমার HSC ICT যাত্রাকে সহজ, ভয়হীন ও উপভোগ্য করতে এখনই জয়েন করো!</p>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-5">
+              <div class="bg-white border-2 border-orange-200 rounded-3xl p-6 shadow-xl shadow-orange-500/10 space-y-5">
+                <img 
+                  src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789311111/OCTAL-1.0-Samnad-Academy-mahims.com_srlast.jpg" 
+                  alt="Octal 1.0 HSC ICT Course" 
+                  class="w-full rounded-2xl object-cover shadow-sm aspect-[16/9]"
+                />
+                <div>
+                  <h3 class="text-xl font-black text-zinc-950">Octal 1.0 | HSC ICT Course</h3>
+                  <p class="text-xs text-zinc-600 mt-1">HSC ICT পূর্ণাঙ্গ প্রস্তুতি কোর্স • Samnad Academy পার্টনারশীপ</p>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-orange-50 border border-orange-200 text-xs space-y-2">
+                  <div class="flex justify-between"><span>প্লাটফর্ম:</span><span class="font-bold">Samnad Academy</span></div>
+                  <div class="flex justify-between"><span>কোলাবোরেশন:</span><span class="font-bold text-orange-600">Mahim's Classroom</span></div>
+                  <div class="flex justify-between border-t border-orange-200 pt-2"><span>এনরোলমেন্ট:</span><span class="font-bold text-emerald-600">ভর্তি চলমান (Active)</span></div>
+                </div>
+
+                <a 
+                  href="https://samnadacademy.com/courses/octal-1-hsc-ict/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="block w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-base shadow-lg shadow-orange-500/30 text-center"
+                >
+                  কোর্সটি কিনুন &rarr;
+                </a>
+                <p class="text-[11px] text-center text-zinc-500">* কিনুন বাটনে ক্লিক করলে কোর্সটির অফিসিয়াল রেজিস্ট্রেশন পেজে নিয়ে যাবে।</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/bangla-boss-2-course': {
+    title: "বাংলা বস ২.০ | Bangla Boss 2.0 Course — Mahims Classroom & Samnad Academy",
+    metaTitle: "বাংলা বস ২.০ (Bangla Boss 2.0) | Mahims Classroom",
+    description: "বাংলা ব্যাকরণ ও নির্মিতি অংশে সর্বোচ্চ প্রস্তুতির জন্য Samnad Academy-র বিশেষ কোর্স বাংলা বস ২.০। ব্যাকরণ রুলস সহজ ব্যাখ্যা ও বোর্ড স্ট্যান্ডার্ড সৃজনশীল লেখার কৌশল।",
+    keywords: "Bangla Boss 2.0, বাংলা বস ২.০, Samnad Academy Bangla, Mahims Classroom বাংলা, বাংলা ব্যাকরণ কোর্স",
+    canonical: `${siteUrl}/classroom/courses/bangla-boss-2-course/`,
+    ogTitle: "বাংলা বস ২.০ | Bangla Boss 2.0 Course — Mahims Classroom",
+    ogDescription: "বাংলা ব্যাকরণ ও নির্মিতি অংশে পূর্ণাঙ্গ প্রস্তুতির সেরা কোর্স।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789311109/Bangla-Boss-2.0-Samnad-Academy-mahims.com_ndkpt8.jpg",
+    twitterTitle: "বাংলা বস ২.০ | Mahims Classroom",
+    twitterDescription: "বাংলা ব্যাকরণ ও নির্মিতি অংশে পূর্ণাঙ্গ প্রস্তুতির সেরা কোর্স।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789311109/Bangla-Boss-2.0-Samnad-Academy-mahims.com_ndkpt8.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "বাংলা বস ২.০ — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "কোর্সসমূহ (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "বাংলা বস ২.০", "item": "https://mahims.com/classroom/courses/bangla-boss-2-course/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/bangla-boss-2-course/#course`,
+          "name": "বাংলা বস ২.০ | Bangla Boss 2.0 Course",
+          "description": "বাংলা ব্যাকরণ ও নির্মিতি অংশে সর্বোচ্চ প্রস্তুতির জন্য Samnad Academy-র বিশেষ কোর্স বাংলা বস ২.০।"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mahims Classroom</span>
+                <span class="text-xs text-orange-600 font-semibold">mahims.com/classroom/courses/bangla-boss-2-course</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">সকল কোর্স</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-12 text-center">
+          <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 mb-4">বাংলা বস ২.০ (Bangla Boss 2.0)</h1>
+          <p class="text-base sm:text-lg text-zinc-600 max-w-xl mx-auto leading-relaxed mb-8">
+            এইচএসসি বাংলা ব্যাকরণ ও নির্মিতি অংশে সর্বোচ্চ প্রস্তুতির জন্য Samnad Academy-র বিশেষ কোর্স।
+          </p>
+          <a href="https://samnadacademy.com/courses/bangla-boss-2-course/" target="_blank" rel="noopener noreferrer" class="inline-block py-3.5 px-8 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-base shadow-lg">
+            কোর্সটি কিনুন &rarr;
+          </a>
+        </main>
+      </div>
+    `
+  },
+
   salami: {
     title: "Mahim Salami | মাহিম সালামি — ডিজিটাল ঈদ সালামি পোর্টাল ও ট্র্যাকার",
     metaTitle: "Mahim Salami | মাহিম সালামি — ঈদ সালামি ট্র্যাকার ও পোর্টাল",
@@ -963,15 +1457,15 @@ const routeData = {
   },
 
   portfolio: {
-    title: "Portfolio | মাহিম ইবনে খুদি — ফুল-স্ট্যাক ওয়েব ডেভেলপার ও ক্রিয়েটিভ ডিজাইনার",
-    metaTitle: "Portfolio | মাহিম ইবনে খুদি — প্রজেক্ট ও সিভি",
-    description: "Mahim Ibne Khudi (মাহিম) - ফুল-স্ট্যাক ওয়েব অ্যাপ্লিকেশন, নো-কোড ওয়ার্কফ্লো অটোমেশন, ব্র্যান্ড আইডেন্টিটি এবং ক্রিয়েটিভ প্রজেক্ট পোর্টফোলিও ও সিভি।",
-    keywords: "Mahim portfolio, mahim cv, mahim ibne khudi portfolio, মাহিম পোর্টফোলিও, mahims.com/portfolio, ফুল-স্ট্যাক ডেভেলপার মাহিম, গ্রাফিক্স ডিজাইন মাহিম, ওয়েব প্রজেক্টস",
+    title: "Mahim Portfolio | Mahims Portfolio — মাহিম ইবনে খুদি (প্রজেক্ট ও সিভি)",
+    metaTitle: "Mahim Portfolio | Mahims Portfolio — মাহিম ইবনে খুদি",
+    description: "Mahim Portfolio (Mahims Portfolio) - মাহিম ইবনে খুদির অফিসিয়াল পোর্টফোলিও, ফুল-স্ট্যাক ওয়েব অ্যাপ্লিকেশন, নো-কোড ওয়ার্কফ্লো অটোমেশন, ব্র্যান্ড আইডেন্টিটি এবং ক্রিয়েটিভ প্রজেক্ট পোর্টফোলিও ও সিভি।",
+    keywords: "Mahim Portfolio, Mahims Portfolio, mahim portfolio, mahims portfolio, mahim cv, mahim ibne khudi portfolio, মাহিম পোর্টফোলিও, mahims.com/portfolio, ফুল-স্ট্যাক ডেভেলপার মাহিম, গ্রাফিক্স ডিজাইন মাহিম, ওয়েব প্রজেক্টস",
     canonical: `${siteUrl}/portfolio/`,
-    ogTitle: "Portfolio | মাহিম ইবনে খুদি — ফুল-স্ট্যাক ও ক্রিয়েটিভ প্রজেক্টস",
+    ogTitle: "Mahim Portfolio | Mahims Portfolio — মাহিম ইবনে খুদি",
     ogDescription: "সফটওয়্যার ডেভেলপমেন্ট, কোডিং প্রজেক্টস, প্রযুক্তি স্ট্যাক ও কাজের ইতিহাস।",
     ogImage: defaultOgImage,
-    twitterTitle: "Portfolio | মাহিম ইবনে খুদি — প্রজেক্ট ও সিভি",
+    twitterTitle: "Mahim Portfolio | Mahims Portfolio — মাহিম ইবনে খুদি",
     twitterDescription: "সফটওয়্যার ডেভেলপমেন্ট ও ক্রিয়েটিভ ডিজাইনের সমন্বিত পোর্টফোলিও।",
     twitterImage: defaultOgImage,
     jsonLd: {
@@ -1047,7 +1541,7 @@ const routeData = {
         <main class="max-w-5xl mx-auto px-4 py-12">
           <section class="text-center space-y-4 mb-12">
             <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">কোডিং, ক্যারিয়ার ও টেক প্রজেক্ট</span>
-            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">প্রফেশনাল পোর্টফোলিও ও সিভি</h1>
+            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 tracking-tight">Mahim Portfolio | Mahims Portfolio — মাহিম ইবনে খুদি</h1>
             <p class="text-base sm:text-lg text-zinc-600 max-w-2xl mx-auto leading-relaxed">
               সফটওয়্যার ডেভেলপমেন্ট, ওয়েব অ্যাপ্লিকেশনস, অটোমেশন এবং ক্রিয়েটিভ ডিজাইনের সমন্বিত প্রজেক্ট ডিসপ্লে ও কাজের ইতিহাস।
             </p>
@@ -1318,34 +1812,42 @@ if (fs.existsSync(distDir)) {
   // Enrich root dist/index.html with pre-rendered semantic navigation & classroom links for Googlebot crawler
   const rootHomepagePrerender = `
     <header class="sr-only">
-      <h1>Mahim's World | মাহিম ইবনে খুদি</h1>
-      <p>শিক্ষা, একাডেমি, প্রযুক্তি ও সৃষ্টিশীল ডিজিটাল অঙ্গন।</p>
+      <h1>Mahims (মাহিমস) | Mahim's World — মাহিম ইবনে খুদি</h1>
+      <p>Mahims (mahims.com) - মাহিম ইবনে খুদির অফিসিয়াল ডিজিটাল প্ল্যাটফর্ম ও ইকোসিস্টেম। শিক্ষা, ক্লাসরুম (Mahims Classroom), প্রযুক্তি, পোর্টফোলিও (Mahim Portfolio) ও সৃষ্টিশীল দিগন্ত।</p>
       <nav aria-label="প্রধান নেভিগেশন">
         <ul>
-          <li><a href="https://mahims.com/">হোম (Home)</a></li>
-          <li><a href="https://mahims.com/classroom/">Mahim's Classroom (Mahim Classroom / Mahims Classroom) — মাহিম ক্লাসরুম</a></li>
-          <li><a href="https://mahims.com/portfolio/">পোর্টফোলিও (Portfolio)</a></li>
-          <li><a href="https://mahims.com/blog/">ব্লগ (Blog)</a></li>
-          <li><a href="https://mahims.com/chithi/">মাহিম চিঠি (Chithi)</a></li>
-          <li><a href="https://mahims.com/salami/">মাহিম সালামি (Salami)</a></li>
-          <li><a href="https://mahims.com/about/">আমার সম্পর্কে (About)</a></li>
-          <li><a href="https://mahims.com/contact/">যোগাযোগ (Contact)</a></li>
+          <li><a href="https://mahims.com/">Mahims Home (হোম)</a></li>
+          <li><a href="https://mahims.com/classroom/">Mahims Classroom | Mahim Classroom (মাহিম ক্লাসরুম)</a></li>
+          <li><a href="https://mahims.com/portfolio/">Mahim Portfolio | Mahims Portfolio (মাহিম পোর্টফোলিও)</a></li>
+          <li><a href="https://mahims.com/blog/">Mahim Blog (মাহিম ব্লগ)</a></li>
+          <li><a href="https://mahims.com/chithi/">Mahim Chithi (মাহিম চিঠি)</a></li>
+          <li><a href="https://mahims.com/salami/">Mahim Salami (মাহিম সালামি)</a></li>
+          <li><a href="https://mahims.com/about/">About Mahims (আমার সম্পর্কে)</a></li>
+          <li><a href="https://mahims.com/contact/">Contact Mahims (যোগাযোগ)</a></li>
         </ul>
       </nav>
     </header>
     <main class="sr-only">
       <section>
-        <h2>Mahim's Classroom (Mahim Classroom / Mahims Classroom / মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন</h2>
-        <p>Official academic and admission test platform: Mahim's Classroom (Mahim Classroom). এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।</p>
+        <h2>Mahims (মাহিমস) — Official Portal &amp; Digital Ecosystem</h2>
+        <p>Official website of Mahim Ibne Khudi: <strong>Mahims</strong> (mahims.com). A comprehensive personal portal, digital classroom, technology projects, and portfolio.</p>
+      </section>
+      <section>
+        <h2>Mahims Classroom | Mahim Classroom (মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন</h2>
+        <p>Official academic and admission test platform: Mahims Classroom (Mahim Classroom / Mahim's Classroom). এইচএসসি, এসএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য নিবেদিত শিক্ষা প্ল্যাটফর্ম। কনসেপ্ট ক্লাস, স্মার্ট টেস্ট ইঞ্জিন ও মেন্টরশিপ। প্রতিষ্ঠাতা: মাহিম (Mahim Ibne Khudi, ঢাকা সেন্ট্রাল ইউনিভার্সিটি)।</p>
         <p>শিক্ষক ও মেন্টর প্যানেল:</p>
         <ul>
-          <li><a href="https://mahims.com/classroom/mahim/">মাহিম (Mahim) — প্রতিষ্ঠাতা ও আইসিটি মেন্টর, Mahim's Classroom (Mahim Classroom)</a></li>
+          <li><a href="https://mahims.com/classroom/mahim/">মাহিম (Mahim) — প্রতিষ্ঠাতা ও আইসিটি মেন্টর, Mahims Classroom (Mahim Classroom)</a></li>
           <li><a href="https://mahims.com/classroom/suza/">আবু সালেহ সুজা (Abu Saleh Suza) — ইংরেজি মেন্টর, Mahim Classroom</a></li>
-          <li><a href="https://mahims.com/classroom/samiul/">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — বাংলা মেন্টর, Mahim's Classroom</a></li>
-          <li><a href="https://mahims.com/classroom/mithen/">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — সাধারণ জ্ঞান মেন্টর, Mahim's Classroom</a></li>
-          <li><a href="https://mahims.com/classroom/swocchol/">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — বিজ্ঞান ও গণিত মেন্টর, Mahim's Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/samiul/">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab) — বাংলা মেন্টর, Mahims Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/mithen/">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen) — সাধারণ জ্ঞান মেন্টর, Mahims Classroom</a></li>
+          <li><a href="https://mahims.com/classroom/swocchol/">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar) — বিজ্ঞান ও গণিত মেন্টর, Mahims Classroom</a></li>
         </ul>
-        <p><a href="https://mahims.com/classroom/">Enter Mahim's Classroom (Mahim Classroom / মাহিম ক্লাসরুম)</a></p>
+        <p><a href="https://mahims.com/classroom/">Enter Mahims Classroom (Mahim Classroom / মাহিম ক্লাসরুম)</a></p>
+      </section>
+      <section>
+        <h2>Mahim Portfolio | Mahims Portfolio (মাহিম পোর্টফোলিও) — ফুল-স্ট্যাক প্রজেক্ট ও সিভি</h2>
+        <p>Mahim's professional software engineering, TypeScript, React, automation workflows, and brand identity projects. Visit <a href="https://mahims.com/portfolio/">Mahim Portfolio (Mahims Portfolio)</a>.</p>
       </section>
     </main>
   `;

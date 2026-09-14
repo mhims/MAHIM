@@ -15,6 +15,7 @@ import { ClassroomInstructorPage } from './components/ClassroomInstructorPage';
 import { TeacherProfilePage } from './components/TeacherProfilePage';
 import { ClassroomMentorshipHubPage } from './components/ClassroomMentorshipHubPage';
 import { MentorshipCourseDetailPage } from './components/MentorshipCourseDetailPage';
+import { ExternalCourseDetailPage } from './components/ExternalCourseDetailPage';
 import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
@@ -56,12 +57,16 @@ export default function App() {
     currentPath.startsWith('/classroom/courses/mentorship/') &&
     currentPath !== '/classroom/courses/mentorship';
   const mentorSlug = isMentorshipCourse ? currentPath.replace('/classroom/courses/mentorship/', '') : '';
+  const isOctalCourse = currentPath === '/classroom/courses/octal-1-hsc-ict';
+  const isBanglaBossCourse = currentPath === '/classroom/courses/bangla-boss-2-course';
+  const isExternalCourse = isOctalCourse || isBanglaBossCourse;
   const isTeacherProfile =
     currentPath.startsWith('/classroom/') &&
     !isClassroomInstructor &&
     !isClassroomCourses &&
     !isMentorshipHub &&
-    !isMentorshipCourse;
+    !isMentorshipCourse &&
+    !isExternalCourse;
   const teacherSlug = isTeacherProfile ? currentPath.replace('/classroom/', '') : '';
   const isPortfolio =
     currentPath === '/portfolio' ||
@@ -178,6 +183,8 @@ export default function App() {
     isClassroomInstructor,
     isMentorshipHub,
     isMentorshipCourse,
+    isOctalCourse,
+    isBanglaBossCourse,
     isTeacherProfile,
   ]);
 
@@ -203,6 +210,14 @@ export default function App() {
 
   if (isAllL) {
     return <DriveGatewayPage mode="alll" />;
+  }
+
+  if (isOctalCourse) {
+    return <ExternalCourseDetailPage courseId="octal-1-hsc-ict" />;
+  }
+
+  if (isBanglaBossCourse) {
+    return <ExternalCourseDetailPage courseId="bangla-boss-2-course" />;
   }
 
   if (isMentorshipCourse || isMentorshipHub) {

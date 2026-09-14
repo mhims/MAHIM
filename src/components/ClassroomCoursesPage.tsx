@@ -12,7 +12,8 @@ import {
   User,
   X,
   Calendar,
-  Layers
+  Layers,
+  ExternalLink
 } from 'lucide-react';
 import { ALL_COURSES, type CourseItem } from '../data/courses';
 import { navigateTo } from '../utils/navigation';
@@ -320,20 +321,49 @@ export const ClassroomCoursesPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Button */}
-              <button
-                onClick={() => {
-                  if (course.actionUrl) {
-                    navigateTo(course.actionUrl);
-                  } else {
-                    handleOpenRegister(course.title);
-                  }
-                }}
-                className="w-full py-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 bg-orange-50 hover:bg-orange-500 text-orange-700 hover:text-white border border-orange-300 hover:border-transparent"
-              >
-                <span>{course.actionText || 'আগ্রহ প্রকাশ করুন (Pre-Register)'}</span>
-                <ArrowRight size={14} />
-              </button>
+              {/* Action Buttons */}
+              {course.externalBuyUrl ? (
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      if (course.actionUrl) {
+                        navigateTo(course.actionUrl);
+                      } else {
+                        navigateTo(`/classroom/courses/${course.id}`);
+                      }
+                    }}
+                    className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 hover:border-orange-300"
+                    title="কোর্সের বিস্তারিত দেখুন"
+                  >
+                    <span>বিস্তারিত দেখুন</span>
+                    <ArrowRight size={14} />
+                  </button>
+                  <a
+                    href={course.externalBuyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 text-center"
+                    title="সরাসরি কোর্সটি কিনুন"
+                  >
+                    <span>কোর্সটি কিনুন</span>
+                    <ExternalLink size={14} />
+                  </a>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (course.actionUrl) {
+                      navigateTo(course.actionUrl);
+                    } else {
+                      handleOpenRegister(course.title);
+                    }
+                  }}
+                  className="w-full py-3 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 font-['Hind_Siliguri',sans-serif] cursor-pointer active:scale-98 bg-orange-50 hover:bg-orange-500 text-orange-700 hover:text-white border border-orange-300 hover:border-transparent"
+                >
+                  <span>{course.actionText || 'আগ্রহ প্রকাশ করুন (Pre-Register)'}</span>
+                  <ArrowRight size={14} />
+                </button>
+              )}
             </div>
           ))}
         </div>

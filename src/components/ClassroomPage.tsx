@@ -90,9 +90,90 @@ const ARTICLES: ArticleItem[] = [
   },
 ];
 
+// Mentorship Launch Banner Data & Randomizer
+// 1st image is ALWAYS PRIMARY_MENTORSHIP_BANNER
+const PRIMARY_MENTORSHIP_BANNER = {
+  id: 'primary-mentorship',
+  src: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg',
+  alt: "Mentorship Course - Mahim's Classroom",
+};
+
+// Mahim's Mentor Banner (Guaranteed to be 2nd on initial visit)
+const MAHIM_MENTOR_BANNER = {
+  id: 'mentor-mahim',
+  src: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png',
+  alt: "মাহিম - মেন্টর | মাহিম'স ক্লাসরুম",
+};
+
+// Other Mentor Banners
+const OTHER_MENTOR_BANNERS = [
+  {
+    id: 'mentor-samiul',
+    src: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg',
+    alt: "সামিউল ইসলাম সোহরাব - মেন্টর | মাহিম'স ক্লাসরুম",
+  },
+  {
+    id: 'mentor-mithen',
+    src: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png',
+    alt: "মিশকাত শরীফ মিথেন - মেন্টর | মাহিম'স ক্লাসরুম",
+  },
+  {
+    id: 'mentor-suja',
+    src: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg',
+    alt: "আবু সালেহ সুজা - মেন্টর | মাহিম'স ক্লাসরুম",
+  },
+];
+
+const ALL_MENTOR_BANNERS = [MAHIM_MENTOR_BANNER, ...OTHER_MENTOR_BANNERS];
+
+function shuffleBanners<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export const ClassroomPage: React.FC = () => {
   // Main page displays only the curated courses (configured via showOnMainPage in src/data/courses.ts)
   const mainCourses = getMainPageCourses();
+
+  // Mentorship Banner Slider State:
+  // On initial page visit: 1st is PRIMARY, 2nd is strictly MAHIM, remaining 3 are randomized.
+  // After 1st cycle: 1st remains PRIMARY, and all 4 mentor banners are fully randomized.
+  const [mentorshipSlides, setMentorshipSlides] = useState(() => [
+    PRIMARY_MENTORSHIP_BANNER,
+    MAHIM_MENTOR_BANNER,
+    ...shuffleBanners(OTHER_MENTOR_BANNERS),
+  ]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  // Auto-advance slide every 1.5 seconds (1500ms) with smooth 500ms transition
+  useEffect(() => {
+    // Preload all 5 images immediately to prevent any flicker during auto-sliding
+    [PRIMARY_MENTORSHIP_BANNER, ...ALL_MENTOR_BANNERS].forEach(item => {
+      const img = new Image();
+      img.src = item.src;
+    });
+
+    const interval = setInterval(() => {
+      setCurrentSlideIndex(prev => {
+        const next = prev + 1;
+        if (next >= mentorshipSlides.length) {
+          // In subsequent cycles, all 4 mentor banners are randomly shuffled while PRIMARY strictly stays 1st
+          setMentorshipSlides([
+            PRIMARY_MENTORSHIP_BANNER,
+            ...shuffleBanners(ALL_MENTOR_BANNERS),
+          ]);
+          return 0;
+        }
+        return next;
+      });
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [mentorshipSlides.length]);
 
   // State for Mahim's Profile Modal
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -353,8 +434,10 @@ export const ClassroomPage: React.FC = () => {
       </header>
 
       {/* ========================================================================= */}
-      {/* Top Launch Banner: Mentorship Course (mahims.com/classroom/courses/mentorship) */}
-      {/* Clean, Sharp Image with Animated Traveling Orange Light Beam Border */}
+      {/* Top Launch Banner Slider: Mentorship Course (mahims.com/classroom/courses/mentorship) */}
+      {/* 1st slide is ALWAYS the primary mentorship banner; the other 4 are dynamically shuffled */}
+      {/* Auto-slides every ~900ms; all slides link to /classroom/courses/mentorship */}
+      {/* Clean, Sharp Images with Animated Traveling Orange Light Beam Border */}
       {/* ========================================================================= */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -371,13 +454,45 @@ export const ClassroomPage: React.FC = () => {
           {/* Traveling Orange Light Beam traveling continuously around the border */}
           <div className="absolute inset-[-150%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_300deg,#ea580c_320deg,#f97316_340deg,#fbbf24_355deg,#fff7ed_360deg)] pointer-events-none" />
 
-          {/* Inner container keeping the image clean and sharp */}
-          <div className="relative w-full h-full rounded-[13px] sm:rounded-[21px] overflow-hidden bg-zinc-950">
+          {/* Inner container keeping the images clean, sharp and responsive */}
+          <div className="relative w-full rounded-[13px] sm:rounded-[21px] overflow-hidden bg-zinc-950 select-none">
+            {/* Responsive natural height spacer to ensure 100% fluid responsiveness without layout shifts */}
             <img
-              src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg"
-              alt="Mentorship Course - Mahim's Classroom"
-              className="w-full h-auto object-cover block group-hover:scale-[1.01] transition-transform duration-500"
+              src={PRIMARY_MENTORSHIP_BANNER.src}
+              alt=""
+              aria-hidden="true"
+              className="w-full h-auto object-cover opacity-0 pointer-events-none block"
             />
+
+            {/* Slider Images with Smooth Crossfade */}
+            {mentorshipSlides.map((slide, idx) => {
+              const isActive = idx === currentSlideIndex;
+              return (
+                <img
+                  key={`${slide.id}-${idx}`}
+                  src={slide.src}
+                  alt={slide.alt}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
+                    isActive ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                />
+              );
+            })}
+
+            {/* Subtle Minimal Slide Dots */}
+            <div className="absolute bottom-2 sm:bottom-3.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/45 backdrop-blur-md border border-white/15 pointer-events-none">
+              {mentorshipSlides.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === currentSlideIndex
+                      ? 'w-5 bg-orange-500 shadow-xs shadow-orange-500/80'
+                      : 'w-1.5 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>

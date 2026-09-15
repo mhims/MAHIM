@@ -23,7 +23,7 @@ export const HOME_TOP_SLIDES: HomeTopSlide[] = [
   },
   {
     id: 'portfolio',
-    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789447074/mahimportfoliodfinal_l99rov.png',
+    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789448181/portfoliomahim_uulfa0.jpg',
     link: 'https://mahims.com/portfolio',
     path: '/portfolio',
     title: "Mahim's Portfolio (মাহিম'স পোর্টফোলিও)",

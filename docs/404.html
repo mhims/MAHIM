@@ -14,14 +14,16 @@
         var hash = window.location.hash;
         
         var cleanPath = path.replace(/\/+$/, '') || '/';
-        var knownRoutes = ['/about', '/skills', '/experience', '/education', '/blog', '/contact', '/wallet', '/salami', '/chithi', '/classroom', '/portfolio'];
         
-        if (knownRoutes.indexOf(cleanPath) !== -1) {
-          sessionStorage.setItem('spa_redirect', cleanPath + search + hash);
-          window.location.replace('/' + (search ? search : '') + (hash ? hash : ''));
-        } else {
+        // Skip static asset requests (images, stylesheets, scripts)
+        if (/\.(png|jpe?g|svg|ico|webp|gif|css|js|json|xml|txt|webmanifest)$/i.test(cleanPath)) {
           window.location.replace('/');
+          return;
         }
+
+        // Store intended path in sessionStorage so index.html restores it seamlessly
+        sessionStorage.setItem('spa_redirect', cleanPath + (search ? search : '') + (hash ? hash : ''));
+        window.location.replace('/' + (search ? search : '') + (hash ? hash : ''));
       })();
     </script>
   </head>

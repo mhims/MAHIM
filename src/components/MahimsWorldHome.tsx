@@ -7,6 +7,7 @@ import { MobileAppDock } from './MobileAppDock';
 import { AdminModal } from './AdminModal';
 import { AuthModal } from './AuthModal';
 import { DynamicSEO } from './DynamicSEO';
+import { HomeTopBannerSlider } from './HomeTopBannerSlider';
 import { navigateTo } from '../utils/navigation';
 import { motion } from 'motion/react';
 import {
@@ -106,9 +107,14 @@ export const MahimsWorldHome: React.FC = () => {
 
       <main className="flex-grow pb-24 lg:pb-16 relative z-10">
         {/* ========================================================================= */}
+        {/* TOP INTERACTIVE BANNER SLIDER: Classroom, Portfolio, Chithi                */}
+        {/* ========================================================================= */}
+        <HomeTopBannerSlider />
+
+        {/* ========================================================================= */}
         {/* 1. HERO SECTION: Mahim's World (New Font & Gradient), Typewriter & Subtext */}
         {/* ========================================================================= */}
-        <section className="relative overflow-hidden pt-24 pb-6 sm:pt-28 sm:pb-14 lg:pt-32 lg:pb-16 border-b border-black/5 dark:border-white/5">
+        <section className="relative overflow-hidden pt-6 pb-6 sm:pt-10 sm:pb-12 lg:pt-12 lg:pb-16 border-b border-black/5 dark:border-white/5">
           <div className="w-full max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 15 }}

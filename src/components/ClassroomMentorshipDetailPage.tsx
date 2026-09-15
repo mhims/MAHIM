@@ -484,14 +484,27 @@ export const ClassroomMentorshipDetailPage: React.FC<Props> = ({ slug }) => {
               </div>
 
               {/* Primary Buy Button */}
-              <button
-                onClick={handleBuyClick}
-                id="buy-mentorship-course-btn"
-                className="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-base sm:text-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2.5 transition-all transform active:scale-95 cursor-pointer text-center"
-              >
-                <span>কোর্সটি কিনুন</span>
-                <ExternalLink size={18} />
-              </button>
+              {course?.externalBuyUrl ? (
+                <a
+                  href={course.externalBuyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id="buy-mentorship-course-btn"
+                  className="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-base sm:text-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2.5 transition-all transform active:scale-95 cursor-pointer text-center no-underline"
+                >
+                  <span>কোর্সটি কিনুন</span>
+                  <ExternalLink size={18} />
+                </a>
+              ) : (
+                <button
+                  onClick={handleBuyClick}
+                  id="buy-mentorship-course-btn"
+                  className="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-base sm:text-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2.5 transition-all transform active:scale-95 cursor-pointer text-center"
+                >
+                  <span>কোর্সটি কিনুন</span>
+                  <ExternalLink size={18} />
+                </button>
+              )}
 
               <p className="text-[11px] text-center text-zinc-500 mt-3 font-medium">
                 * কিনুন বাটনে ক্লিক করে কোর্সটির এনরোলমেন্ট বা প্রি-রেজিস্ট্রেশন সম্পন্ন করুন।

@@ -554,7 +554,7 @@ export const ClassroomPage: React.FC = () => {
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer font-sans"
           >
             <Sparkles size={16} className="text-amber-200" />
-            <span>Mentorship Course (Coming Soon)</span>
+            <span>Mentorship Course</span>
             <ArrowRight size={16} />
           </button>
 

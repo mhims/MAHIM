@@ -9,7 +9,7 @@ export interface MentorCourseInfo {
   degreeBn: string;
   image: string;
   badge: string;
-  externalCanonicalUrl: string; // The samnadacademy or combo canonical URL for SEO ranking
+  externalBuyUrl?: string; // User will provide this later for the Buy button
   isCombo?: boolean;
   metaTitle: string;
   metaDescription: string;
@@ -54,7 +54,7 @@ export const MENTORSHIP_COURSE_COMMON_DETAILS = `ভর্তি পরীক্
 SamNad Academy × Mahim’s Classroom
 Learn with Direction. Prepare with Confidence. Achieve Your Goal.`;
 
-// The 4 Individual Mentor Courses with exact SEO canonical URLs
+// The 4 Individual Mentor Courses
 export const INDIVIDUAL_MENTOR_COURSES: MentorCourseInfo[] = [
   {
     id: 'mentorship-suja',
@@ -67,8 +67,7 @@ export const INDIVIDUAL_MENTOR_COURSES: MentorCourseInfo[] = [
     degreeBn: 'ফার্মেসি বিভাগ',
     image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg',
     badge: 'Pharmac, MBSTU',
-    externalCanonicalUrl: 'https://samnadacademy.com/courses/mentorship/abu-saleh-suza/',
-    metaTitle: 'Abu Saleh Suza — Mentorship Course | SamNad Academy × Mahim’s Classroom',
+    metaTitle: 'Abu Saleh Suza — Mentorship Course | Mahim’s Classroom',
     metaDescription: 'আবু সালেহ সুজা (Pharmacy, MBSTU) এর ওয়ান-টু-ওয়ান মেন্টরশীপ কোর্স। বিশ্ববিদ্যালয় ভর্তি পরীক্ষা ও একাডেমিক প্রস্তুতির পূর্ণাঙ্গ দিকনির্দেশনা ও গাইডলাইন।',
   },
   {
@@ -82,8 +81,7 @@ export const INDIVIDUAL_MENTOR_COURSES: MentorCourseInfo[] = [
     degreeBn: 'সফটওয়্যার ইঞ্জিনিয়ারিং',
     image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg',
     badge: 'Daffodil International University (DIU)',
-    externalCanonicalUrl: 'https://samnadacademy.com/courses/mentorship/samiul-islam-sohorab/',
-    metaTitle: 'Samiul Islam Sohorab — Mentorship Course | SamNad Academy × Mahim’s Classroom',
+    metaTitle: 'Samiul Islam Sohorab — Mentorship Course | Mahim’s Classroom',
     metaDescription: 'সামিউল ইসলাম সোহরাব (SWE, DIU) এর পার্সোনালাইজড মেন্টরশীপ কোর্স। একাডেমিক প্রস্তুতি, স্টাডি প্ল্যান ও এডমিশন হ্যাকস।',
   },
   {
@@ -97,8 +95,7 @@ export const INDIVIDUAL_MENTOR_COURSES: MentorCourseInfo[] = [
     degreeBn: 'ফাউন্ডারঃ মিথেন প্রাইভেট হোম',
     image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png',
     badge: 'Begum Rokeya University (BRUR)',
-    externalCanonicalUrl: 'https://samnadacademy.com/courses/mentorship/mishkat-sharif-mithen/',
-    metaTitle: 'Mishkat Sharif Mithen — Mentorship Course | SamNad Academy × Mahim’s Classroom',
+    metaTitle: 'Mishkat Sharif Mithen — Mentorship Course | Mahim’s Classroom',
     metaDescription: 'মিশকাত শরীফ মিথেন (BRUR, Founder Mithen Private Home) এর মেন্টরশীপ কোর্স। ভর্তি পরীক্ষা ও বোর্ড পরীক্ষার নিখুঁত স্ট্র্যাটেজি।',
   },
   {
@@ -112,8 +109,7 @@ export const INDIVIDUAL_MENTOR_COURSES: MentorCourseInfo[] = [
     degreeBn: 'ফাউন্ডার, মাহিমস ক্লাসরুম',
     image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png',
     badge: 'Dhaka Central University (DCU)',
-    externalCanonicalUrl: 'https://samnadacademy.com/courses/mentorship/mahim-ibn-khudi/',
-    metaTitle: 'Mahim Ibne Khudi — Mentorship Course | SamNad Academy × Mahim’s Classroom',
+    metaTitle: 'Mahim Ibne Khudi — Mentorship Course | Mahim’s Classroom',
     metaDescription: 'মাহিম ইবনে খুদি (Founder, Mahims Classroom) এর ব্যক্তিগত মেন্টরশীপ কোর্স। আইসিটি, বিজ্ঞান ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার বিশেষ গাইডলাইন।',
   },
 ];
@@ -130,7 +126,6 @@ export const COMBO_MENTORSHIP_COURSE: MentorCourseInfo = {
   degreeBn: 'সকল অভিজ্ঞ মেন্টরদের সমন্বিত গাইডলাইন প্যানেল',
   image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg',
   badge: 'Combo Mentorship • সকল মেন্টরদের সমন্বিত গাইডলাইন',
-  externalCanonicalUrl: 'https://mahims.com/classroom/courses/mentorship/mentorship-program-combo',
   metaTitle: 'Mentorship Program Combo | SamNad Academy × Mahim’s Classroom',
   metaDescription: 'শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম। ভর্তি পরীক্ষা ও একাডেমিক প্রস্তুতির সেরা রোডম্যাপ।',
   isCombo: true,

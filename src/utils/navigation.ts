@@ -60,8 +60,8 @@ export function isValidRoute(pathname: string): boolean {
   if (SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized)) {
     return true;
   }
-  // Allow dynamic /classroom/:slug
-  if (normalized.startsWith('/classroom/')) {
+  // Allow dynamic /classroom/:slug and /courses/:slug
+  if (normalized.startsWith('/classroom/') || normalized.startsWith('/courses/')) {
     return true;
   }
   return false;

@@ -19,11 +19,29 @@ const routes = [
   'classroom/instructor',
   'classroom/instructors',
   'classroom/courses/mentorship',
+  'classroom/mentorship',
+  'classroom/courses/mentorship/mahim-ibn-khudi',
+  'classroom/courses/mentorship/samiul-islam-sohorab',
+  'classroom/courses/mentorship/abu-saleh-suza',
+  'classroom/courses/mentorship/mishkat-sharif-mithen',
+  'classroom/courses/mentorship/mentorship-program-combo',
   'classroom/courses/mentorship/suza',
   'classroom/courses/mentorship/mithen',
   'classroom/courses/mentorship/samiul',
   'classroom/courses/mentorship/mahim',
+  'classroom/courses/mentorship/combo',
   'classroom/courses/mentorship/swocchol',
+  'courses/mentorship',
+  'courses/mentorship/mahim-ibn-khudi',
+  'courses/mentorship/samiul-islam-sohorab',
+  'courses/mentorship/abu-saleh-suza',
+  'courses/mentorship/mishkat-sharif-mithen',
+  'courses/mentorship/mentorship-program-combo',
+  'courses/mentorship/mahim',
+  'courses/mentorship/samiul',
+  'courses/mentorship/suza',
+  'courses/mentorship/mithen',
+  'courses/mentorship/combo',
   'classroom/mahim',
   'classroom/samiul',
   'classroom/suza',
@@ -944,15 +962,15 @@ const routeData = {
   },
 
   'classroom/courses/mentorship': {
-    title: "Mentorship Course | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
-    metaTitle: "Mentorship Course — Coming Soon | Mahims Classroom",
-    description: "Mahims Classroom Mentorship Course — এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার্থীদের জন্য বিশেষ মেন্টরশীপ ও পারসোনালাইজড গাইডলাইন।",
-    keywords: "Mahims Classroom Mentorship, Mentorship Course Mahims, মাহিম ক্লাসরুম মেন্টরশীপ, ভর্তি মেন্টরশীপ, এইচএসসি গাইডলাইন",
+    title: "Mentorship Courses | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
+    metaTitle: "Mentorship Courses | Mahims Classroom & Samnad Academy",
+    description: "Mahims Classroom Mentorship Courses — শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ মেন্টরদের ওয়ান-টু-ওয়ান গাইডলাইন ও কম্বো মেন্টরশীপ প্রোগ্রাম। মেন্টর: মাহিম ইবনে খুদি, সামিউল ইসলাম সোহরাব, আবু সালেহ সুজা ও মিশকাত শরীফ মিথেন।",
+    keywords: "Mahims Classroom Mentorship, Mentorship Course Mahims, মাহিম ক্লাসরুম মেন্টরশীপ, ভর্তি মেন্টরশীপ, এইচএসসি গাইডলাইন, Samnad Academy Mentorship",
     canonical: `${siteUrl}/classroom/courses/mentorship/`,
-    ogTitle: "Mentorship Course | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
-    ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতির বিশেষ মেন্টরশীপ কোর্স।",
+    ogTitle: "Mentorship Courses | Mahims Classroom — এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম",
+    ogDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতির বিশেষ মেন্টরশীপ কোর্স প্যানেল। SamNad Academy ও Mahims Classroom এর সমন্বয়ে।",
     ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
-    twitterTitle: "Mentorship Course | Mahims Classroom",
+    twitterTitle: "Mentorship Courses | Mahims Classroom",
     twitterDescription: "এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতির বিশেষ মেন্টরশীপ কোর্স।",
     twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
     jsonLd: {
@@ -971,7 +989,7 @@ const routeData = {
         {
           "@type": "Course",
           "@id": `${siteUrl}/classroom/courses/mentorship/#course`,
-          "name": "Mentorship Course — Mahims Classroom",
+          "name": "Mentorship Programs — Mahims Classroom & Samnad Academy",
           "description": "এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রাম — এইচএসসি ও বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি।"
         }
       ]
@@ -983,30 +1001,561 @@ const routeData = {
             <a href="/classroom/" class="flex items-center gap-3">
               <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
               <div>
-                <span class="font-black text-lg block leading-tight text-zinc-950">Mentorship Course</span>
-                <span class="text-xs text-orange-600 font-semibold">Mahims Classroom Exclusive Program</span>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mentorship Programs</span>
+                <span class="text-xs text-orange-600 font-semibold">SamNad Academy × Mahim’s Classroom</span>
               </div>
             </a>
             <a href="/classroom/courses/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">সকল কোর্স</a>
           </div>
         </header>
 
-        <main class="max-w-4xl mx-auto px-4 py-12 text-center">
-          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-4">Official Program Announcement</span>
-          <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 mb-3 tracking-tight">Mentorship Course — Mahims Classroom</h1>
-          <p class="text-xl font-bold text-orange-600 tracking-wide uppercase mb-6">Coming Soon</p>
-          <p class="text-base sm:text-lg text-zinc-600 max-w-xl mx-auto leading-relaxed mb-8">
-            আমাদের এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রামের পূর্ণাঙ্গ গাইডলাইন, মেন্টরদের সেশন প্ল্যান ও ভর্তি প্রক্রিয়া খুব শীঘ্রই প্রকাশিত হতে যাচ্ছে। সাথে থাকুন!
-          </p>
+        <main class="max-w-5xl mx-auto px-4 py-10">
+          <div class="text-center mb-10">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-3">Special Mentorship Programs</span>
+            <h1 class="text-3xl sm:text-5xl font-black text-zinc-950 mb-3">মেন্টরশীপ কোর্স ও গাইডলাইন প্রোগ্রাম</h1>
+            <p class="text-base text-zinc-600 max-w-2xl mx-auto">
+              আপনার প্রস্তুতিকে আরও সুশৃঙ্খল, কার্যকর এবং লক্ষ্যভিত্তিক করতে শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ মেন্টরদের ওয়ান-টু-ওয়ান গাইডলাইন ও কম্বো মেন্টরশীপ সেশন।
+            </p>
+          </div>
 
-          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm text-left max-w-2xl mx-auto space-y-4">
-            <h2 class="text-lg font-bold text-zinc-900 border-b pb-2">মেন্টর প্যানেল:</h2>
-            <ul class="space-y-2 text-sm text-zinc-700">
-              <li>• <a href="/classroom/mahim/" class="text-orange-600 font-bold hover:underline">মাহিম (Mahim)</a> — আইসিটি ও এডমিশন গাইডলাইন</li>
-              <li>• <a href="/classroom/suza/" class="text-orange-600 font-bold hover:underline">আবু সালেহ সুজা (Abu Saleh Suza)</a> — ইংরেজি</li>
-              <li>• <a href="/classroom/samiul/" class="text-orange-600 font-bold hover:underline">সামিউল ইসলাম সোহরাব (Samiul Islam Sohrab)</a> — বাংলা</li>
-              <li>• <a href="/classroom/mithen/" class="text-orange-600 font-bold hover:underline">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</a> — সাধারণ জ্ঞান</li>
-              <li>• <a href="/classroom/swocchol/" class="text-orange-600 font-bold hover:underline">স্বচ্ছল কুমার কর্মকার (Swocchol Kumar Karmokar)</a> — বিজ্ঞান ও গণিত</li>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white border-2 border-orange-300 rounded-3xl p-6 shadow-sm">
+              <span class="text-xs font-bold text-orange-600 uppercase tracking-wider block mb-1">Combo Mentorship</span>
+              <h2 class="text-xl font-bold text-zinc-950 mb-2">অল মেন্টরস কম্বো মেন্টরশীপ প্রোগ্রাম</h2>
+              <p class="text-sm text-zinc-600 mb-4">শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম।</p>
+              <a href="/classroom/courses/mentorship/mentorship-program-combo/" class="inline-block px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm">বিস্তারিত দেখুন &rarr;</a>
+            </div>
+
+            <div class="bg-white border border-orange-200 rounded-3xl p-6 shadow-sm">
+              <span class="text-xs font-bold text-orange-600 uppercase tracking-wider block mb-1">Dhaka Central University (DCU)</span>
+              <h2 class="text-xl font-bold text-zinc-950 mb-2">মাহিম ইবনে খুদি — মেন্টরশীপ কোর্স</h2>
+              <p class="text-sm text-zinc-600 mb-4">ফাউন্ডার, মাহিমস ক্লাসরুম। আইসিটি ও এডমিশন বিশেষ গাইডলাইন।</p>
+              <a href="/classroom/courses/mentorship/mahim-ibn-khudi/" class="inline-block px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm">বিস্তারিত দেখুন &rarr;</a>
+            </div>
+
+            <div class="bg-white border border-orange-200 rounded-3xl p-6 shadow-sm">
+              <span class="text-xs font-bold text-orange-600 uppercase tracking-wider block mb-1">Daffodil International University (DIU)</span>
+              <h2 class="text-xl font-bold text-zinc-950 mb-2">সামিউল ইসলাম সোহরাব — মেন্টরশীপ কোর্স</h2>
+              <p class="text-sm text-zinc-600 mb-4">সফটওয়্যার ইঞ্জিনিয়ারিং (DIU)। একাডেমিক প্রস্তুতি ও এডমিশন হ্যাকস।</p>
+              <a href="/classroom/courses/mentorship/samiul-islam-sohorab/" class="inline-block px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm">বিস্তারিত দেখুন &rarr;</a>
+            </div>
+
+            <div class="bg-white border border-orange-200 rounded-3xl p-6 shadow-sm">
+              <span class="text-xs font-bold text-orange-600 uppercase tracking-wider block mb-1">Pharmacy, MBSTU</span>
+              <h2 class="text-xl font-bold text-zinc-950 mb-2">আবু সালেহ সুজা — মেন্টরশীপ কোর্স</h2>
+              <p class="text-sm text-zinc-600 mb-4">ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)।</p>
+              <a href="/classroom/courses/mentorship/abu-saleh-suza/" class="inline-block px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm">বিস্তারিত দেখুন &rarr;</a>
+            </div>
+
+            <div class="bg-white border border-orange-200 rounded-3xl p-6 shadow-sm">
+              <span class="text-xs font-bold text-orange-600 uppercase tracking-wider block mb-1">Begum Rokeya University (BRUR)</span>
+              <h2 class="text-xl font-bold text-zinc-950 mb-2">মিশকাত শরীফ মিথেন — মেন্টরশীপ কোর্স</h2>
+              <p class="text-sm text-zinc-600 mb-4">ফাউন্ডারঃ মিথেন প্রাইভেট হোম, বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)।</p>
+              <a href="/classroom/courses/mentorship/mishkat-sharif-mithen/" class="inline-block px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm">বিস্তারিত দেখুন &rarr;</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/mentorship/mahim-ibn-khudi': {
+    title: "Mahim Ibne Khudi — Mentorship Course | Mahims Classroom & Samnad Academy",
+    metaTitle: "মাহিম ইবনে খুদি (Mentorship Course) | Mahims Classroom",
+    description: "মাহিম ইবনে খুদি (Founder, Mahims Classroom - Dhaka Central University) এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy ও Mahims Classroom এর যৌথ উদ্যোগে এইচএসসি, আইসিটি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার বিশেষ গাইডলাইন।",
+    keywords: "Mahim Ibne Khudi Mentorship, Mahim Mentorship Course, মাহিম ইবনে খুদি মেন্টরশীপ, মাহিম ক্লাসরুম মেন্টরশীপ, samnad academy mahim mentorship, mahims.com/classroom/courses/mentorship/mahim-ibn-khudi/, ভর্তি গাইডলাইন, আইসিটি প্রস্তুতি, ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+    canonical: `${siteUrl}/classroom/courses/mentorship/mahim-ibn-khudi/`,
+    ogTitle: "Mahim Ibne Khudi — Mentorship Course | Mahims Classroom",
+    ogDescription: "মাহিম ইবনে খুদি এর পার্সোনালাইজড মেন্টরশীপ কোর্স। ভর্তি পরীক্ষা ও আইসিটি প্রস্তুতির বিশেষ গাইডলাইন। SamNad Academy কোলাবোরেশন।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png",
+    twitterTitle: "Mahim Ibne Khudi — Mentorship Course | Mahims Classroom",
+    twitterDescription: "মাহিম ইবনে খুদি এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy কোলাবোরেশন।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "মাহিম ইবনে খুদি মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" },
+            { "@type": "ListItem", "position": 5, "name": "মাহিম ইবনে খুদি (Mahim Ibne Khudi)", "item": "https://mahims.com/classroom/courses/mentorship/mahim-ibn-khudi/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/mahim-ibn-khudi/#course`,
+          "name": "Mahim Ibne Khudi — Mentorship Course",
+          "alternateName": "মাহিম ইবনে খুদি মেন্টরশীপ কোর্স",
+          "description": "মাহিম ইবনে খুদি (Founder, Mahims Classroom) এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy ও Mahims Classroom এর যৌথ উদ্যোগে এইচএসসি, আইসিটি ও বিশ্ববিদ্যালয় ভর্তি পরীক্ষার বিশেষ গাইডলাইন।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "SamNad Academy × Mahim's Classroom",
+            "url": "https://mahims.com/classroom/"
+          },
+          "instructor": {
+            "@type": "Person",
+            "name": "Mahim Ibne Khudi",
+            "alternateName": "মাহিম ইবনে খুদি",
+            "jobTitle": "Founder, Mahims Classroom",
+            "affiliation": {
+              "@type": "Organization",
+              "name": "Dhaka Central University (DCU)"
+            },
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "1000",
+            "priceCurrency": "BDT",
+            "availability": "https://schema.org/InStock",
+            "url": "https://samnadacademy.com/courses/mentorship-program-mahim-ibn-khudi/"
+          },
+          "inLanguage": "bn"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans pb-16">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/courses/mentorship/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mahim Ibne Khudi</span>
+                <span class="text-xs text-orange-600 font-semibold">Mentorship Course • SamNad Academy × Mahim’s Classroom</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/mentorship/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">&larr; সকল মেন্টর</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-10">
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png" alt="Mahim Ibne Khudi" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border border-orange-200 shrink-0" />
+            <div class="text-center sm:text-left flex-1">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-2">Dhaka Central University (DCU)</span>
+              <h1 class="text-2xl sm:text-4xl font-black text-zinc-950 mb-1">মাহিম ইবনে খুদি (Mahim Ibne Khudi)</h1>
+              <p class="text-sm font-semibold text-orange-700 mb-4">ফাউন্ডার, মাহিমস ক্লাসরুম • মেন্টরশীপ কোর্স</p>
+              <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <a href="https://samnadacademy.com/courses/mentorship-program-mahim-ibn-khudi/" target="_blank" rel="noopener noreferrer" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md">
+                  কোর্সটি কিনুন (SamNad Academy) &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-zinc-950 border-b pb-3">কোর্সের বিস্তারিত বিবরণ ও দিকনির্দেশনা</h2>
+            <p class="text-base text-zinc-700 leading-relaxed">
+              ভর্তি পরীক্ষা, একাডেমিক প্রস্তুতি কিংবা নিজের কাঙ্ক্ষিত বিশ্ববিদ্যালয়ে জায়গা করে নেওয়ার পথে শুধু পড়াশোনা করলেই যথেষ্ট নয়—প্রয়োজন সঠিক পরিকল্পনা, নিয়মিত গাইডলাইন এবং অভিজ্ঞ মেন্টরের দিকনির্দেশনা।
+            </p>
+            <p class="text-base text-zinc-700 leading-relaxed">
+              এই Mentorship Course এমন শিক্ষার্থীদের জন্য তৈরি, যারা নিজেদের প্রস্তুতিকে আরও গোছানো, কার্যকর এবং লক্ষ্যভিত্তিক করতে চায়। SamNad Academy ও Mahim’s Classroom-এর সমন্বয়ে এই কোর্সে শিক্ষার্থীরা তাদের প্রস্তুতির পুরো journey-তে প্রয়োজনীয় গাইডলাইন ও মেন্টরশীপ পাবে।
+            </p>
+            <h3 class="text-lg font-bold text-zinc-950 pt-2">এই কোর্সে যা থাকছে:</h3>
+            <ul class="space-y-3 text-sm text-zinc-700">
+              <li><strong>১. সঠিক প্রস্তুতির দিকনির্দেশনা:</strong> কীভাবে শুরু করবেন, কোন বিষয়কে কতটা গুরুত্ব দেবেন এবং কীভাবে সময়কে কাজে লাগাবেন—এসব বিষয়ে পরিষ্কার গাইডলাইন।</li>
+              <li><strong>২. Personalized Mentorship:</strong> আপনার প্রস্তুতি, সমস্যা ও প্রয়োজন অনুযায়ী মেন্টরের কাছ থেকে প্রয়োজনীয় পরামর্শ ও দিকনির্দেশনা।</li>
+              <li><strong>৩. Study Plan &amp; Strategy:</strong> পরীক্ষার প্রস্তুতিকে আরও কার্যকর করতে বাস্তবসম্মত স্টাডি প্ল্যান, রুটিন ও প্রস্তুতির কৌশল।</li>
+              <li><strong>৪. Regular Guidance &amp; Support:</strong> প্রস্তুতির বিভিন্ন পর্যায়ে প্রয়োজনীয় পরামর্শ, সমস্যা সমাধান এবং সঠিক পথে থাকার জন্য নিয়মিত সাপোর্ট।</li>
+              <li><strong>৫. Question &amp; Discussion Support:</strong> পড়াশোনা ও প্রস্তুতি নিয়ে গুরুত্বপূর্ণ প্রশ্ন বা সমস্যাগুলো নিয়ে মেন্টরের সঙ্গে আলোচনা করার সুযোগ।</li>
+              <li><strong>৬. Exam &amp; Admission Guidance:</strong> ভর্তি পরীক্ষা ও একাডেমিক প্রস্তুতির ক্ষেত্রে কীভাবে স্মার্টভাবে এগোতে হবে, সে বিষয়ে প্রয়োজনীয় গাইডলাইন ও কৌশল।</li>
+            </ul>
+            <div class="pt-4 border-t border-orange-100 flex justify-between items-center">
+              <a href="/classroom/courses/mentorship/" class="text-sm font-bold text-orange-600 hover:underline">&larr; অন্যান্য মেন্টরদের কোর্স দেখুন</a>
+              <a href="https://samnadacademy.com/courses/mentorship-program-mahim-ibn-khudi/" target="_blank" rel="noopener noreferrer" class="px-5 py-2 rounded-xl bg-orange-600 text-white font-bold text-sm">কিনুন &rarr;</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/mentorship/samiul-islam-sohorab': {
+    title: "Samiul Islam Sohorab — Mentorship Course | Mahims Classroom & Samnad Academy",
+    metaTitle: "সামিউল ইসলাম সোহরাব (Mentorship Course) | Mahims Classroom",
+    description: "সামিউল ইসলাম সোহরাব (Software Engineering, DIU) এর ওয়ান-টু-ওয়ান মেন্টরশীপ কোর্স। SamNad Academy ও Mahims Classroom এর যৌথ উদ্যোগে একাডেমিক প্রস্তুতি, স্টাডি প্ল্যান ও এডমিশন হ্যাকস।",
+    keywords: "Samiul Islam Sohorab Mentorship, সামিউল ইসলাম সোহরাব মেন্টরশীপ, Mahims Classroom Samiul, DIU SWE Samiul, Samnad Academy Samiul Sohorab, mahims.com/classroom/courses/mentorship/samiul-islam-sohorab/",
+    canonical: `${siteUrl}/classroom/courses/mentorship/samiul-islam-sohorab/`,
+    ogTitle: "Samiul Islam Sohorab — Mentorship Course | Mahims Classroom",
+    ogDescription: "সামিউল ইসলাম সোহরাব এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy কোলাবোরেশন।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg",
+    twitterTitle: "Samiul Islam Sohorab — Mentorship Course | Mahims Classroom",
+    twitterDescription: "সামিউল ইসলাম সোহরাব এর পার্সোনালাইজড মেন্টরশীপ কোর্স।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "সামিউল ইসলাম সোহরাব মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" },
+            { "@type": "ListItem", "position": 5, "name": "সামিউল ইসলাম সোহরাব (Samiul Islam Sohorab)", "item": "https://mahims.com/classroom/courses/mentorship/samiul-islam-sohorab/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/samiul-islam-sohorab/#course`,
+          "name": "Samiul Islam Sohorab — Mentorship Course",
+          "alternateName": "সামিউল ইসলাম সোহরাব মেন্টরশীপ কোর্স",
+          "description": "সামিউল ইসলাম সোহরাব (Software Engineering, DIU) এর পার্সোনালাইজড মেন্টরশীপ কোর্স।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "SamNad Academy × Mahim's Classroom",
+            "url": "https://mahims.com/classroom/"
+          },
+          "instructor": {
+            "@type": "Person",
+            "name": "Samiul Islam Sohorab",
+            "alternateName": "সামিউল ইসলাম সোহরাব",
+            "jobTitle": "Software Engineering",
+            "affiliation": {
+              "@type": "Organization",
+              "name": "Daffodil International University (DIU)"
+            },
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "1000",
+            "priceCurrency": "BDT",
+            "availability": "https://schema.org/InStock",
+            "url": "https://samnadacademy.com/courses/mentorship-program-samiul-sohorab/"
+          },
+          "inLanguage": "bn"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans pb-16">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/courses/mentorship/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Samiul Islam Sohorab</span>
+                <span class="text-xs text-orange-600 font-semibold">Mentorship Course • SamNad Academy × Mahim’s Classroom</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/mentorship/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">&larr; সকল মেন্টর</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-10">
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg" alt="Samiul Islam Sohorab" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border border-orange-200 shrink-0" />
+            <div class="text-center sm:text-left flex-1">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-2">Daffodil International University (DIU)</span>
+              <h1 class="text-2xl sm:text-4xl font-black text-zinc-950 mb-1">সামিউল ইসলাম সোহরাব (Samiul Islam Sohorab)</h1>
+              <p class="text-sm font-semibold text-orange-700 mb-4">সফটওয়্যার ইঞ্জিনিয়ারিং • মেন্টরশীপ কোর্স</p>
+              <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <a href="https://samnadacademy.com/courses/mentorship-program-samiul-sohorab/" target="_blank" rel="noopener noreferrer" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md">
+                  কোর্সটি কিনুন (SamNad Academy) &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-zinc-950 border-b pb-3">কোর্সের বিস্তারিত বিবরণ ও দিকনির্দেশনা</h2>
+            <p class="text-base text-zinc-700 leading-relaxed">
+              ভর্তি পরীক্ষা, একাডেমিক প্রস্তুতি কিংবা নিজের কাঙ্ক্ষিত বিশ্ববিদ্যালয়ে জায়গা করে নেওয়ার পথে শুধু পড়াশোনা করলেই যথেষ্ট নয়—প্রয়োজন সঠিক পরিকল্পনা, নিয়মিত গাইডলাইন এবং অভিজ্ঞ মেন্টরের দিকনির্দেশনা।
+            </p>
+            <h3 class="text-lg font-bold text-zinc-950 pt-2">এই কোর্সে যা থাকছে:</h3>
+            <ul class="space-y-3 text-sm text-zinc-700">
+              <li><strong>১. সঠিক প্রস্তুতির দিকনির্দেশনা:</strong> পরিষ্কার স্টাডি প্ল্যান ও রোডম্যাপ।</li>
+              <li><strong>২. Personalized Mentorship:</strong> ওয়ান-টু-ওয়ান গাইডলাইন ও প্রবলেম সলভিং।</li>
+              <li><strong>৩. Study Plan &amp; Strategy:</strong> পরীক্ষার প্রস্তুতিকে নিখুঁত করতে বাস্তবসম্মত স্টাডি রুটিন।</li>
+              <li><strong>৪. Regular Guidance &amp; Support:</strong> প্রস্তুতির ধারাবাহিকতা ধরে রাখতে নিয়মিত ফলোআপ।</li>
+            </ul>
+            <div class="pt-4 border-t border-orange-100 flex justify-between items-center">
+              <a href="/classroom/courses/mentorship/" class="text-sm font-bold text-orange-600 hover:underline">&larr; অন্যান্য মেন্টরদের কোর্স দেখুন</a>
+              <a href="https://samnadacademy.com/courses/mentorship-program-samiul-sohorab/" target="_blank" rel="noopener noreferrer" class="px-5 py-2 rounded-xl bg-orange-600 text-white font-bold text-sm">কিনুন &rarr;</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/mentorship/abu-saleh-suza': {
+    title: "Abu Saleh Suza — Mentorship Course | Mahims Classroom & Samnad Academy",
+    metaTitle: "আবু সালেহ সুজা (Mentorship Course) | Mahims Classroom",
+    description: "আবু সালেহ সুজা (Pharmacy, MBSTU - ফার্মেসি বিভাগ, মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয়) এর ওয়ান-টু-ওয়ান মেন্টরশীপ কোর্স। SamNad Academy ও Mahims Classroom এর যৌথ উদ্যোগে বিশ্ববিদ্যালয় ভর্তি পরীক্ষা ও একাডেমিক প্রস্তুতির পূর্ণাঙ্গ দিকনির্দেশনা।",
+    keywords: "Abu Saleh Suza Mentorship, আবু সালেহ সুজা মেন্টরশীপ, Pharmacy MBSTU Suza, Mahims Classroom Suza, mahims.com/classroom/courses/mentorship/abu-saleh-suza/",
+    canonical: `${siteUrl}/classroom/courses/mentorship/abu-saleh-suza/`,
+    ogTitle: "Abu Saleh Suza — Mentorship Course | Mahims Classroom",
+    ogDescription: "আবু সালেহ সুজা (Pharmacy, MBSTU) এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy কোলাবোরেশন।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg",
+    twitterTitle: "Abu Saleh Suza — Mentorship Course | Mahims Classroom",
+    twitterDescription: "আবু সালেহ সুজা এর পার্সোনালাইজড মেন্টরশীপ কোর্স।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "আবু সালেহ সুজা মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" },
+            { "@type": "ListItem", "position": 5, "name": "আবু সালেহ সুজা (Abu Saleh Suza)", "item": "https://mahims.com/classroom/courses/mentorship/abu-saleh-suza/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/abu-saleh-suza/#course`,
+          "name": "Abu Saleh Suza — Mentorship Course",
+          "alternateName": "আবু সালেহ সুজা মেন্টরশীপ কোর্স",
+          "description": "আবু সালেহ সুজা (Pharmacy, MBSTU) এর ওয়ান-টু-ওয়ান মেন্টরশীপ কোর্স।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "SamNad Academy × Mahim's Classroom",
+            "url": "https://mahims.com/classroom/"
+          },
+          "instructor": {
+            "@type": "Person",
+            "name": "Abu Saleh Suza",
+            "alternateName": "আবু সালেহ সুজা",
+            "jobTitle": "Pharmacy",
+            "affiliation": {
+              "@type": "Organization",
+              "name": "Mawlana Bhashani Science and Technology University (MBSTU)"
+            },
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg"
+          },
+          "inLanguage": "bn"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans pb-16">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/courses/mentorship/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Abu Saleh Suza</span>
+                <span class="text-xs text-orange-600 font-semibold">Mentorship Course • SamNad Academy × Mahim’s Classroom</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/mentorship/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">&larr; সকল মেন্টর</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-10">
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg" alt="Abu Saleh Suza" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border border-orange-200 shrink-0" />
+            <div class="text-center sm:text-left flex-1">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-2">Pharmacy, MBSTU</span>
+              <h1 class="text-2xl sm:text-4xl font-black text-zinc-950 mb-1">আবু সালেহ সুজা (Abu Saleh Suza)</h1>
+              <p class="text-sm font-semibold text-orange-700 mb-4">ফার্মেসি বিভাগ • মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU)</p>
+              <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <a href="/classroom/courses/mentorship/abu-saleh-suza/" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md">
+                  মেন্টরশীপ প্রোগ্রামে যোগ দিন &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-zinc-950 border-b pb-3">কোর্সের বিস্তারিত বিবরণ ও দিকনির্দেশনা</h2>
+            <p class="text-base text-zinc-700 leading-relaxed">
+              বিশ্ববিদ্যালয় ভর্তি পরীক্ষা ও বোর্ড পরীক্ষার প্রস্তুতির ক্ষেত্রে অভিজ্ঞ মেন্টরের ওয়ান-টু-ওয়ান গাইডলাইন আপনাকে শতভাগ এগিয়ে রাখবে।
+            </p>
+            <div class="pt-4 border-t border-orange-100">
+              <a href="/classroom/courses/mentorship/" class="text-sm font-bold text-orange-600 hover:underline">&larr; অন্যান্য মেন্টরদের কোর্স দেখুন</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/mentorship/mishkat-sharif-mithen': {
+    title: "Mishkat Sharif Mithen — Mentorship Course | Mahims Classroom & Samnad Academy",
+    metaTitle: "মিশকাত শরীফ মিথেন (Mentorship Course) | Mahims Classroom",
+    description: "মিশকাত শরীফ মিথেন (Begum Rokeya University - BRUR, Founder Mithen Private Home) এর মেন্টরশীপ কোর্স। SamNad Academy ও Mahims Classroom এর যৌথ উদ্যোগে ভর্তি পরীক্ষা ও বোর্ড পরীক্ষার নিখুঁত স্ট্র্যাটেজি।",
+    keywords: "Mishkat Sharif Mithen Mentorship, মিশকাত শরীফ মিথেন মেন্টরশীপ, Mithen Private Home, BRUR Mithen, Mahims Classroom Mithen, mahims.com/classroom/courses/mentorship/mishkat-sharif-mithen/",
+    canonical: `${siteUrl}/classroom/courses/mentorship/mishkat-sharif-mithen/`,
+    ogTitle: "Mishkat Sharif Mithen — Mentorship Course | Mahims Classroom",
+    ogDescription: "মিশকাত শরীফ মিথেন এর পার্সোনালাইজড মেন্টরশীপ কোর্স। SamNad Academy কোলাবোরেশন।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png",
+    twitterTitle: "Mishkat Sharif Mithen — Mentorship Course | Mahims Classroom",
+    twitterDescription: "মিশকাত শরীফ মিথেন এর পার্সোনালাইজড মেন্টরশীপ কোর্স।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "মিশকাত শরীফ মিথেন মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" },
+            { "@type": "ListItem", "position": 5, "name": "মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)", "item": "https://mahims.com/classroom/courses/mentorship/mishkat-sharif-mithen/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/mishkat-sharif-mithen/#course`,
+          "name": "Mishkat Sharif Mithen — Mentorship Course",
+          "alternateName": "মিশকাত শরীফ মিথেন মেন্টরশীপ কোর্স",
+          "description": "মিশকাত শরীফ মিথেন (Begum Rokeya University - BRUR) এর মেন্টরশীপ কোর্স।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "SamNad Academy × Mahim's Classroom",
+            "url": "https://mahims.com/classroom/"
+          },
+          "instructor": {
+            "@type": "Person",
+            "name": "Mishkat Sharif Mithen",
+            "alternateName": "মিশকাত শরীফ মিথেন",
+            "jobTitle": "Founder, Mithen Private Home",
+            "affiliation": {
+              "@type": "Organization",
+              "name": "Begum Rokeya University (BRUR)"
+            },
+            "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png"
+          },
+          "inLanguage": "bn"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans pb-16">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/courses/mentorship/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Mishkat Sharif Mithen</span>
+                <span class="text-xs text-orange-600 font-semibold">Mentorship Course • SamNad Academy × Mahim’s Classroom</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/mentorship/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">&larr; সকল মেন্টর</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-10">
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png" alt="Mishkat Sharif Mithen" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border border-orange-200 shrink-0" />
+            <div class="text-center sm:text-left flex-1">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-2">Begum Rokeya University (BRUR)</span>
+              <h1 class="text-2xl sm:text-4xl font-black text-zinc-950 mb-1">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</h1>
+              <p class="text-sm font-semibold text-orange-700 mb-4">ফাউন্ডারঃ মিথেন প্রাইভেট হোম • বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR)</p>
+              <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <a href="/classroom/courses/mentorship/mishkat-sharif-mithen/" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md">
+                  মেন্টরশীপ প্রোগ্রামে যোগ দিন &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-zinc-950 border-b pb-3">কোর্সের বিস্তারিত বিবরণ ও দিকনির্দেশনা</h2>
+            <p class="text-base text-zinc-700 leading-relaxed">
+              সঠিক দিকনির্দেশনা ও পারসোনালাইজড মেন্টরশীপ আপনার বিশ্ববিদ্যালয় ভর্তি প্রস্তুতিকে রাখবে গোছানো ও শাণিত।
+            </p>
+            <div class="pt-4 border-t border-orange-100">
+              <a href="/classroom/courses/mentorship/" class="text-sm font-bold text-orange-600 hover:underline">&larr; অন্যান্য মেন্টরদের কোর্স দেখুন</a>
+            </div>
+          </div>
+        </main>
+      </div>
+    `
+  },
+
+  'classroom/courses/mentorship/mentorship-program-combo': {
+    title: "All Mentors Combo Mentorship Course | SamNad Academy × Mahims Classroom",
+    metaTitle: "অল মেন্টরস কম্বো মেন্টরশীপ প্রোগ্রাম | Mahims Classroom",
+    description: "শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম (Abu Saleh Suza, Samiul Islam Sohorab, Mishkat Sharif Mithen, Mahim Ibne Khudi)। ভর্তি পরীক্ষা ও একাডেমিক প্রস্তুতির সেরা রোডম্যাপ।",
+    keywords: "Combo Mentorship Program, কম্বো মেন্টরশীপ কোর্স, SamNad Academy Mentorship, Mahims Classroom Combo, mahims.com/classroom/courses/mentorship/mentorship-program-combo/",
+    canonical: `${siteUrl}/classroom/courses/mentorship/mentorship-program-combo/`,
+    ogTitle: "All Mentors Combo Mentorship Course | Mahims Classroom",
+    ogDescription: "শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম। SamNad Academy ও Mahims Classroom এর সমন্বয়ে।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
+    twitterTitle: "All Mentors Combo Mentorship Course | Mahims Classroom",
+    twitterDescription: "শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "কম্বো মেন্টরশীপ কোর্স — Mahims Classroom",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "মাহিম ক্লাসরুম (Classroom)", "item": "https://mahims.com/classroom/" },
+            { "@type": "ListItem", "position": 3, "name": "সকল কোর্স (Courses)", "item": "https://mahims.com/classroom/courses/" },
+            { "@type": "ListItem", "position": 4, "name": "মেন্টরশীপ কোর্স (Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/" },
+            { "@type": "ListItem", "position": 5, "name": "কম্বো মেন্টরশীপ (Combo Mentorship)", "item": "https://mahims.com/classroom/courses/mentorship/mentorship-program-combo/" }
+          ]
+        },
+        {
+          "@type": "Course",
+          "@id": `${siteUrl}/classroom/courses/mentorship/mentorship-program-combo/#course`,
+          "name": "All Mentors Combo Mentorship Course",
+          "alternateName": "অল মেন্টরস কম্বো মেন্টরশীপ প্রোগ্রাম",
+          "description": "শীর্ষ বিশ্ববিদ্যালয়ের অভিজ্ঞ ৪ জন মেন্টরের সমন্বিত কম্বো মেন্টরশীপ প্রোগ্রাম।",
+          "provider": {
+            "@type": "EducationalOrganization",
+            "name": "SamNad Academy × Mahim's Classroom",
+            "url": "https://mahims.com/classroom/"
+          },
+          "inLanguage": "bn"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fffbf7] text-zinc-900 font-sans pb-16">
+        <header class="border-b border-orange-200 bg-white/95 backdrop-blur-md sticky top-0 z-20">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <a href="/classroom/courses/mentorship/" class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-lg">M</span>
+              <div>
+                <span class="font-black text-lg block leading-tight text-zinc-950">Combo Mentorship Program</span>
+                <span class="text-xs text-orange-600 font-semibold">SamNad Academy × Mahim’s Classroom</span>
+              </div>
+            </a>
+            <a href="/classroom/courses/mentorship/" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-orange-300 text-orange-900 hover:bg-orange-100">&larr; সকল মেন্টর</a>
+          </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 py-10">
+          <div class="bg-white border-2 border-orange-300 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 text-center sm:text-left flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+            <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg" alt="All Mentors Combo Mentorship" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border border-orange-200 shrink-0" />
+            <div class="flex-1">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200 mb-2">Complete Panel Guidance</span>
+              <h1 class="text-2xl sm:text-4xl font-black text-zinc-950 mb-1">অল মেন্টরস কম্বো মেন্টরশীপ কোর্স</h1>
+              <p class="text-sm font-semibold text-orange-700 mb-4">শীর্ষ বিশ্ববিদ্যালয়ের ৪ জন অভিজ্ঞ মেন্টরের সমন্বিত প্যানেল গাইডলাইন</p>
+              <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                <a href="/classroom/courses/mentorship/mentorship-program-combo/" class="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md">
+                  কম্বো মেন্টরশীপে জয়েন করুন &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-orange-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+            <h2 class="text-xl font-bold text-zinc-950 border-b pb-3">মেন্টর প্যানেল পরিচিতি</h2>
+            <ul class="space-y-3 text-sm text-zinc-700">
+              <li>• <a href="/classroom/courses/mentorship/mahim-ibn-khudi/" class="text-orange-600 font-bold hover:underline">মাহিম ইবনে খুদি (Mahim Ibne Khudi)</a> — ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU) | ফাউন্ডার, মাহিমস ক্লাসরুম</li>
+              <li>• <a href="/classroom/courses/mentorship/samiul-islam-sohorab/" class="text-orange-600 font-bold hover:underline">সামিউল ইসলাম সোহরাব (Samiul Islam Sohorab)</a> — ড্যাফোডিল ইন্টারন্যাশনাল ইউনিভার্সিটি (DIU) | সফটওয়্যার ইঞ্জিনিয়ারিং</li>
+              <li>• <a href="/classroom/courses/mentorship/abu-saleh-suza/" class="text-orange-600 font-bold hover:underline">আবু সালেহ সুজা (Abu Saleh Suza)</a> — মওলানা ভাসানী বিজ্ঞান ও প্রযুক্তি বিশ্ববিদ্যালয় (MBSTU) | ফার্মেসি বিভাগ</li>
+              <li>• <a href="/classroom/courses/mentorship/mishkat-sharif-mithen/" class="text-orange-600 font-bold hover:underline">মিশকাত শরীফ মিথেন (Mishkat Sharif Mithen)</a> — বেগম রোকেয়া বিশ্ববিদ্যালয় (BRUR) | ফাউন্ডারঃ মিথেন প্রাইভেট হোম</li>
             </ul>
           </div>
         </main>
@@ -1737,6 +2286,30 @@ if (fs.existsSync(distDir)) {
     htmlContent = htmlContent.replace(/\.\/assets\//g, '/assets/');
     htmlContent = htmlContent.replace(/\.\/favicon/g, '/favicon');
 
+    let targetRoute = route;
+    const routeAliases = {
+      'classroom/mentorship': 'classroom/courses/mentorship',
+      'courses/mentorship': 'classroom/courses/mentorship',
+      'classroom/courses/mentorship/mahim': 'classroom/courses/mentorship/mahim-ibn-khudi',
+      'classroom/courses/mentorship/samiul': 'classroom/courses/mentorship/samiul-islam-sohorab',
+      'classroom/courses/mentorship/suza': 'classroom/courses/mentorship/abu-saleh-suza',
+      'classroom/courses/mentorship/mithen': 'classroom/courses/mentorship/mishkat-sharif-mithen',
+      'classroom/courses/mentorship/combo': 'classroom/courses/mentorship/mentorship-program-combo',
+      'courses/mentorship/mahim-ibn-khudi': 'classroom/courses/mentorship/mahim-ibn-khudi',
+      'courses/mentorship/samiul-islam-sohorab': 'classroom/courses/mentorship/samiul-islam-sohorab',
+      'courses/mentorship/abu-saleh-suza': 'classroom/courses/mentorship/abu-saleh-suza',
+      'courses/mentorship/mishkat-sharif-mithen': 'classroom/courses/mentorship/mishkat-sharif-mithen',
+      'courses/mentorship/mentorship-program-combo': 'classroom/courses/mentorship/mentorship-program-combo',
+      'courses/mentorship/mahim': 'classroom/courses/mentorship/mahim-ibn-khudi',
+      'courses/mentorship/samiul': 'classroom/courses/mentorship/samiul-islam-sohorab',
+      'courses/mentorship/suza': 'classroom/courses/mentorship/abu-saleh-suza',
+      'courses/mentorship/mithen': 'classroom/courses/mentorship/mishkat-sharif-mithen',
+      'courses/mentorship/combo': 'classroom/courses/mentorship/mentorship-program-combo'
+    };
+    if (routeAliases[targetRoute]) {
+      targetRoute = routeAliases[targetRoute];
+    }
+
     if (route === 'wallet') {
       htmlContent = htmlContent
         .replace(/<title>.*?<\/title>/, '<title>Personal Vault | Mahim</title>')
@@ -1748,8 +2321,8 @@ if (fs.existsSync(distDir)) {
           /class="bg-\[#fdfdfb\] text-\[#1a1a1a\]/,
           'class="bg-neutral-950 text-neutral-100'
         );
-    } else if (routeData[route]) {
-      const data = routeData[route];
+    } else if (routeData[targetRoute]) {
+      const data = routeData[targetRoute];
 
       // 1. Replace Title & Meta Title
       htmlContent = htmlContent

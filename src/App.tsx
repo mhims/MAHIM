@@ -27,6 +27,23 @@ import { trackPageView, getActiveWebhookUrl } from './utils/visitorTracker';
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() => {
     if (typeof window === 'undefined') return '/';
+    // Check if GitHub Pages 404 stored intended SPA redirect path
+    try {
+      const spaRedirect = sessionStorage.getItem('spa_redirect');
+      if (spaRedirect) {
+        sessionStorage.removeItem('spa_redirect');
+        const cleanRedirect = spaRedirect.replace(/\/+$/, '') || '/';
+        if (window.history.replaceState) {
+          window.history.replaceState(null, '', cleanRedirect);
+        }
+        if (isValidRoute(cleanRedirect)) {
+          return cleanRedirect;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     // Support both: If user enters with hash (e.g. #about or #salami or #wallet), immediately resolve and clean URL
     let path = window.location.pathname.replace(/\/+$/, '') || '/';
     if (window.location.hash) {
@@ -71,7 +88,10 @@ export default function App() {
     (currentPath.startsWith('/courses/mentorship/') &&
       currentPath !== '/courses/mentorship');
   const mentorSlug = isMentorshipCourse
-    ? currentPath.replace('/classroom/courses/mentorship/', '').replace('/courses/mentorship/', '')
+    ? currentPath
+        .replace('/classroom/courses/mentorship/', '')
+        .replace('/courses/mentorship/', '')
+        .replace(/\/+$/, '')
     : '';
   const isOctalCourse = currentPath === '/classroom/courses/octal-1-hsc-ict';
   const isBanglaBossCourse = currentPath === '/classroom/courses/bangla-boss-2-course';

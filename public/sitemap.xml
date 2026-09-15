@@ -71,12 +71,62 @@
   </url>
   <url>
     <loc>https://mahims.com/classroom/courses/mentorship/</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.92</priority>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.96</priority>
     <image:image>
       <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg</image:loc>
-      <image:title>Mentorship Course - Mahims Classroom</image:title>
+      <image:title>Mentorship Courses Panel - Mahims Classroom &amp; Samnad Academy</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/mahim-ibn-khudi/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789388129/mahimmentor_lqt0tg.png</image:loc>
+      <image:title>Mahim Ibne Khudi - Mentorship Course | Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/samiul-islam-sohorab/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789388172/samiulmentor_ntpjge.jpg</image:loc>
+      <image:title>Samiul Islam Sohorab - Mentorship Course | Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/abu-saleh-suza/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789388189/suzamentor_fqbj8e.jpg</image:loc>
+      <image:title>Abu Saleh Suza - Mentorship Course | Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/mishkat-sharif-mithen/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789388182/mithenmentor_atwyjb.png</image:loc>
+      <image:title>Mishkat Sharif Mithen - Mentorship Course | Mahims Classroom</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/classroom/courses/mentorship/mentorship-program-combo/</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg</image:loc>
+      <image:title>All Mentors Combo Mentorship Course | Mahims Classroom &amp; Samnad Academy</image:title>
     </image:image>
   </url>
   <url>

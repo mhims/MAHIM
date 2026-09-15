@@ -28,6 +28,14 @@ export const ClassroomMentorshipCoursesSection: React.FC<Props> = ({
     navigateTo(`/classroom/courses/mentorship/${course.slug}`);
   };
 
+  const handleBuy = (course: MentorCourseInfo) => {
+    if (course.externalBuyUrl) {
+      window.open(course.externalBuyUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    onBuyCourse(course);
+  };
+
   return (
     <section
       id="mentorship-courses-section"
@@ -127,7 +135,7 @@ export const ClassroomMentorshipCoursesSection: React.FC<Props> = ({
               </button>
 
               <button
-                onClick={() => onBuyCourse(COMBO_MENTORSHIP_COURSE)}
+                onClick={() => handleBuy(COMBO_MENTORSHIP_COURSE)}
                 id="combo-mentorship-buy-btn"
                 className="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
@@ -196,7 +204,7 @@ export const ClassroomMentorshipCoursesSection: React.FC<Props> = ({
                 </p>
 
                 <p className="text-[11px] text-zinc-500 mt-1 leading-tight font-['Hind_Siliguri',sans-serif]">
-                  {course.institutionBn}
+                  {course.degreeBn ? `${course.degreeBn} • ` : ''}{course.institutionBn}
                 </p>
               </div>
 
@@ -229,7 +237,7 @@ export const ClassroomMentorshipCoursesSection: React.FC<Props> = ({
               </button>
 
               <button
-                onClick={() => onBuyCourse(course)}
+                onClick={() => handleBuy(course)}
                 id={`buy-btn-${course.slug}`}
                 className="flex-1 py-2.5 px-2 rounded-xl text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-sm shadow-orange-500/20 transition-all text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1"
               >

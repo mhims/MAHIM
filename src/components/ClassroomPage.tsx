@@ -194,6 +194,7 @@ export const ClassroomPage: React.FC = () => {
   // State for Registration Modal
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
+
   // Student Auth & Profile State
   const [currentStudent, setCurrentStudent] = useState<StudentUser | null>(null);
   const [isStudentProfileOpen, setIsStudentProfileOpen] = useState(false);
@@ -327,6 +328,7 @@ export const ClassroomPage: React.FC = () => {
     setIsRegisterModalOpen(true);
     setFormSubmitted(false);
   };
+
 
   const submitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -497,6 +499,7 @@ export const ClassroomPage: React.FC = () => {
           </div>
         </div>
       </motion.div>
+
 
       {/* Hero Section (Focus strictly on HSC, Admission & SSC as requested) */}
       <section id="hero" className="relative z-10 pt-10 sm:pt-16 pb-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
@@ -2303,6 +2306,7 @@ export const ClassroomPage: React.FC = () => {
         initialTab={studentProfileTab}
         onSuccessLogin={(student) => setCurrentStudent(student)}
       />
+
 
       {/* ========================================================================= */}
       {/* 4. Dedicated Classroom Admin Modal (Completely separate from portfolio)   */}

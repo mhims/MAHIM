@@ -19,6 +19,8 @@ import {
 import { ALL_COURSES, type CourseItem } from '../data/courses';
 import { navigateTo } from '../utils/navigation';
 import { saveClassroomRegistration } from '../utils/classroomStorage';
+import { ClassroomMentorshipCoursesSection } from './ClassroomMentorshipCoursesSection';
+import type { MentorCourseInfo } from '../data/mentorshipDetails';
 
 export const ClassroomCoursesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -239,6 +241,20 @@ export const ClassroomCoursesPage: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {/* Mentorship Section in All Courses (When 'all' or 'mentorship' category selected) */}
+        {(activeCategory === 'all' || activeCategory === 'mentorship') && (
+          <div className="mb-10">
+            <ClassroomMentorshipCoursesSection
+              onBuyCourse={(course: MentorCourseInfo) => {
+                const title = course.isCombo
+                  ? 'কম্বো মেন্টরশীপ কোর্স (All Mentors Combo)'
+                  : `মেন্টরশীপ কোর্স - ${course.mentorNameBn} (${course.institution})`;
+                handleOpenRegister(title);
+              }}
+            />
+          </div>
+        )}
 
         {/* Courses Count */}
         <div className="flex items-center justify-between mb-6 text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif] px-1">

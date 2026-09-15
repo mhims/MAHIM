@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
 
 export interface HomeTopSlide {
@@ -9,7 +9,6 @@ export interface HomeTopSlide {
   link: string;
   path: string;
   title: string;
-  badgeText: string;
 }
 
 export const HOME_TOP_SLIDES: HomeTopSlide[] = [
@@ -19,7 +18,6 @@ export const HOME_TOP_SLIDES: HomeTopSlide[] = [
     link: 'https://mahims.com/classroom',
     path: '/classroom',
     title: "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-    badgeText: 'mahims.com/classroom',
   },
   {
     id: 'portfolio',
@@ -27,7 +25,6 @@ export const HOME_TOP_SLIDES: HomeTopSlide[] = [
     link: 'https://mahims.com/portfolio',
     path: '/portfolio',
     title: "Mahim's Portfolio (মাহিম'স পোর্টফোলিও)",
-    badgeText: 'mahims.com/portfolio',
   },
   {
     id: 'chithi',
@@ -35,7 +32,6 @@ export const HOME_TOP_SLIDES: HomeTopSlide[] = [
     link: 'https://mahims.com/chithi',
     path: '/chithi',
     title: "Mahim's Chithi (চিঠি ও ভাবনা)",
-    badgeText: 'mahims.com/chithi',
   },
 ];
 
@@ -74,7 +70,7 @@ export const HomeTopBannerSlider: React.FC = () => {
         onClick={handleSlideClick}
         id="home-top-carousel-banner"
         className="relative group p-[3px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 active:scale-[0.99] orange-pulsing-glow shadow-xl shadow-orange-500/10"
-        title={`${currentSlide.title} — ভিজিট করতে ক্লিক করুন (${currentSlide.badgeText})`}
+        title={`${currentSlide.title} — ভিজিট করতে ক্লিক করুন`}
       >
         {/* Traveling Orange Light Beam traveling continuously around the border (Classroom style) */}
         <div className="absolute inset-[-150%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_300deg,#ea580c_320deg,#f97316_340deg,#fbbf24_355deg,#fff7ed_360deg)] pointer-events-none" />
@@ -108,13 +104,6 @@ export const HomeTopBannerSlider: React.FC = () => {
               </div>
             );
           })}
-
-          {/* Quick Destination Pill Tag at Top Right */}
-          <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 group-hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-[11px] sm:text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all shadow-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-            <span>{currentSlide.badgeText}</span>
-            <ExternalLink size={12} className="text-orange-400 group-hover:translate-x-0.5 transition-transform" />
-          </div>
 
           {/* Minimal Slide Indicator Dots (Clickable to switch slides) */}
           <div className="absolute bottom-2 sm:bottom-3.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/15">

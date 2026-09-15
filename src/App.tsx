@@ -16,7 +16,7 @@ import { ClassroomBlogListPage } from './components/ClassroomBlogListPage';
 import { ClassroomBlogDetailPage } from './components/ClassroomBlogDetailPage';
 import { TeacherProfilePage } from './components/TeacherProfilePage';
 import { ClassroomMentorshipHubPage } from './components/ClassroomMentorshipHubPage';
-import { MentorshipCourseDetailPage } from './components/MentorshipCourseDetailPage';
+import { ClassroomMentorshipDetailPage } from './components/ClassroomMentorshipDetailPage';
 import { ExternalCourseDetailPage } from './components/ExternalCourseDetailPage';
 import { PortfolioPage } from './components/PortfolioPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
@@ -61,11 +61,18 @@ export default function App() {
   const classroomBlogSlug = isClassroomBlogDetail ? currentPath.replace('/classroom/blog/', '') : '';
   const isClassroomInstructor = currentPath === '/classroom/instructor' || currentPath === '/classroom/instructors';
   const isClassroomCourses = currentPath === '/classroom/courses';
-  const isMentorshipHub = currentPath === '/classroom/courses/mentorship';
+  const isMentorshipHub =
+    currentPath === '/classroom/courses/mentorship' ||
+    currentPath === '/classroom/mentorship' ||
+    currentPath === '/courses/mentorship';
   const isMentorshipCourse =
-    currentPath.startsWith('/classroom/courses/mentorship/') &&
-    currentPath !== '/classroom/courses/mentorship';
-  const mentorSlug = isMentorshipCourse ? currentPath.replace('/classroom/courses/mentorship/', '') : '';
+    (currentPath.startsWith('/classroom/courses/mentorship/') &&
+      currentPath !== '/classroom/courses/mentorship') ||
+    (currentPath.startsWith('/courses/mentorship/') &&
+      currentPath !== '/courses/mentorship');
+  const mentorSlug = isMentorshipCourse
+    ? currentPath.replace('/classroom/courses/mentorship/', '').replace('/courses/mentorship/', '')
+    : '';
   const isOctalCourse = currentPath === '/classroom/courses/octal-1-hsc-ict';
   const isBanglaBossCourse = currentPath === '/classroom/courses/bangla-boss-2-course';
   const isExternalCourse = isOctalCourse || isBanglaBossCourse;
@@ -249,7 +256,16 @@ export default function App() {
     );
   }
 
-  if (isMentorshipCourse || isMentorshipHub) {
+  if (isMentorshipCourse) {
+    return (
+      <>
+        <ClassroomMentorshipDetailPage slug={mentorSlug} />
+        <ClassroomMobileDock currentPath={currentPath} />
+      </>
+    );
+  }
+
+  if (isMentorshipHub) {
     return (
       <>
         <ClassroomMentorshipHubPage />

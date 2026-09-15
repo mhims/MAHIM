@@ -1,14 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GraduationCap,
   ArrowLeft,
   Sparkles,
-  Clock,
+  BookOpen,
+  Phone,
+  User,
+  X,
   CheckCircle2,
 } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
+import { ClassroomMentorshipCoursesSection } from './ClassroomMentorshipCoursesSection';
+import { saveClassroomRegistration } from '../utils/classroomStorage';
+import type { MentorCourseInfo } from '../data/mentorshipDetails';
 
 export const ClassroomMentorshipHubPage: React.FC = () => {
+  // Buy / Pre-registration modal state
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [buyCourseTitle, setBuyCourseTitle] = useState('');
+  const [studentName, setStudentName] = useState('');
+  const [studentPhone, setStudentPhone] = useState('');
+  const [studentMessage, setStudentMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleBuyCourse = (course: MentorCourseInfo) => {
+    const title = course.isCombo
+      ? 'কম্বো মেন্টরশীপ কোর্স (All Mentors Combo)'
+      : `মেন্টরশীপ কোর্স - ${course.mentorNameBn} (${course.institution})`;
+    setBuyCourseTitle(title);
+    setFormSubmitted(false);
+    setIsBuyModalOpen(true);
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!studentName.trim() || !studentPhone.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      saveClassroomRegistration({
+        name: studentName,
+        phone: studentPhone,
+        course: buyCourseTitle,
+        message: studentMessage,
+      });
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    } catch {
+      // ignore
+    } finally {
+      setIsSubmitting(false);
+      setFormSubmitted(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fffbf7] text-zinc-900 selection:bg-orange-500 selection:text-white font-sans relative overflow-x-clip pb-28 sm:pb-20">
       {/* Background Decorative Warm Gradients */}
@@ -72,9 +117,9 @@ export const ClassroomMentorshipHubPage: React.FC = () => {
       </header>
 
       {/* Main Container */}
-      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
         {/* Top Launch Banner - Pure Image with Animated Traveling Orange Light Beam Border */}
-        <div className="relative mb-8 sm:mb-12 w-full p-[3px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl orange-pulsing-glow">
+        <div className="relative mb-6 sm:mb-10 w-full p-[3px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl orange-pulsing-glow">
           {/* Traveling Orange Light Beam traveling continuously around the border */}
           <div className="absolute inset-[-150%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_300deg,#ea580c_320deg,#f97316_340deg,#fbbf24_355deg,#fff7ed_360deg)] pointer-events-none" />
 
@@ -88,43 +133,134 @@ export const ClassroomMentorshipHubPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Coming Soon Section in English as requested */}
-        <div className="bg-white rounded-3xl border border-orange-200/90 p-8 sm:p-12 shadow-sm text-center max-w-3xl mx-auto font-sans">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300 text-xs sm:text-sm font-bold uppercase tracking-wider mb-5 shadow-xs">
-            <Sparkles size={16} className="text-orange-600" />
-            <span>Official Program Announcement</span>
-          </div>
+        {/* Mentorship Courses: 1 Combo Course + 4 Individual Courses */}
+        <ClassroomMentorshipCoursesSection
+          onBuyCourse={handleBuyCourse}
+        />
+      </main>
 
-          {/* Heading strictly in English */}
-          <h1 className="text-3xl sm:text-5xl font-black text-zinc-900 tracking-tight leading-tight">
-            Mentorship Course
-          </h1>
-          <p className="text-xl sm:text-2xl font-black text-orange-600 tracking-wide mt-2 uppercase">
-            Coming Soon
-          </p>
-
-          {/* Status Note */}
-          <p className="text-sm sm:text-base text-zinc-600 mt-4 leading-relaxed max-w-xl mx-auto font-['Hind_Siliguri',sans-serif]">
-            আমাদের এক্সক্লুসিভ মেন্টরশীপ প্রোগ্রামের পূর্ণাঙ্গ গাইডলাইন, মেন্টরদের সেশন প্ল্যান ও ভর্তি প্রক্রিয়া খুব শীঘ্রই প্রকাশিত হতে যাচ্ছে। সাথেই থাকুন!
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+      {/* Course Purchase / Pre-registration Modal */}
+      {isBuyModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+          onClick={() => setIsBuyModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-orange-200 p-6 sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              onClick={() => navigateTo('/classroom')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md shadow-orange-500/25 transition-all font-['Hind_Siliguri',sans-serif] active:scale-95 cursor-pointer"
+              onClick={() => setIsBuyModalOpen(false)}
+              aria-label="Close"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-orange-50 cursor-pointer transition-colors"
             >
-              <ArrowLeft size={16} />
-              <span>ক্লাসরুম মূল পাতায় ফিরে যান</span>
+              <X size={18} />
             </button>
-            <button
-              onClick={() => navigateTo('/classroom/courses')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 font-bold text-sm transition-all font-['Hind_Siliguri',sans-serif] cursor-pointer"
-            >
-              <span>অন্যান্য কোর্স দেখুন</span>
-            </button>
+
+            {!formSubmitted ? (
+              <>
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-bold mb-2">
+                    <Sparkles size={14} className="text-orange-600" />
+                    <span>কোর্স এনরোলমেন্ট / বুকিং</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif]">
+                    মেন্টরশীপ কোর্স বুকিং
+                  </h3>
+                  <p className="text-xs text-orange-700 font-bold mt-1 font-['Hind_Siliguri',sans-serif]">
+                    {buyCourseTitle}
+                  </p>
+                  <p className="text-xs text-zinc-500 mt-1 font-['Hind_Siliguri',sans-serif]">
+                    আপনার নাম ও ফোন নম্বর দিয়ে প্রি-বুক করে রাখুন। পেমেন্ট গেটওয়ে ও বিস্তারিত সরাসরি আপনার নম্বরে জানিয়ে দেওয়া হবে।
+                  </p>
+                </div>
+
+                <form onSubmit={handleFormSubmit} className="space-y-4 font-['Hind_Siliguri',sans-serif]">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">
+                      শিক্ষার্থীর নাম *
+                    </label>
+                    <div className="relative">
+                      <User size={16} className="absolute left-3.5 top-3.5 text-zinc-400" />
+                      <input
+                        type="text"
+                        required
+                        value={studentName}
+                        onChange={(e) => setStudentName(e.target.value)}
+                        placeholder="আপনার পূর্ণ নাম লিখুন"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-orange-200 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-orange-50/30"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">
+                      মোবাইল নম্বর (WhatsApp) *
+                    </label>
+                    <div className="relative">
+                      <Phone size={16} className="absolute left-3.5 top-3.5 text-zinc-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={studentPhone}
+                        onChange={(e) => setStudentPhone(e.target.value)}
+                        placeholder="01XXXXXXXXX"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-orange-200 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-orange-50/30 font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">
+                      মন্তব্য বা কোনো প্রশ্ন (ঐচ্ছিক)
+                    </label>
+                    <textarea
+                      value={studentMessage}
+                      onChange={(e) => setStudentMessage(e.target.value)}
+                      placeholder="আপনার লক্ষ্য বা কোনো বিশেষ জিজ্ঞাসা থাকলে লিখুন..."
+                      rows={2}
+                      className="w-full p-3 rounded-xl border border-orange-200 text-xs focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-orange-50/30"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <span>সংরক্ষণ হচ্ছে...</span>
+                    ) : (
+                      <>
+                        <span>বুকিং সম্পন্ন করুন</span>
+                        <Sparkles size={16} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="text-center py-4 font-['Hind_Siliguri',sans-serif]">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-200 shadow-sm">
+                  <CheckCircle2 size={30} />
+                </div>
+                <h4 className="text-xl font-bold text-zinc-900 mb-1">
+                  বুকিং সফল হয়েছে!
+                </h4>
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
+                  ধন্যবাদ, <span className="font-bold text-zinc-900">{studentName}</span>! <span className="text-orange-600 font-semibold">{buyCourseTitle}</span> এর জন্য আপনার অনুরোধ গৃহীত হয়েছে। শীঘ্রই আমাদের টিম আপনার নম্বরে যোগাযোগ করবে।
+                </p>
+                <button
+                  onClick={() => setIsBuyModalOpen(false)}
+                  className="w-full py-3 rounded-xl font-bold text-sm bg-orange-500 hover:bg-orange-600 text-white transition-all shadow-md"
+                >
+                  ঠিক আছে
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </main>
+      )}
     </div>
   );
 };

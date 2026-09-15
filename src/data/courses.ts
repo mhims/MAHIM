@@ -43,11 +43,11 @@ export const ALL_COURSES: CourseItem[] = [
       'প্রবলেম সলভিং ও মোটিভেশনাল ওয়ান-টু-ওয়ান সেশন',
       'কনসেপ্ট ক্লিয়ারিং থেকে ভর্তি পরীক্ষা জয় করার রোডম্যাপ',
     ],
-    status: 'launching_soon',
+    status: 'active',
     isFeatured: true,
     showOnMainPage: true, // Only this & 2 external courses shown on main page
-    actionText: 'বিস্তারিত দেখুন (Coming Soon)',
-    actionUrl: '/classroom/courses/mentorship',
+    actionText: 'বিস্তারিত ও কোর্সসমূহ',
+    actionUrl: '/classroom/mentorship',
     imageUrl: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789306292/mentorship_qt39pi.jpg',
   },
 

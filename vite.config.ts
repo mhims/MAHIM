@@ -42,6 +42,38 @@ export default defineConfig(() => {
               res.end();
             }
           });
+
+          // Sync main site blogs directly to src/data/userBlogPosts.ts so Git push includes them
+          server.middlewares.use('/api/save-main-blogs', (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', (chunk) => {
+                body += chunk;
+              });
+              req.on('end', () => {
+                try {
+                  const parsed = JSON.parse(body);
+                  if (Array.isArray(parsed.posts)) {
+                    const code = `import { BlogPost } from '../types';\n\n/**\n * All articles written by Mahim from the Admin Panel will be saved here automatically.\n */\nexport const USER_BLOG_POSTS: BlogPost[] = ${JSON.stringify(parsed.posts, null, 2)};\n`;
+                    const targetPath = path.resolve(__dirname, 'src/data/userBlogPosts.ts');
+                    fs.writeFileSync(targetPath, code, 'utf-8');
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ success: true }));
+                    return;
+                  }
+                } catch (err) {
+                  console.error('Error saving main blogs to disk:', err);
+                }
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Failed to write file' }));
+              });
+            } else {
+              res.statusCode = 405;
+              res.end();
+            }
+          });
         },
       },
     ],

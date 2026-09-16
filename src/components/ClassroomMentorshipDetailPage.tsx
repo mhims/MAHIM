@@ -271,10 +271,13 @@ export const ClassroomMentorshipDetailPage: React.FC<Props> = ({ slug }) => {
           </button>
         </div>
 
-        {/* 2-Column Responsive Layout: Left Description & Highlights, Right Course Thumbnail & Buy Card */}
+        {/* 2-Column Responsive Layout:
+            - Mobile (<lg): Order-1 shows the buying box (image, title, info, buy button) first; Order-2 shows details & story below it.
+            - Desktop (lg): Natural 2-column layout (7 cols left for details, 5 cols right for buying box) with smooth synchronized scrolling.
+        */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
-          {/* Left Column (Content & Details - 7 cols) */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8 font-['Hind_Siliguri',sans-serif]">
+          {/* Left Column (Content & Details - 7 cols on Desktop, Below Buy Card on Mobile) */}
+          <div className="order-2 lg:order-1 lg:col-span-7 space-y-6 sm:space-y-8 font-['Hind_Siliguri',sans-serif]">
             {/* Title Card */}
             <div className="bg-white rounded-3xl border border-orange-200/90 p-6 sm:p-8 shadow-sm">
               <div className="flex items-center gap-2 flex-wrap mb-4">
@@ -444,8 +447,8 @@ export const ClassroomMentorshipDetailPage: React.FC<Props> = ({ slug }) => {
             </div>
           </div>
 
-          {/* Right Column (Sticky Card with Image, Title, and Buy Button - 5 cols) */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-5 font-['Hind_Siliguri',sans-serif]">
+          {/* Right Column (Course Image, Title, and Buy Card - 5 cols on Desktop, First on Mobile) */}
+          <div className="order-1 lg:order-2 lg:col-span-5 space-y-5 font-['Hind_Siliguri',sans-serif]">
             <div className="bg-white rounded-3xl border-2 border-orange-200/90 p-5 sm:p-6 shadow-xl shadow-orange-500/10">
               {/* Image with glow border */}
               <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-950 border border-orange-200 shadow-md mb-5 aspect-[16/9] group">

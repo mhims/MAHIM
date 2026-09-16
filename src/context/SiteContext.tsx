@@ -268,10 +268,19 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
+  // Known sample dummy post IDs to completely eradicate
+  const SAMPLE_POST_IDS = new Set(['post-1', 'post-2', 'post-3']);
+
   const [posts, setPosts] = useState<BlogPost[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.POSTS);
-      return saved ? JSON.parse(saved) : DEFAULT_BLOG_POSTS;
+      if (saved) {
+        const parsed: BlogPost[] = JSON.parse(saved);
+        // Exclude sample dummy posts
+        const userCreated = parsed.filter((p) => !SAMPLE_POST_IDS.has(p.id));
+        return userCreated;
+      }
+      return DEFAULT_BLOG_POSTS;
     } catch {
       return DEFAULT_BLOG_POSTS;
     }
@@ -338,7 +347,18 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [certifications]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(posts));
+    const cleaned = posts.filter((p) => !SAMPLE_POST_IDS.has(p.id));
+    localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(cleaned));
+
+    // Automatically sync to src/data/userBlogPosts.ts on disk via Vite middleware
+    // so when pushed to GitHub, user's posts are included in the repository!
+    if (typeof window !== 'undefined') {
+      fetch('/api/save-main-blogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ posts: cleaned }),
+      }).catch(() => {});
+    }
   }, [posts]);
 
   useEffect(() => {

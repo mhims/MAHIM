@@ -47,7 +47,8 @@ const routes = [
   'classroom/suza',
   'classroom/mithen',
   'classroom/swocchol',
-  'portfolio'
+  'portfolio',
+  'thoughts'
 ];
 
 const siteUrl = 'https://mahims.com';
@@ -55,6 +56,7 @@ const defaultOgImage = `${siteUrl}/assets/og-main.png`;
 const classroomOgImage = `${siteUrl}/assets/og-classroom.jpg`;
 const chithiOgImage = `${siteUrl}/assets/og-chithi.jpg`;
 const salamiOgImage = `${siteUrl}/assets/og-salami.jpg`;
+const thoughtsOgImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg';
 
 const routeData = {
   classroom: {
@@ -2111,6 +2113,64 @@ const routeData = {
             </div>
           </section>
         </main>
+      </div>
+    `
+  },
+
+  thoughts: {
+    title: "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান | Mahim's World",
+    metaTitle: "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান",
+    description: "Think With Mahim (mahims.com/thoughts) — মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধানের মুক্ত বুদ্ধিবৃত্তিক অঙ্গন।",
+    keywords: "Think With Mahim, think with mahim, mahims.com/thoughts, মাহিম ইবনে খুদি দর্শন, ধর্মতত্ত্ব ও যুক্তি, ইসলাম ও সমকালীন দর্শন, আত্মশুদ্ধি ও মুক্তচিন্তা",
+    canonical: `${siteUrl}/thoughts/`,
+    ogTitle: "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান",
+    ogDescription: "মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধানের মুক্ত বুদ্ধিবৃত্তিক অঙ্গন।",
+    ogImage: thoughtsOgImage,
+    twitterTitle: "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান",
+    twitterDescription: "মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব ও জীবনের অনুসন্ধান।",
+    twitterImage: thoughtsOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "name": "Think With Mahim",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "হোম (Home)", "item": "https://mahims.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Think With Mahim", "item": "https://mahims.com/thoughts/" }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": "https://mahims.com/thoughts/#webpage",
+          "url": "https://mahims.com/thoughts/",
+          "name": "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান",
+          "description": "মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধান।",
+          "primaryImageOfPage": thoughtsOgImage,
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Mahim's World",
+            "url": "https://mahims.com/"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Mahim Ibne Khudi",
+            "url": "https://mahims.com/"
+          }
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div class="min-h-screen bg-[#fdfdfb] text-zinc-900 font-sans p-6 sm:p-12 max-w-5xl mx-auto">
+        <header class="text-center space-y-4 pt-6 pb-8">
+          <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-800 text-xs font-bold">দর্শন • ধর্মতত্ত্ব • বিশ্বাস ও যুক্তি</span>
+          <h1 class="text-4xl sm:text-5xl font-black text-zinc-950">Think With Mahim</h1>
+          <p class="text-xl font-bold text-amber-600">বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান</p>
+          <p class="text-sm text-zinc-600 max-w-xl mx-auto">এখানে আমি বিভিন্ন বিষয়ে লেখালেখি করবো। নিজের চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধান।</p>
+        </header>
+        <div class="rounded-2xl overflow-hidden border border-amber-500/25 my-6 shadow-xl">
+          <img src="${thoughtsOgImage}" alt="Think With Mahim" class="w-full h-auto block" />
+        </div>
       </div>
     `
   },

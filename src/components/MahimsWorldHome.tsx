@@ -519,31 +519,31 @@ export const MahimsWorldHome: React.FC = () => {
 
                 <div>
                   <h4 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white font-['Hind_Siliguri',sans-serif]">
-                    ভাবনা ও ইলম (ধর্মতত্ত্ব ও দর্শন)
+                    Think With Mahim
                   </h4>
                   <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-['Hind_Siliguri',sans-serif] mt-2 leading-relaxed">
-                    তুলনামূলক ধর্মতত্ত্ব, ইসলাম ও সমকালীন আধুনিক চিন্তাধারা, আত্মশুদ্ধি এবং বুদ্ধিবৃত্তিক সমাজ নিয়ে ব্যক্তিগত পাঠ ও গবেষণামূলক ভাবনা।
+                    বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান। তুলনামূলক ধর্মতত্ত্ব, দর্শন ও সমকালীন আধুনিক চিন্তাধারার বুদ্ধিবৃত্তিক সংকলন।
                   </p>
                 </div>
 
                 <div className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-400 font-['Hind_Siliguri',sans-serif]">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>তুলনামূলক ধর্মতত্ত্বের তাত্ত্বিক বিশ্লেষণ</span>
+                    <span>তুলনামূলক ধর্মতত্ত্ব ও দর্শন চর্চা</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>আত্মশুদ্ধি ও আধুনিক জীবনদর্শন</span>
+                    <span>বিশ্বাস, যুক্তি ও জীবনের অনুসন্ধান</span>
                   </div>
                 </div>
               </div>
 
               <div className="pt-6">
                 <button
-                  onClick={() => setActiveModal('theology')}
+                  onClick={(e) => navigateTo('/thoughts', e)}
                   className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all group-hover:shadow-emerald-600/40"
                 >
-                  <span>গবেষণার নোটস পড়ুন</span>
+                  <span>Think With Mahim</span>
                   <ChevronRight size={15} />
                 </button>
               </div>

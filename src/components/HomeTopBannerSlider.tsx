@@ -33,6 +33,13 @@ export const HOME_TOP_SLIDES: HomeTopSlide[] = [
     path: '/chithi',
     title: "Mahim's Chithi (চিঠি ও ভাবনা)",
   },
+  {
+    id: 'thoughts',
+    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg',
+    link: 'https://mahims.com/thoughts',
+    path: '/thoughts',
+    title: 'Think With Mahim (থিঙ্ক উইথ মাহিম)',
+  },
 ];
 
 export const HomeTopBannerSlider: React.FC = () => {

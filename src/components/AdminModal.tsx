@@ -47,6 +47,7 @@ import {
   Compass,
   ExternalLink
 } from 'lucide-react';
+import { AdminThoughtsTab } from './AdminThoughtsTab';
 
 export const AdminModal: React.FC = () => {
   const {
@@ -95,7 +96,7 @@ export const AdminModal: React.FC = () => {
 
   // Active Admin Tab
   const [activeTab, setActiveTab] = useState<
-    'general' | 'blog' | 'users' | 'experience' | 'skills' | 'sheets' | 'seo' | 'messages' | 'backup'
+    'general' | 'blog' | 'thoughts' | 'users' | 'experience' | 'skills' | 'sheets' | 'seo' | 'messages' | 'backup'
   >('general');
 
   // Blog Post form state (for creating or editing)
@@ -593,6 +594,7 @@ export const AdminModal: React.FC = () => {
             {[
               { id: 'general', label: 'হোম ও প্রোফাইল', icon: Sliders },
               { id: 'blog', label: 'ব্লগ পোস্ট ম্যানেজার', icon: BookOpen },
+              { id: 'thoughts', label: 'থিঙ্ক উইথ মাহিম (Thoughts)', icon: Compass },
               { id: 'users', label: 'ইউজার ও মেম্বারস', icon: Users },
               { id: 'experience', label: 'অভিজ্ঞতা ও শিক্ষা', icon: Briefcase },
               { id: 'skills', label: 'স্কিল ও সার্টিফিকেট', icon: Wrench },
@@ -1159,6 +1161,9 @@ export const AdminModal: React.FC = () => {
 
               </div>
             )}
+
+            {/* TAB: Think With Mahim (Thoughts) Manager */}
+            {activeTab === 'thoughts' && <AdminThoughtsTab />}
 
             {/* TAB 3: Users & Permission Control */}
             {activeTab === 'users' && (

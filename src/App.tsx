@@ -19,6 +19,7 @@ import { ClassroomMentorshipHubPage } from './components/ClassroomMentorshipHubP
 import { ClassroomMentorshipDetailPage } from './components/ClassroomMentorshipDetailPage';
 import { ExternalCourseDetailPage } from './components/ExternalCourseDetailPage';
 import { PortfolioPage } from './components/PortfolioPage';
+import { ThoughtsPage } from './components/ThoughtsPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { ClassroomMobileDock } from './components/ClassroomMobileDock';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
@@ -67,6 +68,7 @@ export default function App() {
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
+  const isThoughts = currentPath === '/thoughts' || currentPath.startsWith('/thoughts/');
   const isAllF = currentPath === '/allf';
   const isAllU = currentPath === '/allu';
   const isAllL = currentPath === '/alll';
@@ -345,6 +347,14 @@ export default function App() {
         <ClassroomPage />
         <ClassroomMobileDock currentPath={currentPath} />
       </>
+    );
+  }
+
+  if (isThoughts) {
+    return (
+      <SiteProvider>
+        <ThoughtsPage />
+      </SiteProvider>
     );
   }
 

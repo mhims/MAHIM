@@ -52,7 +52,8 @@ export const STANDALONE_ROUTES = new Set([
   '/classroom/samiul',
   '/classroom/suza',
   '/classroom/mithen',
-  '/classroom/swocchol'
+  '/classroom/swocchol',
+  '/thoughts'
 ]);
 
 export function isValidRoute(pathname: string): boolean {
@@ -60,8 +61,12 @@ export function isValidRoute(pathname: string): boolean {
   if (SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized)) {
     return true;
   }
-  // Allow dynamic /classroom/:slug and /courses/:slug
-  if (normalized.startsWith('/classroom/') || normalized.startsWith('/courses/')) {
+  // Allow dynamic /classroom/:slug, /courses/:slug, and /thoughts/:slug
+  if (
+    normalized.startsWith('/classroom/') ||
+    normalized.startsWith('/courses/') ||
+    normalized.startsWith('/thoughts/')
+  ) {
     return true;
   }
   return false;

@@ -105,6 +105,130 @@ export default defineConfig(() => {
               res.end();
             }
           });
+
+          // Sync Courses directly to src/data/courses.ts so Git push includes them
+          server.middlewares.use('/api/save-courses', (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', (chunk) => {
+                body += chunk;
+              });
+              req.on('end', () => {
+                try {
+                  const parsed = JSON.parse(body);
+                  if (typeof parsed.fileContent === 'string') {
+                    const targetPath = path.resolve(__dirname, 'src/data/courses.ts');
+                    fs.writeFileSync(targetPath, parsed.fileContent, 'utf-8');
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ success: true }));
+                    return;
+                  }
+                } catch (err) {
+                  console.error('Error saving courses to disk:', err);
+                }
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Failed to write courses file' }));
+              });
+            } else {
+              res.statusCode = 405;
+              res.end();
+            }
+          });
+
+          // Sync Teachers directly to src/data/teachers.ts so Git push includes them
+          server.middlewares.use('/api/save-teachers', (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', (chunk) => {
+                body += chunk;
+              });
+              req.on('end', () => {
+                try {
+                  const parsed = JSON.parse(body);
+                  if (typeof parsed.fileContent === 'string') {
+                    const targetPath = path.resolve(__dirname, 'src/data/teachers.ts');
+                    fs.writeFileSync(targetPath, parsed.fileContent, 'utf-8');
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ success: true }));
+                    return;
+                  }
+                } catch (err) {
+                  console.error('Error saving teachers to disk:', err);
+                }
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Failed to write teachers file' }));
+              });
+            } else {
+              res.statusCode = 405;
+              res.end();
+            }
+          });
+
+          // Sync Top Banner Slides to src/data/topSlides.ts so Git push includes them
+          server.middlewares.use('/api/save-top-slides', (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', (chunk) => {
+                body += chunk;
+              });
+              req.on('end', () => {
+                try {
+                  const parsed = JSON.parse(body);
+                  if (typeof parsed.fileContent === 'string') {
+                    const targetPath = path.resolve(__dirname, 'src/data/topSlides.ts');
+                    fs.writeFileSync(targetPath, parsed.fileContent, 'utf-8');
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ success: true }));
+                    return;
+                  }
+                } catch (err) {
+                  console.error('Error saving top slides to disk:', err);
+                }
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Failed to write top slides file' }));
+              });
+            } else {
+              res.statusCode = 405;
+              res.end();
+            }
+          });
+
+          // Sync Portfolio Projects to src/data/portfolioProjects.ts so Git push includes them
+          server.middlewares.use('/api/save-portfolio', (req, res) => {
+            if (req.method === 'POST') {
+              let body = '';
+              req.on('data', (chunk) => {
+                body += chunk;
+              });
+              req.on('end', () => {
+                try {
+                  const parsed = JSON.parse(body);
+                  if (typeof parsed.fileContent === 'string') {
+                    const targetPath = path.resolve(__dirname, 'src/data/portfolioProjects.ts');
+                    fs.writeFileSync(targetPath, parsed.fileContent, 'utf-8');
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ success: true }));
+                    return;
+                  }
+                } catch (err) {
+                  console.error('Error saving portfolio to disk:', err);
+                }
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Failed to write portfolio file' }));
+              });
+            } else {
+              res.statusCode = 405;
+              res.end();
+            }
+          });
         },
       },
     ],

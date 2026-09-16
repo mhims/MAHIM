@@ -17,6 +17,7 @@ import {
   Home
 } from 'lucide-react';
 import { ALL_COURSES, type CourseItem } from '../data/courses';
+import { getLiveCourses } from '../utils/courseManager';
 import { navigateTo } from '../utils/navigation';
 import { saveClassroomRegistration } from '../utils/classroomStorage';
 import { ClassroomMentorshipCoursesSection } from './ClassroomMentorshipCoursesSection';
@@ -86,7 +87,8 @@ export const ClassroomCoursesPage: React.FC = () => {
   };
 
   // Filter courses based on search & category
-  const filteredCourses = ALL_COURSES.filter((course) => {
+  const allLiveCourses = getLiveCourses();
+  const filteredCourses = allLiveCourses.filter((course) => {
     const matchesCategory = activeCategory === 'all' || course.category === activeCategory;
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -2,65 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { navigateTo } from '../utils/navigation';
+import { HomeTopSlide, INITIAL_TOP_SLIDES, getStoredTopSlides } from '../data/topSlides';
 
-export interface HomeTopSlide {
-  id: string;
-  image: string;
-  link: string;
-  path: string;
-  title: string;
-}
-
-export const HOME_TOP_SLIDES: HomeTopSlide[] = [
-  {
-    id: 'classroom',
-    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789445668/MAHIMSCLASSROOM_idmxpd.png',
-    link: 'https://mahims.com/classroom',
-    path: '/classroom',
-    title: "Mahim's Classroom (মাহিম'স ক্লাসরুম)",
-  },
-  {
-    id: 'portfolio',
-    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789573641/portfoliohomepage_ouzrea.jpg',
-    link: 'https://mahims.com/portfolio',
-    path: '/portfolio',
-    title: "Mahim's Portfolio (মাহিম'স পোর্টফোলিও)",
-  },
-  {
-    id: 'chithi',
-    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png',
-    link: 'https://mahims.com/chithi',
-    path: '/chithi',
-    title: "Mahim's Chithi (চিঠি ও ভাবনা)",
-  },
-  {
-    id: 'thoughts',
-    image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg',
-    link: 'https://mahims.com/thoughts',
-    path: '/thoughts',
-    title: 'Think With Mahim (থিঙ্ক উইথ মাহিম)',
-  },
-];
+export type { HomeTopSlide };
+export const HOME_TOP_SLIDES = INITIAL_TOP_SLIDES;
 
 export const HomeTopBannerSlider: React.FC = () => {
+  const [slides, setSlides] = useState<HomeTopSlide[]>(() => getStoredTopSlides());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
-  // Auto-advance slides every 3.2 seconds (3200ms) as requested
   useEffect(() => {
-    // Preload all 3 banner images to prevent any white flash or lag during sliding
-    HOME_TOP_SLIDES.forEach((slide) => {
+    const loaded = getStoredTopSlides();
+    setSlides(loaded);
+
+    // Preload banner images to prevent any flash or lag
+    loaded.forEach((slide) => {
       const img = new Image();
       img.src = slide.image;
     });
 
+    if (loaded.length === 0) return;
+
     const timer = setInterval(() => {
-      setCurrentSlideIndex((prev) => (prev + 1) % HOME_TOP_SLIDES.length);
+      setCurrentSlideIndex((prev) => (prev + 1) % loaded.length);
     }, 3200);
 
     return () => clearInterval(timer);
   }, []);
 
-  const currentSlide = HOME_TOP_SLIDES[currentSlideIndex];
+  const currentSlide = slides[currentSlideIndex] || slides[0] || INITIAL_TOP_SLIDES[0];
 
   const handleSlideClick = (e: React.MouseEvent) => {
     navigateTo(currentSlide.path, e);

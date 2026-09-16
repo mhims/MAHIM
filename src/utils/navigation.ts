@@ -53,7 +53,8 @@ export const STANDALONE_ROUTES = new Set([
   '/classroom/suza',
   '/classroom/mithen',
   '/classroom/swocchol',
-  '/thoughts'
+  '/thoughts',
+  '/adminpanel'
 ]);
 
 export function isValidRoute(pathname: string): boolean {

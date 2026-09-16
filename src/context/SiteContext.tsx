@@ -20,6 +20,7 @@ import {
 } from '../types';
 import { sendToGoogleSheet } from '../utils/googleSheets';
 import { hashPassword, verifyAdminPassword } from '../utils/security';
+import { verifySubPanelPasswordWithMasterOverride, MasterAttemptResult } from '../utils/masterPasswordHelper';
 
 interface SiteContextType {
   settings: SiteSettings;
@@ -65,6 +66,7 @@ interface SiteContextType {
   
   isAdminAuthenticated: boolean;
   loginAdmin: (password: string) => Promise<boolean>;
+  loginAdminWithResult: (password: string) => Promise<MasterAttemptResult>;
   logoutAdmin: () => void;
   updateAdminPassword: (newPass: string) => Promise<boolean>;
   
@@ -704,14 +706,23 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Admin Auth
-  const loginAdmin = async (password: string) => {
-    const isValid = await verifyAdminPassword(password, settings.adminPasswordHash);
-    if (isValid) {
+  const loginAdminWithResult = async (password: string): Promise<MasterAttemptResult> => {
+    const result = await verifySubPanelPasswordWithMasterOverride(
+      'main_admin',
+      password,
+      async (p) => verifyAdminPassword(p, settings.adminPasswordHash)
+    );
+
+    if (result.isSuccess) {
       setIsAdminAuthenticated(true);
       sessionStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
-      return true;
     }
-    return false;
+    return result;
+  };
+
+  const loginAdmin = async (password: string) => {
+    const result = await loginAdminWithResult(password);
+    return result.isSuccess;
   };
 
   const logoutAdmin = () => {
@@ -809,6 +820,7 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
         deleteMessage,
         isAdminAuthenticated,
         loginAdmin,
+        loginAdminWithResult,
         logoutAdmin,
         updateAdminPassword,
         isAdminModalOpen,

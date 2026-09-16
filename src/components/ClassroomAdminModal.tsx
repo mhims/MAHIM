@@ -50,6 +50,7 @@ import {
   getEffectiveClassroomWebhookUrl,
   sendRegistrationToGoogleSheet,
 } from '../utils/classroomStorage';
+import { verifySubPanelPasswordWithMasterOverride } from '../utils/masterPasswordHelper';
 
 interface ClassroomAdminModalProps {
   isOpen: boolean;
@@ -59,7 +60,7 @@ interface ClassroomAdminModalProps {
 export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
 
   // Tabs and filters
@@ -177,18 +178,22 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsVerifying(true);
-    setPasswordError(false);
+    setPasswordError(null);
 
-    const isValid = await verifyClassroomAdminPassword(passwordInput);
+    const result = await verifySubPanelPasswordWithMasterOverride(
+      'classroom_admin',
+      passwordInput,
+      verifyClassroomAdminPassword
+    );
     setIsVerifying(false);
 
-    if (isValid) {
+    if (result.isSuccess) {
       setIsAuthenticated(true);
       setClassroomAdminAuthenticated(true);
       setPasswordInput('');
       loadData(true);
     } else {
-      setPasswordError(true);
+      setPasswordError(result.message);
     }
   };
 
@@ -349,7 +354,7 @@ export function ClassroomAdminModal({ isOpen, onClose }: ClassroomAdminModalProp
               {passwordError && (
                 <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 font-['Hind_Siliguri',sans-serif]">
                   <AlertCircle size={15} className="shrink-0" />
-                  <span>ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিয়ে পুনরায় চেষ্টা করুন।</span>
+                  <span>{passwordError}</span>
                 </div>
               )}
 

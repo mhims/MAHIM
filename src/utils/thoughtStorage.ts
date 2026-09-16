@@ -81,6 +81,8 @@ export function getThoughtPosts(includeDrafts = false): ThoughtPost[] {
   }
 }
 
+export const getStoredThoughtPosts = (includeDrafts = true) => getThoughtPosts(includeDrafts);
+
 export function getThoughtPostBySlug(slug: string): ThoughtPost | null {
   if (!slug) return null;
   const cleanSlug = slug.toLowerCase().trim();

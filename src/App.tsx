@@ -22,6 +22,7 @@ import { PortfolioPage } from './components/PortfolioPage';
 import { ThoughtsPage } from './components/ThoughtsPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { ClassroomMobileDock } from './components/ClassroomMobileDock';
+import { GlobalAdminPanel } from './components/GlobalAdminPanel';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 import { trackPageView, getActiveWebhookUrl } from './utils/visitorTracker';
 
@@ -68,6 +69,7 @@ export default function App() {
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
+  const isAdminPanel = currentPath === '/adminpanel' || currentPath.startsWith('/adminpanel/');
   const isThoughts = currentPath === '/thoughts' || currentPath.startsWith('/thoughts/');
   const isAllF = currentPath === '/allf';
   const isAllU = currentPath === '/allu';
@@ -235,6 +237,14 @@ export default function App() {
     isBanglaBossCourse,
     isTeacherProfile,
   ]);
+
+  if (isAdminPanel) {
+    return (
+      <SiteProvider>
+        <GlobalAdminPanel />
+      </SiteProvider>
+    );
+  }
 
   if (isSalami) {
     return <SalamiPage />;

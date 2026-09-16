@@ -297,5 +297,18 @@ export const ALL_COURSES: CourseItem[] = [
 
 // Helper to get only the courses selected for the main /classroom page
 export function getMainPageCourses(): CourseItem[] {
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('mahims_classroom_courses_v2');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.filter((course: CourseItem) => course.showOnMainPage === true);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
   return ALL_COURSES.filter((course) => course.showOnMainPage === true);
 }

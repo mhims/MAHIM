@@ -81,6 +81,7 @@ export const AdminModal: React.FC = () => {
     deleteMessage,
     isAdminAuthenticated,
     loginAdmin,
+    loginAdminWithResult,
     logoutAdmin,
     updateAdminPassword,
     isAdminModalOpen,
@@ -214,10 +215,10 @@ export const AdminModal: React.FC = () => {
     e.preventDefault();
     setIsVerifying(true);
     setPasswordError('');
-    const success = await loginAdmin(passwordInput);
+    const result = await loginAdminWithResult(passwordInput);
     setIsVerifying(false);
-    if (!success) {
-      setPasswordError('ভুল পাসওয়ার্ড! সঠিক এডমিন পাসওয়ার্ড প্রদান করুন।');
+    if (!result.isSuccess) {
+      setPasswordError(result.message);
     } else {
       setPasswordInput('');
     }

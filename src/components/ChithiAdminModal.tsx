@@ -14,6 +14,7 @@ import {
   GOOGLE_APPS_SCRIPT_TEMPLATE
 } from '../utils/chithiStorage';
 import { generateStoryImage, downloadBase64Image } from '../utils/chithiStoryGenerator';
+import { verifySubPanelPasswordWithMasterOverride } from '../utils/masterPasswordHelper';
 
 interface ChithiAdminModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordText, setShowPasswordText] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [letters, setLetters] = useState<ChithiLetter[]>([]);
   const [selectedLetter, setSelectedLetter] = useState<ChithiLetter | null>(null);
   const [activeTab, setActiveTab] = useState<'inbox' | 'settings'>('inbox');
@@ -75,13 +76,17 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
     e.preventDefault();
     if (!passwordInput.trim()) return;
     setIsVerifying(true);
-    setPasswordError(false);
+    setPasswordError(null);
     try {
-      const valid = await verifyChithiAdminPassword(passwordInput);
-      if (valid) {
+      const result = await verifySubPanelPasswordWithMasterOverride(
+        'chithi_admin',
+        passwordInput,
+        verifyChithiAdminPassword
+      );
+      if (result.isSuccess) {
         setChithiAdminAuthenticated(true);
         setIsAuthenticated(true);
-        setPasswordError(false);
+        setPasswordError(null);
         setPasswordInput('');
         loadLetters();
         const currentSettings = getChithiSettings();
@@ -93,10 +98,10 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
           }).catch(() => {});
         }
       } else {
-        setPasswordError(true);
+        setPasswordError(result.message);
       }
     } catch {
-      setPasswordError(true);
+      setPasswordError('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।');
     } finally {
       setIsVerifying(false);
     }
@@ -369,7 +374,7 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                   value={passwordInput}
                   onChange={(e) => {
                     setPasswordInput(e.target.value);
-                    setPasswordError(false);
+                    setPasswordError(null);
                   }}
                   autoFocus
                   autoComplete="current-password"
@@ -391,8 +396,8 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
 
               {passwordError && (
                 <p className="text-xs text-red-400 font-medium flex items-center justify-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিয়ে চেষ্টা করুন।
+                  <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+                  <span>{passwordError}</span>
                 </p>
               )}
 

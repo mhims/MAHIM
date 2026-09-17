@@ -56,7 +56,7 @@ const routes = [
 const siteUrl = 'https://mahims.com';
 const defaultOgImage = `${siteUrl}/assets/og-main.png`;
 const classroomOgImage = `${siteUrl}/assets/og-classroom.jpg`;
-const chithiOgImage = `${siteUrl}/assets/og-chithi.jpg`;
+const chithiOgImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png';
 const salamiOgImage = `${siteUrl}/assets/og-salami.jpg`;
 const thoughtsOgImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg';
 

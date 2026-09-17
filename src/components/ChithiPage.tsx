@@ -68,16 +68,18 @@ export function ChithiPage() {
     });
 
     // Update Open Graph and Twitter tags
+    const chithiImageUrl = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png';
     const ogTags: Record<string, string> = {
       'og:title': 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে',
       'og:description': 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।',
       'og:url': 'https://mahims.com/chithi',
       'og:site_name': 'Mahim Chithi',
-      'og:image': 'https://mahims.com/assets/og-chithi.jpg',
-      'og:image:secure_url': 'https://mahims.com/assets/og-chithi.jpg',
+      'og:image': chithiImageUrl,
+      'og:image:secure_url': chithiImageUrl,
+      'og:image:type': 'image/png',
       'twitter:title': 'Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে',
       'twitter:description': 'মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা বা সিক্রেট বার্তা পাঠান ১০০% নিরাপদে।',
-      'twitter:image': 'https://mahims.com/assets/og-chithi.jpg',
+      'twitter:image': chithiImageUrl,
       'twitter:card': 'summary_large_image',
     };
 
@@ -90,6 +92,26 @@ export function ChithiPage() {
       }
       el.setAttribute('content', val);
     });
+
+    // Also update twitter name-based tags for maximum social compatibility
+    ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach((tName) => {
+      let el = document.querySelector(`meta[name="${tName}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute('name', tName);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', ogTags[tName] || '');
+    });
+
+    // Update image_src link for WhatsApp & legacy link crawlers
+    let imageSrc = document.querySelector('link[rel="image_src"]');
+    if (!imageSrc) {
+      imageSrc = document.createElement('link');
+      imageSrc.setAttribute('rel', 'image_src');
+      document.head.appendChild(imageSrc);
+    }
+    imageSrc.setAttribute('href', chithiImageUrl);
 
     // Update canonical link
     let canonical = document.querySelector('link[rel="canonical"]');

@@ -127,9 +127,6 @@ export default function App() {
 
   // Live Visitor Analytics (Tracks IP, device, OS, browser, duration to Google Sheets)
   useEffect(() => {
-    // Never track visits on /chithi to prevent any visit logs from reaching the Chithi sheet
-    if (currentPath === '/chithi' || currentPath.startsWith('/chithi')) return;
-
     const webhookUrl = getActiveWebhookUrl();
     if (!webhookUrl) return;
     const cleanup = trackPageView(webhookUrl, currentPath);

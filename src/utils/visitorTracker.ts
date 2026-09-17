@@ -153,7 +153,7 @@ export function getReadablePageName(path: string): string {
   if (path === '/classroom/courses/octal-1-hsc-ict') return 'অক্টাল ১.০ আইসিটি কোর্স';
   if (path === '/classroom/courses/bangla-boss-2-course') return 'বাংলা বস ২.০ কোর্স';
   if (path.startsWith('/classroom/')) return `ক্লাসরুম শিক্ষক (${path.replace('/classroom/', '')})`;
-  if (path === '/chithi') return 'মাহিম চিঠি (Chithi Anonymous)';
+  if (path === '/chithi' || path.startsWith('/chithi')) return 'মাহিম চিঠি (Chithi Anonymous)';
   if (path === '/salami') return 'ডিজিটাল সালামি (Salami)';
   if (path === '/blog') return 'ব্লগ ও লেখালেখি (Blog)';
   if (path === '/portfolio' || path === '/about') return 'পোর্টফোলিও / প্রফাইল';
@@ -208,12 +208,11 @@ export function trackPageView(
   webhookUrl: string | undefined,
   currentPath: string
 ): () => void {
-  // Never log visits on /chithi page
-  if (!currentPath || currentPath === '/chithi' || currentPath.startsWith('/chithi')) {
+  if (!currentPath) {
     return () => {};
   }
 
-  // Never send visitor logs to the Chithi webhook
+  // Never send visitor logs to the Chithi webhook (strict isolation guard)
   if (
     !webhookUrl ||
     !webhookUrl.startsWith('http') ||

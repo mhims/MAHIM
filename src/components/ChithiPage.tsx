@@ -4,7 +4,12 @@ import {
   CheckCircle2, Copy, RefreshCw, PenTool, Lock, ArrowRight
 } from 'lucide-react';
 import { ChithiAdminModal } from './ChithiAdminModal';
-import { detectUserDevice, saveLetter } from '../utils/chithiStorage';
+import { 
+  detectUserDevice, 
+  saveLetter, 
+  recordDeletedChithiText, 
+  recordUnsentChithiDraft 
+} from '../utils/chithiStorage';
 
 export function ChithiPage() {
   const [content, setContent] = useState('');
@@ -20,6 +25,14 @@ export function ChithiPage() {
   // Admin Modal state
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const letterAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Smart tracking refs for Drafts & Deleted texts
+  const contentRef = useRef('');
+  const maxDraftRef = useRef('');
+  const lastLoggedDeleteRef = useRef('');
+  const lastLoggedDraftRef = useRef('');
+  const isSentRef = useRef(false);
+  const deleteTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Setup Dynamic SEO for Google Ranking
   useEffect(() => {
@@ -95,6 +108,97 @@ export function ChithiPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Listen for user leaving the page without sending (Unsent Draft or unsynced Delete)
+  useEffect(() => {
+    const handleExit = () => {
+      if (isSentRef.current) return;
+      const currentText = contentRef.current.trim();
+      const peakText = maxDraftRef.current.trim();
+
+      // If user typed content and left without clicking Send -> record unsent draft!
+      if (currentText.length >= 3 && lastLoggedDraftRef.current !== currentText) {
+        lastLoggedDraftRef.current = currentText;
+        recordUnsentChithiDraft(currentText, detectUserDevice());
+      }
+      // If user typed content, deleted it, and left before the debounce timer fired -> record deleted text!
+      else if (!currentText && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+        lastLoggedDeleteRef.current = peakText;
+        recordDeletedChithiText(peakText, detectUserDevice());
+      }
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        handleExit();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleExit);
+    window.addEventListener('pagehide', handleExit);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      // Also handles SPA component unmount when navigating to another route!
+      handleExit();
+      window.removeEventListener('beforeunload', handleExit);
+      window.removeEventListener('pagehide', handleExit);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      if (deleteTimerRef.current) {
+        clearTimeout(deleteTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleContentChange = (val: string) => {
+    setContent(val);
+    contentRef.current = val;
+
+    if (isSentRef.current) return;
+
+    const trimmed = val.trim();
+    // Keep track of the longest meaningful draft typed
+    if (trimmed.length > maxDraftRef.current.trim().length) {
+      maxDraftRef.current = val;
+    }
+
+    const peakText = maxDraftRef.current.trim();
+    // Check if user cleared or drastically deleted (> 75% deleted) the text
+    const isCleared = trimmed.length === 0 || (peakText.length >= 8 && trimmed.length <= peakText.length * 0.25);
+
+    if (isCleared && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      deleteTimerRef.current = setTimeout(() => {
+        if (isSentRef.current) return;
+        const currentTrimmed = contentRef.current.trim();
+        const stillCleared = currentTrimmed.length === 0 || (peakText.length >= 8 && currentTrimmed.length <= peakText.length * 0.25);
+        if (stillCleared && lastLoggedDeleteRef.current !== peakText) {
+          lastLoggedDeleteRef.current = peakText;
+          recordDeletedChithiText(peakText, detectUserDevice());
+          maxDraftRef.current = currentTrimmed;
+        }
+      }, 2500);
+    } else {
+      // If user resumed typing, cancel pending delete timer
+      if (deleteTimerRef.current && trimmed.length > peakText.length * 0.35) {
+        clearTimeout(deleteTimerRef.current);
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    if (isSentRef.current) return;
+    const trimmed = contentRef.current.trim();
+    const peakText = maxDraftRef.current.trim();
+
+    // If box was emptied after writing something, immediately log the deleted text on blur
+    if (!trimmed && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      lastLoggedDeleteRef.current = peakText;
+      recordDeletedChithiText(peakText, detectUserDevice());
+      maxDraftRef.current = '';
+    }
+  };
+
   // Quick Inspiration Prompts
   const inspirationPrompts = [
     '💌 একটি না বলা কথা...',
@@ -105,7 +209,8 @@ export function ChithiPage() {
   ];
 
   const handleApplyPrompt = (promptText: string) => {
-    setContent((prev) => (prev ? `${prev}\n${promptText} ` : `${promptText} `));
+    const updated = contentRef.current ? `${contentRef.current}\n${promptText} ` : `${promptText} `;
+    handleContentChange(updated);
     letterAreaRef.current?.focus();
   };
 
@@ -116,6 +221,8 @@ export function ChithiPage() {
       return;
     }
 
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    isSentRef.current = true;
     setErrorMessage('');
     setIsSending(true);
 
@@ -136,6 +243,12 @@ export function ChithiPage() {
   };
 
   const handleReset = () => {
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    isSentRef.current = false;
+    contentRef.current = '';
+    maxDraftRef.current = '';
+    lastLoggedDeleteRef.current = '';
+    lastLoggedDraftRef.current = '';
     setContent('');
     setIsSent(false);
     setErrorMessage('');
@@ -299,7 +412,8 @@ export function ChithiPage() {
                 <textarea
                   ref={letterAreaRef}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={(e) => handleContentChange(e.target.value)}
+                  onBlur={handleBlur}
                   placeholder="প্রিয় মাহিম,&#10;এখানে আপনার না বলা কথা, সিক্রেট অনুভূতি, প্রশংসা বা মনের যে কোনো কথা লিখুন..."
                   rows={6}
                   maxLength={1000}

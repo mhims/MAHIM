@@ -208,7 +208,17 @@ export function trackPageView(
   webhookUrl: string | undefined,
   currentPath: string
 ): () => void {
-  if (!webhookUrl || !webhookUrl.startsWith('http')) {
+  // Never log visits on /chithi page
+  if (!currentPath || currentPath === '/chithi' || currentPath.startsWith('/chithi')) {
+    return () => {};
+  }
+
+  // Never send visitor logs to the Chithi webhook
+  if (
+    !webhookUrl ||
+    !webhookUrl.startsWith('http') ||
+    webhookUrl.includes('AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w')
+  ) {
     return () => {};
   }
 
@@ -420,6 +430,9 @@ export interface VisitorRecord {
 }
 
 export const DEFAULT_MAHIMS_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
+
+const CHITHI_WEBHOOK_URL_GUARD =
   'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
 
 const VISITOR_STORAGE_KEY = 'mahims_visitor_records_cache_v1';
@@ -478,7 +491,12 @@ export function getActiveWebhookUrl(): string {
     const saved = localStorage.getItem('mahims_site_settings_v1');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed.googleSheetWebhookUrl && typeof parsed.googleSheetWebhookUrl === 'string' && parsed.googleSheetWebhookUrl.trim()) {
+      if (
+        parsed.googleSheetWebhookUrl &&
+        typeof parsed.googleSheetWebhookUrl === 'string' &&
+        parsed.googleSheetWebhookUrl.trim() &&
+        parsed.googleSheetWebhookUrl.trim() !== CHITHI_WEBHOOK_URL_GUARD
+      ) {
         return parsed.googleSheetWebhookUrl.trim();
       }
     }

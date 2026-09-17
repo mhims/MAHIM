@@ -67,7 +67,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   ],
   googleSiteVerification: 't4ejgDcENe8vJ4Q97NJwtR6odLfYib__3hEpQhVwuIQ',
 
-  googleSheetWebhookUrl: 'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec',
+  googleSheetWebhookUrl: 'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec',
   googleSheetSyncEnabled: true,
 
   // Salted SHA-256 hash for @@MahimsdotcomAdmin11223300@@

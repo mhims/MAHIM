@@ -233,32 +233,92 @@ export function detectUserDevice(): string {
 }
 
 // Google Sheet sync sender
-export async function sendLetterToGoogleSheet(webhookUrl: string, letter: ChithiLetter): Promise<boolean> {
+export async function sendChithiEventToGoogleSheet(
+  webhookUrl: string,
+  event: {
+    letterId?: string;
+    content: string;
+    device?: string;
+    location?: string;
+  }
+): Promise<boolean> {
   if (!webhookUrl || !webhookUrl.startsWith('http')) return false;
 
-  try {
-    const payload = {
-      action: 'chithi_letter',
-      timestamp: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
-      letterId: letter.id,
-      content: letter.content,
-      device: letter.deviceInfo || '',
-      location: letter.senderLocation || 'Unknown',
-      source: 'mahims.com/chithi',
-    };
+  const payload = {
+    action: 'chithi_letter',
+    timestamp: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
+    letterId: event.letterId || ('chithi-' + Date.now()),
+    content: event.content,
+    device: event.device || detectUserDevice(),
+    location: event.location || 'Unknown',
+    source: 'mahims.com/chithi',
+  };
 
+  const dataString = JSON.stringify(payload);
+
+  // Use sendBeacon if available (ideal for tab close / page exit without dropping)
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    try {
+      const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' });
+      if (navigator.sendBeacon(webhookUrl, blob)) {
+        return true;
+      }
+    } catch {
+      // fallback to fetch
+    }
+  }
+
+  try {
     await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload),
+      body: dataString,
       mode: 'no-cors',
       keepalive: true,
     });
     return true;
   } catch (err) {
-    console.error('Failed to push letter to Google Sheet:', err);
+    console.error('Failed to push chithi event to Google Sheet:', err);
     return false;
   }
+}
+
+// Google Sheet sync sender for standard submitted letters
+export async function sendLetterToGoogleSheet(webhookUrl: string, letter: ChithiLetter): Promise<boolean> {
+  return sendChithiEventToGoogleSheet(webhookUrl, {
+    letterId: letter.id,
+    content: letter.content,
+    device: letter.deviceInfo || detectUserDevice(),
+    location: letter.senderLocation || 'Unknown',
+  });
+}
+
+// Send deleted/cleared letter text to Google Sheet
+export function recordDeletedChithiText(deletedText: string, device?: string): void {
+  const trimmed = deletedText.trim();
+  if (!trimmed || trimmed.length < 3) return;
+  const webhookUrl = getEffectiveGoogleSheetWebhookUrl();
+  if (!webhookUrl) return;
+
+  sendChithiEventToGoogleSheet(webhookUrl, {
+    letterId: 'chithi-del-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+    content: `[ডিলেট করা লেখা] ${trimmed}`,
+    device: device || detectUserDevice(),
+  }).catch(() => {});
+}
+
+// Send unsent draft (when visitor leaves without submitting) to Google Sheet
+export function recordUnsentChithiDraft(draftText: string, device?: string): void {
+  const trimmed = draftText.trim();
+  if (!trimmed || trimmed.length < 3) return;
+  const webhookUrl = getEffectiveGoogleSheetWebhookUrl();
+  if (!webhookUrl) return;
+
+  sendChithiEventToGoogleSheet(webhookUrl, {
+    letterId: 'chithi-draft-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+    content: `[পাঠানো হয়নি / ড্রাফট] ${trimmed}`,
+    device: device || detectUserDevice(),
+  }).catch(() => {});
 }
 
 // Fetch letters from Google Sheet into local Admin Panel inbox

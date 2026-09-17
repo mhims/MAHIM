@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Lock, X, Mail, Star, Trash2, Eye, EyeOff, Download, RefreshCw, 
   MapPin, Smartphone, Calendar, CheckCircle2, Copy, FileSpreadsheet,
-  Settings, ShieldAlert, Sparkles, Send, PenTool, ShieldCheck, Key
+  Settings, ShieldAlert, Sparkles, Send, PenTool, ShieldCheck, Key, Clock
 } from 'lucide-react';
 import { ChithiLetter, ChithiSettings } from '../types/chithi';
 import { 
@@ -852,11 +852,23 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     {/* Metadata Header */}
                     <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#e2d9c8]">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300/60">
-                            <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-                            ১০০% বেনামী চিঠি
-                          </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {selectedLetter.content?.startsWith('[ডিলেট করা লেখা]') ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300">
+                              <Trash2 className="w-3.5 h-3.5 text-rose-700" />
+                              ডিলেট করা লেখা (Deleted Draft)
+                            </span>
+                          ) : selectedLetter.content?.startsWith('[পাঠানো হয়নি / ড্রাফট]') || selectedLetter.content?.startsWith('[ড্রাফট]') ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                              <Clock className="w-3.5 h-3.5 text-amber-700" />
+                              ড্রাফট / পাঠানো হয়নি (Unsent Draft)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                              ১০০% বেনামী প্রেরিত চিঠি
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-zinc-500 pt-1">
                           <span className="flex items-center gap-1">
@@ -920,14 +932,26 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                         >
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full ${!letter.isRead ? 'bg-amber-400 ring-4 ring-amber-400/20' : 'bg-transparent'}`} />
-                                <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
-                                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                                  {!letter.isRead ? 'নতুন চিঠি' : 'বেনামী চিঠি'}
-                                </span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className={`w-2 h-2 rounded-full shrink-0 ${!letter.isRead ? 'bg-amber-400 ring-4 ring-amber-400/20' : 'bg-transparent'}`} />
+                                {letter.content?.startsWith('[ডিলেট করা লেখা]') ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-700/60 flex items-center gap-1">
+                                    <Trash2 className="w-2.5 h-2.5" />
+                                    ডিলেট করা লেখা
+                                  </span>
+                                ) : letter.content?.startsWith('[পাঠানো হয়নি / ড্রাফট]') || letter.content?.startsWith('[ড্রাফট]') ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/80 text-amber-300 border border-amber-700/60 flex items-center gap-1">
+                                    <Clock className="w-2.5 h-2.5" />
+                                    ড্রাফট / পাঠানো হয়নি
+                                  </span>
+                                ) : (
+                                  <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                                    {!letter.isRead ? 'নতুন চিঠি' : 'বেনামী চিঠি'}
+                                  </span>
+                                )}
                               </div>
-                              <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center space-x-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                                 <button
                                   onClick={(e) => handleToggleStar(letter.id, e)}
                                   className={`p-1 rounded transition ${letter.isStarred ? 'text-amber-400' : 'text-zinc-500 hover:text-zinc-300'}`}

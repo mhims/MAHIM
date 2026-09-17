@@ -52,16 +52,28 @@ export const ThoughtsPage: React.FC = () => {
 
     // Dynamic SEO for Thoughts page
     const originalTitle = document.title;
-    document.title = "Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান | Mahim's World";
+    document.title = "Think With Mahim (Thik With Mahim) — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান | Mahim's World";
 
     let metaDesc = document.querySelector('meta[name="description"]');
     const originalDesc = metaDesc?.getAttribute('content') || '';
     if (metaDesc) {
       metaDesc.setAttribute(
         'content',
-        'Think With Mahim: মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধানের মুক্ত বুদ্ধিবৃত্তিক অঙ্গন।'
+        'Think With Mahim (Thik With Mahim / থিঙ্ক উইথ মাহিম): মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধানের মুক্ত বুদ্ধিবৃত্তিক অঙ্গন।'
       );
     }
+
+    // Dynamic Meta Keywords for Search Engines
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute(
+      'content',
+      'Thik With Mahim, Think With Mahim, thik with mahim, think with mahim, thinkwithmahim, thikwithmahim, থিঙ্ক উইথ মাহিম, ঠিক উইথ মাহিম, মাহিম ইবনে খুদি চিন্তাভাবনা, mahims.com/thoughts, mahims.com/think-with-mahim, দর্শন ও ধর্মতত্ত্ব'
+    );
 
     // JSON-LD structured data injection
     const scriptId = 'thoughts-jsonld';
@@ -74,10 +86,21 @@ export const ThoughtsPage: React.FC = () => {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: 'Think With Mahim',
-        headline: 'Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান',
+        alternateName: [
+          'Thik With Mahim',
+          'think with mahim',
+          'thik with mahim',
+          'thinkwithmahim',
+          'thikwithmahim',
+          'থিঙ্ক উইথ মাহিম',
+          'ঠিক উইথ মাহিম',
+        ],
+        headline: 'Think With Mahim (Thik With Mahim) — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান',
         description:
-          'মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধান।',
+          'Think With Mahim (Thik With Mahim / থিঙ্ক উইথ মাহিম): মাহিম ইবনে খুদির ব্যক্তিগত চিন্তাভাবনা, দর্শন, ধর্মতত্ত্ব, বিশ্বাস ও যুক্তির আলোয় জীবনের অনুসন্ধান।',
         url: 'https://mahims.com/thoughts/',
+        keywords:
+          'Thik With Mahim, Think With Mahim, think with mahim, thik with mahim, thinkwithmahim, থিঙ্ক উইথ মাহিম, ঠিক উইথ মাহিম',
         author: {
           '@type': 'Person',
           name: 'Mahim Ibne Khudi',
@@ -195,10 +218,10 @@ export const ThoughtsPage: React.FC = () => {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12"
         >
-          <div
+            <div
             id="top-think-with-mahim-banner"
             className="relative group p-[3px] rounded-2xl sm:rounded-3xl overflow-hidden orange-pulsing-glow shadow-xl shadow-amber-500/10 dark:shadow-orange-950/40"
-            title="Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান"
+            title="Think With Mahim (Thik With Mahim) — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান"
           >
             {/* Traveling Orange/Amber Light Beam */}
             <div className="absolute inset-[-150%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_300deg,#ea580c_320deg,#f59e0b_340deg,#fbbf24_355deg,#fff7ed_360deg)] pointer-events-none" />
@@ -207,7 +230,7 @@ export const ThoughtsPage: React.FC = () => {
             <div className="relative w-full rounded-[13px] sm:rounded-[21px] overflow-hidden bg-white dark:bg-zinc-950 select-none">
               <img
                 src={BANNER_IMAGE_URL}
-                alt="Think With Mahim — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান"
+                alt="Think With Mahim (Thik With Mahim) — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান"
                 className="w-full h-auto object-cover block"
                 loading="eager"
               />
@@ -228,9 +251,14 @@ export const ThoughtsPage: React.FC = () => {
               <span>দর্শন • ধর্মতত্ত্ব • বিশ্বাস ও যুক্তি</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] font-['Outfit',sans-serif] select-none text-zinc-950 dark:text-white">
-              Think With <span className="text-amber-500 dark:text-amber-400">Mahim</span>
-            </h1>
+            <div>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] font-['Outfit',sans-serif] select-none text-zinc-950 dark:text-white">
+                Think With <span className="text-amber-500 dark:text-amber-400">Mahim</span>
+              </h1>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 font-['Hind_Siliguri',sans-serif] font-medium tracking-wide">
+                থিঙ্ক উইথ মাহিম • Thik With Mahim • Intellectual Sanctuary
+              </p>
+            </div>
 
             <p className="text-lg sm:text-2xl font-bold font-['Hind_Siliguri',sans-serif] text-amber-600 dark:text-amber-400">
               বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান

@@ -521,7 +521,10 @@ export const MahimsWorldHome: React.FC = () => {
                   <h4 className="text-xl sm:text-2xl font-black text-zinc-950 dark:text-white font-['Hind_Siliguri',sans-serif]">
                     Think With Mahim
                   </h4>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-['Hind_Siliguri',sans-serif] mt-2 leading-relaxed">
+                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold font-['Hind_Siliguri',sans-serif] mt-0.5">
+                    Thik With Mahim • থিঙ্ক উইথ মাহিম
+                  </p>
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-['Hind_Siliguri',sans-serif] mt-1.5 leading-relaxed">
                     বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান। তুলনামূলক ধর্মতত্ত্ব, দর্শন ও সমকালীন আধুনিক চিন্তাধারার বুদ্ধিবৃত্তিক সংকলন।
                   </p>
                 </div>

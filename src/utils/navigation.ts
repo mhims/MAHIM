@@ -54,6 +54,8 @@ export const STANDALONE_ROUTES = new Set([
   '/classroom/mithen',
   '/classroom/swocchol',
   '/thoughts',
+  '/think-with-mahim',
+  '/thik-with-mahim',
   '/adminpanel'
 ]);
 

@@ -15,8 +15,28 @@
       <image:title>Mahims Official Brand Logo</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://mahims.com/favicon-48x48.png</image:loc>
+      <image:loc>https://mahims.com/favicon-v2-48x48.png</image:loc>
       <image:title>Mahims Official Favicon</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/thoughts/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg</image:loc>
+      <image:title>Think With Mahim (Thik With Mahim) — বিশ্বাস, যুক্তি ও অভিজ্ঞতার আলোয় জীবনের অনুসন্ধান</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mahims.com/think-with-mahim/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.96</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg</image:loc>
+      <image:title>Think With Mahim (Thik With Mahim)</image:title>
     </image:image>
   </url>
   <url>

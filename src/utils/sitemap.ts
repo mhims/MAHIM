@@ -11,6 +11,8 @@ export function generateSitemapXml(settings: SiteSettings, posts: BlogPost[]): s
     { loc: `${baseUrl}/#experience`, priority: '0.8', changefreq: 'monthly' },
     { loc: `${baseUrl}/#education`, priority: '0.8', changefreq: 'monthly' },
     { loc: `${baseUrl}/#blog`, priority: '0.95', changefreq: 'daily' },
+    { loc: `${baseUrl}/thoughts`, priority: '0.98', changefreq: 'daily', image: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg', title: 'Think With Mahim (Thik With Mahim)' },
+    { loc: `${baseUrl}/think-with-mahim`, priority: '0.95', changefreq: 'weekly' },
     { loc: `${baseUrl}/#contact`, priority: '0.8', changefreq: 'weekly' },
   ];
 

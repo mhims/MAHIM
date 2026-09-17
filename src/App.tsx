@@ -70,7 +70,13 @@ export default function App() {
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
   const isAdminPanel = currentPath === '/adminpanel' || currentPath.startsWith('/adminpanel/');
-  const isThoughts = currentPath === '/thoughts' || currentPath.startsWith('/thoughts/');
+  const isThoughts =
+    currentPath === '/thoughts' ||
+    currentPath.startsWith('/thoughts/') ||
+    currentPath === '/think-with-mahim' ||
+    currentPath.startsWith('/think-with-mahim/') ||
+    currentPath === '/thik-with-mahim' ||
+    currentPath.startsWith('/thik-with-mahim/');
   const isAllF = currentPath === '/allf';
   const isAllU = currentPath === '/allu';
   const isAllL = currentPath === '/alll';

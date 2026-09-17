@@ -853,7 +853,12 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#e2d9c8]">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          {selectedLetter.content?.startsWith('[ডিলেট করা লেখা]') ? (
+                          {selectedLetter.content?.startsWith('[ডিলেট করা ভার্সন') ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                              <Trash2 className="w-3.5 h-3.5 text-purple-700" />
+                              ডিলেট করা ভার্সন (Deleted Version)
+                            </span>
+                          ) : selectedLetter.content?.startsWith('[ডিলেট করা লেখা]') ? (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300">
                               <Trash2 className="w-3.5 h-3.5 text-rose-700" />
                               ডিলেট করা লেখা (Deleted Draft)
@@ -934,7 +939,12 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span className={`w-2 h-2 rounded-full shrink-0 ${!letter.isRead ? 'bg-amber-400 ring-4 ring-amber-400/20' : 'bg-transparent'}`} />
-                                {letter.content?.startsWith('[ডিলেট করা লেখা]') ? (
+                                {letter.content?.startsWith('[ডিলেট করা ভার্সন') ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/80 text-purple-300 border border-purple-700/60 flex items-center gap-1">
+                                    <Trash2 className="w-2.5 h-2.5" />
+                                    ডিলেট করা ভার্সন
+                                  </span>
+                                ) : letter.content?.startsWith('[ডিলেট করা লেখা]') ? (
                                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-700/60 flex items-center gap-1">
                                     <Trash2 className="w-2.5 h-2.5" />
                                     ডিলেট করা লেখা

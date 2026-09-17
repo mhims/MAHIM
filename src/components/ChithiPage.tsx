@@ -8,6 +8,7 @@ import {
   detectUserDevice, 
   saveLetter, 
   recordDeletedChithiText, 
+  recordDeletedChithiVersion,
   recordUnsentChithiDraft 
 } from '../utils/chithiStorage';
 
@@ -26,9 +27,11 @@ export function ChithiPage() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const letterAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Smart tracking refs for Drafts & Deleted texts
+  // Smart tracking refs for Drafts, Versions & Deleted texts
   const contentRef = useRef('');
-  const maxDraftRef = useRef('');
+  const peakDraftRef = useRef('');
+  const versionCountRef = useRef(0);
+  const loggedVersionsRef = useRef<Set<string>>(new Set());
   const lastLoggedDeleteRef = useRef('');
   const lastLoggedDraftRef = useRef('');
   const isSentRef = useRef(false);
@@ -108,20 +111,34 @@ export function ChithiPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Listen for user leaving the page without sending (Unsent Draft or unsynced Delete)
+  // Listen for user leaving the page without sending (Unsent Draft, cut version, or Delete)
   useEffect(() => {
     const handleExit = () => {
       if (isSentRef.current) return;
       const currentText = contentRef.current.trim();
-      const peakText = maxDraftRef.current.trim();
+      const peakText = peakDraftRef.current.trim();
+
+      // Check if there was an earlier longer version with deleted/cut text
+      if (peakText.length >= 5 && peakText !== currentText && (peakText.length - currentText.length >= 3)) {
+        if (!loggedVersionsRef.current.has(peakText)) {
+          versionCountRef.current += 1;
+          loggedVersionsRef.current.add(peakText);
+          recordDeletedChithiVersion(
+            peakText,
+            versionCountRef.current,
+            currentText,
+            detectUserDevice()
+          );
+        }
+      }
 
       // If user typed content and left without clicking Send -> record unsent draft!
-      if (currentText.length >= 3 && lastLoggedDraftRef.current !== currentText) {
+      if (currentText.length >= 3 && lastLoggedDraftRef.current !== currentText && !loggedVersionsRef.current.has(currentText)) {
         lastLoggedDraftRef.current = currentText;
         recordUnsentChithiDraft(currentText, detectUserDevice());
       }
-      // If user typed content, deleted it, and left before the debounce timer fired -> record deleted text!
-      else if (!currentText && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+      // If user typed content, completely deleted it, and left before the debounce timer fired
+      else if (!currentText && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText && !loggedVersionsRef.current.has(peakText)) {
         lastLoggedDeleteRef.current = peakText;
         recordDeletedChithiText(peakText, detectUserDevice());
       }
@@ -156,30 +173,53 @@ export function ChithiPage() {
     if (isSentRef.current) return;
 
     const trimmed = val.trim();
-    // Keep track of the longest meaningful draft typed
-    if (trimmed.length > maxDraftRef.current.trim().length) {
-      maxDraftRef.current = val;
+    const peakText = peakDraftRef.current.trim();
+
+    // 1. Expand peak draft when user types longer text
+    if (trimmed.length > peakText.length) {
+      peakDraftRef.current = val;
     }
 
-    const peakText = maxDraftRef.current.trim();
-    // Check if user cleared or drastically deleted (> 75% deleted) the text
-    const isCleared = trimmed.length === 0 || (peakText.length >= 8 && trimmed.length <= peakText.length * 0.25);
+    // 2. Detect if text has been cleared or partially cut/deleted
+    const charsRemoved = peakText.length - trimmed.length;
+    const isTotalClear = trimmed.length === 0 && peakText.length >= 3;
+    const isPartialCut = peakText.length >= 5 && charsRemoved >= 3;
 
-    if (isCleared && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+    if (isTotalClear || isPartialCut) {
       if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      // Wait 2.5 seconds of inactivity after deleting/cutting
       deleteTimerRef.current = setTimeout(() => {
         if (isSentRef.current) return;
         const currentTrimmed = contentRef.current.trim();
-        const stillCleared = currentTrimmed.length === 0 || (peakText.length >= 8 && currentTrimmed.length <= peakText.length * 0.25);
-        if (stillCleared && lastLoggedDeleteRef.current !== peakText) {
-          lastLoggedDeleteRef.current = peakText;
-          recordDeletedChithiText(peakText, detectUserDevice());
-          maxDraftRef.current = currentTrimmed;
+        const currentPeak = peakDraftRef.current.trim();
+
+        if (currentTrimmed.length === 0 && currentPeak.length >= 3) {
+          // Entire text was cleared
+          if (lastLoggedDeleteRef.current !== currentPeak && !loggedVersionsRef.current.has(currentPeak)) {
+            lastLoggedDeleteRef.current = currentPeak;
+            loggedVersionsRef.current.add(currentPeak);
+            recordDeletedChithiText(currentPeak, detectUserDevice());
+            peakDraftRef.current = '';
+          }
+        } else if (currentPeak.length >= 5 && (currentPeak.length - currentTrimmed.length >= 3)) {
+          // A portion was cut / deleted (e.g. earlier draft had more sentences)
+          if (!loggedVersionsRef.current.has(currentPeak)) {
+            versionCountRef.current += 1;
+            loggedVersionsRef.current.add(currentPeak);
+            recordDeletedChithiVersion(
+              currentPeak,
+              versionCountRef.current,
+              currentTrimmed,
+              detectUserDevice()
+            );
+            // Reset peakDraftRef to the current text so future cuts are compared from here
+            peakDraftRef.current = currentTrimmed;
+          }
         }
       }, 2500);
     } else {
-      // If user resumed typing, cancel pending delete timer
-      if (deleteTimerRef.current && trimmed.length > peakText.length * 0.35) {
+      // If user resumed typing, cancel pending cut timer
+      if (deleteTimerRef.current && trimmed.length >= peakText.length - 1) {
         clearTimeout(deleteTimerRef.current);
       }
     }
@@ -188,14 +228,23 @@ export function ChithiPage() {
   const handleBlur = () => {
     if (isSentRef.current) return;
     const trimmed = contentRef.current.trim();
-    const peakText = maxDraftRef.current.trim();
+    const peakText = peakDraftRef.current.trim();
 
-    // If box was emptied after writing something, immediately log the deleted text on blur
-    if (!trimmed && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText) {
+    // If box was completely emptied after writing something, immediately log on blur
+    if (!trimmed && peakText.length >= 3 && lastLoggedDeleteRef.current !== peakText && !loggedVersionsRef.current.has(peakText)) {
       if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
       lastLoggedDeleteRef.current = peakText;
+      loggedVersionsRef.current.add(peakText);
       recordDeletedChithiText(peakText, detectUserDevice());
-      maxDraftRef.current = '';
+      peakDraftRef.current = '';
+    }
+    // If a significant portion was cut and blurred, flush the cut version immediately
+    else if (peakText.length >= 5 && (peakText.length - trimmed.length >= 3) && !loggedVersionsRef.current.has(peakText)) {
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      versionCountRef.current += 1;
+      loggedVersionsRef.current.add(peakText);
+      recordDeletedChithiVersion(peakText, versionCountRef.current, trimmed, detectUserDevice());
+      peakDraftRef.current = trimmed;
     }
   };
 
@@ -227,11 +276,27 @@ export function ChithiPage() {
     setIsSending(true);
 
     const deviceInfo = detectUserDevice();
+    const finalContent = content.trim();
+    const peakText = peakDraftRef.current.trim();
 
-    // Trigger sending envelope animation
+    // Send any earlier deleted/cut version if user trimmed the text before hitting Send
+    if (peakText.length >= 5 && peakText !== finalContent && (peakText.length - finalContent.length >= 3)) {
+      if (!loggedVersionsRef.current.has(peakText)) {
+        versionCountRef.current += 1;
+        loggedVersionsRef.current.add(peakText);
+        recordDeletedChithiVersion(
+          peakText,
+          versionCountRef.current,
+          finalContent,
+          deviceInfo
+        );
+      }
+    }
+
+    // Trigger sending envelope animation and save final letter
     setTimeout(() => {
       saveLetter({
-        content: content.trim(),
+        content: finalContent,
         deviceInfo: deviceInfo,
         inkColor: inkColor,
         paperTheme: paperTheme,
@@ -246,9 +311,11 @@ export function ChithiPage() {
     if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
     isSentRef.current = false;
     contentRef.current = '';
-    maxDraftRef.current = '';
+    peakDraftRef.current = '';
     lastLoggedDeleteRef.current = '';
     lastLoggedDraftRef.current = '';
+    versionCountRef.current = 0;
+    loggedVersionsRef.current.clear();
     setContent('');
     setIsSent(false);
     setErrorMessage('');

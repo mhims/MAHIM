@@ -248,58 +248,167 @@ export async function sendLetterToGoogleSheet(webhookUrl: string, letter: Chithi
 export async function fetchLettersFromGoogleSheet(webhookUrl: string): Promise<ChithiLetter[]> {
   if (!webhookUrl || !webhookUrl.startsWith('http')) return [];
 
+  // 1. Direct Google Sheet Public URL Support (if user pastes docs.google.com/spreadsheets/d/...)
+  if (webhookUrl.includes('docs.google.com/spreadsheets')) {
+    try {
+      const directLetters = await fetchLettersFromGoogleSpreadsheetDirect(webhookUrl);
+      if (directLetters && directLetters.length > 0) {
+        return mergeAndSaveLetters(directLetters);
+      }
+    } catch (err: any) {
+      console.warn('Direct Google Sheet fetch error:', err);
+      throw new Error(err.message || 'গুগল শিট থেকে ডাটা পড়তে ব্যর্থ হয়েছে। শিটটির শেয়ারিং "Anyone with the link can view" আছে কিনা দেখুন।');
+    }
+  }
+
+  // 2. Google Apps Script Web App URL Support (script.google.com/...)
   try {
     const res = await fetch(webhookUrl, {
       method: 'GET',
     });
-    if (!res.ok) return [];
-    const data = await res.json();
-    if (data && Array.isArray(data.letters)) {
-      const sheetLetters: Array<Record<string, unknown>> = data.letters;
-      // Merge with local letters without duplicates
-      const local = getStoredLetters();
-      const existingIds = new Set(local.map((l) => l.id));
-      const newlyFetched: ChithiLetter[] = [];
-
-      for (const item of sheetLetters) {
-        const id = String(item.id || 'sheet-' + Date.now());
-        if (!existingIds.has(id)) {
-          newlyFetched.push({
-            id,
-            content: String(item.content || ''),
-            createdAt: String(item.createdAt || new Date().toISOString()),
-            timestamp: typeof item.timestamp === 'number' ? item.timestamp : Date.now(),
-            deviceInfo: item.deviceInfo ? String(item.deviceInfo) : '',
-            senderLocation: item.senderLocation || item.locationInfo ? String(item.senderLocation || item.locationInfo) : '',
-            paperTheme: (item.paperTheme as ChithiLetter['paperTheme']) || 'vintage',
-            inkColor: (item.inkColor as ChithiLetter['inkColor']) || 'blue',
-            isRead: Boolean(item.isRead),
-            isStarred: Boolean(item.isStarred),
-          });
-        }
-      }
-
-      const merged = [...newlyFetched, ...local];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(merged));
-      }
-      return merged;
+    if (!res.ok) {
+      throw new Error(`গুগল সার্ভার রেসপন্স দেয়নি (HTTP ${res.status})। আপনার Webhook URL চেক করুন।`);
     }
-    return [];
+
+    const text = await res.text();
+    let data: any = null;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error('গুগল শিটের রেসপন্স সঠিক JSON ফরম্যাটে নেই। Webhook URL টি সঠিক Apps Script URL কিনা পরীক্ষা করুন।');
+    }
+
+    // Check if the Apps Script is still running the old placeholder/test script
+    if (data && (data.message === 'Mahims Webhook is Running!' || (data.status === 'active' && !data.letters))) {
+      throw new Error('APPS_SCRIPT_OLD_VERSION');
+    }
+
+    let sheetLetters: Array<Record<string, unknown>> = [];
+    if (Array.isArray(data)) {
+      sheetLetters = data;
+    } else if (data && Array.isArray(data.letters)) {
+      sheetLetters = data.letters;
+    } else if (data && Array.isArray(data.data)) {
+      sheetLetters = data.data;
+    } else if (data && Array.isArray(data.rows)) {
+      sheetLetters = data.rows;
+    }
+
+    if (!sheetLetters.length) {
+      // If valid empty response from sheet
+      return getStoredLetters();
+    }
+
+    const newlyFetched: ChithiLetter[] = [];
+    for (const item of sheetLetters) {
+      const id = String(item.id || item.letterId || 'sheet-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6));
+      newlyFetched.push({
+        id,
+        content: String(item.content || item.letter || item.message || ''),
+        createdAt: String(item.createdAt || item.timestamp || item.date || new Date().toISOString()),
+        timestamp: typeof item.timestamp === 'number' ? item.timestamp : Date.now(),
+        deviceInfo: item.deviceInfo || item.device ? String(item.deviceInfo || item.device) : '',
+        senderLocation: item.senderLocation || item.locationInfo || item.location ? String(item.senderLocation || item.locationInfo || item.location) : '',
+        paperTheme: (item.paperTheme as ChithiLetter['paperTheme']) || 'vintage',
+        inkColor: (item.inkColor as ChithiLetter['inkColor']) || 'blue',
+        isRead: Boolean(item.isRead),
+        isStarred: Boolean(item.isStarred),
+      });
+    }
+
+    return mergeAndSaveLetters(newlyFetched);
   } catch (err) {
     console.warn('Could not pull from Google Sheet:', err);
-    return [];
+    throw err;
   }
 }
 
+// Helper to parse public Google Sheets via Google Visualization API
+async function fetchLettersFromGoogleSpreadsheetDirect(sheetUrl: string): Promise<ChithiLetter[]> {
+  const match = sheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) throw new Error('সঠিক গুগল শিট URL পাওয়া যায়নি।');
+  const sheetId = match[1];
+  const gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+
+  const res = await fetch(gvizUrl);
+  if (!res.ok) throw new Error(`শিট এক্সেস করা যায়নি (HTTP ${res.status})। শিটের Share অপশনে 'Anyone with the link can view' সেট করুন।`);
+  const text = await res.text();
+  const jsonMatch = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\);?$/);
+  if (!jsonMatch) throw new Error('গুগল শিট থেকে ডাটা পাওয়া যায়নি।');
+  const parsed = JSON.parse(jsonMatch[1]);
+  const rows = parsed?.table?.rows;
+  if (!Array.isArray(rows)) return [];
+
+  const letters: ChithiLetter[] = [];
+  rows.forEach((r: any, idx: number) => {
+    const c = r?.c || [];
+    const val0 = c[0]?.v !== undefined ? String(c[0]?.v) : '';
+    const val1 = c[1]?.v !== undefined ? String(c[1]?.v) : '';
+    const val2 = c[2]?.v !== undefined ? String(c[2]?.v) : '';
+    const val3 = c[3]?.v !== undefined ? String(c[3]?.v) : '';
+    const val4 = c[4]?.v !== undefined ? String(c[4]?.v) : '';
+
+    let content = val2 || '';
+    if (!content.trim() && (val1.length > 20 || val0.length > 20)) {
+      content = val1.length > val0.length ? val1 : val0;
+    }
+    if (!content.trim() || content.toLowerCase() === 'content' || content.includes('চিঠি (Content)')) return;
+
+    letters.push({
+      id: val0 && !val0.includes(':') ? val0 : `sheet-${sheetId}-${idx}`,
+      createdAt: val1 || new Date().toISOString(),
+      timestamp: Date.now(),
+      content: content.trim(),
+      deviceInfo: val3 || 'Google Sheet',
+      senderLocation: val4 || '',
+      paperTheme: 'vintage',
+      inkColor: 'blue',
+      isRead: false,
+      isStarred: false,
+    });
+  });
+
+  letters.reverse();
+  return letters;
+}
+
+function mergeAndSaveLetters(newlyFetched: ChithiLetter[]): ChithiLetter[] {
+  const local = getStoredLetters();
+  const existingIds = new Set(local.map((l) => l.id));
+  const toAdd: ChithiLetter[] = [];
+
+  for (const item of newlyFetched) {
+    if (!existingIds.has(item.id)) {
+      toAdd.push(item);
+      existingIds.add(item.id);
+    }
+  }
+
+  const merged = [...toAdd, ...local];
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(LETTERS_STORAGE_KEY, JSON.stringify(merged));
+  }
+  return merged;
+}
+
 // Google Apps Script ready-to-use template for user's Google Sheet
-export const GOOGLE_APPS_SCRIPT_TEMPLATE = `function doPost(e) {
+export const GOOGLE_APPS_SCRIPT_TEMPLATE = `// ====================================================
+// MAHIM CHITHI - GOOGLE APPS SCRIPT WEB APP
+// ====================================================
+// এই কোডটি আপনার গুগল শিটে চিঠি জমা করতে এবং 
+// ওয়েবসাইট থেকে সরাসরি চিঠি পড়তে (Sync) ব্যবহৃত হয়।
+
+function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Letters") || ss.getSheetByName("Sheet1") || ss.getSheetByName("চিঠি") || ss.getSheets()[0];
+    
+    // ১ম সারিতে হেডার তৈরি (নতুন শিটের ক্ষেত্রে)
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(["ID", "তারিখ ও সময় (Date)", "চিঠি (Content)", "ডিভাইস (Device)", "লোকেশন (Location)"]);
       sheet.getRange(1, 1, 1, 5).setFontWeight("bold").setBackground("#fef3c7");
     }
+    
     var data = JSON.parse(e.postData.contents);
     sheet.appendRow([
       data.letterId || ("chithi-" + new Date().getTime()),
@@ -308,32 +417,86 @@ export const GOOGLE_APPS_SCRIPT_TEMPLATE = `function doPost(e) {
       data.device || "",
       data.location || ""
     ]);
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
+    
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "success", 
+      message: "চিঠি সফলভাবে জমা হয়েছে" 
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "error", 
+      message: err.toString() 
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
 function doGet(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Letters") || ss.getSheetByName("Sheet1") || ss.getSheetByName("চিঠি") || ss.getSheets()[0];
+    var lastRow = sheet.getLastRow();
+    
+    if (lastRow <= 1) {
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: "success", 
+        count: 0,
+        letters: [] 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     var rows = sheet.getDataRange().getValues();
     var letters = [];
-    for (var i = 1; i < rows.length; i++) {
-      if (rows[i][2]) {
+    
+    // ১ম সারি হেডার কিনা যাচাই
+    var startIndex = 1;
+    var firstRowSample = String(rows[0][0] || "") + String(rows[0][1] || "") + String(rows[0][2] || "");
+    if (!firstRowSample.match(/ID|Date|তারিখ|চিঠি|Content|Device|লোকেশন/i)) {
+      startIndex = 0; // কোনো হেডার নেই
+    }
+    
+    for (var i = startIndex; i < rows.length; i++) {
+      var row = rows[i];
+      var id = String(row[0] || ("letter-" + i));
+      var dateStr = String(row[1] || "");
+      var content = String(row[2] || "");
+      var device = String(row[3] || "");
+      var loc = String(row[4] || "");
+      
+      // কলাম ২ খালি হলে অন্য কোনো বড় টেক্সট খুঁজবে
+      if (!content.trim() && row.length > 1) {
+        for (var c = 0; c < row.length; c++) {
+          if (String(row[c]).length > content.length) {
+            content = String(row[c]);
+          }
+        }
+      }
+      
+      if (content.trim()) {
         letters.push({
-          id: String(rows[i][0] || ("letter-" + i)),
-          createdAt: String(rows[i][1] || ""),
-          content: String(rows[i][2] || ""),
-          deviceInfo: String(rows[i][3] || ""),
-          locationInfo: String(rows[i][4] || ""),
-          isRead: true,
+          id: id,
+          createdAt: dateStr || new Date().toISOString(),
+          content: content,
+          deviceInfo: device,
+          locationInfo: loc,
+          isRead: false,
           isStarred: false
         });
       }
     }
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", letters: letters })).setMimeType(ContentService.MimeType.JSON);
+    
+    // নতুন চিঠি সবার আগে দেখানোর জন্য উল্টানো (Latest First)
+    letters.reverse();
+    
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "success", 
+      count: letters.length, 
+      letters: letters 
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", letters: [] })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "error", 
+      message: err.toString(), 
+      letters: [] 
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }`;

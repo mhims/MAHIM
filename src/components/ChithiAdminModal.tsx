@@ -287,12 +287,20 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
     try {
       const merged = await fetchLettersFromGoogleSheet(url);
       setLetters(merged);
-      setSyncStatus(`গুগল শিট থেকে সফলভাবে মোট ${merged.length} টি চিঠি লোড হয়েছে!`);
-      setTimeout(() => setSyncStatus(null), 4000);
-    } catch (err) {
-      console.error(err);
-      setSyncStatus('গুগল শিট থেকে লোড করা সম্ভব হয়নি। Webhook URL এবং Apps Script ঠিক আছে কিনা দেখুন।');
+      if (merged.length > 0) {
+        setSyncStatus(`গুগল শিট থেকে সফলভাবে মোট ${merged.length} টি চিঠি লোড হয়েছে!`);
+      } else {
+        setSyncStatus('গুগল শিটের সাথে সংযোগ সফল হয়েছে, তবে কোনো চিঠি পাওয়া যায়নি। শিটে নতুন চিঠি আছে কিনা দেখুন।');
+      }
       setTimeout(() => setSyncStatus(null), 5000);
+    } catch (err: any) {
+      console.error(err);
+      if (err?.message === 'APPS_SCRIPT_OLD_VERSION') {
+        setSyncStatus('⚠️ গুগল শিট কানেক্টেড, কিন্তু Apps Script-এ পুরনো কোড চলছে (যেটি চিঠি রিটার্ন করে না)। "সেটিংস ও ব্যাকআপ" ট্যাব থেকে নতুন Apps Script কোড কপি করে শিটে পেস্ট করে "New deployment" করুন।');
+      } else {
+        setSyncStatus(err?.message || 'গুগল শিট থেকে লোড করা সম্ভব হয়নি। Webhook URL এবং Apps Script ঠিক আছে কিনা দেখুন।');
+      }
+      setTimeout(() => setSyncStatus(null), 8000);
     } finally {
       setFetchingFromSheet(false);
     }
@@ -487,14 +495,18 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
 
             {/* Sync Notification Banner */}
             {syncStatus && (
-              <div className="px-5 py-2 bg-emerald-950/80 border-b border-emerald-800/60 text-xs text-emerald-300 flex items-center justify-between">
+              <div className={`px-5 py-2.5 border-b text-xs flex items-center justify-between transition-all ${
+                syncStatus.includes('⚠️') || syncStatus.includes('ব্যর্থ') || syncStatus.includes('সম্ভব হয়নি')
+                  ? 'bg-amber-950/95 border-amber-800/80 text-amber-200'
+                  : 'bg-emerald-950/80 border-emerald-800/60 text-emerald-300'
+              }`}>
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  {syncStatus}
+                  <span className="shrink-0">{syncStatus.includes('⚠️') ? '⚠️' : <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}</span>
+                  <span className="leading-snug">{syncStatus}</span>
                 </span>
                 <button 
                   onClick={() => setSyncStatus(null)}
-                  className="text-emerald-400/60 hover:text-emerald-300 text-xs ml-2"
+                  className="text-zinc-400 hover:text-white text-xs ml-3 px-1.5 py-0.5 rounded hover:bg-white/10"
                 >
                   ✕
                 </button>
@@ -520,29 +532,37 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                     </div>
 
                     {/* Simple 3-step setup guide */}
-                    <div className="p-3.5 bg-zinc-950/90 border border-zinc-800 rounded-lg space-y-2 text-xs">
+                    <div className="p-3.5 bg-zinc-950/90 border border-zinc-800 rounded-lg space-y-2.5 text-xs">
                       <div className="flex items-center justify-between">
-                        <span className="font-semibold text-amber-400">সহজ ২ মিনিটে গুগল শিট কানেক্ট করার উপায়:</span>
+                        <span className="font-semibold text-amber-400">সহজ ২ মিনিটে গুগল শিট কানেক্ট বা আপডেট করার নিয়ম:</span>
                         <button
                           type="button"
                           onClick={handleCopyScriptCode}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[11px] font-semibold transition"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[11px] font-semibold transition cursor-pointer"
                         >
                           <Copy className="w-3 h-3" />
                           {copiedScript ? 'কপি হয়েছে!' : 'Apps Script কোড কপি করুন'}
                         </button>
                       </div>
-                      <ol className="list-decimal list-inside space-y-1 text-zinc-300 text-[11px] leading-normal">
-                        <li>আপনার গুগল অ্যাকাউন্টে একটি নতুন <strong>Google Sheet</strong> তৈরি করুন।</li>
-                        <li>উপরে মেনু থেকে <strong>Extensions &gt; Apps Script</strong>-এ যান এবং বিদ্যমান কোড মুছে ওপরের কপি করা কোডটি পেস্ট করে সেভ করুন।</li>
-                        <li>উপরে নীল <strong>Deploy &gt; New deployment</strong> বাটনে ক্লিক করে <strong>Web app</strong> নির্বাচন করুন (Who has access: <em>Anyone</em>), এরপর প্রাপ্ত <strong>Web app URL</strong> টি নিচের বক্সে পেস্ট করে সেভ করুন!</li>
+                      <ol className="list-decimal list-inside space-y-1.5 text-zinc-300 text-[11px] leading-relaxed">
+                        <li>আপনার Google Sheet-এ গিয়ে মেনু থেকে <strong>Extensions &gt; Apps Script</strong> খুলুন।</li>
+                        <li>বিদ্যমান সমস্ত কোড মুছে ওপরের কপি করা নতুন কোডটি পেস্ট করুন এবং সেভ (Save) করুন।</li>
+                        <li>
+                          <strong className="text-amber-300">গুরুত্বপূর্ণ আপডেট ধাপ:</strong> উপরে নীল <strong>Deploy &gt; Manage deployments</strong>-এ যান &gt; পেনসিল (Edit) বাটনে ক্লিক করুন &gt; <strong>Version</strong> ড্রপডাউনে <em>New version</em> সিলেক্ট করুন &gt; <strong>Deploy</strong> চাপুন।
+                        </li>
+                        <li>প্রাপ্ত Web app URL টি নিচে পেস্ট করে <strong>'সেটিংস সংরক্ষণ করুন'</strong> দিন। এরপর সিঙ্ক করলেই শিটের সব চিঠি ওয়েবসাইটে চলে আসবে!</li>
                       </ol>
+
+                      <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded text-[11px] text-amber-200/90">
+                        💡 <strong>চিঠি শিটে জমা হচ্ছে কিন্তু ওয়েবসাইটে ০ টি দেখাচ্ছে?</strong> এর কারণ Apps Script-এ পূর্বে শুধু লেখার (Post) অনুমতি ছিল, শিট থেকে পড়ার (Get) কোডটি ডিপ্লয় করা হয়নি। ওপরের কোডটি কপি করে <strong>Deploy &gt; Manage deployments &gt; New version</strong> দিলেই সাথে সাথে ঠিক হয়ে যাবে।
+                      </div>
+
                       <button
                         type="button"
                         onClick={() => setShowScriptCode(!showScriptCode)}
-                        className="text-[11px] text-zinc-400 hover:text-zinc-200 underline pt-1 cursor-pointer"
+                        className="text-[11px] text-zinc-400 hover:text-zinc-200 underline pt-1 cursor-pointer block"
                       >
-                        {showScriptCode ? '▲ কোড লুকান' : '▼ কোড দেখুন'}
+                        {showScriptCode ? '▲ কোড লুকান' : '▼ সম্পূর্ণ কোড দেখুন'}
                       </button>
                       {showScriptCode && (
                         <pre className="p-2.5 bg-black/60 rounded text-[10px] text-emerald-300 font-mono overflow-x-auto max-h-48 border border-zinc-800 select-all">

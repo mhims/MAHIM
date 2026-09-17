@@ -420,7 +420,7 @@ export interface VisitorRecord {
 }
 
 export const DEFAULT_MAHIMS_WEBHOOK_URL =
-  'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
+  'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
 
 const VISITOR_STORAGE_KEY = 'mahims_visitor_records_cache_v1';
 

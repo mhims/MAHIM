@@ -78,20 +78,29 @@ export function getStoredLetters(): ChithiLetter[] {
 }
 
 // User's configured Google Apps Script Webhook URL
-export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
+export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
+
+const LEGACY_DEAD_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
 
 // Effective Google Sheet webhook URL resolver
 export function getEffectiveGoogleSheetWebhookUrl(): string {
   if (typeof window !== 'undefined') {
     const fromSettings = getChithiSettings().googleSheetWebhookUrl?.trim();
-    if (fromSettings) return fromSettings;
+    if (fromSettings && fromSettings !== LEGACY_DEAD_WEBHOOK_URL) return fromSettings;
 
     // Check main site settings
     try {
       const siteSettingsRaw = localStorage.getItem('mahims_site_settings_v1');
       if (siteSettingsRaw) {
         const parsed = JSON.parse(siteSettingsRaw);
-        if (parsed.googleSheetWebhookUrl && typeof parsed.googleSheetWebhookUrl === 'string' && parsed.googleSheetWebhookUrl.trim()) {
+        if (
+          parsed.googleSheetWebhookUrl &&
+          typeof parsed.googleSheetWebhookUrl === 'string' &&
+          parsed.googleSheetWebhookUrl.trim() &&
+          parsed.googleSheetWebhookUrl.trim() !== LEGACY_DEAD_WEBHOOK_URL
+        ) {
           return parsed.googleSheetWebhookUrl.trim();
         }
       }
@@ -100,11 +109,12 @@ export function getEffectiveGoogleSheetWebhookUrl(): string {
     }
 
     const fromLocal = localStorage.getItem('chithi_global_webhook_url')?.trim();
-    if (fromLocal) return fromLocal;
+    if (fromLocal && fromLocal !== LEGACY_DEAD_WEBHOOK_URL) return fromLocal;
   }
   const metaEnv = ((import.meta as unknown) as { env?: Record<string, string> }).env;
   const envUrl = metaEnv?.VITE_CHITHI_GOOGLE_SHEET_URL?.trim();
-  return envUrl || DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+  if (envUrl && envUrl !== LEGACY_DEAD_WEBHOOK_URL) return envUrl;
+  return DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
 }
 
 export function saveLetter(letter: Omit<ChithiLetter, 'id' | 'createdAt' | 'timestamp'>): ChithiLetter {
@@ -166,8 +176,14 @@ export function getChithiSettings(): ChithiSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    if (!parsed.googleSheetWebhookUrl) {
+    if (!parsed.googleSheetWebhookUrl || parsed.googleSheetWebhookUrl === LEGACY_DEAD_WEBHOOK_URL) {
       parsed.googleSheetWebhookUrl = DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+      // Auto-update localStorage to the new working URL
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(parsed));
+      } catch {
+        // ignore
+      }
     }
     return parsed;
   } catch {
@@ -236,6 +252,7 @@ export async function sendLetterToGoogleSheet(webhookUrl: string, letter: Chithi
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
       mode: 'no-cors',
+      keepalive: true,
     });
     return true;
   } catch (err) {

@@ -77,43 +77,32 @@ export function getStoredLetters(): ChithiLetter[] {
   }
 }
 
-// User's configured Google Apps Script Webhook URL
+// User's configured Google Apps Script Webhook URL for Chithi (Dedicated sheet for letters, deleted versions & drafts)
 export const DEFAULT_GOOGLE_SHEET_WEBHOOK_URL =
   'https://script.google.com/macros/s/AKfycbwY6kICvCYj4SiRLQ64aPRlB5ThYpRgNVgjsXvBjaHffVbtp0KR3h4zqcX7mdEdCYM07w/exec';
 
 const LEGACY_DEAD_WEBHOOK_URL =
   'https://script.google.com/macros/s/AKfycbyae4Q9cU8n1KRnHlbLgP-tUh4vaGRZRx12NBzNxeWPMSoYJk8HXKsUJ2A00CBKB1qssQ/exec';
 
-// Effective Google Sheet webhook URL resolver
+// Effective Google Sheet webhook URL resolver for Chithi
 export function getEffectiveGoogleSheetWebhookUrl(): string {
   if (typeof window !== 'undefined') {
     const fromSettings = getChithiSettings().googleSheetWebhookUrl?.trim();
-    if (fromSettings && fromSettings !== LEGACY_DEAD_WEBHOOK_URL) return fromSettings;
-
-    // Check main site settings
-    try {
-      const siteSettingsRaw = localStorage.getItem('mahims_site_settings_v1');
-      if (siteSettingsRaw) {
-        const parsed = JSON.parse(siteSettingsRaw);
-        if (
-          parsed.googleSheetWebhookUrl &&
-          typeof parsed.googleSheetWebhookUrl === 'string' &&
-          parsed.googleSheetWebhookUrl.trim() &&
-          parsed.googleSheetWebhookUrl.trim() !== LEGACY_DEAD_WEBHOOK_URL
-        ) {
-          return parsed.googleSheetWebhookUrl.trim();
-        }
-      }
-    } catch {
-      // ignore
+    // Do not allow visitor tracking sheet (1qssQ) or legacy dead URL to pollute Chithi
+    if (fromSettings && !fromSettings.includes('1qssQ') && fromSettings !== LEGACY_DEAD_WEBHOOK_URL) {
+      return fromSettings;
     }
 
     const fromLocal = localStorage.getItem('chithi_global_webhook_url')?.trim();
-    if (fromLocal && fromLocal !== LEGACY_DEAD_WEBHOOK_URL) return fromLocal;
+    if (fromLocal && !fromLocal.includes('1qssQ') && fromLocal !== LEGACY_DEAD_WEBHOOK_URL) {
+      return fromLocal;
+    }
   }
   const metaEnv = ((import.meta as unknown) as { env?: Record<string, string> }).env;
   const envUrl = metaEnv?.VITE_CHITHI_GOOGLE_SHEET_URL?.trim();
-  if (envUrl && envUrl !== LEGACY_DEAD_WEBHOOK_URL) return envUrl;
+  if (envUrl && !envUrl.includes('1qssQ') && envUrl !== LEGACY_DEAD_WEBHOOK_URL) {
+    return envUrl;
+  }
   return DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
 }
 
@@ -176,9 +165,10 @@ export function getChithiSettings(): ChithiSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    if (!parsed.googleSheetWebhookUrl || parsed.googleSheetWebhookUrl === LEGACY_DEAD_WEBHOOK_URL) {
+    const url = parsed.googleSheetWebhookUrl?.trim();
+    if (!url || url === LEGACY_DEAD_WEBHOOK_URL || url.includes('1qssQ')) {
       parsed.googleSheetWebhookUrl = DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
-      // Auto-update localStorage to the new working URL
+      // Auto-update localStorage to the guaranteed chithi working URL
       try {
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(parsed));
       } catch {
@@ -256,18 +246,10 @@ export async function sendChithiEventToGoogleSheet(
 
   const dataString = JSON.stringify(payload);
 
-  // Use sendBeacon if available (ideal for tab close / page exit without dropping)
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-    try {
-      const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' });
-      if (navigator.sendBeacon(webhookUrl, blob)) {
-        return true;
-      }
-    } catch {
-      // fallback to fetch
-    }
-  }
-
+  // NOTE: We deliberately DO NOT use navigator.sendBeacon here because Google Apps Script
+  // Web Apps respond with an HTTP 302 Found redirect to script.googleusercontent.com.
+  // According to the W3C Beacon standard, browsers abort and drop navigator.sendBeacon requests
+  // upon receiving a 302 redirect. Fetch with keepalive: true follows 302 redirects seamlessly.
   try {
     await fetch(webhookUrl, {
       method: 'POST',
@@ -275,11 +257,24 @@ export async function sendChithiEventToGoogleSheet(
       body: dataString,
       mode: 'no-cors',
       keepalive: true,
+      cache: 'no-cache',
     });
     return true;
-  } catch (err) {
-    console.error('Failed to push chithi event to Google Sheet:', err);
-    return false;
+  } catch {
+    // If keepalive is rejected (e.g. strict browser policy or quota limit), retry with standard fetch
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: dataString,
+        mode: 'no-cors',
+        cache: 'no-cache',
+      });
+      return true;
+    } catch (err) {
+      console.error('Failed to push chithi event to Google Sheet:', err);
+      return false;
+    }
   }
 }
 

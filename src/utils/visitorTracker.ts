@@ -167,18 +167,9 @@ export function sendVisitorPayload(webhookUrl: string, payload: VisitorLogPayloa
 
   const dataString = JSON.stringify(payload);
 
-  // Use sendBeacon if available (ideal for tab close / navigation without blocking)
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-    try {
-      const blob = new Blob([dataString], { type: 'text/plain;charset=utf-8' });
-      const sent = navigator.sendBeacon(webhookUrl, blob);
-      if (sent) return;
-    } catch {
-      // fallback to fetch
-    }
-  }
-
-  // Fallback to fetch with keepalive & mode no-cors
+  // NOTE: We deliberately DO NOT use navigator.sendBeacon here because Google Apps Script
+  // responds with an HTTP 302 Found redirect, which causes browsers to drop beacons.
+  // Fetch with keepalive: true reliably outlives the page and follows redirects.
   fetch(webhookUrl, {
     method: 'POST',
     headers: {
@@ -188,7 +179,15 @@ export function sendVisitorPayload(webhookUrl: string, payload: VisitorLogPayloa
     mode: 'no-cors',
     keepalive: true,
   }).catch(() => {
-    // Ignore network errors silently for analytics
+    // Retry plain fetch if keepalive is restricted
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+      },
+      body: dataString,
+      mode: 'no-cors',
+    }).catch(() => {});
   });
 }
 

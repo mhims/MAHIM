@@ -235,7 +235,14 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        react: path.resolve(__dirname, 'node_modules/react'),
+        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       },
+      dedupe: ['react', 'react-dom'],
+    },
+    optimizeDeps: {
+      entries: ['index.html'],
+      include: ['react', 'react-dom', 'react-dom/client', 'motion/react', 'lucide-react'],
     },
     build: {
       rollupOptions: {

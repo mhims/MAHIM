@@ -229,67 +229,69 @@ export const ClassroomBlogListPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Search & Topic Selector Box */}
-        <div className="bg-white border border-orange-200/90 rounded-3xl p-4 sm:p-6 shadow-sm mb-10 max-w-5xl mx-auto">
-          {/* Search Box */}
-          <div className="relative mb-4">
-            <Search size={18} className="absolute left-4 top-3.5 text-zinc-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="আর্টিকেলের শিরোনাম, টপিক বা কি-ওয়ার্ড দিয়ে খুঁজুন..."
-              className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all shadow-inner"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-3.5 text-xs text-zinc-400 hover:text-zinc-700 font-bold"
-              >
-                ক্লিয়ার
-              </button>
-            )}
-          </div>
+        {/* Search & Topic Selector Box (Only shown if blogs exist) */}
+        {blogs.length > 0 && (
+          <div className="bg-white border border-orange-200/90 rounded-3xl p-4 sm:p-6 shadow-sm mb-10 max-w-5xl mx-auto">
+            {/* Search Box */}
+            <div className="relative mb-4">
+              <Search size={18} className="absolute left-4 top-3.5 text-zinc-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="আর্টিকেলের শিরোনাম, টপিক বা কি-ওয়ার্ড দিয়ে খুঁজুন..."
+                className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-all shadow-inner"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-3.5 text-xs text-zinc-400 hover:text-zinc-700 font-bold"
+                >
+                  ক্লিয়ার
+                </button>
+              )}
+            </div>
 
-          {/* Topic Pills */}
-          <div>
-            <div className="flex items-center gap-2 mb-2 text-xs font-bold text-zinc-700 font-['Hind_Siliguri',sans-serif]">
-              <Filter size={14} className="text-orange-600" />
-              <span>টপিক অনুযায়ী ফিল্টার করুন:</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setSelectedTopic('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer ${
-                  selectedTopic === 'all'
-                    ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
-                    : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-                }`}
-              >
-                সব টপিক ({blogs.length})
-              </button>
-              {topics.map((top) => {
-                const count = blogs.filter(
-                  (b) => b.topic?.trim() === top.trim() || b.category?.trim() === top.trim()
-                ).length;
-                const isSelected = selectedTopic.toLowerCase().trim() === top.toLowerCase().trim();
-                return (
-                  <button
-                    key={top}
-                    onClick={() => setSelectedTopic(top)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
-                        : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-                    }`}
-                  >
-                    {top} {count > 0 ? `(${count})` : ''}
-                  </button>
-                );
-              })}
+            {/* Topic Pills */}
+            <div>
+              <div className="flex items-center gap-2 mb-2 text-xs font-bold text-zinc-700 font-['Hind_Siliguri',sans-serif]">
+                <Filter size={14} className="text-orange-600" />
+                <span>টপিক অনুযায়ী ফিল্টার করুন:</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setSelectedTopic('all')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer ${
+                    selectedTopic === 'all'
+                      ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
+                      : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  }`}
+                >
+                  সব টপিক ({blogs.length})
+                </button>
+                {topics.map((top) => {
+                  const count = blogs.filter(
+                    (b) => b.topic?.trim() === top.trim() || b.category?.trim() === top.trim()
+                  ).length;
+                  const isSelected = selectedTopic.toLowerCase().trim() === top.toLowerCase().trim();
+                  return (
+                    <button
+                      key={top}
+                      onClick={() => setSelectedTopic(top)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
+                          : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                      }`}
+                    >
+                      {top} {count > 0 ? `(${count})` : ''}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Toast Notification */}
         {shareToast && (
@@ -490,22 +492,23 @@ export const ClassroomBlogListPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 px-4 bg-white rounded-3xl border border-orange-200/80 max-w-lg mx-auto">
-            <BookOpen size={36} className="mx-auto text-orange-400 mb-3" />
-            <h4 className="text-base font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-1">
-              {blogs.length === 0 ? 'এখনো কোনো আর্টিকেল পোস্ট করা হয়নি' : 'কোনো আর্টিকেল পাওয়া যায়নি'}
+          <div className="text-center py-16 px-6 bg-white rounded-3xl border border-orange-200/80 max-w-lg mx-auto shadow-xs">
+            <BookOpen size={40} className="mx-auto text-orange-400 mb-3" />
+            <h4 className="text-lg font-bold text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-2">
+              {blogs.length === 0 ? 'এখনো কোনো আর্টিকেল প্রকাশ করা হয়নি' : 'কোনো আর্টিকেল পাওয়া যায়নি'}
             </h4>
-            <p className="text-xs text-zinc-500 font-['Hind_Siliguri',sans-serif] mb-4">
+            <p className="text-xs sm:text-sm text-zinc-500 font-['Hind_Siliguri',sans-serif] mb-6 leading-relaxed">
               {blogs.length === 0
-                ? 'ক্লাসরুম ব্লগে শিক্ষা বিষয়ক আর্টিকেল পোস্ট করতে অ্যাডমিন প্যানেল ব্যবহার করুন।'
+                ? 'ব্লগ সেকশনটি সম্পূর্ণ পরিষ্কার ও খালি রাখা হয়েছে। আপনার পছন্দ অনুযায়ী যখন নিজে আর্টিকেল লিখবেন ও সেভ করবেন, তখন তা স্বয়ংক্রিয়ভাবে এখানে ও হোমপেজে প্রকাশিত হবে।'
                 : 'আপনার ফিল্টার বা সার্চ কি-ওয়ার্ড পরিবর্তন করে আবার চেষ্টা করুন।'}
             </p>
             {blogs.length === 0 ? (
               <button
                 onClick={() => setIsAdminModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif] transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs sm:text-sm font-bold font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer shadow-md shadow-orange-500/20"
               >
-                নতুন আর্টিকেল লিখুন (অ্যাডমিন)
+                <PlusCircle size={16} />
+                <span>নতুন আর্টিকেল লিখুন (অ্যাডমিন)</span>
               </button>
             ) : (
               <button
@@ -513,7 +516,7 @@ export const ClassroomBlogListPage: React.FC = () => {
                   setSelectedTopic('all');
                   setSearchQuery('');
                 }}
-                className="px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif]"
+                className="px-5 py-2.5 rounded-xl bg-orange-600 text-white text-xs font-bold font-['Hind_Siliguri',sans-serif]"
               >
                 সকল আর্টিকেল দেখুন
               </button>

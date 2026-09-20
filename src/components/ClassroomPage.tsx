@@ -37,59 +37,7 @@ import { saveClassroomRegistration } from '../utils/classroomStorage';
 import { getClassroomBlogs } from '../utils/classroomBlogStorage';
 import { ALL_COURSES, getMainPageCourses, type CourseItem } from '../data/courses';
 
-interface ArticleItem {
-  id: string;
-  title: string;
-  category: string;
-  readTime: string;
-  date: string;
-  summary: string;
-  content: string[];
-}
-
 // Courses on the main page are curated via getMainPageCourses() from src/data/courses.ts
-
-const ARTICLES: ArticleItem[] = [
-  {
-    id: 'admission-strategy',
-    title: 'এডমিশন পরীক্ষায় প্রথমবার প্রস্তুতি নেওয়ার সঠিক স্ট্র্যাটেজি ও টাইম ম্যানেজমেন্ট',
-    category: 'এডমিশন গাইডলাইন',
-    readTime: '৪ মিনিট পাঠ',
-    date: 'সেপ্টেম্বর ২০২৬',
-    summary: 'এইচএসসির পর কম সময়ে বিপুল সিলেবাস কীভাবে রিভিশন দেবেন এবং নেগেটিভ মার্কিং এড়িয়ে কাঙ্ক্ষিত চান্স নিশ্চিত করবেন।',
-    content: [
-      'বিশ্ববিদ্যালয় ভর্তি পরীক্ষা কেবল মুখস্থ বিদ্যার লড়াই নয়, এটি মূলত স্নায়ুর লড়াই এবং কৌশলগত অগ্রাধিকার নির্ধারণের খেলা।',
-      'প্রথমেই বিগত ২০ বছরের প্রশ্ন বিশ্লেষণ করে চিহ্নিত করুন কোন টপিকগুলো থেকে প্রতিবছর প্রশ্ন আসে। সেই টপিকগুলোর মূল কনসেপ্ট একবারে ক্লিয়ার করে ফেলুন।',
-      'প্রতিদিন সময় ধরে অন্তত ১০০টি এমসিকিউ প্র্যাকটিস করুন এবং নেগেটিভ মার্কিং যেন ০.৫ এর বেশি না হয় সেদিকে সতর্ক নজর রাখুন।',
-    ],
-  },
-  {
-    id: 'ict-c-programming',
-    title: 'এইচএসসি আইসিটি: সি প্রোগ্রামিং ও লজিক গেইটের ভয় দূর করার সহজ টেকনিক',
-    category: 'এইচএসসি টিপস',
-    readTime: '৩ মিনিট পাঠ',
-    date: 'সেপ্টেম্বর ২০২৬',
-    summary: 'এইচএসসি আইসিটির ৫ম ও ৩য় অধ্যায় সহজে বোঝার উপায় ও সিকিউতে পূর্ণ নম্বর পাওয়ার স্মার্ট ফর্মুলা।',
-    content: [
-      'আইসিটি বিষয়ে শিক্ষার্থীদের সবচেয়ে বড় ভীতি থাকে সি প্রোগ্রামিং ও লজিক গেইট নিয়ে। কিন্তু বাস্তবে এগুলো গণিতের চেয়েও বেশি যৌক্তিক।',
-      'লুপ (Loop), কন্ডিশন (if-else) এবং অ্যারে (Array) এর ফ্লোচার্ট আগে খাতায় আঁকা শিখুন। ফ্লোচার্ট পরিষ্কার থাকলে কোড লেখা পানির মতো সহজ হয়ে যায়।',
-      'ডিজিটাল ডিভাইসে সত্যক সারণী ও বুলিয়ান শতসিদ্ধ মুখস্থ করার চেয়ে কীভাবে গেইটের ইনপুট আউটপুটে রূপান্তর হয় তা লজিক্যালি অনুধাবন করুন।',
-    ],
-  },
-  {
-    id: 'exam-hall-strategy',
-    title: 'পরীক্ষার হলে কীভাবে সঠিক টাইম ম্যানেজমেন্ট করে সর্বোচ্চ নম্বর নিশ্চিত করবেন?',
-    category: 'পরীক্ষার টেকনিক',
-    readTime: '৩ মিনিট পাঠ',
-    date: 'সেপ্টেম্বর ২০২৬',
-    summary: 'সহজ প্রশ্ন বাছাই, জানা প্রশ্নের ভুল এড়ানো এবং শেষ মুহূর্তের রিভিশনের পরীক্ষিত উপায়।',
-    content: [
-      'পরীক্ষার খাতা পাওয়ার পর প্রথম ৫ মিনিট ঠান্ডা মাথায় পুরো প্রশ্নপত্র চোখ বুলিয়ে নিন। যে প্রশ্নগুলো আপনি ১০০% নিশ্চিত, সেগুলো চিহ্নিত করুন।',
-      'কখনই একটি কঠিন প্রশ্নে ৫ মিনিটের বেশি আটকে থাকবেন না। কঠিন প্রশ্নটি চিহ্নিত করে রেখে আগে নিশ্চিত নম্বরগুলো তুলে নিন।',
-      'অনলাইন বা অফলাইন মক টেস্ট দেওয়ার সময় নিজের ঘড়ি দেখে পরীক্ষা দেওয়ার অভ্যাস গড়ে তুললে মূল পরীক্ষার হলের ভয় ৯০% দূর হয়ে যায়।',
-    ],
-  },
-];
 
 // Mentorship Launch Banner Data & Randomizer
 // 1st image is ALWAYS PRIMARY_MENTORSHIP_BANNER
@@ -202,9 +150,6 @@ export const ClassroomPage: React.FC = () => {
 
   // State for Classroom Dedicated Admin Modal
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-
-  // State for Article Reading Modal
-  const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
   // Form states
   const [studentName, setStudentName] = useState('');
@@ -1269,28 +1214,28 @@ export const ClassroomPage: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* Blog & Study Articles Section (New section as requested) */}
-      <section id="articles" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="text-center max-w-2xl mx-auto mb-10"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
-            <FileText size={14} />
-            <span>Academic & Admission Blog</span>
-          </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight font-['Hind_Siliguri',sans-serif]">
-            স্টাডি আর্টিকেল ও গাইডলাইন
-          </h2>
-          <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
-            এডমিশন হ্যাকস, এইচএসসি আইসিটি টিপস এবং পরীক্ষার হলের সেরা কৌশলের প্রয়োজনীয় আর্টিকেলসমূহ।
-          </p>
-        </motion.div>
+      {/* Blog & Study Articles Section (Only rendered when user has written and published articles) */}
+      {getClassroomBlogs(false).length > 0 && (
+        <section id="articles" className="relative z-10 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="text-center max-w-2xl mx-auto mb-10"
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
+              <FileText size={14} />
+              <span>Academic & Admission Blog</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight font-['Hind_Siliguri',sans-serif]">
+              স্টাডি আর্টিকেল ও গাইডলাইন
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-600 mt-2 font-['Hind_Siliguri',sans-serif]">
+              এডমিশন হ্যাকস, এইচএসসি আইসিটি টিপস এবং পরীক্ষার হলের সেরা কৌশলের প্রয়োজনীয় আর্টিকেলসমূহ।
+            </p>
+          </motion.div>
 
-        {getClassroomBlogs(false).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {getClassroomBlogs(false).slice(0, 3).map((post, idx) => (
               <motion.div
@@ -1341,26 +1286,19 @@ export const ClassroomPage: React.FC = () => {
               </motion.div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-10 px-6 bg-orange-50/50 rounded-3xl border border-orange-200/80 max-w-lg mx-auto">
-            <FileText size={32} className="mx-auto text-orange-400 mb-2" />
-            <p className="text-sm font-bold text-zinc-800 font-['Hind_Siliguri',sans-serif]">
-              এডমিশন ও একাডেমিক নতুন আর্টিকেল শীঘ্রই প্রকাশিত হচ্ছে!
-            </p>
-          </div>
-        )}
 
-        {/* View All Blogs Button */}
-        <div className="mt-8 text-center">
-          <button
-            onClick={() => navigateTo('/classroom/blog')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 font-bold text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer group shadow-xs"
-          >
-            <span>সবগুলো আর্টিকেল ও ব্লগ দেখুন</span>
-            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-      </section>
+          {/* View All Blogs Button */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => navigateTo('/classroom/blog')}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 font-bold text-xs sm:text-sm font-['Hind_Siliguri',sans-serif] transition-all cursor-pointer group shadow-xs"
+            >
+              <span>সবগুলো আর্টিকেল ও ব্লগ দেখুন</span>
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Pre-Registration Banner (NO WhatsApp, 100% focused direct registration) */}
       <section className="relative z-10 py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
@@ -2105,49 +2043,6 @@ export const ClassroomPage: React.FC = () => {
                 বন্ধ করুন
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 2. Article Reader Modal (Blog detail view)                                */}
-      {/* ========================================================================= */}
-      {selectedArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-lg bg-white border-2 border-orange-400 rounded-3xl p-6 sm:p-8 shadow-2xl text-left overflow-hidden max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setSelectedArticle(null)}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-orange-50 text-zinc-500 hover:text-zinc-900 hover:bg-orange-100 transition-colors cursor-pointer"
-            >
-              <X size={18} />
-            </button>
-
-            <div className="flex items-center gap-2 text-xs font-bold text-orange-700 mb-3 font-['Hind_Siliguri',sans-serif]">
-              <span className="px-2.5 py-0.5 rounded-md bg-orange-100 border border-orange-200">
-                {selectedArticle.category}
-              </span>
-              <span>•</span>
-              <span className="text-zinc-500">{selectedArticle.readTime}</span>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-black text-zinc-900 font-['Hind_Siliguri',sans-serif] mb-4 leading-snug">
-              {selectedArticle.title}
-            </h3>
-
-            <div className="space-y-3.5 text-xs sm:text-sm text-zinc-700 font-['Hind_Siliguri',sans-serif] leading-relaxed mb-6">
-              {selectedArticle.content.map((p, idx) => (
-                <p key={idx} className="bg-orange-50/40 p-3 rounded-xl border border-orange-100">
-                  {p}
-                </p>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setSelectedArticle(null)}
-              className="w-full py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-orange-500 text-white font-['Hind_Siliguri',sans-serif]"
-            >
-              পড়া শেষ হয়েছে (বন্ধ করুন)
-            </button>
           </div>
         </div>
       )}

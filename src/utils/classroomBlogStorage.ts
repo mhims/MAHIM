@@ -1,16 +1,21 @@
 import { ClassroomBlogPost, DEFAULT_CLASSROOM_BLOGS, DEFAULT_CLASSROOM_BLOG_TOPICS } from '../data/classroomBlogs';
 
-const STORAGE_KEY = 'mahim_classroom_blogs_v2';
-const OLD_STORAGE_KEY = 'mahim_classroom_blogs_v1';
+const STORAGE_KEY = 'mahim_classroom_blogs_v3';
+const OLD_STORAGE_KEYS = [
+  'mahim_classroom_blogs_v2',
+  'mahim_classroom_blogs_v1',
+  'mahim_classroom_blogs',
+  'classroom_blogs',
+  'classroom_articles',
+];
 const LIKES_STORAGE_KEY = 'mahim_classroom_blog_liked_ids';
 
-// Known sample post IDs to permanently remove
-const SAMPLE_IDS = new Set([
-  'cblog_admission_strategy_2026',
-  'cblog_hsc_mistakes',
-  'cblog_success_story_tahsina',
-  'cblog_ict_coding',
-]);
+// Purge legacy storage immediately upon module load to ensure no stale sample articles remain
+if (typeof window !== 'undefined') {
+  try {
+    OLD_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+  } catch {}
+}
 
 /**
  * Persists blogs directly to the project's src/data/classroomBlogs.ts file on disk
@@ -36,31 +41,23 @@ export function getClassroomBlogs(includeDrafts = false): ClassroomBlogPost[] {
   }
 
   try {
-    // Check v2 storage first
-    let raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     let list: ClassroomBlogPost[] = [];
 
     if (raw) {
-      list = JSON.parse(raw);
-    } else {
-      // Check legacy storage and migrate, but strictly filter out sample posts
-      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
-      if (oldRaw) {
-        try {
-          const oldList: ClassroomBlogPost[] = JSON.parse(oldRaw);
-          list = oldList.filter((item) => !SAMPLE_IDS.has(item.id));
-        } catch {
-          list = [];
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          list = parsed;
         }
-      } else {
-        list = [...DEFAULT_CLASSROOM_BLOGS].filter((item) => !SAMPLE_IDS.has(item.id));
+      } catch {
+        list = [];
       }
+    } else {
+      // Start with completely empty list — no sample articles
+      list = [...DEFAULT_CLASSROOM_BLOGS];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      localStorage.removeItem(OLD_STORAGE_KEY);
     }
-
-    // Always strip sample posts
-    list = list.filter((item) => !SAMPLE_IDS.has(item.id));
 
     if (!includeDrafts) {
       list = list.filter((item) => item.status === 'published');
@@ -229,7 +226,7 @@ export function clearAllClassroomBlogs(): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
-    localStorage.removeItem(OLD_STORAGE_KEY);
+    OLD_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
     syncToFileSystem([]);
     window.dispatchEvent(new CustomEvent('classroom:blog_updated', { detail: { cleared: true } }));
   } catch (err) {

@@ -125,8 +125,17 @@ export default function App() {
     currentPath === '/blog' ||
     currentPath === '/contact';
 
-  // Live Visitor Analytics (Tracks IP, device, OS, browser, duration to Google Sheets)
+  // Live Visitor Analytics (Google Analytics GA4 + Webhook to Google Sheets)
   useEffect(() => {
+    // Track Single-Page Application (SPA) route navigation in Google Analytics (GA4)
+    if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+      (window as any).gtag('config', 'G-9BTLKBP1GS', {
+        page_path: currentPath,
+        page_title: document.title,
+        page_location: window.location.href,
+      });
+    }
+
     const webhookUrl = getActiveWebhookUrl();
     if (!webhookUrl) return;
     const cleanup = trackPageView(webhookUrl, currentPath);

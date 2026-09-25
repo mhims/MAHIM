@@ -20,71 +20,299 @@ export interface VisitorLogPayload {
   source: string;
 }
 
-interface IpLocation {
+export interface IpLocation {
   ip: string;
   location: string;
 }
 
-let cachedIpLocation: IpLocation | null = null;
+// Bangladesh Divisions & 64 Districts Bengali name dictionary
+const BD_DISTRICTS_BN: Record<string, string> = {
+  // 8 Divisions
+  'dhaka': 'ঢাকা',
+  'chittagong': 'চট্টগ্রাম',
+  'chattogram': 'চট্টগ্রাম',
+  'rangpur': 'রংপুর',
+  'rajshahi': 'রাজশাহী',
+  'khulna': 'খুলনা',
+  'barisal': 'বরিশাল',
+  'barishal': 'বরিশাল',
+  'sylhet': 'সিলেট',
+  'mymensingh': 'ময়মনসিংহ',
 
-// Resolve Client IP and Geolocation silently with fast timeout & caching
-export async function getIpAndLocation(): Promise<IpLocation> {
-  if (cachedIpLocation) return cachedIpLocation;
+  // Rangpur Division Districts & Cities
+  'dinajpur': 'দিনাজপুর',
+  'gaibandha': 'গাইবান্ধা',
+  'kurigram': 'কুড়িগ্রাম',
+  'lalmonirhat': 'লালমনিরহাট',
+  'nilphamari': 'নীলফামারী',
+  'panchagarh': 'পঞ্চগড়',
+  'thakurgaon': 'ঠাকুরগাঁও',
+  'saidpur': 'সৈয়দপুর',
 
-  try {
-    const stored = sessionStorage.getItem('mahims_cached_ip_data');
-    if (stored) {
-      cachedIpLocation = JSON.parse(stored);
-      return cachedIpLocation!;
+  // Rajshahi Division Districts
+  'bogura': 'বগুড়া',
+  'bogra': 'বগুড়া',
+  'joypurhat': 'জয়পুরহাট',
+  'naogaon': 'নওগাঁ',
+  'natore': 'নাটোর',
+  'chapainawabganj': 'চাঁপাইনবাবগঞ্জ',
+  'nawabganj': 'চাঁপাইনবাবগঞ্জ',
+  'pabna': 'পাবনা',
+  'sirajganj': 'সিরাজগঞ্জ',
+
+  // Dhaka Division Districts
+  'faridpur': 'ফরিদপুর',
+  'gazipur': 'গাজীপুর',
+  'gopalganj': 'গোপালগঞ্জ',
+  'kishoreganj': 'কিশোরগঞ্জ',
+  'madaripur': 'মাদারীপুর',
+  'manikganj': 'মানিকগঞ্জ',
+  'munshiganj': 'মুন্সীগঞ্জ',
+  'narayanganj': 'নারায়ণগঞ্জ',
+  'narsingdi': 'নরসিংদী',
+  'rajbari': 'রাজবাড়ী',
+  'shariatpur': 'শরীয়তপুর',
+  'tangail': 'টাঙ্গাইল',
+  'savar': 'সাভার',
+
+  // Chittagong Division Districts
+  'bandarban': 'বান্দরবান',
+  'brahmanbaria': 'ব্রাহ্মণবাড়িয়া',
+  'chandpur': 'চাঁদপুর',
+  'comilla': 'কুমিল্লা',
+  'cumilla': 'কুমিল্লা',
+  'cox\'s bazar': 'কক্সবাজার',
+  'coxs bazar': 'কক্সবাজার',
+  'coxsbazar': 'কক্সবাজার',
+  'feni': 'ফেনী',
+  'khagrachhari': 'খাগড়াছড়ি',
+  'lakshmipur': 'লক্ষ্মীপুর',
+  'noakhali': 'নোয়াখালী',
+  'rangamati': 'রাঙামাটি',
+
+  // Khulna Division Districts
+  'bagerhat': 'বাগেরহাট',
+  'chuadanga': 'চুয়াডাঙ্গা',
+  'jessore': 'যশোর',
+  'jashore': 'যশোর',
+  'jhenaidah': 'ঝিনাইদহ',
+  'kushtia': 'কুষ্টিয়া',
+  'magura': 'মাগুরা',
+  'meherpur': 'মেহেরপুর',
+  'narail': 'নড়াইল',
+  'satkhira': 'সাতক্ষীরা',
+
+  // Barisal Division Districts
+  'barguna': 'বরগুনা',
+  'bhola': 'ভোলা',
+  'jhalokati': 'ঝালকাঠি',
+  'patuakhali': 'পটুয়াখালী',
+  'pirojpur': 'পিরোজপুর',
+
+  // Sylhet Division Districts
+  'habiganj': 'হবিগঞ্জ',
+  'moulvibazar': 'মৌলভীবাজার',
+  'maulvibazar': 'মৌলভীবাজার',
+  'sunamganj': 'সুনামগঞ্জ',
+
+  // Mymensingh Division Districts
+  'jamalpur': 'জামালপুর',
+  'netrokona': 'নেত্রকোণা',
+  'sherpur': 'শেরপুর',
+};
+
+/**
+ * Formats city, region and country into clean, readable location string.
+ * For Bangladesh: e.g. "রংপুর, বাংলাদেশ (Rangpur)" or "বগুড়া, রাজশাহী বিভাগ, বাংলাদেশ (Bogura, Rajshahi)"
+ * For Other countries: e.g. "Kolkata, West Bengal, India"
+ */
+export function formatLocationString(city?: string, region?: string, country?: string): string {
+  const cCity = (city || '').trim();
+  const cRegion = (region || '').replace(/\s*division/gi, '').trim();
+  const cCountry = (country || '').trim() || 'Bangladesh';
+
+  const isBd = /bangladesh|bd/i.test(cCountry);
+
+  if (isBd) {
+    const cityKey = cCity.toLowerCase();
+    const regionKey = cRegion.toLowerCase();
+
+    const cityBn = BD_DISTRICTS_BN[cityKey] || (cCity ? cCity : '');
+    const regionBn = BD_DISTRICTS_BN[regionKey] || (cRegion ? cRegion : '');
+
+    // Both city and region known and different (e.g. Bogura in Rajshahi)
+    if (cityBn && regionBn && cityBn.toLowerCase() !== regionBn.toLowerCase()) {
+      const engSub = [cCity, cRegion].filter(Boolean).join(', ');
+      return `${cityBn}, ${regionBn} বিভাগ, বাংলাদেশ${engSub ? ` (${engSub})` : ''}`;
     }
-  } catch {
-    // sessionStorage might be disabled or restricted
+
+    // City known (e.g. Rangpur -> "রংপুর, বাংলাদেশ (Rangpur)")
+    if (cityBn) {
+      return `${cityBn}, বাংলাদেশ${cCity ? ` (${cCity})` : ''}`;
+    }
+
+    // Only division known (e.g. "রংপুর বিভাগ, বাংলাদেশ (Rangpur)")
+    if (regionBn) {
+      return `${regionBn} বিভাগ, বাংলাদেশ${cRegion ? ` (${cRegion})` : ''}`;
+    }
+
+    return 'বাংলাদেশ (Bangladesh)';
   }
 
-  // 1st priority: ipapi.co (Provides IP + City + Country)
+  // Non-Bangladesh international visitors
+  const parts = [cCity, cRegion, cCountry].filter(Boolean);
+  return parts.length > 0 ? parts.join(', ') : 'Unknown';
+}
+
+let cachedIpLocation: IpLocation | null = null;
+let pendingIpPromise: Promise<IpLocation> | null = null;
+
+// Resolve Client IP and Geolocation silently with high accuracy (City + District + Country)
+export async function getIpAndLocation(): Promise<IpLocation> {
+  // If already resolved with city details, return immediately
+  if (
+    cachedIpLocation &&
+    cachedIpLocation.location &&
+    cachedIpLocation.location !== 'Bangladesh' &&
+    cachedIpLocation.location !== 'Unknown'
+  ) {
+    return cachedIpLocation;
+  }
+
+  if (pendingIpPromise) {
+    return pendingIpPromise;
+  }
+
+  pendingIpPromise = resolveIpAndLocation().finally(() => {
+    pendingIpPromise = null;
+  });
+
+  return pendingIpPromise;
+}
+
+async function resolveIpAndLocation(): Promise<IpLocation> {
+  // Check sessionStorage cache (v2 with district support)
+  try {
+    const stored = sessionStorage.getItem('mahims_cached_ip_data_v2');
+    if (stored) {
+      const parsed: IpLocation = JSON.parse(stored);
+      if (
+        parsed.ip &&
+        parsed.location &&
+        parsed.location !== 'Bangladesh' &&
+        parsed.location !== 'Unknown'
+      ) {
+        cachedIpLocation = parsed;
+        return cachedIpLocation;
+      }
+    }
+  } catch {
+    // sessionStorage might be restricted
+  }
+
+  // 1st priority: ipwho.is (Free, HTTPS, CORS open, high accuracy district/city in BD)
+  try {
+    const res = await fetch('https://ipwho.is/', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success !== false) {
+        const loc = formatLocationString(data.city, data.region, data.country);
+        cachedIpLocation = {
+          ip: data.ip || 'Unknown',
+          location: loc,
+        };
+        try {
+          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
+        } catch {}
+        return cachedIpLocation;
+      }
+    }
+  } catch {
+    // Fallback to next provider
+  }
+
+  // 2nd priority: get.geojs.io (Free open-source geo service, HTTPS, CORS open)
+  try {
+    const res = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        const loc = formatLocationString(data.city, data.region, data.country);
+        cachedIpLocation = {
+          ip: data.ip || 'Unknown',
+          location: loc,
+        };
+        try {
+          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
+        } catch {}
+        return cachedIpLocation;
+      }
+    }
+  } catch {
+    // Fallback to next provider
+  }
+
+  // 3rd priority: ipapi.co (Provides IP + City + Country)
   try {
     const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
     if (res.ok) {
       const data = await res.json();
-      const city = data.city || '';
-      const country = data.country_name || '';
-      const loc = [city, country].filter(Boolean).join(', ') || 'Bangladesh';
-      cachedIpLocation = {
-        ip: data.ip || 'Unknown',
-        location: loc,
-      };
-      try {
-        sessionStorage.setItem('mahims_cached_ip_data', JSON.stringify(cachedIpLocation));
-      } catch {
-        // ignore
+      if (data && !data.error) {
+        const loc = formatLocationString(data.city, data.region, data.country_name);
+        cachedIpLocation = {
+          ip: data.ip || 'Unknown',
+          location: loc,
+        };
+        try {
+          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
+        } catch {}
+        return cachedIpLocation;
       }
-      return cachedIpLocation;
     }
   } catch {
-    // Fallback if ipapi is rate-limited or blocked
+    // Fallback to next provider
   }
 
-  // 2nd priority fallback: api.ipify.org
+  // 4th priority: freeipapi.com
+  try {
+    const res = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        const loc = formatLocationString(data.cityName, data.regionName, data.countryName);
+        cachedIpLocation = {
+          ip: data.ipAddress || 'Unknown',
+          location: loc,
+        };
+        try {
+          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
+        } catch {}
+        return cachedIpLocation;
+      }
+    }
+  } catch {
+    // Fallback to IP-only
+  }
+
+  // 5th fallback: api.ipify.org (IP only)
   try {
     const res2 = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(2000) });
     if (res2.ok) {
       const data2 = await res2.json();
       cachedIpLocation = {
         ip: data2.ip || 'Unknown',
-        location: 'Bangladesh',
+        location: 'বাংলাদেশ (Bangladesh)',
       };
       try {
-        sessionStorage.setItem('mahims_cached_ip_data', JSON.stringify(cachedIpLocation));
-      } catch {
-        // ignore
-      }
+        sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
+      } catch {}
       return cachedIpLocation;
     }
   } catch {
     // ignore
   }
 
-  return { ip: 'Unknown', location: 'Unknown' };
+  return { ip: 'Unknown', location: 'বাংলাদেশ (Bangladesh)' };
 }
 
 // Device detection

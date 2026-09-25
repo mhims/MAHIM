@@ -45,7 +45,8 @@ import {
   Globe,
   Clock,
   Compass,
-  ExternalLink
+  ExternalLink,
+  MapPin
 } from 'lucide-react';
 import { AdminThoughtsTab } from './AdminThoughtsTab';
 
@@ -2293,7 +2294,10 @@ export const AdminModal: React.FC = () => {
                                   <Globe className="w-3 h-3 text-emerald-400/70 shrink-0" />
                                   <span>{item.ip}</span>
                                 </div>
-                                <div className="text-[10px] text-slate-400">{item.location}</div>
+                                <div className="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                  <MapPin className="w-2.5 h-2.5 text-amber-400/80 shrink-0" />
+                                  <span>{item.location}</span>
+                                </div>
                               </td>
                               <td className="py-2 px-3 whitespace-nowrap text-slate-300">
                                 <div className="flex items-center gap-1.5">

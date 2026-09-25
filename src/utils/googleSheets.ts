@@ -100,7 +100,7 @@ function doPost(e) {
         vSheet.setColumnWidth(1, 170); // Time
         vSheet.setColumnWidth(2, 210); // Page
         vSheet.setColumnWidth(3, 130); // IP
-        vSheet.setColumnWidth(4, 160); // Location
+        vSheet.setColumnWidth(4, 210); // Location (City/District, Country)
         vSheet.setColumnWidth(5, 140); // Device
         vSheet.setColumnWidth(6, 120); // OS
         vSheet.setColumnWidth(7, 120); // Browser

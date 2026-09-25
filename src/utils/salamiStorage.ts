@@ -64,9 +64,9 @@ export function getSalamiSettings(): SalamiSettings {
   if (typeof window === 'undefined') {
     return {
       googleSheetWebhookUrl: DEFAULT_SALAMI_WEBHOOK_URL,
-      bKashNumber: '01560061992',
-      nagadNumber: '01560061992',
-      rocketNumber: '01560061992',
+      bKashNumber: '01762 855 347',
+      nagadNumber: '01762 855 347',
+      rocketNumber: '01762 855 347',
     };
   }
   try {
@@ -74,24 +74,24 @@ export function getSalamiSettings(): SalamiSettings {
     if (!raw) {
       return {
         googleSheetWebhookUrl: DEFAULT_SALAMI_WEBHOOK_URL,
-        bKashNumber: '01560061992',
-        nagadNumber: '01560061992',
-        rocketNumber: '01560061992',
+        bKashNumber: '01762 855 347',
+        nagadNumber: '01762 855 347',
+        rocketNumber: '01762 855 347',
       };
     }
     const parsed = JSON.parse(raw);
     return {
       googleSheetWebhookUrl: parsed.googleSheetWebhookUrl || DEFAULT_SALAMI_WEBHOOK_URL,
-      bKashNumber: parsed.bKashNumber || '01560061992',
-      nagadNumber: parsed.nagadNumber || '01560061992',
-      rocketNumber: parsed.rocketNumber || '01560061992',
+      bKashNumber: parsed.bKashNumber || '01762 855 347',
+      nagadNumber: parsed.nagadNumber || '01762 855 347',
+      rocketNumber: parsed.rocketNumber || '01762 855 347',
     };
   } catch {
     return {
       googleSheetWebhookUrl: DEFAULT_SALAMI_WEBHOOK_URL,
-      bKashNumber: '01560061992',
-      nagadNumber: '01560061992',
-      rocketNumber: '01560061992',
+      bKashNumber: '01762 855 347',
+      nagadNumber: '01762 855 347',
+      rocketNumber: '01762 855 347',
     };
   }
 }

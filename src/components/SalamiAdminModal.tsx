@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Lock, X, Trash2, Download, RefreshCw, Smartphone, CheckCircle2,
   Copy, FileSpreadsheet, Settings, Key, Clock, Search, Gift, Heart,
-  Sparkles, Check, AlertCircle, Eye, EyeOff
+  Sparkles, Check, AlertCircle, Eye, EyeOff, Share2, Send
 } from 'lucide-react';
 import { SalamiRecord, SalamiSettings } from '../types/salami';
 import {
@@ -13,6 +13,9 @@ import {
   fetchSalamiFromGoogleSheet, exportSalamiToCSV,
   SALAMI_APPS_SCRIPT_TEMPLATE
 } from '../utils/salamiStorage';
+import {
+  generateAdminPaidReceiptCard, getWhatsAppShareLink, getPaidShareText, downloadSalamiCard
+} from '../utils/salamiCardGenerator';
 import { verifySubPanelPasswordWithMasterOverride } from '../utils/masterPasswordHelper';
 
 interface SalamiAdminModalProps {
@@ -40,6 +43,13 @@ export function SalamiAdminModal({ isOpen, onClose }: SalamiAdminModalProps) {
   const [newPassword, setNewPassword] = useState('');
   const [pwChangeStatus, setPwChangeStatus] = useState<string | null>(null);
 
+  // Admin Receipt Card Modal State
+  const [selectedRecordForCard, setSelectedRecordForCard] = useState<SalamiRecord | null>(null);
+  const [customCardNote, setCustomCardNote] = useState('আপনার সালামি সফলভাবে বিকাশ/নগদে পাঠানো হয়েছে। ঈদ মোবারক! 🌙');
+  const [cardPreviewUrl, setCardPreviewUrl] = useState<string | null>(null);
+  const [isGeneratingCard, setIsGeneratingCard] = useState(false);
+  const [copiedReceiptText, setCopiedReceiptText] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       const auth = isSalamiAdminAuthenticated();
@@ -58,6 +68,40 @@ export function SalamiAdminModal({ isOpen, onClose }: SalamiAdminModalProps) {
   const showToast = (msg: string) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleOpenReceiptCard = async (record: SalamiRecord) => {
+    setSelectedRecordForCard(record);
+    setIsGeneratingCard(true);
+    try {
+      const url = await generateAdminPaidReceiptCard({
+        name: record.name,
+        phone: record.phone,
+        amount: record.amount,
+        customNote: customCardNote,
+        dateStr: record.timestamp || new Date().toLocaleDateString('bn-BD'),
+      });
+      setCardPreviewUrl(url);
+    } catch (err) {
+      console.error('Error generating receipt card:', err);
+    } finally {
+      setIsGeneratingCard(false);
+    }
+  };
+
+  const handleUpdateCardNote = async (newNote: string) => {
+    setCustomCardNote(newNote);
+    if (!selectedRecordForCard) return;
+    try {
+      const url = await generateAdminPaidReceiptCard({
+        name: selectedRecordForCard.name,
+        phone: selectedRecordForCard.phone,
+        amount: selectedRecordForCard.amount,
+        customNote: newNote,
+        dateStr: selectedRecordForCard.timestamp || new Date().toLocaleDateString('bn-BD'),
+      });
+      setCardPreviewUrl(url);
+    } catch {}
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -565,10 +609,18 @@ export function SalamiAdminModal({ isOpen, onClose }: SalamiAdminModalProps) {
                                 </button>
                               </td>
 
-                              <td className="py-3 px-4 whitespace-nowrap text-right">
+                              <td className="py-3 px-4 whitespace-nowrap text-right space-x-1.5">
+                                <button
+                                  onClick={() => handleOpenReceiptCard(item)}
+                                  className="p-1.5 px-2.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 transition-colors inline-flex items-center gap-1.5 text-[11px] font-bold cursor-pointer"
+                                  title="সালামি পরিশোধের রসিদ কার্ড তৈরি ও পাঠান"
+                                >
+                                  <Share2 className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span>রসিদ কার্ড</span>
+                                </button>
                                 <button
                                   onClick={() => handleDelete(item.id)}
-                                  className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 transition-colors"
+                                  className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 transition-colors inline-flex cursor-pointer"
                                   title="মুছে ফেলুন"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -586,6 +638,95 @@ export function SalamiAdminModal({ isOpen, onClose }: SalamiAdminModalProps) {
           </div>
         )}
       </div>
+
+      {/* ================= Admin Paid Receipt Card Modal ================= */}
+      {selectedRecordForCard && cardPreviewUrl && (
+        <div
+          className="fixed inset-0 z-[100005] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fadeIn"
+          onClick={() => setSelectedRecordForCard(null)}
+        >
+          <div
+            className="relative max-w-lg w-full bg-slate-900 border border-emerald-500/40 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <Gift className="w-5 h-5 text-emerald-400" />
+                <h4 className="text-base font-bold text-white">সালামি পরিশোধ কনফার্মেশন কার্ড</h4>
+              </div>
+              <button
+                onClick={() => setSelectedRecordForCard(null)}
+                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300">
+              <strong className="text-white">{selectedRecordForCard.name}</strong>-কে সালামি পাঠানোর পর এই কার্ডটি তার WhatsApp বা Messenger-এ পাঠাতে পারেন।
+            </p>
+
+            {/* Canvas Card Image */}
+            <div className="rounded-2xl overflow-hidden border border-emerald-500/30 shadow-lg bg-slate-950">
+              <img src={cardPreviewUrl} alt="Salami Paid Receipt" className="w-full h-auto" />
+            </div>
+
+            {/* Custom note on card */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                কার্ডের বার্তা পরিবর্তন করুন:
+              </label>
+              <input
+                type="text"
+                value={customCardNote}
+                onChange={e => handleUpdateCardNote(e.target.value)}
+                placeholder="বার্তা লিখুন..."
+                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+
+            {/* Share / Download Actions */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+              <button
+                onClick={() => downloadSalamiCard(cardPreviewUrl, selectedRecordForCard.name)}
+                className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>কার্ড ডাউনলোড</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const url = getWhatsAppShareLink(
+                    selectedRecordForCard.phone,
+                    selectedRecordForCard.name,
+                    selectedRecordForCard.amount
+                  );
+                  window.open(url, '_blank');
+                }}
+                className="py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md transition-colors cursor-pointer"
+              >
+                <Send className="w-4 h-4" />
+                <span>WhatsApp এ পাঠান</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const text = getPaidShareText(selectedRecordForCard.name, selectedRecordForCard.amount);
+                  navigator.clipboard.writeText(text);
+                  setCopiedReceiptText(true);
+                  setTimeout(() => setCopiedReceiptText(false), 2500);
+                  showToast('মেসেজ টেক্সট কপি হয়েছে!');
+                }}
+                className="py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md transition-colors cursor-pointer"
+              >
+                {copiedReceiptText ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <span>{copiedReceiptText ? 'কপি হয়েছে' : 'মেসেজ কপি'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

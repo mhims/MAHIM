@@ -116,15 +116,36 @@ export function SalamiPage() {
   useEffect(() => {
     bgAudioRef.current = new Audio('https://res.cloudinary.com/drvyjj7td/video/upload/v1779167887/eids_uyrojb.mp3');
     bgAudioRef.current.loop = true;
-    bgAudioRef.current.volume = 0.35;
+    bgAudioRef.current.volume = 0.45;
+
+    // Trigger celebratory confetti fireworks on initial page load
+    celebrate();
+
+    // Browser audio policy: start audio on first interaction
+    const handleFirstInteraction = () => {
+      startMusic();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
 
     return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
       if (bgAudioRef.current) {
         bgAudioRef.current.pause();
         bgAudioRef.current = null;
       }
     };
   }, []);
+
+  const startMusic = () => {
+    if (bgAudioRef.current && bgAudioRef.current.paused && !isAudioMuted) {
+      bgAudioRef.current.play().catch(() => {});
+    }
+  };
 
   const toggleMusic = () => {
     if (!bgAudioRef.current) return;
@@ -137,31 +158,36 @@ export function SalamiPage() {
     }
   };
 
-  // Confetti helper
-  const triggerConfetti = () => {
-    const end = Date.now() + 3500;
-    const interval = setInterval(() => {
-      if (Date.now() > end) {
-        clearInterval(interval);
-        return;
-      }
+  // Continuous celebratory fireworks / streamers (like the original code)
+  const celebrate = () => {
+    const duration = 4500;
+    const end = Date.now() + duration;
+    (function frame() {
       confetti({
-        particleCount: 25,
-        startVelocity: 30,
-        spread: 360,
-        origin: { x: Math.random(), y: Math.random() - 0.2 },
-        colors: ['#c5a059', '#d12053', '#ffe66d', '#4ecdc4', '#a8e6cf'],
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.75 },
+        colors: ['#c5a059', '#d12053', '#ffeaa7', '#4ecdc4'],
       });
-    }, 250);
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.75 },
+        colors: ['#c5a059', '#d12053', '#ffeaa7', '#4ecdc4'],
+      });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
   };
 
   // Copy phone number
-  const copyPhoneNumber = (num: string = '01560061992') => {
+  const copyPhoneNumber = (num: string = '01762855347') => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(num);
     }
     setShowCopyToast(true);
-    triggerConfetti();
+    celebrate();
     setTimeout(() => setShowCopyToast(false), 2600);
   };
 
@@ -232,7 +258,7 @@ export function SalamiPage() {
         setWonAmount(wonText);
         setHasWon(true);
         playWinSound();
-        triggerConfetti();
+        celebrate();
       }
     };
 
@@ -240,7 +266,7 @@ export function SalamiPage() {
   };
 
   // Submit Send Salami Form
-  const handleSubmitSend = async (e: React.FormEvent) => {
+  const handleSubmitSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!sendName.trim()) return;
 
@@ -255,19 +281,22 @@ export function SalamiPage() {
       timestamp: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
     };
 
+    // Instant local save
     addSalamiRecord(payload);
+
+    // Fire-and-forget Google Sheet in background (zero UI waiting!)
     const settings = getSalamiSettings();
-    await sendSalamiToGoogleSheet(settings.googleSheetWebhookUrl, payload);
+    sendSalamiToGoogleSheet(settings.googleSheetWebhookUrl, payload).catch(() => {});
 
     setIsSending(false);
-    triggerConfetti();
+    celebrate();
     setShowImagePopup(true);
     setSendName('');
     setSendMessage('');
   };
 
   // Submit Receive Salami Form
-  const handleSubmitReceive = async (e: React.FormEvent) => {
+  const handleSubmitReceive = (e: React.FormEvent) => {
     e.preventDefault();
     if (!receiveName.trim() || !receivePhone.trim()) return;
 
@@ -283,21 +312,25 @@ export function SalamiPage() {
       timestamp: new Date().toLocaleString('bn-BD', { timeZone: 'Asia/Dhaka' }),
     };
 
+    // Instant local save
     addSalamiRecord(payload);
+
+    // Fire-and-forget Google Sheet in background (zero UI waiting!)
     const settings = getSalamiSettings();
-    await sendSalamiToGoogleSheet(settings.googleSheetWebhookUrl, payload);
+    sendSalamiToGoogleSheet(settings.googleSheetWebhookUrl, payload).catch(() => {});
 
     // Generate sharable card
-    const cardUrl = await generateSalamiCardCanvas({
+    generateSalamiCardCanvas({
       name: receiveName.trim(),
       amount: claimAmount,
       wish: receiveMessage.trim(),
       dateStr: new Date().toLocaleDateString('bn-BD'),
+    }).then(cardUrl => {
+      setCardDataUrl(cardUrl);
     });
-    setCardDataUrl(cardUrl);
 
     setIsClaiming(false);
-    triggerConfetti();
+    celebrate();
     setShowSuccessCardModal(true);
   };
 
@@ -359,6 +392,33 @@ export function SalamiPage() {
 
   return (
     <div className="min-h-screen bg-[#fdfaf5] text-[#5d4037] font-['Hind_Siliguri',sans-serif] relative overflow-x-hidden selection:bg-[#c5a059]/20 selection:text-[#5d4037]">
+      {/* Keyframe animation styles for glowing lamp and swinging lanterns */}
+      <style>{`
+        @keyframes pulsateGlow {
+          from {
+            filter: drop-shadow(0 0 10px #c5a059);
+            transform: scale(1);
+            opacity: 0.82;
+          }
+          to {
+            filter: drop-shadow(0 0 45px #c5a059);
+            transform: scale(1.05);
+            opacity: 1;
+          }
+        }
+        @keyframes swingMotion {
+          from { transform: rotate(-8deg); }
+          to   { transform: rotate(8deg); }
+        }
+        .hero-lamp-animated {
+          animation: pulsateGlow 2s infinite alternate ease-in-out;
+        }
+        .lantern-svg-animated {
+          animation: swingMotion 4s infinite ease-in-out alternate;
+          transform-origin: top center;
+        }
+      `}</style>
+
       {/* Background Arabesque texture pattern */}
       <div
         className="fixed inset-0 pointer-events-none opacity-30 z-0"
@@ -378,7 +438,7 @@ export function SalamiPage() {
       {/* Swinging Lanterns */}
       <div className="fixed top-0 left-0 w-full pointer-events-none z-10 overflow-hidden h-36">
         <svg
-          className="absolute w-12 sm:w-16 top-0 left-[8%] animate-[swing_4s_infinite_ease-in-out_alternate] origin-top opacity-60 drop-shadow-[0_0_12px_#c5a059]"
+          className="lantern-svg-animated absolute w-12 sm:w-16 top-0 left-[8%] opacity-65 drop-shadow-[0_0_15px_#c5a059]"
           viewBox="0 0 100 120"
         >
           <path d="M50 0v20M25 20h50l8 15-8 15H25l-8-15 8-15zM25 50h50v40l-25 20-25-20V50z" fill="#ffcc00" stroke="#d4af37" strokeWidth="2" />
@@ -388,7 +448,7 @@ export function SalamiPage() {
         </svg>
 
         <svg
-          className="absolute w-12 sm:w-16 top-0 right-[10%] animate-[swing_4s_infinite_ease-in-out_alternate] origin-top opacity-60 drop-shadow-[0_0_12px_#c5a059] delay-1000"
+          className="lantern-svg-animated absolute w-12 sm:w-16 top-0 right-[10%] opacity-65 drop-shadow-[0_0_15px_#c5a059] [animation-delay:2s]"
           viewBox="0 0 100 120"
         >
           <path d="M50 0v20M25 20h50l8 15-8 15H25l-8-15 8-15zM25 50h50v40l-25 20-25-20V50z" fill="#ffcc00" stroke="#d4af37" strokeWidth="2" />
@@ -430,8 +490,8 @@ export function SalamiPage() {
           আপনাকে জানাই পবিত্র ঈদ-উল-আযহার শুভেচ্ছা। ঈদ মোবারক!
         </p>
 
-        {/* Hero Lamp SVG Illustration */}
-        <div className="absolute -bottom-16 right-4 sm:right-16 w-24 sm:w-36 pointer-events-none drop-shadow-[0_0_25px_#c5a059]">
+        {/* Hero Lamp SVG Illustration with glowing pulsing animation */}
+        <div className="hero-lamp-animated absolute -bottom-16 right-4 sm:right-16 w-24 sm:w-36 pointer-events-none drop-shadow-[0_0_25px_#c5a059]">
           <svg viewBox="0 0 100 150" className="w-full h-auto">
             <path d="M50 10 L85 45 L85 105 L50 140 L15 105 L15 45 Z" fill="#3e2723" stroke="#d4af37" strokeWidth="4" />
             <circle cx="50" cy="80" r="24" fill="#ffaa00">
@@ -455,14 +515,20 @@ export function SalamiPage() {
               <button
                 onClick={() => {
                   setPortalMode('send');
-                  copyPhoneNumber('01560061992');
+                  startMusic();
+                  celebrate();
+                  copyPhoneNumber('01762855347');
                 }}
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#5d4037] hover:bg-[#c5a059] text-white font-bold text-lg shadow-xl shadow-[#5d4037]/20 hover:-translate-y-1 transition-all cursor-pointer"
               >
                 সালামি পাঠান 💸
               </button>
               <button
-                onClick={() => setPortalMode('receive')}
+                onClick={() => {
+                  setPortalMode('receive');
+                  startMusic();
+                  celebrate();
+                }}
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#d12053] hover:bg-[#b01842] text-white font-bold text-lg shadow-xl shadow-[#d12053]/20 hover:-translate-y-1 transition-all cursor-pointer"
               >
                 সালামি নিন 🎁
@@ -480,14 +546,14 @@ export function SalamiPage() {
 
               {/* bKash Phone Box */}
               <div
-                onClick={() => copyPhoneNumber('01560061992')}
+                onClick={() => copyPhoneNumber('01762855347')}
                 className="p-6 rounded-3xl bg-[#fff0f5] border-3 border-dashed border-[#d12053] hover:bg-[#ffe0eb] transition-all cursor-pointer group shadow-inner"
               >
                 <span className="text-xs uppercase font-extrabold text-[#d12053] tracking-widest block mb-2">
                   পার্সোনাল নম্বর
                 </span>
                 <h3 className="text-3xl sm:text-4xl font-extrabold text-[#d12053] font-mono tracking-wider">
-                  015 6006 1992
+                  01762 855 347
                 </h3>
                 <span className="text-xs font-semibold text-[#c4567a] mt-2 block group-hover:scale-105 transition-transform">
                   👆 ট্যাপ করুন — নম্বর কপি হয়ে যাবে
@@ -675,12 +741,12 @@ export function SalamiPage() {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/+8801560061992"
+        href="https://wa.me/@mahim.wp"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-5 z-40 flex flex-col items-center gap-1 group text-decoration-none"
       >
-        <span className="bg-[#25D366] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md group-hover:scale-105 transition-transform">
+        <span className="bg-[#25D366] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md group-hover:scale-105 transition-transform">
           মাহিমকে মেসেজ দিন
         </span>
         <div className="w-13 h-13 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-all">

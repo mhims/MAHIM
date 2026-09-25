@@ -218,3 +218,168 @@ export async function shareSalamiCard(dataUrl: string, name: string, amount: str
   }
   return false;
 }
+
+export interface PaidReceiptData {
+  name: string;
+  phone: string;
+  amount: string;
+  customNote?: string;
+  dateStr?: string;
+}
+
+/**
+ * Generates an Admin-issued Salami Paid Receipt card to send to friends via WhatsApp/Messenger
+ */
+export function generateAdminPaidReceiptCard(data: PaidReceiptData): Promise<string> {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      resolve('');
+      return;
+    }
+
+    // 1. Festive Green & Gold Gradient Background
+    const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+    bgGrad.addColorStop(0, '#fdfaf5');
+    bgGrad.addColorStop(0.5, '#f4fbf7');
+    bgGrad.addColorStop(1, '#e8f8f0');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1080, 1080);
+
+    // 2. Outer Border (Emerald & Gold)
+    ctx.strokeStyle = '#2e7d32';
+    ctx.lineWidth = 14;
+    ctx.strokeRect(30, 30, 1020, 1020);
+
+    // 3. Inner Decorative Border
+    ctx.save();
+    ctx.strokeStyle = '#c5a059';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([16, 12]);
+    ctx.strokeRect(55, 55, 970, 970);
+    ctx.restore();
+
+    // 4. Header Icons & Title
+    ctx.fillStyle = '#2e7d32';
+    ctx.font = '50px "Hind Siliguri", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌙 ✨ 💸', 540, 130);
+
+    ctx.fillStyle = '#1b5e20';
+    ctx.font = 'bold 64px "Hind Siliguri", sans-serif';
+    ctx.fillText('সালামি পাঠানো সম্পন্ন!', 540, 215);
+
+    ctx.fillStyle = '#c5a059';
+    ctx.font = '600 30px "Hind Siliguri", sans-serif';
+    ctx.fillText('— মাহিম সালামি অফিসিয়াল কনফার্মেশন —', 540, 270);
+
+    // 5. White Box Container
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(46, 125, 50, 0.15)';
+    ctx.shadowBlur = 30;
+    ctx.shadowOffsetY = 15;
+
+    const rx = 100, ry = 315, rw = 880, rh = 570, radius = 32;
+    ctx.beginPath();
+    ctx.roundRect(rx, ry, rw, rh, radius);
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    ctx.strokeStyle = '#c8e6c9';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // 6. Paid Verified Badge
+    ctx.fillStyle = '#e8f5e9';
+    const bw = 460, bh = 56, bx = (1080 - bw) / 2, by = 350;
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 28);
+    ctx.fill();
+    ctx.strokeStyle = '#2e7d32';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#2e7d32';
+    ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
+    ctx.fillText('✅ পরিশোধিত • PAID CONFIRMED', 540, 388);
+
+    // 7. Recipient Info
+    ctx.fillStyle = '#1b5e20';
+    ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
+    ctx.fillText(data.name || 'প্রিয় বন্ধু', 540, 465);
+
+    if (data.phone && data.phone !== 'N/A') {
+      ctx.fillStyle = '#616161';
+      ctx.font = '600 24px "Hind Siliguri", monospace';
+      ctx.fillText(`বিকাশ নম্বর: ${data.phone}`, 540, 510);
+    }
+
+    // 8. Amount Highlight Box
+    ctx.fillStyle = '#f1f8e9';
+    const aw = 680, ah = 145, ax = (1080 - aw) / 2, ay = 540;
+    ctx.beginPath();
+    ctx.roundRect(ax, ay, aw, ah, 24);
+    ctx.fill();
+    ctx.strokeStyle = '#2e7d32';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 8]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#33691e';
+    ctx.font = '600 22px "Hind Siliguri", sans-serif';
+    ctx.fillText('প্রেরিত সালামির পরিমাণ', 540, 580);
+
+    ctx.fillStyle = '#d12053';
+    ctx.font = 'bold 60px "Hind Siliguri", sans-serif';
+    ctx.fillText(data.amount || 'সালামি', 540, 650);
+
+    // 9. Personal note from Mahim
+    const note = data.customNote && data.customNote.trim()
+      ? `"${data.customNote.trim()}"`
+      : '“আপনার সালামি সফলভাবে পাঠানো হয়েছে। ঈদ মোবারক! 🌙”';
+    ctx.fillStyle = '#424242';
+    ctx.font = 'italic 26px "Hind Siliguri", sans-serif';
+    ctx.fillText(note, 540, 740);
+
+    // 10. Date & Stamp
+    ctx.fillStyle = '#757575';
+    ctx.font = '500 20px "Hind Siliguri", sans-serif';
+    ctx.fillText(`তারিখ: ${data.dateStr || new Date().toLocaleDateString('bn-BD')}`, 540, 800);
+
+    ctx.fillStyle = '#2e7d32';
+    ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
+    ctx.fillText('— মাহিম ইবনে খুদি (Mahim Ibne Khudi) —', 540, 840);
+
+    // 11. Footer Branding
+    ctx.fillStyle = '#5d4037';
+    ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
+    ctx.fillText('মাহিম সালামি পোর্টাল • mahims.com/salami', 540, 950);
+
+    resolve(canvas.toDataURL('image/png'));
+  });
+}
+
+export function getWhatsAppShareLink(phone: string, name: string, amount: string): string {
+  const cleanPhone = (phone || '').replace(/[^0-9]/g, '');
+  let targetPhone = cleanPhone;
+  if (cleanPhone.startsWith('0')) {
+    targetPhone = `88${cleanPhone}`;
+  } else if (!cleanPhone.startsWith('88')) {
+    targetPhone = `880${cleanPhone}`;
+  }
+  const text = encodeURIComponent(
+    `ঈদ মোবারক ${name}! 🌙✨\n\nআপনার সালামির "${amount}" সফলভাবে বিকাশ/নগদে পাঠানো হয়েছে।\nঈদ আনন্দ ছড়িয়ে পড়ুক সবার প্রাণে!\n\n— মাহিম ইবনে খুদি\nhttps://mahims.com/salami`
+  );
+  return `https://wa.me/${targetPhone}?text=${text}`;
+}
+
+export function getPaidShareText(name: string, amount: string): string {
+  return `ঈদ মোবারক ${name}! 🌙✨\n\nআপনার সালামির "${amount}" সফলভাবে বিকাশ/নগদে পাঠানো হয়েছে।\nঈদ আনন্দ সবার প্রাণে ছড়িয়ে পড়ুক!\n\n— মাহিম ইবনে খুদি\nhttps://mahims.com/salami`;
+}

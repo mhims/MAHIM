@@ -25,7 +25,7 @@ export interface IpLocation {
   location: string;
 }
 
-// Bangladesh Divisions & 64 Districts Bengali name dictionary
+// Bangladesh Divisions, 64 Districts, and major Cities/Upazilas Bengali name dictionary
 const BD_DISTRICTS_BN: Record<string, string> = {
   // 8 Divisions
   'dhaka': 'ঢাকা',
@@ -49,7 +49,7 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'thakurgaon': 'ঠাকুরগাঁও',
   'saidpur': 'সৈয়দপুর',
 
-  // Rajshahi Division Districts
+  // Rajshahi Division Districts & Cities
   'bogura': 'বগুড়া',
   'bogra': 'বগুড়া',
   'joypurhat': 'জয়পুরহাট',
@@ -60,7 +60,7 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'pabna': 'পাবনা',
   'sirajganj': 'সিরাজগঞ্জ',
 
-  // Dhaka Division Districts
+  // Dhaka Division Districts & Towns/Upazilas
   'faridpur': 'ফরিদপুর',
   'gazipur': 'গাজীপুর',
   'gopalganj': 'গোপালগঞ্জ',
@@ -74,8 +74,17 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'shariatpur': 'শরীয়তপুর',
   'tangail': 'টাঙ্গাইল',
   'savar': 'সাভার',
+  'keraniganj': 'কেরানীগঞ্জ',
+  'tongi': 'টঙ্গী',
+  'tejgaon': 'তেজগাঁও',
+  'mirpur': 'মিরপুর',
+  'uttara': 'উত্তরা',
+  'gulshan': 'গুলশান',
+  'dhanmondi': 'ধানমন্ডি',
+  'badda': 'বাড্ডা',
+  'mohammadpur': 'মোহাম্মদপুর',
 
-  // Chittagong Division Districts
+  // Chittagong Division Districts & Towns
   'bandarban': 'বান্দরবান',
   'brahmanbaria': 'ব্রাহ্মণবাড়িয়া',
   'chandpur': 'চাঁদপুর',
@@ -87,7 +96,10 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'feni': 'ফেনী',
   'khagrachhari': 'খাগড়াছড়ি',
   'lakshmipur': 'লক্ষ্মীপুর',
+  'laxmipur': 'লক্ষ্মীপুর',
   'noakhali': 'নোয়াখালী',
+  'maijdi': 'মাইজদী',
+  'maizdee': 'মাইজদী',
   'rangamati': 'রাঙামাটি',
 
   // Khulna Division Districts
@@ -106,6 +118,7 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'barguna': 'বরগুনা',
   'bhola': 'ভোলা',
   'jhalokati': 'ঝালকাঠি',
+  'jhalakathi': 'ঝালকাঠি',
   'patuakhali': 'পটুয়াখালী',
   'pirojpur': 'পিরোজপুর',
 
@@ -114,6 +127,8 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'moulvibazar': 'মৌলভীবাজার',
   'maulvibazar': 'মৌলভীবাজার',
   'sunamganj': 'সুনামগঞ্জ',
+  'sreemangal': 'শ্রীমঙ্গল',
+  'srimangal': 'শ্রীমঙ্গল',
 
   // Mymensingh Division Districts
   'jamalpur': 'জামালপুর',
@@ -121,39 +136,82 @@ const BD_DISTRICTS_BN: Record<string, string> = {
   'sherpur': 'শেরপুর',
 };
 
+// Strips common administrative suffixes (Upazila, Sadar, Division, etc.)
+function cleanGeoName(str?: string): string {
+  if (!str) return '';
+  return str
+    .replace(/\s*(division|district|upazila|sadar|city|pourashava|thana)\b/gi, '')
+    .replace(/[()]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Checks if a location string contains specific city/district details
+ * and is not just the generic country "Bangladesh" or "Unknown".
+ */
+export function isDetailedLocation(loc?: string): boolean {
+  if (!loc) return false;
+  const l = loc.trim().toLowerCase();
+  if (
+    !l ||
+    l === 'unknown' ||
+    l === 'bangladesh' ||
+    l === 'বাংলাদেশ' ||
+    l === 'বাংলাদেশ (bangladesh)' ||
+    l === 'unknown location'
+  ) {
+    return false;
+  }
+  return true;
+}
+
 /**
  * Formats city, region and country into clean, readable location string.
- * For Bangladesh: e.g. "রংপুর, বাংলাদেশ (Rangpur)" or "বগুড়া, রাজশাহী বিভাগ, বাংলাদেশ (Bogura, Rajshahi)"
+ * For Bangladesh: e.g. "রংপুর, বাংলাদেশ (Rangpur)" or "বগুড়া, রাজশাহী বিভাগ, বাংলাদেশ (Bogra, Rajshahi)"
  * For Other countries: e.g. "Kolkata, West Bengal, India"
  */
 export function formatLocationString(city?: string, region?: string, country?: string): string {
   const cCity = (city || '').trim();
-  const cRegion = (region || '').replace(/\s*division/gi, '').trim();
+  const cRegion = (region || '').trim();
   const cCountry = (country || '').trim() || 'Bangladesh';
 
   const isBd = /bangladesh|bd/i.test(cCountry);
 
   if (isBd) {
-    const cityKey = cCity.toLowerCase();
-    const regionKey = cRegion.toLowerCase();
+    // Check if city string has parentheses e.g. "Dhaka (Tejgaon)"
+    let targetCity = cCity;
+    const parenMatch = cCity.match(/\((.*?)\)/);
+    if (parenMatch && parenMatch[1]) {
+      const sub = parenMatch[1].trim().toLowerCase();
+      if (BD_DISTRICTS_BN[sub]) {
+        targetCity = parenMatch[1].trim();
+      }
+    }
 
-    const cityBn = BD_DISTRICTS_BN[cityKey] || (cCity ? cCity : '');
-    const regionBn = BD_DISTRICTS_BN[regionKey] || (cRegion ? cRegion : '');
+    const cleanCity = cleanGeoName(targetCity);
+    const cleanRegion = cleanGeoName(cRegion);
 
-    // Both city and region known and different (e.g. Bogura in Rajshahi)
+    const cityKey = cleanCity.toLowerCase();
+    const regionKey = cleanRegion.toLowerCase();
+
+    const cityBn = BD_DISTRICTS_BN[cityKey] || (cleanCity ? cleanCity : '');
+    const regionBn = BD_DISTRICTS_BN[regionKey] || (cleanRegion ? cleanRegion : '');
+
+    // Both city and region known and distinct (e.g. Bogura in Rajshahi, Savar in Dhaka)
     if (cityBn && regionBn && cityBn.toLowerCase() !== regionBn.toLowerCase()) {
-      const engSub = [cCity, cRegion].filter(Boolean).join(', ');
+      const engSub = [cleanCity, cleanRegion].filter(Boolean).join(', ');
       return `${cityBn}, ${regionBn} বিভাগ, বাংলাদেশ${engSub ? ` (${engSub})` : ''}`;
     }
 
     // City known (e.g. Rangpur -> "রংপুর, বাংলাদেশ (Rangpur)")
     if (cityBn) {
-      return `${cityBn}, বাংলাদেশ${cCity ? ` (${cCity})` : ''}`;
+      return `${cityBn}, বাংলাদেশ${cleanCity ? ` (${cleanCity})` : ''}`;
     }
 
     // Only division known (e.g. "রংপুর বিভাগ, বাংলাদেশ (Rangpur)")
     if (regionBn) {
-      return `${regionBn} বিভাগ, বাংলাদেশ${cRegion ? ` (${cRegion})` : ''}`;
+      return `${regionBn} বিভাগ, বাংলাদেশ${cleanRegion ? ` (${cleanRegion})` : ''}`;
     }
 
     return 'বাংলাদেশ (Bangladesh)';
@@ -169,13 +227,8 @@ let pendingIpPromise: Promise<IpLocation> | null = null;
 
 // Resolve Client IP and Geolocation silently with high accuracy (City + District + Country)
 export async function getIpAndLocation(): Promise<IpLocation> {
-  // If already resolved with city details, return immediately
-  if (
-    cachedIpLocation &&
-    cachedIpLocation.location &&
-    cachedIpLocation.location !== 'Bangladesh' &&
-    cachedIpLocation.location !== 'Unknown'
-  ) {
+  // If already resolved with city/district details, return immediately
+  if (cachedIpLocation && isDetailedLocation(cachedIpLocation.location)) {
     return cachedIpLocation;
   }
 
@@ -190,18 +243,31 @@ export async function getIpAndLocation(): Promise<IpLocation> {
   return pendingIpPromise;
 }
 
-async function resolveIpAndLocation(): Promise<IpLocation> {
-  // Check sessionStorage cache (v2 with district support)
+// Force a fresh IP & location lookup (bypassing any cached values)
+export async function forceRefreshIpAndLocation(): Promise<IpLocation> {
+  cachedIpLocation = null;
+  pendingIpPromise = null;
   try {
-    const stored = sessionStorage.getItem('mahims_cached_ip_data_v2');
+    sessionStorage.removeItem('mahims_cached_ip_data_v3');
+    sessionStorage.removeItem('mahims_cached_ip_data_v2');
+    sessionStorage.removeItem('mahims_cached_ip_data_v1');
+  } catch {}
+  return resolveIpAndLocation();
+}
+
+async function resolveIpAndLocation(): Promise<IpLocation> {
+  // Clean up legacy cache keys
+  try {
+    sessionStorage.removeItem('mahims_cached_ip_data_v1');
+    sessionStorage.removeItem('mahims_cached_ip_data_v2');
+  } catch {}
+
+  // Check sessionStorage cache (v3 with strict isDetailedLocation guard)
+  try {
+    const stored = sessionStorage.getItem('mahims_cached_ip_data_v3');
     if (stored) {
       const parsed: IpLocation = JSON.parse(stored);
-      if (
-        parsed.ip &&
-        parsed.location &&
-        parsed.location !== 'Bangladesh' &&
-        parsed.location !== 'Unknown'
-      ) {
+      if (parsed.ip && parsed.location && isDetailedLocation(parsed.location)) {
         cachedIpLocation = parsed;
         return cachedIpLocation;
       }
@@ -210,107 +276,143 @@ async function resolveIpAndLocation(): Promise<IpLocation> {
     // sessionStorage might be restricted
   }
 
-  // 1st priority: ipwho.is (Free, HTTPS, CORS open, high accuracy district/city in BD)
-  try {
-    const res = await fetch('https://ipwho.is/', { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.success !== false) {
-        const loc = formatLocationString(data.city, data.region, data.country);
-        cachedIpLocation = {
-          ip: data.ip || 'Unknown',
-          location: loc,
-        };
-        try {
-          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
-        } catch {}
-        return cachedIpLocation;
-      }
-    }
-  } catch {
-    // Fallback to next provider
+  // Providers list in order of reliability and city-level accuracy for Bangladesh
+  interface ProviderResult {
+    ip: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    provider: string;
   }
 
-  // 2nd priority: get.geojs.io (Free open-source geo service, HTTPS, CORS open)
-  try {
-    const res = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
+  const providers: Array<() => Promise<ProviderResult | null>> = [
+    // 1. ipinfo.io - Extremely fast, highly accurate for Bangladesh cities and districts
+    async () => {
+      const res = await fetch('https://ipinfo.io/json', { signal: AbortSignal.timeout(2800) });
+      if (!res.ok) return null;
       const data = await res.json();
-      if (data) {
-        const loc = formatLocationString(data.city, data.region, data.country);
-        cachedIpLocation = {
-          ip: data.ip || 'Unknown',
-          location: loc,
-        };
-        try {
-          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
-        } catch {}
-        return cachedIpLocation;
+      if (!data || !data.ip) return null;
+      return {
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        country: data.country === 'BD' ? 'Bangladesh' : data.country,
+        provider: 'ipinfo.io',
+      };
+    },
+
+    // 2. ipwho.is - Free, HTTPS, CORS open, high accuracy district/city in BD
+    async () => {
+      const res = await fetch('https://ipwho.is/', { signal: AbortSignal.timeout(2800) });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || data.success === false) return null;
+      return {
+        ip: data.ip || 'Unknown',
+        city: data.city,
+        region: data.region,
+        country: data.country || 'Bangladesh',
+        provider: 'ipwho.is',
+      };
+    },
+
+    // 3. db-ip.com - Upazila & Thana level precision in Bangladesh
+    async () => {
+      const res = await fetch('https://api.db-ip.com/v2/free/self', { signal: AbortSignal.timeout(2800) });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !data.ipAddress) return null;
+      return {
+        ip: data.ipAddress,
+        city: data.city,
+        region: data.stateProv,
+        country: data.countryName || 'Bangladesh',
+        provider: 'db-ip.com',
+      };
+    },
+
+    // 4. freeipapi.com - Open CORS geolocation
+    async () => {
+      const res = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(2800) });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !data.ipAddress) return null;
+      return {
+        ip: data.ipAddress,
+        city: data.cityName,
+        region: data.regionName,
+        country: data.countryName || 'Bangladesh',
+        provider: 'freeipapi.com',
+      };
+    },
+
+    // 5. get.geojs.io - Free open-source geo service
+    async () => {
+      const res = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: AbortSignal.timeout(2800) });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!data || !data.ip) return null;
+      return {
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        country: data.country || 'Bangladesh',
+        provider: 'geojs.io',
+      };
+    },
+  ];
+
+  let fallbackResult: ProviderResult | null = null;
+
+  // Try providers sequentially: if one returns city/region, accept it immediately!
+  for (const providerFn of providers) {
+    try {
+      const res = await providerFn();
+      if (res) {
+        if (!fallbackResult) fallbackResult = res;
+
+        // Does this provider offer city or region?
+        if (res.city || res.region) {
+          const loc = formatLocationString(res.city, res.region, res.country);
+          if (isDetailedLocation(loc)) {
+            cachedIpLocation = {
+              ip: res.ip || 'Unknown',
+              location: loc,
+            };
+            try {
+              sessionStorage.setItem('mahims_cached_ip_data_v3', JSON.stringify(cachedIpLocation));
+            } catch {}
+            return cachedIpLocation;
+          }
+        }
       }
+    } catch {
+      // Continue to next provider
     }
-  } catch {
-    // Fallback to next provider
   }
 
-  // 3rd priority: ipapi.co (Provides IP + City + Country)
-  try {
-    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
-      const data = await res.json();
-      if (data && !data.error) {
-        const loc = formatLocationString(data.city, data.region, data.country_name);
-        cachedIpLocation = {
-          ip: data.ip || 'Unknown',
-          location: loc,
-        };
-        try {
-          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
-        } catch {}
-        return cachedIpLocation;
-      }
-    }
-  } catch {
-    // Fallback to next provider
+  // If no provider had city/region, use the best fallback
+  if (fallbackResult) {
+    const loc = formatLocationString(fallbackResult.city, fallbackResult.region, fallbackResult.country);
+    cachedIpLocation = {
+      ip: fallbackResult.ip || 'Unknown',
+      location: loc,
+    };
+    return cachedIpLocation;
   }
 
-  // 4th priority: freeipapi.com
+  // Ultimate fallback to IP-only lookup
   try {
-    const res = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(3000) });
+    const res = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(2000) });
     if (res.ok) {
-      const data = await res.json();
-      if (data) {
-        const loc = formatLocationString(data.cityName, data.regionName, data.countryName);
-        cachedIpLocation = {
-          ip: data.ipAddress || 'Unknown',
-          location: loc,
-        };
-        try {
-          sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
-        } catch {}
-        return cachedIpLocation;
-      }
-    }
-  } catch {
-    // Fallback to IP-only
-  }
-
-  // 5th fallback: api.ipify.org (IP only)
-  try {
-    const res2 = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(2000) });
-    if (res2.ok) {
-      const data2 = await res2.json();
+      const d = await res.json();
       cachedIpLocation = {
-        ip: data2.ip || 'Unknown',
+        ip: d.ip || 'Unknown',
         location: 'বাংলাদেশ (Bangladesh)',
       };
-      try {
-        sessionStorage.setItem('mahims_cached_ip_data_v2', JSON.stringify(cachedIpLocation));
-      } catch {}
       return cachedIpLocation;
     }
-  } catch {
-    // ignore
-  }
+  } catch {}
 
   return { ip: 'Unknown', location: 'বাংলাদেশ (Bangladesh)' };
 }
@@ -586,13 +688,13 @@ export function trackPageView(
 // Send a test ping for admin validation
 export async function sendTestVisitorPing(
   webhookUrl: string
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; ipData?: IpLocation }> {
   if (!webhookUrl || !webhookUrl.startsWith('http')) {
     return { success: false, message: 'সঠিক Webhook URL দিন (https://...)' };
   }
 
   try {
-    const ipData = await getIpAndLocation();
+    const ipData = await forceRefreshIpAndLocation();
     const testPayload: VisitorLogPayload = {
       action: 'visitor_log',
       sessionId: `test_${Date.now()}`,
@@ -634,7 +736,11 @@ export async function sendTestVisitorPing(
       timestamp: testPayload.timestamp,
     });
 
-    return { success: true, message: 'টেস্ট ভিজিটর ডাটা সফলভাবে গুগল শিটে পাঠানো হয়েছে! আপনার শিট চেক করুন।' };
+    return { 
+      success: true, 
+      message: `টেস্ট ভিজিটর ডাটা সফলভাবে গুগল শিটে পাঠানো হয়েছে!\nশনাক্তকৃত লোকেশন: "${ipData.location}" (IP: ${ipData.ip})`,
+      ipData,
+    };
   } catch (err) {
     return { success: false, message: 'গুগল শিটে পাঠাতে সমস্যা হয়েছে: ' + String(err) };
   }

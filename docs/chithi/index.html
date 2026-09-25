@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js) - Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9BTLKBP1GS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9BTLKBP1GS');
+    </script>
+
     <title>Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে (চিঠি ডট মি)</title>
 
     <!-- Clean SPA Routing URL Restorer for GitHub Pages -->
@@ -45,8 +56,8 @@
     <meta property="og:url" content="https://mahims.com/chithi/" />
     <meta property="og:title" content="Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে" />
     <meta property="og:description" content="মাহিমকে বেনামে চিঠি পাঠান। কোনো পরিচয় ছাড়াই আপনার মনের না বলা কথা, সিক্রেট অনুভূতি বা বার্তা পাঠান ১০০% নিরাপদে।" />
-    <meta property="og:image" content="https://mahims.com/assets/og-chithi.jpg" />
-    <meta property="og:image:secure_url" content="https://mahims.com/assets/og-chithi.jpg" />
+    <meta property="og:image" content="https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png" />
+    <meta property="og:image:secure_url" content="https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -70,14 +81,14 @@
     <link rel="alternate" type="text/plain" href="https://mahims.com/llms.txt" title="LLM Knowledge Profile" />
 
     <!-- WhatsApp & Legacy Scraper Image Fallback -->
-    <link rel="image_src" href="https://mahims.com/assets/og-chithi.jpg" />
+    <link rel="image_src" href="https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png" />
     
     <!-- Twitter Social Share Card -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://mahims.com/chithi/" />
     <meta property="twitter:title" content="Mahim Chithi | মাহিম চিঠি — মনের না বলা কথা পাঠান গোপনে" />
     <meta property="twitter:description" content="মাহিমকে বেনামে চিঠি পাঠান। মনের না বলা কথা বা সিক্রেট বার্তা পাঠান ১০০% নিরাপদে।" />
-    <meta property="twitter:image" content="https://mahims.com/assets/og-chithi.jpg" />
+    <meta property="twitter:image" content="https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png" />
 
     <!-- Google Fonts: Hind Siliguri, Plus Jakarta Sans, Outfit, Playfair Display, and Handwriting fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -121,7 +132,7 @@
         "Chithi Me Mahim"
       ],
       "url": "https://mahims.com/chithi/",
-      "image": "https://mahims.com/assets/og-chithi.jpg",
+      "image": "https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png",
       "description": "মাহিম ইবনে খুদিকে সম্পূর্ণ বেনামে ও নিরাপদে চিঠি বা গোপন বার্তা পাঠানোর সুরক্ষিত প্ল্যাটফর্ম।",
       "applicationCategory": "SocialNetworkingApplication",
       "operatingSystem": "All",
@@ -203,28 +214,6 @@
           </div>
         </main>
       </div></div>
-    <script>
-      (function() {
-        var isDev = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' || 
-                    window.location.port === '3000' ||
-                    window.location.hostname.includes('run.app');
-        if (!isDev) {
-          if (document.querySelector('script[src*="app.js"]')) return;
-          var head = document.head;
-          var link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = '/assets/app.css';
-          head.appendChild(link);
-
-          var script = document.createElement('script');
-          script.type = 'module';
-          script.crossOrigin = 'anonymous';
-          script.src = '/assets/app.js';
-          document.body.appendChild(script);
-        }
-      })();
-    </script>
   </body>
 </html>
 

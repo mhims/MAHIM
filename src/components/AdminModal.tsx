@@ -10,6 +10,8 @@ import {
   clearStoredVisitors, 
   exportVisitorsToCSV, 
   getActiveWebhookUrl,
+  getIpAndLocation,
+  forceRefreshIpAndLocation,
   VisitorRecord 
 } from '../utils/visitorTracker';
 import { 
@@ -181,6 +183,36 @@ export const AdminModal: React.FC = () => {
   const [visitorSyncMsg, setVisitorSyncMsg] = useState<string | null>(null);
   const [visitorSearchTerm, setVisitorSearchTerm] = useState('');
   const [visitorDeviceFilter, setVisitorDeviceFilter] = useState<'all' | 'Mobile' | 'Desktop'>('all');
+
+  // Live Location Preview State for Admin
+  const [currentClientLocation, setCurrentClientLocation] = useState<{ ip: string; location: string } | null>(null);
+  const [isLoadingClientLoc, setIsLoadingClientLoc] = useState(false);
+
+  React.useEffect(() => {
+    if (activeTab === 'sheets' && isAdminModalOpen) {
+      setIsLoadingClientLoc(true);
+      getIpAndLocation()
+        .then(data => {
+          if (data) setCurrentClientLocation(data);
+        })
+        .finally(() => {
+          setIsLoadingClientLoc(false);
+        });
+    }
+  }, [activeTab, isAdminModalOpen]);
+
+  const handleRefreshClientLocation = async () => {
+    setIsLoadingClientLoc(true);
+    try {
+      const fresh = await forceRefreshIpAndLocation();
+      setCurrentClientLocation(fresh);
+      showNotification(`শনাক্তকৃত লোকেশন: ${fresh.location} (আইপি: ${fresh.ip})`);
+    } catch {
+      showNotification('লোকেশন রিলোড করতে সমস্যা হয়েছে');
+    } finally {
+      setIsLoadingClientLoc(false);
+    }
+  };
 
   const handleSyncVisitorsFromSheet = async () => {
     const url = settings.googleSheetWebhookUrl?.trim() || getActiveWebhookUrl();
@@ -2095,6 +2127,9 @@ export const AdminModal: React.FC = () => {
                           const res = await sendTestVisitorPing(settings.googleSheetWebhookUrl);
                           setIsTestingVisitorPing(false);
                           setVisitorsList(getStoredVisitors());
+                          if (res.ipData) {
+                            setCurrentClientLocation(res.ipData);
+                          }
                           showNotification(res.message);
                         }}
                         className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-medium text-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
@@ -2109,6 +2144,53 @@ export const AdminModal: React.FC = () => {
                         সংরক্ষণ করুন
                       </button>
                     </div>
+                  </div>
+                </div>
+
+                {/* Live Client Location Diagnostic & Test Box */}
+                <div className="p-4 rounded-3xl bg-gradient-to-r from-amber-500/10 via-slate-950 to-emerald-500/10 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h5 className="text-xs font-bold text-white uppercase tracking-wider">আপনার বর্তমান লাইভ আইপি ও লোকেশন ডিটেকশন</h5>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                          সক্রিয়
+                        </span>
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                        <div className="flex items-center gap-1.5 text-slate-300">
+                          <span className="text-slate-400 text-[11px]">আপনার আইপি:</span>
+                          <span className="font-mono text-emerald-400 font-medium">
+                            {currentClientLocation?.ip || 'শনাক্ত হচ্ছে...'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-slate-300">
+                          <span className="text-slate-400 text-[11px]">শনাক্তকৃত লোকেশন:</span>
+                          <span className="text-amber-300 font-bold bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-md">
+                            {currentClientLocation?.location || (isLoadingClientLoc ? 'ডিটেক্ট করা হচ্ছে...' : 'বাংলাদেশ (Bangladesh)')}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        ভিজিটর সাইটে ঢুকলেই স্বয়ংক্রিয়ভাবে তার জেলা ও শহর শনাক্ত হয়ে সরাসরি গুগল শিটে যুক্ত হবে (যেমন: রংপুর, ঢাকা, চট্টগ্রাম ইত্যাদি)।
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
+                    <button
+                      type="button"
+                      disabled={isLoadingClientLoc}
+                      onClick={handleRefreshClientLocation}
+                      className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold flex items-center gap-1.5 border border-amber-500/30 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+                      title="আইপি ও লোকেশন রিফ্রেশ করে পুনরায় পরীক্ষা করুন"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isLoadingClientLoc ? 'animate-spin' : ''}`} />
+                      <span>{isLoadingClientLoc ? 'যাচাই হচ্ছে...' : 'লোকেশন রিফ্রেশ'}</span>
+                    </button>
                   </div>
                 </div>
 

@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js) - Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9BTLKBP1GS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9BTLKBP1GS');
+    </script>
+
     <title>About Mahim | মাহিম ইবনে খুদি — জীবনী, শিক্ষাজীবন ও পরিচয়</title>
 
     <!-- Clean SPA Routing URL Restorer for GitHub Pages -->
@@ -102,28 +113,6 @@
         <h1 class="text-3xl font-black text-zinc-950 mb-4">আমার সম্পর্কে — মাহিম ইবনে খুদি</h1>
         <p class="text-base text-zinc-700 leading-relaxed">মাহিম ইবনে খুদি (Mahim Ibne Khudi) - শিক্ষার্থী, রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি। জন্ম ও বেড়ে ওঠা গাইবান্ধা জেলায়। প্রযুক্তি, শিক্ষা ও দর্শনের সমন্বয়ে সমাজ ও শিক্ষার্থীদের উপকারে আত্মনিবেদিত।</p>
       </div></div>
-    <script>
-      (function() {
-        var isDev = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' || 
-                    window.location.port === '3000' ||
-                    window.location.hostname.includes('run.app');
-        if (!isDev) {
-          if (document.querySelector('script[src*="app.js"]')) return;
-          var head = document.head;
-          var link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = '/assets/app.css';
-          head.appendChild(link);
-
-          var script = document.createElement('script');
-          script.type = 'module';
-          script.crossOrigin = 'anonymous';
-          script.src = '/assets/app.js';
-          document.body.appendChild(script);
-        }
-      })();
-    </script>
   </body>
 </html>
 

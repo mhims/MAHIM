@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /adminpanel
+Disallow: /adminpanel/
 Disallow: /wallet
 Disallow: /wallet/
 Disallow: /allf
@@ -13,6 +15,9 @@ Disallow: /alll/
 # Traditional Search Engines
 User-agent: Googlebot
 Allow: /
+Disallow: /adminpanel
+Disallow: /adminpanel/
+Disallow: /admin
 
 User-agent: Googlebot-Image
 Allow: /

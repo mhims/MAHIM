@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js) - Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9BTLKBP1GS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9BTLKBP1GS');
+    </script>
+
     <title>আবু সালেহ সুজা (Abu Saleh Suza) | মেন্টর — মাহিম'স ক্লাসরুম (Mahim's Classroom)</title>
 
     <!-- Clean SPA Routing URL Restorer for GitHub Pages -->
@@ -180,28 +191,6 @@
           ভর্তি পরীক্ষায় শীর্ষ তালিকায় উত্তীর্ণ হওয়ার মূল চাবিকাঠি হলো বিষয়ভিত্তিক নিখুঁত শর্টকাট, টাইপভিত্তিক সমাধান এবং নেগেটিভ মার্কিং নিয়ন্ত্রণের সঠিক অনুশীলন।
         </p>
       </div></div>
-    <script>
-      (function() {
-        var isDev = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' || 
-                    window.location.port === '3000' ||
-                    window.location.hostname.includes('run.app');
-        if (!isDev) {
-          if (document.querySelector('script[src*="app.js"]')) return;
-          var head = document.head;
-          var link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = '/assets/app.css';
-          head.appendChild(link);
-
-          var script = document.createElement('script');
-          script.type = 'module';
-          script.crossOrigin = 'anonymous';
-          script.src = '/assets/app.js';
-          document.body.appendChild(script);
-        }
-      })();
-    </script>
   </body>
 </html>
 

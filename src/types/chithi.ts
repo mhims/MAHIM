@@ -12,7 +12,9 @@ export interface ChithiLetter {
   };
   deviceInfo?: string; // e.g. "Android 14 • Chrome"
   inkColor?: 'blue' | 'black' | 'maroon' | 'emerald';
-  paperTheme?: 'vintage' | 'parchment' | 'notebook' | 'blush';
+  paperTheme?: 'vintage' | 'parchment' | 'notebook' | 'blush' | 'midnight';
+  stampId?: string;
+  tokenId?: string;
   isRead?: boolean;
   isStarred?: boolean;
 }

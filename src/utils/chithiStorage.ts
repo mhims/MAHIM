@@ -280,9 +280,10 @@ export async function sendChithiEventToGoogleSheet(
 
 // Google Sheet sync sender for standard submitted letters
 export async function sendLetterToGoogleSheet(webhookUrl: string, letter: ChithiLetter): Promise<boolean> {
+  const tokenLabel = letter.tokenId ? ` [উপহার: ${letter.tokenId}]` : '';
   return sendChithiEventToGoogleSheet(webhookUrl, {
     letterId: letter.id,
-    content: letter.content,
+    content: letter.tokenId ? `${letter.content}\n\n${tokenLabel}` : letter.content,
     device: letter.deviceInfo || detectUserDevice(),
     location: letter.senderLocation || 'Unknown',
   });

@@ -226,14 +226,20 @@ export const SiteProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed: EducationItem[] = JSON.parse(saved);
         return parsed.map(item => {
-          if (item.institution.includes('ঢাকা ইন্টারন্যাশনাল ইউনিভার্সিটি') || item.institution.toLowerCase().includes('dhaka international')) {
-            return {
-              ...item,
-              institution: 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি',
-              department: 'ডিপার্টমেন্ট অফ পলিটিক্যাল সাইন্স',
-            };
+          let updated = { ...item };
+          if (updated.institution.includes('ঢাকা ইন্টারন্যাশনাল ইউনিভার্সিটি') || updated.institution.toLowerCase().includes('dhaka international')) {
+            updated.institution = 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি';
+            updated.department = 'ডিপার্টমেন্ট অফ পলিটিক্যাল সাইন্স';
           }
-          return item;
+          if (updated.id === 'edu-2' || updated.degree.includes('HSC') || updated.degree.includes('উচ্চ মাধ্যমিক') || updated.department === 'মানবিক বিভাগ') {
+            updated.department = 'বিজ্ঞান বিভাগ';
+            updated.details = 'কৃতিত্বের সাথে বিজ্ঞান বিভাগে সর্বোচ্চ জিপিএ ৫.০০ প্রাপ্তি।';
+          }
+          if (updated.id === 'edu-3' || updated.degree.includes('SSC') || updated.degree.includes('মাধ্যমিক')) {
+            updated.department = 'বিজ্ঞান বিভাগ';
+            updated.details = 'কৃতিত্বের সাথে বিজ্ঞান বিভাগে সর্বোচ্চ জিপিএ ৫.০০ প্রাপ্তি।';
+          }
+          return updated;
         });
       }
       return DEFAULT_EDUCATION;

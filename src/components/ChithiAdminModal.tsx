@@ -15,6 +15,8 @@ import {
 } from '../utils/chithiStorage';
 import { generateStoryImage, downloadBase64Image } from '../utils/chithiStoryGenerator';
 import { verifySubPanelPasswordWithMasterOverride } from '../utils/masterPasswordHelper';
+import { CHITHI_TOKENS } from '../data/chithiTokens';
+import { PeacockFeatherSvg } from './PeacockFeatherIcon';
 
 interface ChithiAdminModalProps {
   isOpen: boolean;
@@ -874,6 +876,22 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                               ১০০% বেনামী প্রেরিত চিঠি
                             </span>
                           )}
+
+                          {selectedLetter.tokenId && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
+                              <span>🎁 উপহার:</span>
+                              {selectedLetter.tokenId === 'peacock_feather' ? (
+                                <span className="inline-flex items-center gap-1">
+                                  <PeacockFeatherSvg className="w-4 h-4 inline" /> ময়ূরের পাখা
+                                </span>
+                              ) : (
+                                <span>
+                                  {CHITHI_TOKENS.find(t => t.id === selectedLetter.tokenId)?.icon || '🎁'}{' '}
+                                  {CHITHI_TOKENS.find(t => t.id === selectedLetter.tokenId)?.shortName || selectedLetter.tokenId}
+                                </span>
+                              )}
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-zinc-500 pt-1">
                           <span className="flex items-center gap-1">
@@ -958,6 +976,17 @@ export function ChithiAdminModal({ isOpen, onClose }: ChithiAdminModalProps) {
                                   <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
                                     <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
                                     {!letter.isRead ? 'নতুন চিঠি' : 'বেনামী চিঠি'}
+                                  </span>
+                                )}
+
+                                {letter.tokenId && (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/80 text-amber-300 border border-amber-700/60 flex items-center gap-1">
+                                    <span>🎁</span>
+                                    <span>
+                                      {letter.tokenId === 'peacock_feather'
+                                        ? 'ময়ূরের পাখা'
+                                        : CHITHI_TOKENS.find(t => t.id === letter.tokenId)?.shortName || 'উপহার'}
+                                    </span>
                                   </span>
                                 )}
                               </div>

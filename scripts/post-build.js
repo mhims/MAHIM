@@ -50,7 +50,10 @@ const routes = [
   'portfolio',
   'thoughts',
   'think-with-mahim',
-  'thik-with-mahim'
+  'thik-with-mahim',
+  'ps',
+  'dcups',
+  'political-science'
 ];
 
 const siteUrl = 'https://mahims.com';
@@ -2432,6 +2435,61 @@ const routeData = {
         <p class="text-base text-zinc-700 leading-relaxed">স্নাতক (অনার্স): রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি | উচ্চমাধ্যমিক (এইচএসসি): গাইবান্ধা সরকারি কলেজ।</p>
       </div>
     `
+  },
+  ps: {
+    title: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) — ক্লাস রুটিন ও নোটিশ",
+    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
+    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) রাষ্ট্রবিজ্ঞান বিভাগ ১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ বোর্ড, ডিজিটাল বই ও লেকচার শিট পোর্টাল।",
+    keywords: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, রাষ্ট্রবিজ্ঞান বিভাগ, DCU Political Science, ঢাকা কলেজ, DCU PS, ক্লাস রুটিন, নোটিশ",
+    canonical: `${siteUrl}/ps/`,
+    ogTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)",
+    ogDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ ও পিডিএফ লাইব্রেরি।",
+    ogImage: defaultOgImage,
+    twitterTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+    twitterDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
+    twitterImage: defaultOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+      "url": "https://mahims.com/ps/"
+    }
+  },
+  dcups: {
+    title: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)",
+    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
+    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ ১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ ও পিডিএফ পোর্টাল।",
+    canonical: `${siteUrl}/dcups/`,
+    ogTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+    ogDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
+    ogImage: defaultOgImage,
+    twitterTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+    twitterDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
+    twitterImage: defaultOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+      "url": "https://mahims.com/dcups/"
+    }
+  },
+  'political-science': {
+    title: "Department of Political Science | Dhaka Central University",
+    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
+    description: "Department of Political Science, Dhaka Central University (Dhaka College Campus). Class routine, notices, and PDF books library.",
+    canonical: `${siteUrl}/political-science/`,
+    ogTitle: "Department of Political Science | Dhaka Central University",
+    ogDescription: "Class routine, notices, and academic resources for 1st Year 1st Semester.",
+    ogImage: defaultOgImage,
+    twitterTitle: "Department of Political Science | Dhaka Central University",
+    twitterDescription: "Class routine and notices portal.",
+    twitterImage: defaultOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Department of Political Science | Dhaka Central University",
+      "url": "https://mahims.com/political-science/"
+    }
   }
 };
 

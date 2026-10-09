@@ -56,7 +56,11 @@ export const STANDALONE_ROUTES = new Set([
   '/thoughts',
   '/think-with-mahim',
   '/thik-with-mahim',
-  '/adminpanel'
+  '/adminpanel',
+  '/ps',
+  '/dcups',
+  '/political-science',
+  '/dcu-ps'
 ]);
 
 export function isValidRoute(pathname: string): boolean {
@@ -64,8 +68,12 @@ export function isValidRoute(pathname: string): boolean {
   if (SECTION_ROUTES[normalized] || STANDALONE_ROUTES.has(normalized)) {
     return true;
   }
-  // Allow dynamic /classroom/:slug, /courses/:slug, and /thoughts/:slug
+  // Allow dynamic /ps/:subpath, /dcups/:subpath, /classroom/:slug, /courses/:slug, and /thoughts/:slug
   if (
+    normalized.startsWith('/ps') ||
+    normalized.startsWith('/dcups') ||
+    normalized.startsWith('/political-science') ||
+    normalized.startsWith('/dcu-ps') ||
     normalized.startsWith('/classroom/') ||
     normalized.startsWith('/courses/') ||
     normalized.startsWith('/thoughts/')

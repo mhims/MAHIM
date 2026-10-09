@@ -23,6 +23,7 @@ import { ThoughtsPage } from './components/ThoughtsPage';
 import { MahimsWorldHome } from './components/MahimsWorldHome';
 import { ClassroomMobileDock } from './components/ClassroomMobileDock';
 import { GlobalAdminPanel } from './components/GlobalAdminPanel';
+import { PoliticalSciencePage } from './components/PoliticalSciencePage';
 import { SECTION_ROUTES, isValidRoute } from './utils/navigation';
 import { trackPageView, getActiveWebhookUrl } from './utils/visitorTracker';
 
@@ -69,6 +70,15 @@ export default function App() {
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
+  const isPoliticalScience =
+    currentPath === '/ps' ||
+    currentPath.startsWith('/ps/') ||
+    currentPath === '/dcups' ||
+    currentPath.startsWith('/dcups/') ||
+    currentPath === '/political-science' ||
+    currentPath.startsWith('/political-science/') ||
+    currentPath === '/dcu-ps' ||
+    currentPath.startsWith('/dcu-ps/');
   const isAdminPanel = currentPath === '/adminpanel' || currentPath.startsWith('/adminpanel/');
   const isThoughts =
     currentPath === '/thoughts' ||
@@ -203,7 +213,7 @@ export default function App() {
 
   // Clean scroll spy to keep browser URL in sync without hashes
   useEffect(() => {
-    if (isSalami || isWallet || isChithi) return;
+    if (isSalami || isWallet || isChithi || isPoliticalScience) return;
 
     let timeoutId: number;
     const sections = ['home', 'about', 'skills', 'experience', 'education', 'blog', 'contact'];
@@ -221,7 +231,10 @@ export default function App() {
               window.location.pathname !== targetPath &&
               window.location.pathname !== '/salami' &&
               window.location.pathname !== '/wallet' &&
-              window.location.pathname !== '/chithi'
+              window.location.pathname !== '/chithi' &&
+              window.location.pathname !== '/ps' &&
+              window.location.pathname !== '/dcups' &&
+              window.location.pathname !== '/political-science'
             ) {
               window.history.replaceState(null, '', targetPath);
             }
@@ -240,6 +253,7 @@ export default function App() {
     isSalami,
     isWallet,
     isChithi,
+    isPoliticalScience,
     isAllF,
     isAllU,
     isAllL,
@@ -259,6 +273,10 @@ export default function App() {
         <GlobalAdminPanel />
       </SiteProvider>
     );
+  }
+
+  if (isPoliticalScience) {
+    return <PoliticalSciencePage />;
   }
 
   if (isSalami) {

@@ -306,24 +306,8 @@ export const DCU_LOGOS = {
   campus: 'https://res.cloudinary.com/drvyjj7td/image/upload/v1791540249/images_1_d5hcvu.jpg',
 };
 
-export const INITIAL_PS_NOTICES: PSNotice[] = [
-  {
-    id: 'notice-1',
-    title: '১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন কার্যকর সংক্রান্ত বিজ্ঞপ্তি',
-    date: '২২ সেপ্টেম্বর ২০২৬',
-    category: 'ক্লাস রুটিন',
-    content: 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) রাষ্ট্রবিজ্ঞান বিভাগের ১ম বর্ষ ১ম সেমিস্টারের ক্লাস রুটিন ২২/০৯/২০২৬ তারিখ হতে কার্যকর করা হলো। সকল শিক্ষার্থীকে নির্ধারিত সময়ে উপস্থিত থাকার অনুরোধ করা যাচ্ছে। রবিবার ব্যতীত অন্য সকল দিনে ১১:৩০ এর পর কোনো ক্লাস থাকবে না। বুধবার কোনো ক্লাস নেই।',
-    pinned: true,
-  },
-  {
-    id: 'notice-2',
-    title: 'স্বাধীন বাংলাদেশের অভ্যুদয়ের ইতিহাস (HEIBD-21150) টিউটোরিয়াল সেশন',
-    date: '২৫ সেপ্টেম্বর ২০২৬',
-    category: 'সাধারণ',
-    content: 'প্রতি রবিবার দুপুর ১:০০ - ১:৪৫ ঘটিকায় রুম ৩০২-এ ইতিহাস ক্লাসের টিউটোরিয়াল সেশন অনুষ্ঠিত হবে। ক্লাসে উপস্থিতি বাধ্যতামূলক।',
-    pinned: false,
-  }
-];
+// All dummy notices removed as requested - will be added later via Admin Panel or Google Sheet
+export const INITIAL_PS_NOTICES: PSNotice[] = [];
 
 // All dummy books removed as requested - will be added later via Admin Panel
 export const INITIAL_PS_BOOKS: PSBookResource[] = [];

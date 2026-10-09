@@ -58,6 +58,11 @@ export const STANDALONE_ROUTES = new Set([
   '/thik-with-mahim',
   '/adminpanel',
   '/ps',
+  '/ps/today',
+  '/ps/routine',
+  '/ps/courses',
+  '/ps/notices',
+  '/ps/materials',
   '/dcups',
   '/political-science',
   '/dcu-ps'

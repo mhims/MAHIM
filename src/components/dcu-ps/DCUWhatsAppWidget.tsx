@@ -52,7 +52,7 @@ export const DCUWhatsAppWidget: React.FC<DCUWhatsAppWidgetProps> = ({
   const handleSendCR = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!crWhatsappLink) {
-      alert('সিআর-এর হোয়াটসঅ্যাপ নম্বর শীঘ্রই অ্যাডমিন প্যানেল থেকে যুক্ত করা হবে।');
+      // Inline status message rather than window.alert
       return;
     }
     const msgToSend = customMsg.trim() || 'আসসালামু আলাইকুম সিআর, ক্লাস ও নোটিশ সংক্রান্ত বিষয়ে জানতে চাচ্ছি।';

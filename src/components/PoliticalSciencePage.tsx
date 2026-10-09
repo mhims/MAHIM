@@ -4,38 +4,32 @@ import {
   Clock,
   BookOpen,
   Bell,
-  MapPin,
-  ChevronRight,
   Sun,
   Moon,
-  ExternalLink,
   GraduationCap,
-  Sparkles,
   Download,
   FileText,
   Image as ImageIcon,
   ArrowLeft,
-  Share2,
-  Check,
   Menu,
   X,
-  User,
-  Shield,
-  PhoneCall
+  ChevronDown,
+  Building,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import {
+  DCU_LOGOS,
   INITIAL_PS_ROUTINE,
   INITIAL_PS_NOTICES,
   INITIAL_PS_BOOKS,
+  INITIAL_PS_SUBSCRIBERS,
   INITIAL_PS_TEACHERS,
   INITIAL_PS_COURSES,
-  INITIAL_PS_SUBSCRIBERS,
-  DCU_LOGOS,
   PSClassSession,
   PSNotice,
   PSBookResource,
   PSSubscriber,
-  PSCourse
 } from '../data/dcuPoliticalScienceData';
 import { DCUAdminModal } from './dcu-ps/DCUAdminModal';
 import { DCUWhatsAppWidget } from './dcu-ps/DCUWhatsAppWidget';
@@ -100,6 +94,20 @@ export function PoliticalSciencePage() {
   // Mobile App Menu Drawer state
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Desktop routine download dropdown state
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
+  const downloadRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (downloadRef.current && !downloadRef.current.contains(e.target as Node)) {
+        setIsDownloadOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Active section tracked via scroll / buttons
   const [activeSection, setActiveSection] = useState<PSTab>('today');
 
@@ -111,12 +119,35 @@ export function PoliticalSciencePage() {
 
   const [notices, setNotices] = useState<PSNotice[]>(() => {
     const saved = localStorage.getItem('dcu_ps_notices');
-    return saved ? JSON.parse(saved) : INITIAL_PS_NOTICES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Clear any old dummy notices with IDs notice-1, notice-2
+        const cleaned = Array.isArray(parsed)
+          ? parsed.filter((n: any) => n.id !== 'notice-1' && n.id !== 'notice-2' && !n.id.startsWith('dummy'))
+          : [];
+        return cleaned;
+      } catch {
+        return [];
+      }
+    }
+    return INITIAL_PS_NOTICES;
   });
 
   const [books, setBooks] = useState<PSBookResource[]>(() => {
     const saved = localStorage.getItem('dcu_ps_books');
-    return saved ? JSON.parse(saved) : INITIAL_PS_BOOKS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const cleaned = Array.isArray(parsed)
+          ? parsed.filter((b: any) => !b.id.startsWith('b-') && !b.id.startsWith('dummy'))
+          : [];
+        return cleaned;
+      } catch {
+        return [];
+      }
+    }
+    return INITIAL_PS_BOOKS;
   });
 
   const [subscribers, setSubscribers] = useState<PSSubscriber[]>(() => {
@@ -131,7 +162,7 @@ export function PoliticalSciencePage() {
 
   const [tickerNotices, setTickerNotices] = useState<TickerNotice[]>(DEFAULT_TICKER_NOTICES);
 
-  // Secret Admin Modal state (triggered via bottom dot or 5 logo clicks or Ctrl+Alt+Shift+A)
+  // Secret Admin Modal state (triggered via bottom dot or 5 logo clicks)
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('dcu_admin_auth') === 'true';
@@ -178,29 +209,32 @@ export function PoliticalSciencePage() {
   }, [subscribers]);
 
   // Load Ticker Notices from Google Sheet or fallback
-  const loadTickerNotices = async () => {
-    if (googleSheetUrl && googleSheetUrl.trim()) {
+  const loadTickerNotices = async (sheetUrl?: string) => {
+    const targetUrl = sheetUrl !== undefined ? sheetUrl : googleSheetUrl;
+    if (targetUrl.trim()) {
       try {
-        const fetched = await fetchNoticesFromGoogleSheet(googleSheetUrl);
+        const fetched = await fetchNoticesFromGoogleSheet(targetUrl);
         if (fetched.length > 0) {
           setTickerNotices(fetched);
           return;
         }
       } catch (err) {
-        console.warn('Google Sheet fetch error:', err);
+        console.error('Failed to load Google Sheet notices:', err);
       }
     }
-
-    const fromManual: TickerNotice[] = notices.map(n => ({
+    
+    // Fallback: use pinned notices from local notices or empty list
+    const pinned = notices.filter(n => n.pinned).map(n => ({
       id: n.id,
-      text: `${n.title}: ${n.content.slice(0, 120)}...`,
+      text: n.title,
       date: n.date
     }));
-
-    if (fromManual.length > 0) {
-      setTickerNotices(fromManual);
+    if (pinned.length > 0) {
+      setTickerNotices(pinned);
+    } else if (notices.length > 0) {
+      setTickerNotices(notices.map(n => ({ id: n.id, text: n.title, date: n.date })));
     } else {
-      setTickerNotices(DEFAULT_TICKER_NOTICES);
+      setTickerNotices([]);
     }
   };
 
@@ -208,7 +242,24 @@ export function PoliticalSciencePage() {
     loadTickerNotices();
   }, [googleSheetUrl, notices]);
 
-  // Keyboard shortcut Ctrl+Alt+Shift+A for secret admin
+  // Secret 5-tap trigger on the university logo to open Admin
+  const handleLogoClick = () => {
+    logoClicksRef.current += 1;
+    if (logoClickTimeoutRef.current) {
+      clearTimeout(logoClickTimeoutRef.current);
+    }
+
+    if (logoClicksRef.current >= 5) {
+      logoClicksRef.current = 0;
+      setIsAdminOpen(true);
+    } else {
+      logoClickTimeoutRef.current = setTimeout(() => {
+        logoClicksRef.current = 0;
+      }, 2000);
+    }
+  };
+
+  // Keyboard shortcut: Ctrl + Alt + Shift + A
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
@@ -220,22 +271,7 @@ export function PoliticalSciencePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Secret 5 taps on the logo
-  const handleLogoClick = () => {
-    logoClicksRef.current += 1;
-    if (logoClickTimeoutRef.current) {
-      clearTimeout(logoClickTimeoutRef.current);
-    }
-    if (logoClicksRef.current >= 5) {
-      logoClicksRef.current = 0;
-      setIsAdminOpen(true);
-    } else {
-      logoClickTimeoutRef.current = setTimeout(() => {
-        logoClicksRef.current = 0;
-      }, 2000);
-    }
-  };
-
+  // Admin authentication
   const handleAdminLogin = (u: string, p: string): boolean => {
     if (u === 'dcudcps' && p === '@@Dcudcps11223300@@') {
       setIsAuthenticated(true);
@@ -250,68 +286,73 @@ export function PoliticalSciencePage() {
     localStorage.removeItem('dcu_admin_auth');
   };
 
-  // Scroll smoothly to a section on the same page
-  const scrollToSection = (sectionId: PSTab) => {
-    setActiveSection(sectionId);
+  // In-page smooth scroll with clean URLs (NO '#' hash: /ps, /ps/routine, /ps/courses, etc.)
+  const scrollToSection = (tab: PSTab, updateUrl = true) => {
+    setActiveSection(tab);
     setIsMenuOpen(false);
 
-    // Update URL cleanly without page reload
-    const isDcups = window.location.pathname.startsWith('/dcups');
-    const prefix = isDcups ? '/dcups' : '/ps';
-    const newPath = sectionId === 'today' ? prefix : `${prefix}/${sectionId}`;
-    if (window.location.pathname !== newPath) {
-      window.history.pushState(null, '', newPath);
-    }
+    const el = document.getElementById(`section-${tab}`);
+    if (el) {
+      const topOffset = 70;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
 
-    const element = document.getElementById(`section-${sectionId}`);
-    if (element) {
-      const topOffset = 64; // header bar height
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
-        top: elementPosition - topOffset,
+        top: offsetPosition,
         behavior: 'smooth'
       });
+      if (updateUrl) {
+        const cleanPath = tab === 'today' ? '/ps' : `/ps/${tab}`;
+        window.history.replaceState(null, '', cleanPath);
+      }
     }
   };
 
-  // Handle URL change on initial load or popstate
+  // Read initial path on mount (support direct paths /ps/routine and remove any legacy hashes)
   useEffect(() => {
-    const checkHashOrPath = () => {
-      const path = window.location.pathname;
-      let target: PSTab = 'today';
-      if (path.includes('/routine')) target = 'routine';
-      else if (path.includes('/courses')) target = 'courses';
-      else if (path.includes('/notices')) target = 'notices';
-      else if (path.includes('/materials') || path.includes('/books')) target = 'materials';
+    const handleInitialPath = () => {
+      const pathname = window.location.pathname.replace(/\/+$/, '');
+      const segments = pathname.split('/').filter(Boolean);
       
-      if (target !== 'today') {
+      let targetTab: PSTab | null = null;
+      if (segments.length >= 2 && ['today', 'routine', 'courses', 'notices', 'materials'].includes(segments[1])) {
+        targetTab = segments[1] as PSTab;
+      } else if (window.location.hash) {
+        const hash = window.location.hash.replace(/^#\/?/, '');
+        if (['today', 'routine', 'courses', 'notices', 'materials'].includes(hash)) {
+          targetTab = hash as PSTab;
+        }
+      }
+
+      if (targetTab) {
+        const cleanPath = targetTab === 'today' ? '/ps' : `/ps/${targetTab}`;
+        window.history.replaceState(null, '', cleanPath);
         setTimeout(() => {
-          const el = document.getElementById(`section-${target}`);
-          if (el) {
-            const topOffset = 64;
-            const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
-            window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
-          }
+          scrollToSection(targetTab!, false);
         }, 150);
       }
-      setActiveSection(target);
     };
 
-    checkHashOrPath();
-    window.addEventListener('popstate', checkHashOrPath);
-    return () => window.removeEventListener('popstate', checkHashOrPath);
+    handleInitialPath();
+    window.addEventListener('popstate', handleInitialPath);
+    return () => window.removeEventListener('popstate', handleInitialPath);
   }, []);
 
-  // Track active section as user scrolls
+  // Track active section as user scrolls and update clean URL without '#'
   useEffect(() => {
     const handleScroll = () => {
       const sections: PSTab[] = ['today', 'routine', 'courses', 'notices', 'materials'];
-      const scrollPos = window.scrollY + 120;
+      const scrollPos = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(`section-${sections[i]}`);
         if (el && el.offsetTop <= scrollPos) {
-          setActiveSection(sections[i]);
+          const tab = sections[i];
+          setActiveSection(tab);
+          const targetPath = tab === 'today' ? '/ps' : `/ps/${tab}`;
+          if (window.location.pathname !== targetPath && !window.location.hash) {
+            window.history.replaceState(null, '', targetPath);
+          }
           break;
         }
       }
@@ -382,8 +423,16 @@ export function PoliticalSciencePage() {
 
   const isTodayClassDay = [0, 1, 2, 4].includes(currentDayIndex);
 
+  const navMenuItems = [
+    { id: 'today' as PSTab, label: 'আজকের ক্লাস', icon: Clock },
+    { id: 'routine' as PSTab, label: 'সাপ্তাহিক রুটিন', icon: Calendar },
+    { id: 'courses' as PSTab, label: 'কোর্স তালিকা', icon: GraduationCap },
+    { id: 'notices' as PSTab, label: 'নোটিশ বোর্ড', icon: Bell },
+    { id: 'materials' as PSTab, label: 'বই ও শিট', icon: BookOpen },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#fafaf9] dark:bg-[#090d16] text-zinc-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200 selection:bg-amber-500 selection:text-black relative overflow-x-hidden pb-20">
+    <div className="min-h-screen bg-[#fafaf9] dark:bg-[#090d16] text-zinc-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200 selection:bg-amber-500 selection:text-black relative overflow-x-hidden pb-20 md:pb-10">
       
       {/* Background Subtle Dot Pattern */}
       <div
@@ -395,13 +444,13 @@ export function PoliticalSciencePage() {
       />
 
       {/* ========================================================================= */}
-      {/* APP-LIKE TOP APP BAR (Compact Logo on Left, Menu Button on Right)         */}
+      {/* TOP APP BAR (Compact Logo on Left, Desktop Nav, Single Download Button)   */}
       {/* ========================================================================= */}
       <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-zinc-200/90 dark:border-zinc-800/90 shadow-xs">
-        <div className="w-full max-w-lg mx-auto px-3.5 h-12 flex items-center justify-between">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-13 flex items-center justify-between gap-2">
           
-          {/* Left: Tiny University Logo + App Title */}
-          <div className="flex items-center gap-2">
+          {/* Left: Compact University Logo + Department Title */}
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={handleLogoClick}
@@ -411,24 +460,87 @@ export function PoliticalSciencePage() {
               <img
                 src={DCU_LOGOS.university}
                 alt="University Logo"
-                className="w-7 h-7 object-contain select-none"
+                className="w-8 h-8 object-contain select-none drop-shadow-xs"
               />
             </button>
             <div className="leading-tight text-left">
-              <h1 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
-                <span>রাষ্ট্রবিজ্ঞান বিভাগ</span>
-                <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400">
-                  ১ম সেমিস্টার
-                </span>
+              <h1 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                রাষ্ট্রবিজ্ঞান বিভাগ
               </h1>
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
                 ঢাকা সেন্ট্রাল ইউনিভার্সিটি
               </p>
             </div>
           </div>
 
-          {/* Right: Theme Toggle & Menu Drawer Button */}
-          <div className="flex items-center gap-1">
+          {/* Center: Desktop Navigation Bar (Only visible on md/lg screens) */}
+          <nav className="hidden md:flex items-center gap-1 bg-zinc-100/80 dark:bg-zinc-800/60 p-1 rounded-xl border border-zinc-200/60 dark:border-zinc-700/60">
+            {navMenuItems.map(item => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToSection(item.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-white dark:bg-zinc-900 text-amber-600 dark:text-amber-400 shadow-xs font-bold'
+                      : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-zinc-700/50'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-500' : 'text-zinc-400'}`} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Right: Clean Single Routine Download Dropdown + Theme Toggle + Mobile Menu */}
+          <div className="flex items-center gap-2">
+            
+            {/* Desktop Routine Download: Single clean button with dropdown (No redundant double buttons) */}
+            <div className="relative hidden md:block" ref={downloadRef}>
+              <button
+                type="button"
+                onClick={() => setIsDownloadOpen(!isDownloadOpen)}
+                className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border border-amber-500/20"
+                title="রুটিন ডাউনলোড অপশন"
+              >
+                <Download className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                <span>রুটিন ডাউনলোড</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isDownloadOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isDownloadOpen && (
+                <div className="absolute right-0 mt-1.5 w-44 bg-white dark:bg-[#121826] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDownloadOpen(false);
+                      downloadRoutineImage(routine);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2 cursor-pointer transition"
+                  >
+                    <ImageIcon className="w-4 h-4 text-amber-500" />
+                    <span>ছবি (PNG) ডাউনলোড</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDownloadOpen(false);
+                      downloadRoutinePDF(routine);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-2 cursor-pointer transition border-t border-zinc-100 dark:border-zinc-800/80"
+                  >
+                    <FileText className="w-4 h-4 text-amber-500" />
+                    <span>পিডিএফ (PDF) ডাউনলোড</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Theme Toggle */}
             <button
               type="button"
               onClick={toggleTheme}
@@ -438,11 +550,12 @@ export function PoliticalSciencePage() {
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-600" />}
             </button>
 
+            {/* Mobile Menu Drawer Button (Only mobile) */}
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open Menu"
-              className="p-1.5 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer flex items-center gap-1"
+              className="md:hidden p-1.5 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer flex items-center gap-1"
             >
               <Menu className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </button>
@@ -455,7 +568,7 @@ export function PoliticalSciencePage() {
       {/* MOBILE APP MENU DRAWER (Slide-out Sheet)                                 */}
       {/* ========================================================================= */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-50 flex justify-end md:hidden">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
@@ -471,7 +584,7 @@ export function PoliticalSciencePage() {
                   <img
                     src={DCU_LOGOS.university}
                     alt="Logo"
-                    className="w-6 h-6 object-contain"
+                    className="w-7 h-7 object-contain"
                   />
                   <div>
                     <h3 className="text-xs font-bold text-zinc-900 dark:text-white">মেনু</h3>
@@ -481,7 +594,7 @@ export function PoliticalSciencePage() {
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-1 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
+                  className="p-1 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-white cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -489,20 +602,14 @@ export function PoliticalSciencePage() {
 
               {/* Navigation Items */}
               <nav className="mt-4 space-y-1">
-                {[
-                  { id: 'today', label: 'আজকের ক্লাস', icon: Clock },
-                  { id: 'routine', label: 'সাপ্তাহিক রুটিন', icon: Calendar },
-                  { id: 'courses', label: 'কোর্স তালিকা', icon: GraduationCap },
-                  { id: 'notices', label: 'নোটিশ বোর্ড', icon: Bell },
-                  { id: 'materials', label: 'বই ও স্টাডি মেটেরিয়াল', icon: BookOpen },
-                ].map(item => {
+                {navMenuItems.map(item => {
                   const Icon = item.icon;
                   const isActive = activeSection === item.id;
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => scrollToSection(item.id as PSTab)}
+                      onClick={() => scrollToSection(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer text-left ${
                         isActive
                           ? 'bg-amber-500 text-black font-bold shadow-xs'
@@ -557,7 +664,7 @@ export function PoliticalSciencePage() {
                   setIsMenuOpen(false);
                   navigateTo('home');
                 }}
-                className="w-full py-2 px-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-zinc-200 transition"
+                className="w-full py-2 px-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 text-xs font-medium flex items-center justify-center gap-1.5 hover:bg-zinc-200 transition cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>মূল সাইটে যান (mahims.com)</span>
@@ -568,146 +675,203 @@ export function PoliticalSciencePage() {
       )}
 
       {/* ========================================================================= */}
-      {/* Running News Ticker (Marquee from Google Sheet / Notices - Slower Pace)   */}
+      {/* HERO SECTION: CENTERED LOGO + NAMES & PC TOP-RIGHT NOTICE                */}
       {/* ========================================================================= */}
-      <div className="relative z-10 w-full max-w-lg mx-auto px-3 mt-2.5 mb-2.5">
-        <div className="flex items-center bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-xl overflow-hidden shadow-2xs h-8 text-xs">
-          <div className="px-2.5 h-full bg-amber-500 text-black font-bold flex items-center gap-1 shrink-0 text-[11px] select-none">
-            <span className="animate-pulse">📢</span>
-            <span>নোটিশ</span>
-          </div>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-3">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          {/* Desktop Left Spacer (Hidden on mobile) so Center Branding stays dead-center */}
+          <div className="hidden md:block md:col-span-3 lg:col-span-3" />
 
-          <div className="flex-1 overflow-hidden relative h-full flex items-center">
-            <div className="animate-marquee whitespace-nowrap flex items-center gap-10 text-[11px] text-zinc-700 dark:text-zinc-300 font-medium hover:[animation-play-state:paused] cursor-pointer pl-4">
-              {tickerNotices.map((t, idx) => (
-                <span
-                  key={`${t.id}-${idx}`}
-                  onClick={() => scrollToSection('notices')}
-                  className="inline-flex items-center gap-2 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
-                >
-                  <span className="text-amber-500">•</span>
-                  <span>{t.text}</span>
-                  {t.date && <span className="text-[10px] text-zinc-400">({t.date})</span>}
-                </span>
-              ))}
+          {/* Center Branding: University Logo, University Name & Department Name */}
+          <div className="md:col-span-6 lg:col-span-6 text-center flex flex-col items-center justify-center">
+            <button
+              type="button"
+              onClick={handleLogoClick}
+              title="ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ট্যাপ করুন)"
+              className="inline-block transition-transform active:scale-95 cursor-pointer focus:outline-hidden"
+            >
+              <img
+                src={DCU_LOGOS.university}
+                alt="ঢাকা সেন্ট্রাল ইউনিভার্সিটি"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain mx-auto select-none drop-shadow-md hover:opacity-95 transition-opacity"
+              />
+            </button>
+            <div className="mt-2 text-center">
+              <h1 className="text-base sm:text-lg md:text-xl font-black text-zinc-900 dark:text-white tracking-tight">
+                ঢাকা সেন্ট্রাল ইউনিভার্সিটি
+              </h1>
+              <p className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 mt-0.5">
+                রাষ্ট্রবিজ্ঞান বিভাগ
+              </p>
             </div>
           </div>
+
+          {/* Top Right on PC (or below logo on Mobile): Notice Widget */}
+          <div className="md:col-span-3 lg:col-span-3 w-full">
+            <div className="bg-amber-500/10 dark:bg-amber-950/30 border-2 border-amber-500/70 dark:border-amber-500/50 rounded-2xl p-3 shadow-xs flex flex-col justify-between">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-amber-500/20">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                    জরুরি নোটিশ
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection('notices')}
+                  className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer flex items-center gap-0.5"
+                >
+                  <span>সব নোটিশ</span>
+                  <ArrowLeft className="w-3 h-3 rotate-270" />
+                </button>
+              </div>
+
+              {/* Notice Content / Ticker */}
+              <div className="text-xs">
+                {tickerNotices.length > 0 ? (
+                  <div className="overflow-hidden relative h-10 flex items-center">
+                    <div className="animate-marquee whitespace-nowrap flex items-center gap-8 text-zinc-900 dark:text-zinc-100 font-semibold hover:[animation-play-state:paused] cursor-pointer">
+                      {tickerNotices.map((t, idx) => (
+                        <span
+                          key={`${t.id}-${idx}`}
+                          onClick={() => scrollToSection('notices')}
+                          className="inline-flex items-center gap-1.5 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                        >
+                          <span className="text-amber-500 font-bold">•</span>
+                          <span>{t.text}</span>
+                          {t.date && <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">({t.date})</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-2 text-zinc-500 dark:text-zinc-400 text-center text-xs">
+                    আপাতত কোনো জরুরি নোটিশ নেই
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* SINGLE COMPREHENSIVE PAGE - ALL SECTIONS ORGANIZED ON ONE PAGE           */}
+      {/* MAIN CONTENT AREA - FULLY BALANCED & OPTIMIZED FOR PC & MOBILE             */}
       {/* ========================================================================= */}
-      <main className="relative z-10 flex-1 w-full max-w-lg mx-auto px-3 pb-6 flex flex-col gap-4">
+      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* ======================================================================= */}
-        {/* SECTION 1: TODAY'S CLASS STATUS (#section-today)                        */}
+        {/* TOP ROW: TODAY'S CLASS STATUS (LEFT) & DAY PICKER (RIGHT) - BALANCED PC */}
         {/* ======================================================================= */}
-        <section id="section-today" className="space-y-2.5 scroll-mt-16">
+        <section id="section-today" className="grid grid-cols-1 md:grid-cols-2 gap-4 scroll-mt-20">
           
-          {/* TODAY STATUS SUMMARY CARD */}
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                <h2 className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
-                  {isTodayClassDay ? `আজকের ক্লাস (${DAY_NAMES_BN[currentDayIndex]})` : `আজ ছুটি (${DAY_NAMES_BN[currentDayIndex]})`}
-                </h2>
+          {/* Card 1: Today's Class Status */}
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-zinc-100 dark:border-zinc-800/80">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+                  <h2 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
+                    {isTodayClassDay ? `আজকের ক্লাস (${DAY_NAMES_BN[currentDayIndex]})` : `আজ ছুটি (${DAY_NAMES_BN[currentDayIndex]})`}
+                  </h2>
+                </div>
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                  {isTodayClassDay ? `${todaySessions.length}টি ক্লাস` : 'ক্লাস বিরতি'}
+                </span>
               </div>
-              <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
-                {isTodayClassDay ? `${todaySessions.length}টি ক্লাস` : 'ক্লাস নেই'}
-              </span>
-            </div>
 
-            {/* If today has classes, show today's schedule directly */}
-            {isTodayClassDay && todaySessions.length > 0 ? (
-              <div className="space-y-1.5">
-                {todaySessions.map((session, idx) => {
-                  const status = getClassSessionStatus(session, currentDayIndex, now);
-                  const isLive = status === 'live';
-                  return (
-                    <div
-                      key={session.id}
-                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-between text-xs ${
-                        isLive
-                          ? 'bg-amber-500/10 border-amber-500/40 text-zinc-900 dark:text-white ring-1 ring-amber-500/30'
-                          : 'bg-zinc-50/60 dark:bg-zinc-900/40 border-zinc-200/70 dark:border-zinc-800/70 text-zinc-800 dark:text-zinc-200'
-                      }`}
-                    >
-                      <div className="flex-1 min-w-0 pr-2">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span className="font-bold text-[11px] text-amber-600 dark:text-amber-400 font-mono">
-                            {session.timeFormatted}
-                          </span>
-                          {isLive && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500 text-white animate-pulse">
-                              চলমান
+              {/* Today's Schedule Cards */}
+              {isTodayClassDay && todaySessions.length > 0 ? (
+                <div className="space-y-2">
+                  {todaySessions.map((session, idx) => {
+                    const status = getClassSessionStatus(session, currentDayIndex, now);
+                    const isLive = status === 'live';
+                    return (
+                      <div
+                        key={session.id}
+                        className={`p-3 rounded-xl border transition-all flex items-center justify-between text-xs ${
+                          isLive
+                            ? 'bg-amber-500/10 border-amber-500/40 text-zinc-900 dark:text-white ring-1 ring-amber-500/30'
+                            : 'bg-zinc-50/70 dark:bg-zinc-900/50 border-zinc-200/70 dark:border-zinc-800/70 text-zinc-800 dark:text-zinc-200'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="font-bold text-xs text-amber-600 dark:text-amber-400 font-mono">
+                              {session.timeFormatted}
                             </span>
-                          )}
-                          {idx === 0 && session.dayIndex === 0 && (
-                            <span className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                              ১ম ক্লাস
-                            </span>
-                          )}
+                            {isLive && (
+                              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500 text-white animate-pulse">
+                                চলমান ক্লাস
+                              </span>
+                            )}
+                            {idx === 0 && session.dayIndex === 0 && (
+                              <span className="text-[9px] font-medium px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                                ১০:৪৫ ১ম ক্লাস
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="font-semibold text-xs sm:text-sm truncate text-zinc-900 dark:text-zinc-100">
+                            {session.courseTitleBn}
+                          </h4>
+                          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                            {session.teacherName} • {session.courseCode}
+                          </p>
                         </div>
-                        <h4 className="font-semibold text-xs truncate text-zinc-900 dark:text-zinc-100">
-                          {session.courseTitleBn}
-                        </h4>
-                        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-                          {session.teacherName} • {session.courseCode}
+
+                        <div className="shrink-0 text-right">
+                          <span className="text-xs font-bold font-mono px-2.5 py-1 rounded-lg bg-zinc-200/80 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                            {session.room}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Off-day Card with Next Class info directly displayed */
+                <div className="p-4 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/70 dark:border-zinc-800/70 text-center space-y-3 my-auto">
+                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-medium">
+                    {currentDayIndex === 3 ? 'আজ বুধবার — সাপ্তাহিক ক্লাস বিরতি' : 'আজ কোনো ক্লাস নেই'}
+                  </p>
+                  {nextClassInfo && (
+                    <div className="pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-left text-xs">
+                      <div>
+                        <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold block">
+                          পরবর্তী ক্লাসের দিন
+                        </span>
+                        <span className="font-bold text-zinc-900 dark:text-white">
+                          {nextClassInfo.dayName} ({nextClassInfo.session.startTime} এ ১ম ক্লাস)
+                        </span>
+                        <p className="text-[11px] text-zinc-500 truncate max-w-[200px] sm:max-w-xs">
+                          {nextClassInfo.session.courseTitleBn}
                         </p>
                       </div>
-
-                      <div className="shrink-0 text-right">
-                        <span className="text-[11px] font-semibold font-mono px-2 py-0.5 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                          {session.room}
-                        </span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedDay(nextClassInfo.session.dayIndex);
+                          scrollToSection('routine');
+                        }}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-600 text-black transition cursor-pointer shrink-0 shadow-xs"
+                      >
+                        রুটিন দেখুন
+                      </button>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Off-day Card with Next Class info directly displayed */
-              <div className="p-3 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200/70 dark:border-zinc-800/70 text-center space-y-2">
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
-                  {currentDayIndex === 3 ? 'আজ বুধবার — সাপ্তাহিক অফ-ডে' : 'আজ কোনো ক্লাস নেই'}
-                </p>
-                {nextClassInfo && (
-                  <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-left text-xs">
-                    <div>
-                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold block">
-                        পরবর্তী ক্লাসের দিন
-                      </span>
-                      <span className="font-bold text-zinc-900 dark:text-white">
-                        {nextClassInfo.dayName} ({nextClassInfo.session.startTime} এ ১ম ক্লাস)
-                      </span>
-                      <p className="text-[11px] text-zinc-500 truncate max-w-[200px]">
-                        {nextClassInfo.session.courseTitleBn}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedDay(nextClassInfo.session.dayIndex);
-                        scrollToSection('routine');
-                      }}
-                      className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-amber-500 hover:bg-amber-600 text-black transition cursor-pointer shrink-0"
-                    >
-                      রুটিন দেখুন
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* DAY SELECTOR & PREVIEW CARD */}
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+          {/* Card 2: Day-Wise Quick Class Filter */}
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                <span>দিনভিত্তিক বাছাই</span>
+              <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-amber-500" />
+                <span>দিনভিত্তিক ক্লাস বাছাই</span>
               </h3>
               <span className="text-[11px] text-zinc-500 font-medium">
                 {selectedDay === 0 ? 'রবিবার (৩টি ক্লাস)' : selectedDay === 1 ? 'সোমবার (২টি ক্লাস)' : selectedDay === 2 ? 'মঙ্গলবার (২টি ক্লাস)' : 'বৃহস্পতিবার (২টি ক্লাস)'}
@@ -745,7 +909,7 @@ export function PoliticalSciencePage() {
             </div>
 
             {/* Selected Day Class List */}
-            <div className="space-y-1.5 pt-1">
+            <div className="space-y-2 pt-1">
               {displayedSessions.map((session, idx) => (
                 <div
                   key={session.id}
@@ -779,49 +943,117 @@ export function PoliticalSciencePage() {
               ))}
             </div>
           </div>
+
         </section>
 
         {/* ======================================================================= */}
-        {/* SECTION 2: FULL ROUTINE WITH LIGHT MODE PNG & PDF (#section-routine)    */}
+        {/* SECTION 2: NOTICES BOARD (#section-notices) - HIGH VISIBILITY FULL WIDTH */}
         {/* ======================================================================= */}
-        <section id="section-routine" className="space-y-3 scroll-mt-16 pt-2">
-          
-          {/* Header Card with Clean Download Buttons */}
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 shadow-2xs space-y-3">
+        <section id="section-notices" className="space-y-3 scroll-mt-20">
+          <div className="bg-gradient-to-r from-amber-500/15 via-white to-amber-500/10 dark:from-amber-950/40 dark:via-[#121826] dark:to-transparent border-2 border-amber-500/40 dark:border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xs">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-amber-500" />
-                  <span>পূর্ণাঙ্গ সাপ্তাহিক ক্লাস রুটিন</span>
-                </h2>
-                <p className="text-[11px] text-zinc-500">১ম বর্ষ ১ম সেমিস্টার (ঢাকা কলেজ ক্যাম্পাস)</p>
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500 text-black flex items-center justify-center font-bold">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <span>ডিপার্টমেন্ট নোটিশ বোর্ড</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
+                  </h2>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    সর্বশেষ অফিশিয়াল নির্দেশনা ও ঘোষণা
+                  </p>
+                </div>
               </div>
-            </div>
-
-            {/* 2 Big Download Buttons: PNG Image (Light Mode) and PDF */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => downloadRoutineImage(routine)}
-                className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <ImageIcon className="w-4 h-4" />
-                <span>ছবি ডাউনলোড (PNG)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => downloadRoutinePDF(routine)}
-                className="py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 font-bold text-xs flex items-center justify-center gap-2 border border-zinc-700 shadow-xs transition active:scale-95 cursor-pointer"
-              >
-                <FileText className="w-4 h-4 text-amber-400" />
-                <span>পিডিএফ ডাউনলোড (PDF)</span>
-              </button>
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300">
+                {notices.length}টি নোটিশ
+              </span>
             </div>
           </div>
 
-          {/* Weekly Routine Day by Day Cards (Clean, no unnecessary warnings) */}
-          <div className="space-y-2.5">
+          {/* Responsive Notice Cards: 2 Columns on desktop, 1 on mobile */}
+          {notices.length === 0 ? (
+            <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-8 text-center space-y-2.5 shadow-xs">
+              <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
+                <Bell className="w-6 h-6" />
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
+                কোনো নতুন নোটিশ নেই
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+                সব ডামি নোটিশ মুছে ফেলা হয়েছে। আপনি পরবর্তীতে এডমিন প্যানেল বা গুগল শিট থেকে যে নোটিশ যুক্ত করবেন কেবল সেগুলোই এখানে দেখা যাবে।
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {notices.map(notice => (
+                <div
+                  key={notice.id}
+                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 shadow-xs space-y-2.5 text-xs transition hover:border-amber-500/40 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold text-[11px] border border-amber-500/20">
+                        {notice.category}
+                      </span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
+                        🗓️ {notice.date}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm leading-snug">
+                      {notice.title}
+                    </h3>
+                    <p className="text-zinc-600 dark:text-zinc-300 text-xs leading-relaxed pt-1">
+                      {notice.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ======================================================================= */}
+        {/* SECTION 3: FULL WEEKLY ROUTINE (#section-routine) - 4 COLS ON DESKTOP   */}
+        {/* ======================================================================= */}
+        <section id="section-routine" className="space-y-3.5 scroll-mt-20">
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-amber-500" />
+                  <span>পূর্ণাঙ্গ সাপ্তাহিক ক্লাস রুটিন</span>
+                </h2>
+                <p className="text-xs text-zinc-500">
+                  রুম ৩০২ • রাষ্ট্রবিজ্ঞান বিভাগ
+                </p>
+              </div>
+
+              {/* Routine Export Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => downloadRoutineImage(routine)}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs flex items-center gap-1.5 shadow-xs transition active:scale-95 cursor-pointer"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>ছবি ডাউনলোড (PNG)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => downloadRoutinePDF(routine)}
+                  className="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 font-bold text-xs flex items-center gap-1.5 border border-zinc-700 shadow-xs transition active:scale-95 cursor-pointer"
+                >
+                  <FileText className="w-3.5 h-3.5 text-amber-400" />
+                  <span>পিডিএফ (PDF)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Days Displayed in Clean 4-Column Grid on Desktop, 2 on Tablet, 1 on Mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             {[0, 1, 2, 4].map(dayIndex => {
               const daySessions = routine
                 .filter(s => s.dayIndex === dayIndex)
@@ -829,88 +1061,93 @@ export function PoliticalSciencePage() {
               return (
                 <div
                   key={dayIndex}
-                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs space-y-2"
+                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-xs space-y-2.5 flex flex-col justify-between"
                 >
-                  <div className="flex items-center justify-between pb-1 border-b border-zinc-100 dark:border-zinc-800/80">
-                    <span className="font-bold text-xs text-amber-600 dark:text-amber-400">
-                      🗓️ {DAY_NAMES_BN[dayIndex]}
-                    </span>
-                    <span className="text-[11px] text-zinc-500 font-medium">
-                      {daySessions.length}টি ক্লাস
-                    </span>
-                  </div>
+                  <div>
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-100 dark:border-zinc-800/80">
+                      <span className="font-bold text-xs sm:text-sm text-amber-600 dark:text-amber-400">
+                        🗓️ {DAY_NAMES_BN[dayIndex]}
+                      </span>
+                      <span className="text-[11px] text-zinc-500 font-medium">
+                        {daySessions.length}টি ক্লাস
+                      </span>
+                    </div>
 
-                  <div className="space-y-1.5">
-                    {daySessions.map(session => (
-                      <div
-                        key={session.id}
-                        className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between text-xs"
-                      >
-                        <div className="min-w-0 flex-1 pr-2">
-                          <span className="font-bold text-amber-600 dark:text-amber-400 font-mono text-[11px]">
-                            {session.timeFormatted}
+                    <div className="space-y-2">
+                      {daySessions.map(session => (
+                        <div
+                          key={session.id}
+                          className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between text-xs"
+                        >
+                          <div className="min-w-0 flex-1 pr-1.5">
+                            <span className="font-bold text-amber-600 dark:text-amber-400 font-mono text-[11px] block">
+                              {session.timeFormatted}
+                            </span>
+                            <h4 className="font-semibold text-zinc-900 dark:text-white truncate">
+                              {session.courseTitleBn}
+                            </h4>
+                            <p className="text-[10px] text-zinc-500 truncate">
+                              {session.teacherName}
+                            </p>
+                          </div>
+                          <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold shrink-0">
+                            {session.room}
                           </span>
-                          <h4 className="font-semibold text-zinc-900 dark:text-white truncate">
-                            {session.courseTitleBn}
-                          </h4>
-                          <p className="text-[11px] text-zinc-500 truncate">
-                            {session.teacherName} • {session.courseCode}
-                          </p>
                         </div>
-                        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold shrink-0">
-                          {session.room}
-                        </span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-
         </section>
 
         {/* ======================================================================= */}
-        {/* SECTION 3: COURSES LIST (#section-courses)                              */}
+        {/* SECTION 4: COURSES LIST (#section-courses) - 4 COLS ON DESKTOP          */}
         {/* ======================================================================= */}
-        <section id="section-courses" className="space-y-3 scroll-mt-16 pt-2">
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs">
+        <section id="section-courses" className="space-y-3.5 scroll-mt-20">
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs">
             <div className="flex items-center justify-between mb-1">
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+              <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4 text-amber-500" />
                 <span>কোর্স তালিকা (১ম বর্ষ ১ম সেমিস্টার)</span>
               </h2>
-              <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+              <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
                 ৮টি কোর্স
               </span>
             </div>
-            <p className="text-[11px] text-zinc-500">
+            <p className="text-xs text-zinc-500">
               রাষ্ট্রবিজ্ঞান বিভাগ • ঢাকা সেন্ট্রাল ইউনিভার্সিটি
             </p>
           </div>
 
-          <div className="space-y-2">
+          {/* 4 Columns on desktop, 2 on tablet, 1 on mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             {INITIAL_PS_COURSES.map(course => (
               <div
                 key={course.code}
-                className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3 shadow-2xs space-y-1 text-xs"
+                className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-xs space-y-1.5 text-xs flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs text-amber-600 dark:text-amber-400">
-                    {course.code}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">
-                    {course.courseType} ({course.credits} ক্রেডিট)
-                  </span>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-xs text-amber-600 dark:text-amber-400">
+                      {course.code}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">
+                      {course.courseType} ({course.credits} ক্রেডিট)
+                    </span>
+                  </div>
+                  <h4 className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm pt-0.5">
+                    {course.titleBn}
+                  </h4>
+                  <p className="text-[11px] text-zinc-500">
+                    {course.titleEn}
+                  </p>
                 </div>
-                <h4 className="font-bold text-zinc-900 dark:text-white text-xs">
-                  {course.titleBn}
-                </h4>
-                <p className="text-[11px] text-zinc-500">
-                  {course.titleEn}
-                </p>
+
                 {course.description && (
-                  <p className="text-[11px] text-zinc-400 pt-1 border-t border-zinc-100 dark:border-zinc-800/60 leading-relaxed">
+                  <p className="text-[11px] text-zinc-400 pt-1.5 border-t border-zinc-100 dark:border-zinc-800/60 leading-relaxed">
                     {course.description}
                   </p>
                 )}
@@ -920,74 +1157,37 @@ export function PoliticalSciencePage() {
         </section>
 
         {/* ======================================================================= */}
-        {/* SECTION 4: NOTICES BOARD (#section-notices)                             */}
-        {/* ======================================================================= */}
-        <section id="section-notices" className="space-y-3 scroll-mt-16 pt-2">
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
-                <Bell className="w-4 h-4 text-amber-500" />
-                <span>ডিপার্টমেন্ট নোটিশ বোর্ড</span>
-              </h2>
-              <span className="text-[11px] text-zinc-500">{notices.length}টি নোটিশ</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            {notices.map(notice => (
-              <div
-                key={notice.id}
-                className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs space-y-1.5 text-xs"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold text-[10px]">
-                    {notice.category}
-                  </span>
-                  <span className="text-[10px] text-zinc-400">{notice.date}</span>
-                </div>
-                <h4 className="font-bold text-zinc-900 dark:text-white text-xs leading-snug">
-                  {notice.title}
-                </h4>
-                <p className="text-zinc-600 dark:text-zinc-300 text-[11px] leading-relaxed">
-                  {notice.content}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ======================================================================= */}
         {/* SECTION 5: STUDY MATERIALS & BOOKS (#section-materials)                 */}
         {/* ======================================================================= */}
-        <section id="section-materials" className="space-y-3 scroll-mt-16 pt-2">
-          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-2xs">
-            <h2 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-amber-500" />
-              <span>বই ও স্টাডি মেটেরিয়াল</span>
-            </h2>
-            <p className="text-[11px] text-zinc-500">
-              রাষ্ট্রবিজ্ঞান বিভাগ • ১ম বর্ষ ১ম সেমিস্টার
-            </p>
+        <section id="section-materials" className="space-y-3.5 scroll-mt-20">
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-amber-500" />
+                <span>বই ও স্টাডি মেটেরিয়াল</span>
+              </h2>
+              <span className="text-xs text-zinc-500">১ম বর্ষ ১ম সেমিস্টার</span>
+            </div>
           </div>
 
           {books.length === 0 ? (
-            <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-8 text-center space-y-3 shadow-2xs">
+            <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-8 text-center space-y-3 shadow-xs">
               <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
                 <BookOpen className="w-6 h-6" />
               </div>
-              <h3 className="text-xs font-bold text-zinc-900 dark:text-white">
+              <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">
                 কোনো বই বা শিট এখনো যুক্ত করা হয়নি
               </h3>
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 max-w-xs mx-auto leading-relaxed">
-                সব ডামি ডাটা মুছে ফেলা হয়েছে। প্রয়োজনীয় বই, লেকচার শিট ও হ্যান্ডনোটের ড্রাইভ লিংক অ্যাডমিন প্যানেল থেকে পরবর্তীতে যুক্ত করা হবে।
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+                সব ডামি লিংক মুছে ফেলা হয়েছে। আপনি পরবর্তীতে যে বই বা শিটের ড্রাইভ লিংক যুক্ত করবেন কেবল সেগুলোই এখানে দেখা যাবে।
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {books.map(b => (
                 <div
                   key={b.id}
-                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3 text-xs flex items-center justify-between"
+                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 text-xs flex items-center justify-between"
                 >
                   <div>
                     <p className="font-semibold text-zinc-900 dark:text-white">{b.title}</p>
@@ -997,7 +1197,7 @@ export function PoliticalSciencePage() {
                     href={b.driveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-2.5 py-1 rounded-lg bg-amber-500 text-black text-[11px] font-bold shrink-0 ml-2"
+                    className="px-2.5 py-1 rounded-lg bg-amber-500 text-black text-[11px] font-bold shrink-0 ml-2 cursor-pointer"
                   >
                     ডাউনলোড
                   </a>
@@ -1010,15 +1210,15 @@ export function PoliticalSciencePage() {
       </main>
 
       {/* ========================================================================= */}
-      {/* Discreet Footer with Secret Admin Dot and Main Site Link                  */}
+      {/* DISCREET FOOTER (Full width, Main Site Link, Secret Admin Dot)            */}
       {/* ========================================================================= */}
-      <footer className="relative z-10 py-6 px-4 text-center text-xs text-zinc-400 dark:text-zinc-600 select-none space-y-2">
-        {/* Main Site Return Button (in footer as requested) */}
+      <footer className="relative z-10 py-6 px-4 text-center text-xs text-zinc-400 dark:text-zinc-600 select-none space-y-2.5 max-w-7xl mx-auto w-full">
+        {/* Main Site Return Button */}
         <div>
           <button
             type="button"
             onClick={() => navigateTo('home')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-200/60 dark:bg-zinc-800/60 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-200/70 dark:bg-zinc-800/70 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition cursor-pointer shadow-xs"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>মূল সাইটে ফিরুন (mahims.com)</span>
@@ -1026,7 +1226,8 @@ export function PoliticalSciencePage() {
         </div>
 
         <p className="flex items-center justify-center gap-1 text-[11px]">
-          <span>রাষ্ট্রবিজ্ঞান</span>
+          <span>রাষ্ট্রবিজ্ঞান বিভাগ</span>
+          {/* Secret Admin Dot - completely invisible to casual users */}
           <button
             id="ps-secret-admin-dot"
             type="button"
@@ -1051,13 +1252,13 @@ export function PoliticalSciencePage() {
       />
 
       {/* ========================================================================= */}
-      {/* BOTTOM NAVIGATION DOCK (5 Clean Buttons - Smoothly Scroll To Section)    */}
+      {/* MOBILE BOTTOM NAVIGATION DOCK (ONLY ON MOBILE - HIDDEN ON DESKTOP md:)   */}
       {/* ========================================================================= */}
       <nav
         id="dcu-bottom-dock"
-        className="fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-t border-zinc-200/90 dark:border-zinc-800/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-t border-zinc-200/90 dark:border-zinc-800/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
       >
-        <div className="max-w-lg mx-auto grid grid-cols-5 h-14 px-1 items-center">
+        <div className="max-w-md mx-auto grid grid-cols-5 h-14 px-1 items-center">
           
           {/* 1. আজকের ক্লাস */}
           <button

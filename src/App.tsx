@@ -47,10 +47,15 @@ export default function App() {
       // ignore
     }
 
-    // Support both: If user enters with hash (e.g. #about or #salami or #wallet), immediately resolve and clean URL
+    // Support both: If user enters with hash (e.g. #about or #salami or #wallet or /ps#routine), immediately resolve and clean URL
     let path = window.location.pathname.replace(/\/+$/, '') || '/';
     if (window.location.hash) {
-      path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
+      if (path.startsWith('/ps') || path.startsWith('/dcups') || path.startsWith('/political-science')) {
+        const sub = window.location.hash.replace(/^#[/]?/, '');
+        path = sub ? `/ps/${sub}` : '/ps';
+      } else {
+        path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
+      }
     }
 
     // Auto-redirect 404 / unknown routes to homepage for clean SEO & user experience
@@ -156,7 +161,12 @@ export default function App() {
     const handleUrlChange = () => {
       let path = window.location.pathname.replace(/\/+$/, '') || '/';
       if (window.location.hash) {
-        path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
+        if (path.startsWith('/ps') || path.startsWith('/dcups') || path.startsWith('/political-science')) {
+          const sub = window.location.hash.replace(/^#[/]?/, '');
+          path = sub ? `/ps/${sub}` : '/ps';
+        } else {
+          path = ('/' + window.location.hash.replace(/^#[/]?/, '')).replace(/\/+$/, '') || '/';
+        }
       }
 
       if (!isValidRoute(path)) {

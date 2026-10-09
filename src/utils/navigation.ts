@@ -63,6 +63,8 @@ export const STANDALONE_ROUTES = new Set([
   '/ps/courses',
   '/ps/notices',
   '/ps/materials',
+  '/ps/email',
+  '/ps/teachers',
   '/dcups',
   '/political-science',
   '/dcu-ps'

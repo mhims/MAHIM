@@ -16,7 +16,12 @@ import {
   ChevronDown,
   Building,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  Users,
+  Mail,
+  Send,
+  Check,
+  Share2
 } from 'lucide-react';
 import {
   DCU_LOGOS,
@@ -26,6 +31,7 @@ import {
   INITIAL_PS_SUBSCRIBERS,
   INITIAL_PS_TEACHERS,
   INITIAL_PS_COURSES,
+  INITIAL_PS_CRS,
   PSClassSession,
   PSNotice,
   PSBookResource,
@@ -41,7 +47,7 @@ import {
 import { downloadRoutineImage, downloadRoutinePDF } from '../utils/routineExport';
 import { navigateTo } from '../utils/navigation';
 
-export type PSTab = 'today' | 'routine' | 'courses' | 'notices' | 'materials';
+export type PSTab = 'today' | 'routine' | 'courses' | 'notices' | 'materials' | 'email' | 'teachers';
 
 const DAY_NAMES_BN = [
   'রবিবার',
@@ -118,42 +124,92 @@ export function PoliticalSciencePage() {
   });
 
   const [notices, setNotices] = useState<PSNotice[]>(() => {
-    const saved = localStorage.getItem('dcu_ps_notices');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        // Clear any old dummy notices with IDs notice-1, notice-2
-        const cleaned = Array.isArray(parsed)
-          ? parsed.filter((n: any) => n.id !== 'notice-1' && n.id !== 'notice-2' && !n.id.startsWith('dummy'))
-          : [];
-        return cleaned;
-      } catch {
-        return [];
+    try {
+      localStorage.removeItem('dcu_ps_notices');
+      localStorage.removeItem('dcu_ps_notices_v4');
+      const saved = localStorage.getItem('dcu_ps_notices_v5');
+      if (saved) {
+        return JSON.parse(saved);
       }
+    } catch {
+      // ignore
     }
-    return INITIAL_PS_NOTICES;
+    return [];
   });
 
   const [books, setBooks] = useState<PSBookResource[]>(() => {
-    const saved = localStorage.getItem('dcu_ps_books');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        const cleaned = Array.isArray(parsed)
-          ? parsed.filter((b: any) => !b.id.startsWith('b-') && !b.id.startsWith('dummy'))
-          : [];
-        return cleaned;
-      } catch {
-        return [];
+    try {
+      localStorage.removeItem('dcu_ps_books');
+      localStorage.removeItem('dcu_ps_books_v4');
+      const saved = localStorage.getItem('dcu_ps_books_v5');
+      if (saved) {
+        return JSON.parse(saved);
       }
+    } catch {
+      // ignore
     }
-    return INITIAL_PS_BOOKS;
+    return [];
   });
 
   const [subscribers, setSubscribers] = useState<PSSubscriber[]>(() => {
     const saved = localStorage.getItem('dcu_ps_subscribers');
     return saved ? JSON.parse(saved) : INITIAL_PS_SUBSCRIBERS;
   });
+
+  // Email Notification & Update Form State
+  const [subName, setSubName] = useState('');
+  const [subEmail, setSubEmail] = useState('');
+  const [subStudentId, setSubStudentId] = useState('');
+  const [subStatus, setSubStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isCopiedShareLink, setIsCopiedShareLink] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanName = subName.trim();
+    const cleanEmail = subEmail.trim();
+
+    if (!cleanName || !cleanEmail) {
+      setSubStatus({ type: 'error', message: 'অনুগ্রহ করে আপনার নাম ও ইমেইল এড্রেস প্রদান করুন।' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setSubStatus({ type: 'error', message: 'অনুগ্রহ করে একটি সঠিক ইমেইল এড্রেস লিখুন (যেমন: name@gmail.com)।' });
+      return;
+    }
+
+    const alreadyExists = subscribers.some(s => s.email.toLowerCase() === cleanEmail.toLowerCase());
+    if (alreadyExists) {
+      setSubStatus({ type: 'error', message: 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত রয়েছে।' });
+      return;
+    }
+
+    const newSubscriber: PSSubscriber = {
+      id: `sub-${Date.now()}`,
+      name: cleanName,
+      email: cleanEmail,
+      studentId: subStudentId.trim() || undefined,
+      subscribedAt: new Date().toISOString().split('T')[0]
+    };
+
+    setSubscribers(prev => [newSubscriber, ...prev]);
+    setSubStatus({
+      type: 'success',
+      message: '✅ সফলভাবে নিবন্ধিত হয়েছে! যেকোনো জরুরি নোটিশ বা ক্লাস আপডেট এই ইমেইলে জানিয়ে দেওয়া হবে।'
+    });
+    setSubName('');
+    setSubEmail('');
+    setSubStudentId('');
+  };
+
+  const handleCopyFormLink = () => {
+    const link = `${window.location.origin}/ps#section-email`;
+    navigator.clipboard.writeText(link).then(() => {
+      setIsCopiedShareLink(true);
+      setTimeout(() => setIsCopiedShareLink(false), 2500);
+    });
+  };
 
   // Google Sheet Ticker URL state
   const [googleSheetUrl, setGoogleSheetUrl] = useState<string>(() => {
@@ -197,11 +253,11 @@ export function PoliticalSciencePage() {
   }, [routine]);
 
   useEffect(() => {
-    localStorage.setItem('dcu_ps_notices', JSON.stringify(notices));
+    localStorage.setItem('dcu_ps_notices_v5', JSON.stringify(notices));
   }, [notices]);
 
   useEffect(() => {
-    localStorage.setItem('dcu_ps_books', JSON.stringify(books));
+    localStorage.setItem('dcu_ps_books_v5', JSON.stringify(books));
   }, [books]);
 
   useEffect(() => {
@@ -315,11 +371,11 @@ export function PoliticalSciencePage() {
       const segments = pathname.split('/').filter(Boolean);
       
       let targetTab: PSTab | null = null;
-      if (segments.length >= 2 && ['today', 'routine', 'courses', 'notices', 'materials'].includes(segments[1])) {
+      if (segments.length >= 2 && ['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(segments[1])) {
         targetTab = segments[1] as PSTab;
       } else if (window.location.hash) {
         const hash = window.location.hash.replace(/^#\/?/, '');
-        if (['today', 'routine', 'courses', 'notices', 'materials'].includes(hash)) {
+        if (['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(hash)) {
           targetTab = hash as PSTab;
         }
       }
@@ -341,7 +397,7 @@ export function PoliticalSciencePage() {
   // Track active section as user scrolls and update clean URL without '#'
   useEffect(() => {
     const handleScroll = () => {
-      const sections: PSTab[] = ['today', 'routine', 'courses', 'notices', 'materials'];
+      const sections: PSTab[] = ['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'];
       const scrollPos = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -429,6 +485,8 @@ export function PoliticalSciencePage() {
     { id: 'courses' as PSTab, label: 'কোর্স তালিকা', icon: GraduationCap },
     { id: 'notices' as PSTab, label: 'নোটিশ বোর্ড', icon: Bell },
     { id: 'materials' as PSTab, label: 'বই ও শিট', icon: BookOpen },
+    { id: 'email' as PSTab, label: 'ইমেইল আপডেট', icon: Mail },
+    { id: 'teachers' as PSTab, label: 'শিক্ষকবৃন্দ', icon: Users },
   ];
 
   return (
@@ -1207,25 +1265,222 @@ export function PoliticalSciencePage() {
           )}
         </section>
 
+        {/* ======================================================================= */}
+        {/* SECTION 6: EMAIL NOTIFICATIONS & UPDATES (#section-email)                */}
+        {/* ======================================================================= */}
+        <section id="section-email" className="space-y-4 scroll-mt-20">
+          <div className="bg-gradient-to-br from-amber-500/10 via-white dark:via-[#121826] to-emerald-500/5 dark:to-[#121826] border border-amber-500/30 dark:border-amber-500/20 rounded-2xl p-4 sm:p-6 shadow-sm">
+            
+            {/* Header with Share Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500 text-zinc-950 flex items-center justify-center shrink-0 shadow-xs font-bold">
+                  <Mail className="w-5 h-5 text-zinc-950" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <span>জরুরি নোটিশ ও ক্লাস আপডেট ইমেইলে পান</span>
+                  </h2>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                    নতুন কোনো নোটিশ, পরীক্ষার শিডিউল বা রুটিন পরিবর্তনের আপডেট সবার আগে পেতে আপনার ইমেইল যুক্ত করুন।
+                  </p>
+                </div>
+              </div>
+
+              {/* Share / Copy Link for CR or Classmate */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopyFormLink}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:text-amber-600 dark:hover:text-amber-400 text-xs font-medium transition cursor-pointer shadow-2xs active:scale-95"
+                  title="সহপাঠীদের সাথে শেয়ার করতে ফর্ম লিংক কপি করুন"
+                >
+                  {isCopiedShareLink ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">লিংক কপি হয়েছে!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="w-3.5 h-3.5" />
+                      <span>ফর্ম লিংক কপি</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Subscription Form */}
+            <form onSubmit={handleSubscribe} className="pt-4 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    আপনার নাম <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={subName}
+                    onChange={(e) => setSubName(e.target.value)}
+                    placeholder="যেমন: সাকিব হাসান"
+                    className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0d121f] border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-hidden focus:border-amber-500 transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    ইমেইল এড্রেস <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={subEmail}
+                    onChange={(e) => setSubEmail(e.target.value)}
+                    placeholder="example@gmail.com"
+                    className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0d121f] border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-hidden focus:border-amber-500 transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    ক্লাস রোল / আইডি <span className="text-zinc-400 text-[10px]">(ঐচ্ছিক)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={subStudentId}
+                    onChange={(e) => setSubStudentId(e.target.value)}
+                    placeholder="যেমন: 101 বা PS-25"
+                    className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0d121f] border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-hidden focus:border-amber-500 transition"
+                  />
+                </div>
+              </div>
+
+              {/* Status Message */}
+              {subStatus && (
+                <div
+                  className={`p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 ${
+                    subStatus.type === 'success'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                      : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                  }`}
+                >
+                  <span>{subStatus.message}</span>
+                </div>
+              )}
+
+              {/* Submit & Direct Action Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>বর্তমানে {subscribers.length} জন শিক্ষার্থী তালিকায় যুক্ত আছেন</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href="mailto:mahimibnkhudi@gmail.com?subject=DCU%20Political%20Science%20Query"
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition"
+                    title="মাহিমকে সরাসরি ইমেইল পাঠাতে ক্লিক করুন"
+                  >
+                    <span>সরাসরি ইমেইল</span>
+                  </a>
+
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs transition active:scale-95 shadow-xs cursor-pointer"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>ইমেইল যুক্ত করুন</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </section>
+
+        {/* ======================================================================= */}
+        {/* SECTION 7: FACULTY MEMBERS / TEACHERS (#section-teachers)               */}
+        {/* Placed at the very end as requested: "সবার লাস্টে রাখবা কেউ ইচ্ছা হলে দেখলো আরকি" */}
+        {/* ======================================================================= */}
+        <section id="section-teachers" className="space-y-3.5 scroll-mt-20">
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-amber-500" />
+                <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">
+                  সম্মানিত শিক্ষকবৃন্দ (Faculty Members)
+                </h2>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                {INITIAL_PS_TEACHERS.length} জন শিক্ষক
+              </span>
+            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 pt-1">
+              রাষ্ট্রবিজ্ঞান বিভাগ • ঢাকা সেন্ট্রাল ইউনিভার্সিটি
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {INITIAL_PS_TEACHERS.map(teacher => (
+              <div
+                key={teacher.id}
+                className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-3.5 shadow-xs flex items-center gap-3 transition hover:border-amber-500/40"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-xs flex items-center justify-center shrink-0 border border-amber-500/20 font-mono">
+                  {teacher.code}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm truncate">
+                    {teacher.name}
+                  </h4>
+                  <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium truncate">
+                    {teacher.designation}
+                  </p>
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
+                    {teacher.department}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
       </main>
 
       {/* ========================================================================= */}
-      {/* DISCREET FOOTER (Full width, Main Site Link, Secret Admin Dot)            */}
+      {/* BRAND FOOTER (Centered Website Logo + "মাহিমস ডট কম", Discreet Admin Dot)*/}
       {/* ========================================================================= */}
-      <footer className="relative z-10 py-6 px-4 text-center text-xs text-zinc-400 dark:text-zinc-600 select-none space-y-2.5 max-w-7xl mx-auto w-full">
-        {/* Main Site Return Button */}
-        <div>
+      <footer className="relative z-10 py-10 px-4 text-center select-none space-y-4 max-w-7xl mx-auto w-full">
+        {/* Main Website Return Brand Link (Centered Logo + "মাহিমস ডট কম") */}
+        <div className="flex flex-col items-center justify-center pt-2">
           <button
             type="button"
             onClick={() => navigateTo('home')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-200/70 dark:bg-zinc-800/70 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition cursor-pointer shadow-xs"
+            className="group inline-flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-hidden"
+            title="মূল ওয়েবসাইট mahims.com-এ যান"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>মূল সাইটে ফিরুন (mahims.com)</span>
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white dark:bg-[#121826] p-1.5 border border-zinc-200 dark:border-zinc-800 shadow-sm group-hover:shadow-md group-hover:border-amber-500/50 transition-all flex items-center justify-center">
+              <img
+                src="/logo.png"
+                alt="mahims.com"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png';
+                }}
+              />
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="font-bold text-sm sm:text-base text-zinc-800 dark:text-zinc-200 group-hover:text-amber-500 transition-colors">
+                মাহিমস ডট কম
+              </span>
+              <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono tracking-wider">
+                mahims.com
+              </span>
+            </div>
           </button>
         </div>
 
-        <p className="flex items-center justify-center gap-1 text-[11px]">
+        <p className="flex items-center justify-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500">
           <span>রাষ্ট্রবিজ্ঞান বিভাগ</span>
           {/* Secret Admin Dot - completely invisible to casual users */}
           <button
@@ -1243,12 +1498,11 @@ export function PoliticalSciencePage() {
       </footer>
 
       {/* ========================================================================= */}
-      {/* 2 WHATSAPP FLOATING BUTTONS (Mahim + CR, Compact with Popup)             */}
+      {/* 2 WHATSAPP FLOATING BUTTONS (Mahim + 2 CRs, Compact with Popup)           */}
       {/* ========================================================================= */}
       <DCUWhatsAppWidget
         mahimWhatsappLink="https://wa.me/@mahim.wp"
-        crWhatsappLink=""
-        crName="সিআর (ক্লাস প্রতিনিধি)"
+        crList={INITIAL_PS_CRS}
       />
 
       {/* ========================================================================= */}

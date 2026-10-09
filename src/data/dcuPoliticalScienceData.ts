@@ -65,6 +65,31 @@ export interface PSSubscriber {
   subscribedAt: string;
 }
 
+export interface PSCREntry {
+  id: string;
+  name: string;
+  phone: string;
+  link: string;
+  role?: string;
+}
+
+export const INITIAL_PS_CRS: PSCREntry[] = [
+  {
+    id: 'cr-himel',
+    name: 'হিমেল',
+    phone: '+8801629011185',
+    link: 'https://wa.me/8801629011185',
+    role: 'ক্লাস প্রতিনিধি (CR)'
+  },
+  {
+    id: 'cr-tonumoy',
+    name: 'তনুময়',
+    phone: '+8801967844429',
+    link: 'https://wa.me/8801967844429',
+    role: 'ক্লাস প্রতিনিধি (CR)'
+  }
+];
+
 export const INITIAL_PS_TEACHERS: PSTeacher[] = [
   { id: 'sa', code: 'SA', name: 'Professor Shirin Akter Yeasmin', designation: 'Chairman & Professor', department: 'Political Science' },
   { id: 'fs', code: 'FS', name: 'Prof. Farjana Sultana', designation: 'Professor', department: 'Political Science' },

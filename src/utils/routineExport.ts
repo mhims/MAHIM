@@ -1,4 +1,4 @@
-import { PSClassSession } from '../data/dcuPoliticalScienceData';
+import { PSClassSession, DCU_LOGOS } from '../data/dcuPoliticalScienceData';
 
 const DAY_NAMES_BN: Record<number, string> = {
   0: 'রবিবার',
@@ -10,70 +10,153 @@ const DAY_NAMES_BN: Record<number, string> = {
   6: 'শনিবার',
 };
 
+function loadImg(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load image: ' + src));
+    img.src = src;
+  });
+}
+
 /**
  * Downloads the Routine as a high-resolution, crisp LIGHT MODE PNG Image
+ * With University Logo on TOP-LEFT and Website Logo + mahims.com on TOP-RIGHT
  */
-export function downloadRoutineImage(routine: PSClassSession[]): void {
+export async function downloadRoutineImage(routine: PSClassSession[]): Promise<void> {
   const canvas = document.createElement('canvas');
   const width = 1200;
-  const height = 1380;
+  const height = 1420;
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // Crisp White / Off-white Light Background
+  // Load logos in parallel (with safe fallbacks)
+  let uniImg: HTMLImageElement | null = null;
+  let siteImg: HTMLImageElement | null = null;
+
+  try {
+    uniImg = await loadImg('/dcu-logo.png').catch(() =>
+      loadImg(DCU_LOGOS.university)
+    );
+  } catch (e) {
+    console.warn('Could not load university logo for canvas', e);
+  }
+
+  try {
+    siteImg = await loadImg('/logo.png');
+  } catch (e) {
+    console.warn('Could not load site logo for canvas', e);
+  }
+
+  // Crisp White Light Background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, width, height);
 
-  // Elegant subtle light slate outer border
+  // Subtle outer border
   ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 12;
   ctx.strokeRect(20, 20, width - 40, height - 40);
 
-  // Top header banner background (Soft Amber / Slate)
+  // Top header banner background (Soft Slate)
   ctx.fillStyle = '#f8fafc';
-  ctx.fillRect(26, 26, width - 52, 175);
-  ctx.strokeStyle = '#f1f5f9';
+  ctx.fillRect(26, 26, width - 52, 185);
+  ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 2;
-  ctx.strokeRect(26, 26, width - 52, 175);
+  ctx.strokeRect(26, 26, width - 52, 185);
 
-  // Header Title
+  // =========================================================================
+  // 1. TOP-LEFT: UNIVERSITY LOGO
+  // =========================================================================
+  if (uniImg) {
+    ctx.save();
+    // Rounded white badge
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(50, 42, 92, 92, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Clip image
+    ctx.beginPath();
+    ctx.roundRect(52, 44, 88, 88, 14);
+    ctx.clip();
+    ctx.drawImage(uniImg, 52, 44, 88, 88);
+    ctx.restore();
+  }
+
+  // =========================================================================
+  // 2. TOP-RIGHT: WEBSITE LOGO + mahims.com
+  // =========================================================================
+  if (siteImg) {
+    ctx.save();
+    // Rounded white badge
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.roundRect(width - 142, 42, 92, 92, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Clip image
+    ctx.beginPath();
+    ctx.roundRect(width - 140, 44, 88, 88, 14);
+    ctx.clip();
+    ctx.drawImage(siteImg, width - 140, 44, 88, 88);
+    ctx.restore();
+
+    // Text underneath website logo: mahims.com
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 15px monospace';
+    ctx.fillText('mahims.com', width - 96, 154);
+  }
+
+  // =========================================================================
+  // 3. CENTER: TITLE & META DETAILS
+  // =========================================================================
   ctx.textAlign = 'center';
   ctx.fillStyle = '#b45309'; // Rich Amber
-  ctx.font = 'bold 36px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-  ctx.fillText('ঢাকা সেন্ট্রাল ইউনিভার্সিটি', width / 2, 80);
+  ctx.font = 'bold 34px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+  ctx.fillText('ঢাকা সেন্ট্রাল ইউনিভার্সিটি', width / 2, 78);
 
-  ctx.fillStyle = '#0f172a'; // Deep Navy / Charcoal
-  ctx.font = 'bold 28px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-  ctx.fillText('রাষ্ট্রবিজ্ঞান বিভাগ • ১ম বর্ষ ১ম সেমিস্টার', width / 2, 125);
+  ctx.fillStyle = '#0f172a'; // Deep Navy
+  ctx.font = 'bold 26px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+  ctx.fillText('রাষ্ট্রবিজ্ঞান বিভাগ • ১ম বর্ষ ১ম সেমিস্টার', width / 2, 122);
 
   ctx.fillStyle = '#64748b'; // Slate gray
-  ctx.font = '600 20px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-  ctx.fillText('ক্লাস রুটিন (২০২৬ শিক্ষাবর্ষ)', width / 2, 165);
+  ctx.font = '600 18px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+  ctx.fillText('ক্লাস রুটিন (২০২৬ শিক্ষাবর্ষ)', width / 2, 158);
 
   // Accent line
   ctx.strokeStyle = '#f59e0b';
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 3.5;
   ctx.beginPath();
-  ctx.moveTo(width / 2 - 200, 185);
-  ctx.lineTo(width / 2 + 200, 185);
+  ctx.moveTo(width / 2 - 180, 180);
+  ctx.lineTo(width / 2 + 180, 180);
   ctx.stroke();
 
-  // Draw day schedule sections
+  // =========================================================================
+  // 4. DAY SCHEDULE CARDS
+  // =========================================================================
   const days = [0, 1, 2, 4];
-  let startY = 230;
+  let startY = 236;
 
   days.forEach((dayIndex) => {
     const daySessions = routine
       .filter((s) => s.dayIndex === dayIndex)
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    // Day Header Card (Light slate with amber accent)
+    // Day Header Card
     ctx.textAlign = 'left';
     ctx.fillStyle = '#f1f5f9';
     ctx.beginPath();
-    ctx.roundRect(60, startY, width - 120, 48, 8);
+    ctx.roundRect(60, startY, width - 120, 46, 8);
     ctx.fill();
     ctx.strokeStyle = '#cbd5e1';
     ctx.lineWidth = 1.5;
@@ -81,23 +164,23 @@ export function downloadRoutineImage(routine: PSClassSession[]): void {
 
     // Day title text
     ctx.fillStyle = '#b45309';
-    ctx.font = 'bold 23px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-    ctx.fillText(`🗓️ ${DAY_NAMES_BN[dayIndex]}`, 80, startY + 33);
+    ctx.font = 'bold 22px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+    ctx.fillText(`🗓️ ${DAY_NAMES_BN[dayIndex]}`, 80, startY + 31);
 
     // Class count badge
     ctx.textAlign = 'right';
     ctx.fillStyle = '#475569';
-    ctx.font = '600 17px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-    ctx.fillText(`${daySessions.length}টি ক্লাস`, width - 85, startY + 32);
+    ctx.font = '600 16px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+    ctx.fillText(`${daySessions.length}টি ক্লাস`, width - 85, startY + 30);
 
-    startY += 58;
+    startY += 56;
 
-    // Sessions in this day (Clean white cards with light borders)
+    // Sessions in this day
     daySessions.forEach((session, idx) => {
       ctx.textAlign = 'left';
       ctx.fillStyle = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
       ctx.beginPath();
-      ctx.roundRect(60, startY, width - 120, 76, 8);
+      ctx.roundRect(60, startY, width - 120, 74, 8);
       ctx.fill();
       ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 1.5;
@@ -105,35 +188,35 @@ export function downloadRoutineImage(routine: PSClassSession[]): void {
 
       // Time pill
       ctx.fillStyle = '#b45309';
-      ctx.font = 'bold 20px "Hind Siliguri", monospace';
-      ctx.fillText(`⏰ ${session.timeFormatted}`, 80, startY + 32);
+      ctx.font = 'bold 19px "Hind Siliguri", monospace';
+      ctx.fillText(`⏰ ${session.timeFormatted}`, 80, startY + 31);
 
       // Room
       ctx.fillStyle = '#0284c7';
-      ctx.font = 'bold 17px "Hind Siliguri", monospace';
-      ctx.fillText(`📍 রুম: ${session.room}`, 80, startY + 58);
+      ctx.font = 'bold 16px "Hind Siliguri", monospace';
+      ctx.fillText(`📍 রুম: ${session.room}`, 80, startY + 56);
 
       // Course Title & Code
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 20px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-      ctx.fillText(session.courseTitleBn, 320, startY + 32);
+      ctx.font = 'bold 19px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+      ctx.fillText(session.courseTitleBn, 320, startY + 31);
 
       // Teacher info
       ctx.fillStyle = '#64748b';
-      ctx.font = '500 17px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-      ctx.fillText(`শিক্ষক: ${session.teacherName} • কোড: ${session.courseCode}`, 320, startY + 58);
+      ctx.font = '500 16px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
+      ctx.fillText(`শিক্ষক: ${session.teacherName} • কোড: ${session.courseCode}`, 320, startY + 56);
 
-      startY += 84;
+      startY += 82;
     });
 
-    startY += 18;
+    startY += 16;
   });
 
-  // Footer branding (Clean light footer)
+  // Footer branding
   ctx.textAlign = 'center';
   ctx.fillStyle = '#94a3b8';
-  ctx.font = '16px "Hind Siliguri", sans-serif';
-  ctx.fillText('লাইভ রুটিন ও নোটিশ দেখুন: mahims.com/ps • প্রস্তুতকারী: মাহিম ইবনে খুদি', width / 2, height - 45);
+  ctx.font = '15px "Hind Siliguri", sans-serif';
+  ctx.fillText('লাইভ রুটিন ও নোটিশ দেখুন: mahims.com/ps • প্রস্তুতকারী: মাহিম ইবনে খুদি', width / 2, height - 42);
 
   // Trigger download
   const link = document.createElement('a');
@@ -144,10 +227,11 @@ export function downloadRoutineImage(routine: PSClassSession[]): void {
 
 /**
  * Generates and triggers clean printable Routine PDF (Crisp Light Layout)
+ * With University Logo on TOP-LEFT and Website Logo + mahims.com on TOP-RIGHT
  */
 export function downloadRoutinePDF(routine: PSClassSession[]): void {
   const days = [0, 1, 2, 4];
-  
+
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
     alert('পপআপ ব্লকার সক্রিয় থাকায় প্রিন্ট উইন্ডো খোলা যায়নি। অনুগ্রহ করে ব্রাউজারে পপআপ এলাউ করুন।');
@@ -209,25 +293,61 @@ export function downloadRoutinePDF(routine: PSClassSession[]): void {
             margin: 0;
           }
           .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             border-bottom: 3px solid #f59e0b;
-            padding-bottom: 14px;
+            padding-bottom: 16px;
             margin-bottom: 24px;
           }
-          .header h1 {
-            color: #b45309;
-            font-size: 26px;
-            margin: 0 0 6px 0;
+          .header .brand-left {
+            width: 110px;
+            text-align: left;
           }
-          .header h2 {
-            font-size: 20px;
+          .header .brand-left img {
+            width: 76px;
+            height: 76px;
+            object-fit: contain;
+            border-radius: 12px;
+          }
+          .header .brand-center {
+            flex: 1;
+            text-align: center;
+            padding: 0 12px;
+          }
+          .header .brand-center h1 {
+            color: #b45309;
+            font-size: 25px;
+            margin: 0 0 4px 0;
+            font-weight: bold;
+          }
+          .header .brand-center h2 {
+            font-size: 19px;
             color: #0f172a;
             margin: 0 0 4px 0;
           }
-          .header p {
+          .header .brand-center p {
             color: #64748b;
             font-size: 14px;
             margin: 0;
+            font-weight: 600;
+          }
+          .header .brand-right {
+            width: 110px;
+            text-align: center;
+          }
+          .header .brand-right img {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            border-radius: 12px;
+          }
+          .header .brand-right .subtext {
+            font-size: 11px;
+            font-weight: bold;
+            font-family: monospace;
+            color: #475569;
+            margin-top: 2px;
           }
           .footer {
             margin-top: 30px;
@@ -245,9 +365,18 @@ export function downloadRoutinePDF(routine: PSClassSession[]): void {
       </head>
       <body>
         <div class="header">
-          <h1>ঢাকা সেন্ট্রাল ইউনিভার্সিটি</h1>
-          <h2>রাষ্ট্রবিজ্ঞান বিভাগ • ঢাকা কলেজ ক্যাম্পাস</h2>
-          <p>১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন (২০২৬ শিক্ষাবর্ষ)</p>
+          <div class="brand-left">
+            <img src="/dcu-logo.png" onerror="this.src='https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png'" alt="University Logo" />
+          </div>
+          <div class="brand-center">
+            <h1>ঢাকা সেন্ট্রাল ইউনিভার্সিটি</h1>
+            <h2>রাষ্ট্রবিজ্ঞান বিভাগ • ১ম বর্ষ ১ম সেমিস্টার</h2>
+            <p>ক্লাস রুটিন (২০২৬ শিক্ষাবর্ষ)</p>
+          </div>
+          <div class="brand-right">
+            <img src="/logo.png" alt="mahims.com" />
+            <div class="subtext">mahims.com</div>
+          </div>
         </div>
 
         ${routineRows}

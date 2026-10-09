@@ -11,6 +11,9 @@ Disallow: /allu
 Disallow: /allu/
 Disallow: /alll
 Disallow: /alll/
+Disallow: /ps/notices/
+Disallow: /dcups/notices/
+Disallow: /political-science/notices/
 
 # Traditional Search Engines
 User-agent: Googlebot
@@ -18,6 +21,9 @@ Allow: /
 Disallow: /adminpanel
 Disallow: /adminpanel/
 Disallow: /admin
+Disallow: /ps/notices/
+Disallow: /dcups/notices/
+Disallow: /political-science/notices/
 
 User-agent: Googlebot-Image
 Allow: /

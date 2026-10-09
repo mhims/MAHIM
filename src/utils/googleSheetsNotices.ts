@@ -50,6 +50,95 @@ export function formatNoticeDateShort(rawDate?: string): string {
   return clean;
 }
 
+/**
+ * Converts notice date to day-month-year slug base:
+ * e.g. "9 OCT" (year 2026) -> "09-10-2026"
+ * e.g. "2026-10-09" -> "09-10-2026"
+ * e.g. "09/10/2026" -> "09-10-2026"
+ */
+export function getNoticeDateSlugBase(rawDate?: string): string {
+  if (!rawDate) {
+    const d = new Date();
+    const day = ('0' + d.getDate()).slice(-2);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    return `${day}-${month}-${d.getFullYear()}`;
+  }
+
+  const str = String(rawDate).trim();
+
+  // Match "DD-MM-YYYY" or "DD/MM/YYYY"
+  const dmyMatch = str.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+  if (dmyMatch) {
+    const day = ('0' + dmyMatch[1]).slice(-2);
+    const month = ('0' + dmyMatch[2]).slice(-2);
+    return `${day}-${month}-${dmyMatch[3]}`;
+  }
+
+  // Match "YYYY-MM-DD"
+  const ymdMatch = str.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+  if (ymdMatch) {
+    const day = ('0' + ymdMatch[3]).slice(-2);
+    const month = ('0' + ymdMatch[2]).slice(-2);
+    return `${day}-${month}-${ymdMatch[1]}`;
+  }
+
+  // Match "9 OCT", "10 OCT 2026"
+  const shortMatch = str.match(/^(\d{1,2})\s+([A-Za-z]{3,4})(?:\s+(\d{4}))?/i);
+  if (shortMatch) {
+    const day = ('0' + shortMatch[1]).slice(-2);
+    const mStr = shortMatch[2].toUpperCase().slice(0, 3);
+    const monthsMap: Record<string, string> = {
+      JAN: '01', FEB: '02', MAR: '03', APR: '04', MAY: '05', JUN: '06',
+      JUL: '07', AUG: '08', SEP: '09', OCT: '10', NOV: '11', DEC: '12'
+    };
+    const month = monthsMap[mStr] || '10';
+    const year = shortMatch[3] || String(new Date().getFullYear());
+    return `${day}-${month}-${year}`;
+  }
+
+  // Try standard parse
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const day = ('0' + d.getDate()).slice(-2);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    return `${day}-${month}-${d.getFullYear()}`;
+  }
+
+  const clean = str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return clean || 'notice';
+}
+
+/**
+ * Computes unique slugs for all notices:
+ * 1st notice on date -> DD-MM-YYYY (e.g. 09-10-2026)
+ * 2nd notice on same date -> DD-MM-YYYY-2 (e.g. 09-10-2026-2)
+ * 3rd notice on same date -> DD-MM-YYYY-3 (e.g. 09-10-2026-3)
+ */
+export function getNoticeSlugMap<T extends { id: string; date?: string; title?: string }>(
+  notices: T[]
+): Map<string, string> {
+  const map = new Map<string, string>();
+  const dateCounts = new Map<string, number>();
+
+  // Process chronologically (oldest to newest) so first notice of the day gets the base date slug
+  const reversed = [...notices].reverse();
+  reversed.forEach(n => {
+    const base = getNoticeDateSlugBase(n.date);
+    const count = (dateCounts.get(base) || 0) + 1;
+    dateCounts.set(base, count);
+
+    const slug = count === 1 ? base : `${base}-${count}`;
+    map.set(n.id, slug);
+  });
+
+  return map;
+}
+
+export function getNoticeShareUrl(slug: string): string {
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://mahims.com';
+  return `${origin}/ps/notices/${slug}`;
+}
+
 // Helper to parse standard CSV text into notice items
 export function parseCSVToNotices(csvText: string): { ticker: TickerNotice[]; fullNotices: SheetFullNotice[] } {
   const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);

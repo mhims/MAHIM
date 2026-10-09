@@ -182,6 +182,27 @@ function publishNoticeAndSendEmails(form) {
     var shortDate = now.getDate() + ' ' + months[now.getMonth()];
     var noticeId = 'not-' + now.getTime();
 
+    // ওয়েবসাইট সরাসরি পারমালিংক স্লাগ (যেমন: 09-10-2026, একই দিনে একাধিক হলে 09-10-2026-2)
+    var dayStr = ('0' + now.getDate()).slice(-2);
+    var monthStr = ('0' + (now.getMonth() + 1)).slice(-2);
+    var yearStr = now.getFullYear();
+    var baseDateSlug = dayStr + '-' + monthStr + '-' + yearStr;
+
+    var countToday = 0;
+    var nLastRow = noticeSheet.getLastRow();
+    if (nLastRow > 1) {
+      var prevDates = noticeSheet.getRange(2, 3, nLastRow - 1, 1).getValues();
+      for (var dIdx = 0; dIdx < prevDates.length; dIdx++) {
+        var prevD = String(prevDates[dIdx][0]).trim();
+        if (prevD.indexOf(shortDate) !== -1 || prevD.indexOf(baseDateSlug) !== -1) {
+          countToday++;
+        }
+      }
+    }
+
+    var noticeSlug = countToday === 0 ? baseDateSlug : (baseDateSlug + '-' + (countToday + 1));
+    var noticeUrl = 'https://mahims.com/ps/notices/' + noticeSlug;
+
     // ১. নোটিশ শিটে যুক্ত করুন
     var newRow = [noticeId, title, shortDate, category, content, 'ইমেইল প্রস্তুত হচ্ছে...'];
     noticeSheet.appendRow(newRow);
@@ -200,7 +221,7 @@ function publishNoticeAndSendEmails(form) {
 
         if (studentEmail && studentEmail.indexOf('@') > 0) {
           try {
-            var htmlBody = generatePersonalizedNoticeEmail(studentName, title, category, content, shortDate);
+            var htmlBody = generatePersonalizedNoticeEmail(studentName, title, category, content, shortDate, noticeUrl);
             
             MailApp.sendEmail({
               to: studentEmail,
@@ -344,7 +365,8 @@ function getDashboardStats() {
 }
 
 // ৮. প্রিমিয়াম পারসোনালাইজড এইচটিএমএল ইমেইল টেমপ্লেট
-function generatePersonalizedNoticeEmail(studentName, title, category, content, dateStr) {
+function generatePersonalizedNoticeEmail(studentName, title, category, content, dateStr, noticeUrl) {
+  var directLink = noticeUrl || 'https://mahims.com/ps';
   var badgeColor = '#b45309';
   var badgeBg = '#fef3c7';
   var badgeBorder = '#fde68a';
@@ -404,10 +426,13 @@ function generatePersonalizedNoticeEmail(studentName, title, category, content, 
   '        <div style="font-size:12px;color:#64748b;margin-bottom:22px;">' +
   '          🗓️ প্রকাশের সময়: ' + dateStr +
   '        </div>' +
-  '        <div style="text-align:center;margin-top:12px;margin-bottom:6px;">' +
-  '          <a href="https://mahims.com/ps" target="_blank" style="display:inline-block;padding:12px 28px;background-color:#f59e0b;color:#18181b;font-weight:800;font-size:13px;text-decoration:none;border-radius:10px;box-shadow:0 3px 12px rgba(245,158,11,0.25);">' +
-  '            🌐 ওয়েবসাইটে বিস্তারিত দেখুন' +
+  '        <div style="text-align:center;margin-top:14px;margin-bottom:6px;">' +
+  '          <a href="' + directLink + '" target="_blank" style="display:inline-block;padding:12px 28px;background-color:#f59e0b;color:#18181b;font-weight:800;font-size:13px;text-decoration:none;border-radius:10px;box-shadow:0 3px 12px rgba(245,158,11,0.25);">' +
+  '            🌐 নোটিশটি ওয়েবসাইটে দেখুন' +
   '          </a>' +
+  '        </div>' +
+  '        <div style="text-align:center;margin-top:6px;font-size:11px;color:#78716c;">' +
+  '          সরাসরি লিঙ্ক: <a href="' + directLink + '" target="_blank" style="color:#d97706;font-weight:600;word-break:break-all;">' + directLink + '</a>' +
   '        </div>' +
   '      </td>' +
   '    </tr>' +
@@ -415,7 +440,7 @@ function generatePersonalizedNoticeEmail(studentName, title, category, content, 
   '      <td style="background-color:#fbfbfa;padding:18px 20px;text-align:center;border-top:1px solid #f4f4f5;font-size:12px;color:#64748b;">' +
   '        <div style="font-weight:600;color:#334155;">প্রেরক: সিআর / রাষ্ট্রবিজ্ঞান বিভাগ, ঢাকা সেন্ট্রাল ইউনিভার্সিটি</div>' +
   '        <div style="margin-top:5px;font-size:11px;color:#94a3b8;">' +
-  '          পোর্টাল লিঙ্ক: <a href="https://mahims.com/ps" style="color:#d97706;font-weight:600;text-decoration:none;">mahims.com/ps</a>' +
+  '          বিভাগীয় মূল পোর্টাল: <a href="https://mahims.com/ps" style="color:#d97706;font-weight:600;text-decoration:none;">mahims.com/ps</a>' +
   '        </div>' +
   '      </td>' +
   '    </tr>' +

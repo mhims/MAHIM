@@ -11,6 +11,7 @@ import {
   FileText,
   Image as ImageIcon,
   ArrowLeft,
+  ArrowRight,
   Menu,
   X,
   ChevronDown,
@@ -21,7 +22,10 @@ import {
   Mail,
   Send,
   Check,
-  Share2
+  Share2,
+  Copy,
+  MessageCircle,
+  Link
 } from 'lucide-react';
 import {
   DCU_LOGOS,
@@ -45,7 +49,10 @@ import {
   fetchNoticesFromGoogleSheet,
   fetchFullNoticesFromSource,
   sendSubscriberToGoogleSheet,
-  formatNoticeDateShort
+  formatNoticeDateShort,
+  getNoticeDateSlugBase,
+  getNoticeSlugMap,
+  getNoticeShareUrl
 } from '../utils/googleSheetsNotices';
 import { downloadRoutineImage, downloadRoutinePDF } from '../utils/routineExport';
 import { navigateTo } from '../utils/navigation';
@@ -228,6 +235,124 @@ export function PoliticalSciencePage() {
   });
 
   const [tickerNotices, setTickerNotices] = useState<TickerNotice[]>(DEFAULT_TICKER_NOTICES);
+
+  // Notice Slug Mapping & Modal View
+  const noticeSlugMap = useMemo(() => {
+    return getNoticeSlugMap(notices);
+  }, [notices]);
+
+  const [selectedNoticeModal, setSelectedNoticeModal] = useState<PSNotice | 'not_found' | null>(null);
+  const [copiedNoticeId, setCopiedNoticeId] = useState<string | null>(null);
+
+  // Check URL on load and URL change for /ps/notices/:slug or ?notice=:slug
+  const checkUrlForNotice = () => {
+    if (typeof window === 'undefined') return;
+    const pathname = window.location.pathname;
+    const search = window.location.search;
+
+    let targetSlug = '';
+    const match = pathname.match(/\/(?:ps|dcups|political-science|dcu-ps)\/notices\/([^/?#]+)/i);
+    if (match && match[1]) {
+      targetSlug = decodeURIComponent(match[1]).trim();
+    } else {
+      const params = new URLSearchParams(search);
+      const queryNotice = params.get('notice');
+      if (queryNotice) {
+        targetSlug = decodeURIComponent(queryNotice).trim();
+      }
+    }
+
+    if (!targetSlug) return;
+
+    // Search for notice
+    if (notices.length > 0) {
+      const found = notices.find(n => {
+        const slug = noticeSlugMap.get(n.id);
+        return (
+          slug === targetSlug ||
+          n.id === targetSlug ||
+          slug?.toLowerCase() === targetSlug.toLowerCase() ||
+          n.id.toLowerCase() === targetSlug.toLowerCase()
+        );
+      });
+
+      if (found) {
+        setSelectedNoticeModal(found);
+      } else {
+        setSelectedNoticeModal('not_found');
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkUrlForNotice();
+    window.addEventListener('popstate', checkUrlForNotice);
+    return () => window.removeEventListener('popstate', checkUrlForNotice);
+  }, [notices, noticeSlugMap]);
+
+  // Handle meta robots noindex tag dynamically when viewing a specific notice
+  useEffect(() => {
+    let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    const isNoticeRoute =
+      window.location.pathname.includes('/notices/') ||
+      Boolean(selectedNoticeModal);
+
+    if (isNoticeRoute) {
+      if (!metaRobots) {
+        metaRobots = document.createElement('meta');
+        metaRobots.name = 'robots';
+        document.head.appendChild(metaRobots);
+      }
+      metaRobots.content = 'noindex, nofollow';
+    } else if (metaRobots && metaRobots.content === 'noindex, nofollow') {
+      metaRobots.content = 'index, follow';
+    }
+  }, [selectedNoticeModal]);
+
+  const handleOpenNotice = (notice: PSNotice) => {
+    setSelectedNoticeModal(notice);
+    const slug = noticeSlugMap.get(notice.id) || notice.id;
+    if (window.history.pushState) {
+      window.history.pushState(null, '', `/ps/notices/${slug}`);
+    }
+  };
+
+  const handleCloseNoticeModal = () => {
+    setSelectedNoticeModal(null);
+    if (window.history.pushState) {
+      window.history.pushState(null, '', '/ps');
+    }
+  };
+
+  const handleCopyNoticeLink = (notice: PSNotice) => {
+    const slug = noticeSlugMap.get(notice.id) || notice.id;
+    const url = getNoticeShareUrl(slug);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedNoticeId(notice.id);
+      setTimeout(() => setCopiedNoticeId(null), 2500);
+    });
+  };
+
+  const handleShareNotice = (notice: PSNotice) => {
+    const slug = noticeSlugMap.get(notice.id) || notice.id;
+    const url = getNoticeShareUrl(slug);
+    if (navigator.share) {
+      navigator.share({
+        title: `${notice.title} — রাষ্ট্রবিজ্ঞান বিভাগ`,
+        text: `📢 ${notice.title}\n🗓️ ${formatNoticeDateShort(notice.date)}\n\nবিস্তারিত দেখুন:`,
+        url: url
+      }).catch(() => {});
+    } else {
+      handleCopyNoticeLink(notice);
+    }
+  };
+
+  const getWhatsAppNoticeShareUrl = (notice: PSNotice) => {
+    const slug = noticeSlugMap.get(notice.id) || notice.id;
+    const url = getNoticeShareUrl(slug);
+    const text = `📢 [${notice.category}] ${notice.title}\n🗓️ তারিখ: ${formatNoticeDateShort(notice.date)}\n\nবিবরণ:\n${notice.content.slice(0, 120)}...\n\n👉 নোটিশটি ওয়েবসাইটে দেখুন:\n${url}`;
+    return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+  };
 
   // Secret Admin Modal state (triggered via bottom dot or 5 logo clicks)
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -808,24 +933,40 @@ export function PoliticalSciencePage() {
                 </button>
               </div>
 
-              {/* Notice Content / Ticker */}
+              {/* Notice Content / Single Urgent Notice */}
               <div className="text-xs">
                 {tickerNotices.length > 0 ? (
-                  <div className="overflow-hidden relative h-10 flex items-center">
-                    <div className="animate-marquee whitespace-nowrap flex items-center gap-8 text-zinc-900 dark:text-zinc-100 font-semibold hover:[animation-play-state:paused] cursor-pointer">
-                      {tickerNotices.map((t, idx) => (
-                        <span
-                          key={`${t.id}-${idx}`}
-                          onClick={() => scrollToSection('notices')}
-                          className="inline-flex items-center gap-1.5 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  (() => {
+                    const t = tickerNotices[0];
+                    const fullNotice = notices.find(n => n.id === t.id || n.title === t.text);
+                    return (
+                      <div className="flex items-center justify-between gap-2.5 py-1 min-h-[38px]">
+                        <div
+                          onClick={() => fullNotice ? handleOpenNotice(fullNotice) : scrollToSection('notices')}
+                          className="flex items-center gap-2 cursor-pointer group flex-1 min-w-0"
+                          title="বিস্তারিত দেখতে ক্লিক করুন"
                         >
-                          <span className="text-amber-500 font-bold">•</span>
-                          <span>{t.text}</span>
-                          {t.date && <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-semibold">({formatNoticeDateShort(t.date)})</span>}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                          <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                            {t.text}
+                          </span>
+                          {t.date && (
+                            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold shrink-0">
+                              ({formatNoticeDateShort(t.date)})
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => fullNotice ? handleOpenNotice(fullNotice) : scrollToSection('notices')}
+                          className="text-[11px] font-bold text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-white shrink-0 flex items-center gap-1 cursor-pointer bg-amber-500/20 hover:bg-amber-500/30 px-2.5 py-1 rounded-lg border border-amber-500/30 transition active:scale-95"
+                        >
+                          <span>বিস্তারিত</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div className="py-2 text-zinc-500 dark:text-zinc-400 text-center text-xs">
                     আপাতত কোনো জরুরি নোটিশ নেই
@@ -1068,29 +1209,67 @@ export function PoliticalSciencePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {notices.map(notice => (
-                <div
-                  key={notice.id}
-                  className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 shadow-xs space-y-2.5 text-xs transition hover:border-amber-500/40 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold text-[11px] border border-amber-500/20">
-                        {notice.category}
-                      </span>
-                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                        🗓️ {formatNoticeDateShort(notice.date)}
-                      </span>
+              {notices.map(notice => {
+                const isCopied = copiedNoticeId === notice.id;
+                return (
+                  <div
+                    key={notice.id}
+                    className="bg-white dark:bg-[#121826] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3 text-xs transition hover:border-amber-500/40 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold text-[11px] border border-amber-500/20">
+                          {notice.category}
+                        </span>
+                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-semibold">
+                          🗓️ {formatNoticeDateShort(notice.date)}
+                        </span>
+                      </div>
+                      <h3
+                        onClick={() => handleOpenNotice(notice)}
+                        className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm leading-snug cursor-pointer hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                      >
+                        {notice.title}
+                      </h3>
+                      <p className="text-zinc-600 dark:text-zinc-300 text-xs leading-relaxed pt-1.5 line-clamp-3">
+                        {notice.content}
+                      </p>
                     </div>
-                    <h3 className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm leading-snug">
-                      {notice.title}
-                    </h3>
-                    <p className="text-zinc-600 dark:text-zinc-300 text-xs leading-relaxed pt-1">
-                      {notice.content}
-                    </p>
+
+                    {/* Notice Card Action Row */}
+                    <div className="pt-2.5 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenNotice(notice)}
+                        className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+                      >
+                        <span>সম্পূর্ণ পড়ুন</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyNoticeLink(notice)}
+                          className="px-2.5 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-semibold text-xs flex items-center gap-1 transition active:scale-95 cursor-pointer"
+                          title="লিঙ্ক কপি করুন"
+                        >
+                          {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{isCopied ? 'কপি হয়েছে' : 'লিঙ্ক'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleShareNotice(notice)}
+                          className="p-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition active:scale-95 cursor-pointer"
+                          title="শেয়ার করুন"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
@@ -1602,6 +1781,147 @@ export function PoliticalSciencePage() {
 
         </div>
       </nav>
+
+      {/* ========================================================================= */}
+      {/* NOTICE DETAIL / SHARE MODAL (WITH NOINDEX PRESERVED & SAFE SEO)           */}
+      {/* ========================================================================= */}
+      {selectedNoticeModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={handleCloseNoticeModal}
+        >
+          <div
+            className="bg-white dark:bg-[#121826] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 sm:p-7 max-w-lg w-full shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            {selectedNoticeModal === 'not_found' ? (
+              <div className="text-center py-6 space-y-3">
+                <div className="w-14 h-14 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-2xl">
+                  ⚠️
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
+                  নোটিশটি পাওয়া যায়নি বা মেয়াদ শেষ হয়েছে
+                </h3>
+                <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto leading-relaxed">
+                  এই নোটিশটির সময়সীমা শেষ হয়েছে অথবা কর্তৃপক্ষ কর্তৃক এটি মুছে ফেলা হয়েছে। চলমান সকল সাম্প্রতিক নোটিশ নিচে দেখতে পারেন।
+                </p>
+                <div className="pt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleCloseNoticeModal();
+                      scrollToSection('notices');
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs transition active:scale-95 cursor-pointer shadow-xs"
+                  >
+                    চলমান নোটিশগুলো দেখুন
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold text-xs border border-amber-500/20">
+                      🏷️ {selectedNoticeModal.category}
+                    </span>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
+                      🗓️ {formatNoticeDateShort(selectedNoticeModal.date)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCloseNoticeModal}
+                    className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-300 transition cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white leading-snug">
+                    {selectedNoticeModal.title}
+                  </h2>
+                  <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/40 text-xs sm:text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed whitespace-pre-wrap">
+                    {selectedNoticeModal.content}
+                  </div>
+                </div>
+
+                {/* Share Options */}
+                <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
+                      নোটিশের স্থায়ী লিঙ্ক ও শেয়ার
+                    </span>
+                    <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                      🔒 No-Index সুরক্ষিত
+                    </span>
+                  </div>
+
+                  {/* Direct Link Preview Box */}
+                  <div className="flex items-center gap-2 p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/60">
+                    <Link className="w-3.5 h-3.5 text-zinc-400 shrink-0 ml-1" />
+                    <input
+                      type="text"
+                      readOnly
+                      value={getNoticeShareUrl(noticeSlugMap.get(selectedNoticeModal.id) || selectedNoticeModal.id)}
+                      className="bg-transparent text-[11px] font-mono text-zinc-600 dark:text-zinc-300 w-full focus:outline-hidden select-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleCopyNoticeLink(selectedNoticeModal)}
+                      className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-bold text-[11px] shrink-0 transition active:scale-95 cursor-pointer flex items-center gap-1"
+                    >
+                      {copiedNoticeId === selectedNoticeModal.id ? (
+                        <>
+                          <Check className="w-3 h-3" />
+                          <span>কপি হয়েছে</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>কপি</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleShareNotice(selectedNoticeModal)}
+                      className="px-3 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+                    >
+                      <Share2 className="w-4 h-4 text-amber-500" />
+                      <span>শেয়ার অপশন</span>
+                    </button>
+
+                    <a
+                      href={getWhatsAppNoticeShareUrl(selectedNoticeModal)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer shadow-xs"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>হোয়াটসঅ্যাপ</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="pt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={handleCloseNoticeModal}
+                    className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer"
+                  >
+                    বন্ধ করুন
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* SECRET ADMIN PANEL MODAL (Triggered via Bottom Dot or 5 Logo Clicks)       */}

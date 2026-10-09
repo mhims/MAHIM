@@ -52,6 +52,7 @@ const routes = [
   'think-with-mahim',
   'thik-with-mahim',
   'ps',
+  'ps/notices',
   'dcups',
   'political-science'
 ];

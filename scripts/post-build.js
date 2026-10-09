@@ -2438,58 +2438,61 @@ const routeData = {
     `
   },
   ps: {
-    title: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) — ক্লাস রুটিন ও নোটিশ",
-    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
-    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস) রাষ্ট্রবিজ্ঞান বিভাগ ১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ বোর্ড, ডিজিটাল বই ও লেকচার শিট পোর্টাল।",
-    keywords: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, রাষ্ট্রবিজ্ঞান বিভাগ, DCU Political Science, ঢাকা কলেজ, DCU PS, ক্লাস রুটিন, নোটিশ",
+    title: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ — অফিসিয়াল পোর্টাল",
+    metaTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ",
+    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল। ক্লাস রুটিন, জরুরি নোটিশ বোর্ড, ডিজিটাল বই ও লেকচার রিসোর্স।",
+    keywords: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, রাষ্ট্রবিজ্ঞান বিভাগ, DCU Political Science, ঢাকা কলেজ ক্যাম্পাস, DCU PS, ক্লাস রুটিন, নোটিশ",
     canonical: `${siteUrl}/ps/`,
-    ogTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)",
-    ogDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ ও পিডিএফ লাইব্রেরি।",
-    ogImage: defaultOgImage,
-    twitterTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
-    twitterDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
-    twitterImage: defaultOgImage,
+    ogTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল — ক্লাস রুটিন ও নোটিশ বোর্ড।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
+    twitterTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল — ক্লাস রুটিন ও নোটিশ বোর্ড।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
-      "url": "https://mahims.com/ps/"
+      "@type": "EducationalOrganization",
+      "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ",
+      "url": "https://mahims.com/ps/",
+      "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
     }
   },
   dcups: {
-    title: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (ঢাকা কলেজ ক্যাম্পাস)",
-    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
-    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ ১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন, নোটিশ ও পিডিএফ পোর্টাল।",
+    title: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    metaTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ",
+    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল পোর্টাল — ক্লাস রুটিন, নোটিশ ও লাইব্রেরি রিসোর্স।",
     canonical: `${siteUrl}/dcups/`,
-    ogTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
-    ogDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
-    ogImage: defaultOgImage,
-    twitterTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
-    twitterDescription: "১ম বর্ষ ১ম সেমিস্টার ক্লাস রুটিন ও নোটিশ পোর্টাল।",
-    twitterImage: defaultOgImage,
+    ogTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল পোর্টাল — ক্লাস রুটিন ও নোটিশ বোর্ড।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
+    twitterTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল পোর্টাল — ক্লাস রুটিন ও নোটিশ বোর্ড।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
-      "url": "https://mahims.com/dcups/"
+      "@type": "EducationalOrganization",
+      "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ",
+      "url": "https://mahims.com/dcups/",
+      "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
     }
   },
   'political-science': {
-    title: "Department of Political Science | Dhaka Central University",
-    metaTitle: "রাষ্ট্রবিজ্ঞান বিভাগ | ঢাকা সেন্ট্রাল ইউনিভার্সিটি (DCU PS)",
-    description: "Department of Political Science, Dhaka Central University (Dhaka College Campus). Class routine, notices, and PDF books library.",
+    title: "Dhaka Central University | Department of Political Science",
+    metaTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ (DCU PS)",
+    description: "Dhaka Central University — Department of Political Science. Class routine, notices board, and academic resources.",
     canonical: `${siteUrl}/political-science/`,
-    ogTitle: "Department of Political Science | Dhaka Central University",
-    ogDescription: "Class routine, notices, and academic resources for 1st Year 1st Semester.",
-    ogImage: defaultOgImage,
-    twitterTitle: "Department of Political Science | Dhaka Central University",
-    twitterDescription: "Class routine and notices portal.",
-    twitterImage: defaultOgImage,
+    ogTitle: "Dhaka Central University | Department of Political Science",
+    ogDescription: "Official digital portal of the Department of Political Science, Dhaka Central University. Class routine, notices, and academic library.",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
+    twitterTitle: "Dhaka Central University | Department of Political Science",
+    twitterDescription: "Official digital portal of Department of Political Science, Dhaka Central University.",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
     jsonLd: {
       "@context": "https://schema.org",
-      "@type": "WebPage",
+      "@type": "EducationalOrganization",
       "name": "Department of Political Science | Dhaka Central University",
-      "url": "https://mahims.com/political-science/"
+      "url": "https://mahims.com/political-science/",
+      "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
     }
   }
 };

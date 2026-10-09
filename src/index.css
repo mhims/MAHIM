@@ -270,7 +270,7 @@
   animation: spinSlow 5s linear infinite;
 }
 
-@keyframes marquee {
+@keyframes tickerScroll {
   0% {
     transform: translateX(100%);
   }
@@ -279,11 +279,12 @@
   }
 }
 
-.animate-marquee {
+.animate-ticker-scroll {
   display: inline-flex;
-  animation: marquee 22s linear infinite;
+  white-space: nowrap;
+  animation: tickerScroll 20s linear infinite;
 }
 
-.animate-marquee:hover {
+.animate-ticker-scroll:hover {
   animation-play-state: paused;
 }

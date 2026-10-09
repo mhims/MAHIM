@@ -290,6 +290,35 @@ export function PoliticalSciencePage() {
     return () => window.removeEventListener('popstate', checkUrlForNotice);
   }, [notices, noticeSlugMap]);
 
+  // Handle dynamic page title, OG image (University Logo) & meta robots
+  useEffect(() => {
+    const originalTitle = document.title;
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    const ogImg = document.querySelector('meta[property="og:image"]');
+    const twImg = document.querySelector('meta[name="twitter:image"]');
+
+    const prevOgTitle = ogTitle?.getAttribute('content') || '';
+    const prevOgDesc = ogDesc?.getAttribute('content') || '';
+    const prevOgImg = ogImg?.getAttribute('content') || '';
+    const prevTwImg = twImg?.getAttribute('content') || '';
+
+    // Update with University Logo and Prestigious Department branding (no semester info)
+    document.title = 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ — অফিসিয়াল পোর্টাল';
+    if (ogTitle) ogTitle.setAttribute('content', 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ');
+    if (ogDesc) ogDesc.setAttribute('content', 'ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল — ক্লাস রুটিন ও নোটিশ বোর্ড।');
+    if (ogImg) ogImg.setAttribute('content', DCU_LOGOS.university);
+    if (twImg) twImg.setAttribute('content', DCU_LOGOS.university);
+
+    return () => {
+      document.title = originalTitle;
+      if (ogTitle && prevOgTitle) ogTitle.setAttribute('content', prevOgTitle);
+      if (ogDesc && prevOgDesc) ogDesc.setAttribute('content', prevOgDesc);
+      if (ogImg && prevOgImg) ogImg.setAttribute('content', prevOgImg);
+      if (twImg && prevTwImg) twImg.setAttribute('content', prevTwImg);
+    };
+  }, []);
+
   // Handle meta robots noindex tag dynamically when viewing a specific notice
   useEffect(() => {
     let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
@@ -648,10 +677,12 @@ export function PoliticalSciencePage() {
       {/* ========================================================================= */}
       {/* TOP APP BAR (Compact Logo on Left, Desktop Nav, Single Download Button)   */}
       {/* ========================================================================= */}
+      {/* TOP APP BAR: PINNED APP-LIKE HEADER (UNIVERSITY ON TOP, PS ON BOTTOM)     */}
+      {/* ========================================================================= */}
       <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-zinc-200/90 dark:border-zinc-800/90 shadow-xs">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-13 flex items-center justify-between gap-2">
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2">
           
-          {/* Left: Compact University Logo + Department Title */}
+          {/* Left: University Logo + Title (University Name ON TOP, Department ON BOTTOM) */}
           <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
@@ -662,15 +693,15 @@ export function PoliticalSciencePage() {
               <img
                 src={DCU_LOGOS.university}
                 alt="University Logo"
-                className="w-8 h-8 object-contain select-none drop-shadow-xs"
+                className="w-9 h-9 object-contain select-none drop-shadow-xs"
               />
             </button>
             <div className="leading-tight text-left">
-              <h1 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                রাষ্ট্রবিজ্ঞান বিভাগ
-              </h1>
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+              <h1 className="text-xs sm:text-sm font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
                 ঢাকা সেন্ট্রাল ইউনিভার্সিটি
+              </h1>
+              <p className="text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">
+                রাষ্ট্রবিজ্ঞান বিভাগ
               </p>
             </div>
           </div>
@@ -703,7 +734,7 @@ export function PoliticalSciencePage() {
           {/* Right: Clean Single Routine Download Dropdown + Theme Toggle + Mobile Menu */}
           <div className="flex items-center gap-2">
             
-            {/* Desktop Routine Download: Single clean button with dropdown (No redundant double buttons) */}
+            {/* Desktop Routine Download: Single clean button with dropdown */}
             <div className="relative hidden md:block" ref={downloadRef}>
               <button
                 type="button"
@@ -933,33 +964,64 @@ export function PoliticalSciencePage() {
                 </button>
               </div>
 
-              {/* Notice Content / Single Urgent Notice */}
-              <div className="text-xs">
+              {/* Notice Content / Single Urgent Notice with Smooth Horizontal Text Scroll */}
+              <div className="text-xs overflow-hidden">
                 {tickerNotices.length > 0 ? (
                   (() => {
                     const t = tickerNotices[0];
                     const fullNotice = notices.find(n => n.id === t.id || n.title === t.text);
+                    const displayText = fullNotice?.content
+                      ? `${t.text} — ${fullNotice.content}`
+                      : t.text;
+                    const dateFormatted = t.date ? ` (${formatNoticeDateShort(t.date)})` : '';
+                    const fullTickerString = `📢 ${displayText}${dateFormatted}   •   `;
+
                     return (
                       <div className="flex items-center justify-between gap-2.5 py-1 min-h-[38px]">
+                        {/* Smooth Horizontally Scrolling Text Container */}
                         <div
                           onClick={() => fullNotice ? handleOpenNotice(fullNotice) : scrollToSection('notices')}
-                          className="flex items-center gap-2 cursor-pointer group flex-1 min-w-0"
-                          title="বিস্তারিত দেখতে ক্লিক করুন"
+                          className="flex-1 min-w-0 overflow-hidden cursor-pointer relative py-0.5"
+                          title="সম্পূর্ণ নোটিশ পড়তে ক্লিক করুন"
                         >
-                          <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
-                          <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                            {t.text}
-                          </span>
-                          {t.date && (
-                            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold shrink-0">
-                              ({formatNoticeDateShort(t.date)})
-                            </span>
-                          )}
+                          <div className="w-full overflow-hidden whitespace-nowrap">
+                            <div className="animate-ticker-scroll inline-block text-zinc-900 dark:text-zinc-100 font-medium hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
+                              <span className="font-bold text-amber-700 dark:text-amber-400 mr-2">
+                                📢 {t.text}
+                              </span>
+                              {fullNotice?.content && (
+                                <span className="text-zinc-700 dark:text-zinc-300 mr-3">
+                                  — {fullNotice.content}
+                                </span>
+                              )}
+                              {t.date && (
+                                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mr-6">
+                                  [{formatNoticeDateShort(t.date)}]
+                                </span>
+                              )}
+                              {/* Repeated for seamless loop */}
+                              <span className="font-bold text-amber-700 dark:text-amber-400 mr-2">
+                                📢 {t.text}
+                              </span>
+                              {fullNotice?.content && (
+                                <span className="text-zinc-700 dark:text-zinc-300 mr-3">
+                                  — {fullNotice.content}
+                                </span>
+                              )}
+                              {t.date && (
+                                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mr-6">
+                                  [{formatNoticeDateShort(t.date)}]
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Direct Detailed View Action Button */}
                         <button
                           type="button"
                           onClick={() => fullNotice ? handleOpenNotice(fullNotice) : scrollToSection('notices')}
-                          className="text-[11px] font-bold text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-white shrink-0 flex items-center gap-1 cursor-pointer bg-amber-500/20 hover:bg-amber-500/30 px-2.5 py-1 rounded-lg border border-amber-500/30 transition active:scale-95"
+                          className="text-[11px] font-bold text-amber-800 dark:text-amber-300 hover:text-amber-950 dark:hover:text-white shrink-0 flex items-center gap-1 cursor-pointer bg-amber-500/20 hover:bg-amber-500/30 px-2.5 py-1 rounded-lg border border-amber-500/30 transition active:scale-95 shadow-2xs"
                         >
                           <span>বিস্তারিত</span>
                           <ArrowRight className="w-3 h-3" />

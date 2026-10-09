@@ -281,7 +281,7 @@
 
 .animate-marquee {
   display: inline-flex;
-  animation: marquee 75s linear infinite;
+  animation: marquee 22s linear infinite;
 }
 
 .animate-marquee:hover {

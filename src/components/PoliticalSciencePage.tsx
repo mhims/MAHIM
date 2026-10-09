@@ -44,7 +44,8 @@ import {
   DEFAULT_TICKER_NOTICES,
   fetchNoticesFromGoogleSheet,
   fetchFullNoticesFromSource,
-  sendSubscriberToGoogleSheet
+  sendSubscriberToGoogleSheet,
+  formatNoticeDateShort
 } from '../utils/googleSheetsNotices';
 import { downloadRoutineImage, downloadRoutinePDF } from '../utils/routineExport';
 import { navigateTo } from '../utils/navigation';
@@ -820,7 +821,7 @@ export function PoliticalSciencePage() {
                         >
                           <span className="text-amber-500 font-bold">•</span>
                           <span>{t.text}</span>
-                          {t.date && <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">({t.date})</span>}
+                          {t.date && <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-semibold">({formatNoticeDateShort(t.date)})</span>}
                         </span>
                       ))}
                     </div>
@@ -1078,7 +1079,7 @@ export function PoliticalSciencePage() {
                         {notice.category}
                       </span>
                       <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                        🗓️ {notice.date}
+                        🗓️ {formatNoticeDateShort(notice.date)}
                       </span>
                     </div>
                     <h3 className="font-bold text-zinc-900 dark:text-white text-xs sm:text-sm leading-snug">

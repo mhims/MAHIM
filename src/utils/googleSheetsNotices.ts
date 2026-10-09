@@ -16,6 +16,40 @@ export interface SheetFullNotice {
 
 export const DEFAULT_TICKER_NOTICES: TickerNotice[] = [];
 
+// Helper to format date into short readable format like "9 OCT", "10 OCT"
+export function formatNoticeDateShort(rawDate?: string): string {
+  if (!rawDate) return '';
+  const str = String(rawDate).trim();
+  if (!str) return '';
+
+  // If already clean like "9 OCT", "10 OCT", "09 OCT"
+  if (/^\d{1,2}\s+[A-Za-z]{3,4}$/i.test(str)) {
+    return str.toUpperCase();
+  }
+
+  // Parse if standard date string
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) {
+    const day = d.getDate();
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    return `${day} ${months[d.getMonth()]}`;
+  }
+
+  // Remove "GMT...", "Bangladesh Standard Time", etc.
+  let clean = str
+    .replace(/\s*\(.*?Standard Time.*?\)/gi, '')
+    .replace(/\s*\(.*?Bangladesh.*?\)/gi, '')
+    .replace(/\s*GMT[+-]\d{4}/gi, '')
+    .trim();
+
+  const match = clean.match(/(\d{1,2})\s+([A-Za-z]{3,4})/);
+  if (match) {
+    return `${match[1]} ${match[2].toUpperCase()}`;
+  }
+
+  return clean;
+}
+
 // Helper to parse standard CSV text into notice items
 export function parseCSVToNotices(csvText: string): { ticker: TickerNotice[]; fullNotices: SheetFullNotice[] } {
   const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
@@ -37,21 +71,23 @@ export function parseCSVToNotices(csvText: string): { ticker: TickerNotice[]; fu
     const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(p => p.replace(/^"|"$/g, '').trim());
     const text = parts[0];
     if (text && text.length > 2) {
-      const date = parts[1] || '';
+      const rawDate = parts[1] || '';
+      const shortDate = formatNoticeDateShort(rawDate);
+      const displayDate = shortDate || rawDate;
       const category = (parts[2] || 'সাধারণ') as SheetFullNotice['category'];
       const content = parts[3] || text;
       
       ticker.push({
         id: `sheet-${i}`,
         text: text,
-        date: date,
+        date: displayDate,
         link: parts[4] || ''
       });
 
       fullNotices.push({
         id: `sheet-notice-${i}`,
         title: text,
-        date: date || new Date().toLocaleDateString('bn-BD'),
+        date: displayDate,
         category: category,
         content: content,
         pinned: i === 1 // first notice pinned by default
@@ -110,14 +146,18 @@ export async function fetchFullNoticesFromSource(url: string): Promise<{ ticker:
       if (response.ok) {
         const data = await response.json();
         if (Array.isArray(data)) {
-          const fullNotices: SheetFullNotice[] = data.map((item: any, idx: number) => ({
-            id: item.id || `app-${idx}`,
-            title: item.title || item.text || 'নোটিশ',
-            date: item.date || '',
-            category: item.category || 'সাধারণ',
-            content: item.content || item.description || item.title || '',
-            pinned: Boolean(item.pinned)
-          }));
+          const fullNotices: SheetFullNotice[] = data.map((item: any, idx: number) => {
+            const rawDate = item.date || '';
+            const shortDate = formatNoticeDateShort(rawDate);
+            return {
+              id: item.id || `app-${idx}`,
+              title: item.title || item.text || 'নোটিশ',
+              date: shortDate || rawDate,
+              category: item.category || 'সাধারণ',
+              content: item.content || item.description || item.title || '',
+              pinned: Boolean(item.pinned)
+            };
+          });
 
           const ticker: TickerNotice[] = fullNotices.map(n => ({
             id: n.id,

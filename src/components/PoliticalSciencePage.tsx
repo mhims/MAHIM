@@ -42,7 +42,9 @@ import { DCUWhatsAppWidget } from './dcu-ps/DCUWhatsAppWidget';
 import {
   TickerNotice,
   DEFAULT_TICKER_NOTICES,
-  fetchNoticesFromGoogleSheet
+  fetchNoticesFromGoogleSheet,
+  fetchFullNoticesFromSource,
+  sendSubscriberToGoogleSheet
 } from '../utils/googleSheetsNotices';
 import { downloadRoutineImage, downloadRoutinePDF } from '../utils/routineExport';
 import { navigateTo } from '../utils/navigation';
@@ -194,6 +196,12 @@ export function PoliticalSciencePage() {
     };
 
     setSubscribers(prev => [newSubscriber, ...prev]);
+    
+    // If Google Apps Script Web App is connected, sync subscriber directly to Google Sheet
+    if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+      sendSubscriberToGoogleSheet(googleSheetUrl, cleanName, cleanEmail, subStudentId.trim() || undefined);
+    }
+
     setSubStatus({
       type: 'success',
       message: '✅ সফলভাবে নিবন্ধিত হয়েছে! যেকোনো জরুরি নোটিশ বা ক্লাস আপডেট এই ইমেইলে জানিয়ে দেওয়া হবে।'
@@ -211,9 +219,11 @@ export function PoliticalSciencePage() {
     });
   };
 
-  // Google Sheet Ticker URL state
+  // Google Apps Script Web App / Sheet URL state (defaulted to user's live Web App)
+  const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxCTkqiq--KwNzefsunGPZayldyo5Eo6cSx7wcG0hFGPBr93tCdbzJB7F5xK2ygBrFI/exec';
+
   const [googleSheetUrl, setGoogleSheetUrl] = useState<string>(() => {
-    return localStorage.getItem('dcu_ps_sheets_url') || '';
+    return localStorage.getItem('dcu_ps_sheets_url') || DEFAULT_WEB_APP_URL;
   });
 
   const [tickerNotices, setTickerNotices] = useState<TickerNotice[]>(DEFAULT_TICKER_NOTICES);
@@ -264,14 +274,23 @@ export function PoliticalSciencePage() {
     localStorage.setItem('dcu_ps_subscribers', JSON.stringify(subscribers));
   }, [subscribers]);
 
-  // Load Ticker Notices from Google Sheet or fallback
+  useEffect(() => {
+    if (googleSheetUrl) {
+      localStorage.setItem('dcu_ps_sheets_url', googleSheetUrl);
+    }
+  }, [googleSheetUrl]);
+
+  // Load Ticker & Main Notices from Google Sheet or fallback
   const loadTickerNotices = async (sheetUrl?: string) => {
     const targetUrl = sheetUrl !== undefined ? sheetUrl : googleSheetUrl;
     if (targetUrl.trim()) {
       try {
-        const fetched = await fetchNoticesFromGoogleSheet(targetUrl);
-        if (fetched.length > 0) {
-          setTickerNotices(fetched);
+        const result = await fetchFullNoticesFromSource(targetUrl);
+        if (result.ticker.length > 0) {
+          setTickerNotices(result.ticker);
+        }
+        if (result.fullNotices.length > 0) {
+          setNotices(result.fullNotices);
           return;
         }
       } catch (err) {
@@ -480,13 +499,12 @@ export function PoliticalSciencePage() {
   const isTodayClassDay = [0, 1, 2, 4].includes(currentDayIndex);
 
   const navMenuItems = [
-    { id: 'today' as PSTab, label: 'আজকের ক্লাস', icon: Clock },
-    { id: 'routine' as PSTab, label: 'সাপ্তাহিক রুটিন', icon: Calendar },
-    { id: 'courses' as PSTab, label: 'কোর্স তালিকা', icon: GraduationCap },
-    { id: 'notices' as PSTab, label: 'নোটিশ বোর্ড', icon: Bell },
-    { id: 'materials' as PSTab, label: 'বই ও শিট', icon: BookOpen },
-    { id: 'email' as PSTab, label: 'ইমেইল আপডেট', icon: Mail },
-    { id: 'teachers' as PSTab, label: 'শিক্ষকবৃন্দ', icon: Users },
+    { id: 'routine' as PSTab, label: 'রুটিন', icon: Calendar },
+    { id: 'notices' as PSTab, label: 'নোটিশ', icon: Bell },
+    { id: 'materials' as PSTab, label: 'বই-শিট', icon: BookOpen },
+    { id: 'courses' as PSTab, label: 'কোর্স', icon: GraduationCap },
+    { id: 'teachers' as PSTab, label: 'শিক্ষক', icon: Users },
+    { id: 'email' as PSTab, label: 'ইমেইল', icon: Mail },
   ];
 
   return (
@@ -535,7 +553,9 @@ export function PoliticalSciencePage() {
           <nav className="hidden md:flex items-center gap-1 bg-zinc-100/80 dark:bg-zinc-800/60 p-1 rounded-xl border border-zinc-200/60 dark:border-zinc-700/60">
             {navMenuItems.map(item => {
               const Icon = item.icon;
-              const isActive = activeSection === item.id;
+              const isActive = item.id === 'routine'
+                ? (activeSection === 'routine' || activeSection === 'today')
+                : activeSection === item.id;
               return (
                 <button
                   key={item.id}
@@ -566,7 +586,7 @@ export function PoliticalSciencePage() {
                 title="রুটিন ডাউনলোড অপশন"
               >
                 <Download className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>রুটিন ডাউনলোড</span>
+                <span>ডাউনলোড</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isDownloadOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -662,7 +682,9 @@ export function PoliticalSciencePage() {
               <nav className="mt-4 space-y-1">
                 {navMenuItems.map(item => {
                   const Icon = item.icon;
-                  const isActive = activeSection === item.id;
+                  const isActive = item.id === 'routine'
+                    ? (activeSection === 'routine' || activeSection === 'today')
+                    : activeSection === item.id;
                   return (
                     <button
                       key={item.id}
@@ -1369,29 +1391,22 @@ export function PoliticalSciencePage() {
               )}
 
               {/* Submit & Direct Action Row */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-                <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>বর্তমানে {subscribers.length} জন শিক্ষার্থী তালিকায় যুক্ত আছেন</span>
-                </div>
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <a
+                  href="mailto:mahimibnkhudi@gmail.com?subject=DCU%20Political%20Science%20Query"
+                  className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition cursor-pointer"
+                  title="মাহিমকে সরাসরি ইমেইল পাঠাতে ক্লিক করুন"
+                >
+                  <span>সরাসরি ইমেইল</span>
+                </a>
 
-                <div className="flex items-center gap-2">
-                  <a
-                    href="mailto:mahimibnkhudi@gmail.com?subject=DCU%20Political%20Science%20Query"
-                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition"
-                    title="মাহিমকে সরাসরি ইমেইল পাঠাতে ক্লিক করুন"
-                  >
-                    <span>সরাসরি ইমেইল</span>
-                  </a>
-
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs transition active:scale-95 shadow-xs cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>ইমেইল যুক্ত করুন</span>
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs transition active:scale-95 shadow-xs cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>ইমেইল যুক্ত করুন</span>
+                </button>
               </div>
             </form>
 

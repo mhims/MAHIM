@@ -28,6 +28,7 @@ import {
   PSCourse
 } from '../../data/dcuPoliticalScienceData';
 import { fetchNoticesFromGoogleSheet } from '../../utils/googleSheetsNotices';
+import { GOOGLE_APPS_SCRIPT_CODE } from '../../utils/googleAppsScriptTemplate';
 
 interface DCUAdminModalProps {
   isOpen: boolean;
@@ -77,6 +78,14 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
   const [activeTab, setActiveTab] = useState<'ticker_sheet' | 'notices' | 'books' | 'routine' | 'subscribers' | 'export'>('ticker_sheet');
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedEmails, setCopiedEmails] = useState(false);
+  const [copiedScript, setCopiedScript] = useState(false);
+
+  const handleCopyScript = () => {
+    navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_CODE).then(() => {
+      setCopiedScript(true);
+      setTimeout(() => setCopiedScript(false), 2500);
+    });
+  };
 
   // Google Sheet Sync test state
   const [tempSheetUrl, setTempSheetUrl] = useState(googleSheetUrl);
@@ -366,7 +375,7 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                 }`}
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" />
-                গুগল শিট নোটিশ স্ক্রল
+                গুগল শিট ও ওয়েব অ্যাপ
               </button>
 
               <button
@@ -438,38 +447,69 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
             {/* Tab Panels */}
             <div className="flex-1 overflow-y-auto p-5 space-y-5">
               
-              {/* GOOGLE SHEETS TICKER TAB */}
+              {/* GOOGLE SHEETS & WEB APP TAB */}
               {activeTab === 'ticker_sheet' && (
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60">
                     <div className="flex items-center gap-2 mb-2">
                       <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                       <h3 className="font-bold text-zinc-900 dark:text-white text-sm">
-                        গুগল শিট থেকে অটোমেটিক স্ক্রলিং নোটিশ (Live Ticker)
+                        গুগল শিট ও Apps Script ওয়েব অ্যাপ নোটিশ পোর্টাল
                       </h3>
                     </div>
                     <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                      আপনি একটি সাধারণ গুগল শিট বানিয়ে সেখানে যা নোটিশ লিখবেন, তা ওয়েবসাইটের উপরে নিউজের মতো স্ক্রল হতে থাকবে। কোনো কোড চেঞ্জ ছাড়াই তাৎক্ষণিক আপডেট হবে।
+                      সিআর বা এডমিন সরাসরি ব্রাউজার দিয়ে একটি ওয়েব অ্যাপ ওপেন করে যেকোনো সময় নোটিশ লিখে সেভ করলেই তা স্বয়ংক্রিয়ভাবে শিক্ষার্থীদের কাছে ব্র্যান্ডেড ইমেইল পৌঁছে দেবে, ওয়েবসাইট লাইভ আপডেট হবে এবং সেখান থেকেই অপ্রয়োজনীয় নোটিশ মুছে ফেলা যাবে।
                     </p>
+                  </div>
+
+                  {/* 1-Click Code Copy Box */}
+                  <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-bold text-zinc-900 dark:text-white block">
+                          📜 গুগল অ্যাপস স্ক্রিপ্ট (Web App Script)
+                        </span>
+                        <span className="text-[11px] text-zinc-500">
+                          ফাঁকা গুগল শিটে এই কোডটি দিলেই নোটিশ ড্যাশবোর্ড, অটো-ফরম্যাট ও ইমেইল প্রস্তুত হয়ে যাবে
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyScript}
+                        className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0"
+                      >
+                        {copiedScript ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>কপি হয়েছে!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Apps Script কোড কপি</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   <form onSubmit={handleSaveSheetUrl} className="space-y-3">
                     <div>
                       <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                        গুগল শিটের লিংক (বা Publish to Web CSV URL)
+                        গুগল ওয়েব অ্যাপ লিংক (বা গুগল শিট URL)
                       </label>
                       <div className="relative">
                         <input
                           type="url"
                           value={tempSheetUrl}
                           onChange={e => setTempSheetUrl(e.target.value)}
-                          placeholder="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit..."
+                          placeholder="https://script.google.com/macros/s/AKfycb.../exec"
                           className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white font-mono"
                         />
                         <LinkIcon className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
                       </div>
                       <p className="text-[11px] text-zinc-500 mt-1">
-                        টিপস: গুগল শিটটি <strong>Share ➜ Anyone with the link can view</strong> করুন অথবা <strong>File ➜ Share ➜ Publish to web ➜ CSV</strong> লিংক কপি করে দিন।
+                        Apps Script থেকে পাওয়া <strong>Web app URL</strong> অথবা সাধারণ গুগল শিটের ভিউ লিংক এখানে বসিয়ে সেভ করুন।
                       </p>
                     </div>
 
@@ -519,13 +559,13 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                     </div>
                   </form>
 
-                  <div className="p-4 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5">
+                  <div className="p-4 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
                     <p className="font-semibold text-zinc-800 dark:text-zinc-200">
-                      📋 গুগল শিট সাজানোর সহজ নিয়ম:
+                      🚀 ওয়েব অ্যাপ সেটআপ করার ৩টি সহজ ধাপ:
                     </p>
-                    <p>• ১ম কলাম (A কলাম): যে নোটিশটি স্ক্রল করতে চান সেই লেখাটি লিখবেন।</p>
-                    <p>• ২য় কলাম (B কলাম): ঐচ্ছিক তারিখ (যেমন: ৯ অক্টোবর ২০২৬)।</p>
-                    <p>• প্রতি লাইনে একটি করে নোটিশ লিখলে সেগুলো পর পর স্ক্রল হয়ে যাবে।</p>
+                    <p>১. আপনার যেকোনো ফাঁকা গুগল শিট ওপেন করে উপরের মেনু থেকে <strong>Extensions ➜ Apps Script</strong> এ ক্লিক করুন।</p>
+                    <p>২. পূর্বের সব লেখা মুছে উপরের <strong>Apps Script কোড কপি</strong> বাটনে ক্লিক করে পুরো কোডটি পেস্ট করুন এবং 💾 Save আইকনে চাপ দিন।</p>
+                    <p>৩. এরপর উপরে ডানদিকে <strong>Deploy ➜ New deployment</strong> ➜ গিয়ার আইকন থেকে <strong>Web app</strong> সিলেক্ট করে <em>Execute as: Me</em> এবং <em>Who has access: Anyone</em> দিয়ে Deploy করুন। এরপর পাওয়া লিংকটি এখানে বসিয়ে সেভ করুন।</p>
                   </div>
                 </div>
               )}

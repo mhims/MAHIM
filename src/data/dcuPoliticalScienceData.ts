@@ -337,12 +337,4 @@ export const INITIAL_PS_NOTICES: PSNotice[] = [];
 // All dummy books removed as requested - will be added later via Admin Panel
 export const INITIAL_PS_BOOKS: PSBookResource[] = [];
 
-export const INITIAL_PS_SUBSCRIBERS: PSSubscriber[] = [
-  {
-    id: 'sub-1',
-    name: 'মাহিম ইবনে খুদি',
-    email: 'mahimibnkhudi@gmail.com',
-    studentId: 'PS-01',
-    subscribedAt: '2026-10-09'
-  }
-];
+export const INITIAL_PS_SUBSCRIBERS: PSSubscriber[] = [];

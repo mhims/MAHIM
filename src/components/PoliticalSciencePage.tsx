@@ -25,7 +25,8 @@ import {
   Share2,
   Copy,
   MessageCircle,
-  Link
+  Link,
+  Loader2
 } from 'lucide-react';
 import {
   DCU_LOGOS,
@@ -241,53 +242,91 @@ export function PoliticalSciencePage() {
     return getNoticeSlugMap(notices);
   }, [notices]);
 
-  const [selectedNoticeModal, setSelectedNoticeModal] = useState<PSNotice | 'not_found' | null>(null);
-  const [copiedNoticeId, setCopiedNoticeId] = useState<string | null>(null);
-
-  // Check URL on load and URL change for /ps/notices/:slug or ?notice=:slug
-  const checkUrlForNotice = () => {
-    if (typeof window === 'undefined') return;
+  // Extract notice slug from URL path (/ps/notices/:slug) or query (?notice=:slug)
+  const extractTargetNoticeSlug = (): string => {
+    if (typeof window === 'undefined') return '';
     const pathname = window.location.pathname;
     const search = window.location.search;
 
-    let targetSlug = '';
     const match = pathname.match(/\/(?:ps|dcups|political-science|dcu-ps)\/notices\/([^/?#]+)/i);
     if (match && match[1]) {
-      targetSlug = decodeURIComponent(match[1]).trim();
-    } else {
-      const params = new URLSearchParams(search);
-      const queryNotice = params.get('notice');
-      if (queryNotice) {
-        targetSlug = decodeURIComponent(queryNotice).trim();
-      }
+      return decodeURIComponent(match[1]).trim();
+    }
+    const params = new URLSearchParams(search);
+    const queryNotice = params.get('notice');
+    if (queryNotice) {
+      return decodeURIComponent(queryNotice).trim();
+    }
+    return '';
+  };
+
+  // Find notice by slug or ID with flexible date normalization
+  const findNoticeBySlugOrId = (items: PSNotice[], targetSlug: string): PSNotice | null => {
+    if (!targetSlug || items.length === 0) return null;
+    const cleanTarget = targetSlug.toLowerCase().trim();
+    const slugMap = getNoticeSlugMap(items);
+
+    // 1. Exact slug or ID match
+    let found = items.find(n => {
+      const slug = slugMap.get(n.id);
+      return (
+        slug?.toLowerCase() === cleanTarget ||
+        n.id.toLowerCase() === cleanTarget
+      );
+    });
+    if (found) return found;
+
+    // 2. Normalized date slug match (e.g. 9-10-2026 vs 09-10-2026)
+    const normalizedTarget = cleanTarget.replace(/\b0(\d)/g, '$1');
+    found = items.find(n => {
+      const slug = slugMap.get(n.id) || '';
+      const normalizedSlug = slug.toLowerCase().replace(/\b0(\d)/g, '$1');
+      return normalizedSlug === normalizedTarget;
+    });
+    if (found) return found;
+
+    // 3. Match base date
+    found = items.find(n => {
+      const baseDate = getNoticeDateSlugBase(n.date).toLowerCase();
+      return baseDate === cleanTarget || baseDate.replace(/\b0(\d)/g, '$1') === normalizedTarget;
+    });
+
+    return found || null;
+  };
+
+  const [selectedNoticeModal, setSelectedNoticeModal] = useState<PSNotice | 'not_found' | null>(null);
+  const [isNoticeLoading, setIsNoticeLoading] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return Boolean(extractTargetNoticeSlug());
+  });
+  const [copiedNoticeId, setCopiedNoticeId] = useState<string | null>(null);
+
+  // Check URL on load and URL change for /ps/notices/:slug or ?notice=:slug
+  const checkUrlForNotice = (items = notices) => {
+    const targetSlug = extractTargetNoticeSlug();
+    if (!targetSlug) {
+      setIsNoticeLoading(false);
+      return;
     }
 
-    if (!targetSlug) return;
-
-    // Search for notice
-    if (notices.length > 0) {
-      const found = notices.find(n => {
-        const slug = noticeSlugMap.get(n.id);
-        return (
-          slug === targetSlug ||
-          n.id === targetSlug ||
-          slug?.toLowerCase() === targetSlug.toLowerCase() ||
-          n.id.toLowerCase() === targetSlug.toLowerCase()
-        );
-      });
-
+    if (items.length > 0) {
+      const found = findNoticeBySlugOrId(items, targetSlug);
       if (found) {
         setSelectedNoticeModal(found);
       } else {
         setSelectedNoticeModal('not_found');
       }
+      setIsNoticeLoading(false);
     }
   };
 
   useEffect(() => {
-    checkUrlForNotice();
-    window.addEventListener('popstate', checkUrlForNotice);
-    return () => window.removeEventListener('popstate', checkUrlForNotice);
+    checkUrlForNotice(notices);
+    const handlePopState = () => {
+      checkUrlForNotice(notices);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, [notices, noticeSlugMap]);
 
   // Handle dynamic page title, OG image (University Logo) & meta robots
@@ -438,6 +477,8 @@ export function PoliticalSciencePage() {
   // Load Ticker & Main Notices from Google Sheet or fallback
   const loadTickerNotices = async (sheetUrl?: string) => {
     const targetUrl = sheetUrl !== undefined ? sheetUrl : googleSheetUrl;
+    let loadedNotices = notices;
+
     if (targetUrl.trim()) {
       try {
         const result = await fetchFullNoticesFromSource(targetUrl);
@@ -445,32 +486,46 @@ export function PoliticalSciencePage() {
           setTickerNotices(result.ticker);
         }
         if (result.fullNotices.length > 0) {
+          loadedNotices = result.fullNotices;
           setNotices(result.fullNotices);
-          return;
         }
       } catch (err) {
         console.error('Failed to load Google Sheet notices:', err);
       }
     }
     
-    // Fallback: use pinned notices from local notices or empty list
-    const pinned = notices.filter(n => n.pinned).map(n => ({
+    // Fallback: use pinned notices from loaded notices
+    const pinned = loadedNotices.filter(n => n.pinned).map(n => ({
       id: n.id,
       text: n.title,
       date: n.date
     }));
     if (pinned.length > 0) {
       setTickerNotices(pinned);
-    } else if (notices.length > 0) {
-      setTickerNotices(notices.map(n => ({ id: n.id, text: n.title, date: n.date })));
+    } else if (loadedNotices.length > 0) {
+      setTickerNotices(loadedNotices.map(n => ({ id: n.id, text: n.title, date: n.date })));
     } else {
       setTickerNotices([]);
+    }
+
+    // Resolve any requested notice slug with newly loaded notices
+    const targetSlug = extractTargetNoticeSlug();
+    if (targetSlug) {
+      const found = findNoticeBySlugOrId(loadedNotices, targetSlug);
+      if (found) {
+        setSelectedNoticeModal(found);
+      } else {
+        setSelectedNoticeModal('not_found');
+      }
+      setIsNoticeLoading(false);
+    } else {
+      setIsNoticeLoading(false);
     }
   };
 
   useEffect(() => {
     loadTickerNotices();
-  }, [googleSheetUrl, notices]);
+  }, [googleSheetUrl]);
 
   // Secret 5-tap trigger on the university logo to open Admin
   const handleLogoClick = () => {
@@ -538,10 +593,21 @@ export function PoliticalSciencePage() {
     }
   };
 
-  // Read initial path on mount (support direct paths /ps/routine and remove any legacy hashes)
+  // Read initial path on mount (support direct paths /ps/routine and preserve notice URLs)
   useEffect(() => {
     const handleInitialPath = () => {
       const pathname = window.location.pathname.replace(/\/+$/, '');
+      const search = window.location.search;
+
+      // If URL is for a specific notice (/ps/notices/:slug or ?notice=), DO NOT rewrite URL or erase slug!
+      if (
+        pathname.match(/\/(?:ps|dcups|political-science|dcu-ps)\/notices\/[^/?#]+/i) ||
+        search.includes('notice=')
+      ) {
+        setActiveSection('notices');
+        return;
+      }
+
       const segments = pathname.split('/').filter(Boolean);
       
       let targetTab: PSTab | null = null;
@@ -571,6 +637,16 @@ export function PoliticalSciencePage() {
   // Track active section as user scrolls and update clean URL without '#'
   useEffect(() => {
     const handleScroll = () => {
+      // Do not overwrite URL when viewing a specific notice or modal is open
+      if (
+        selectedNoticeModal ||
+        isNoticeLoading ||
+        window.location.pathname.match(/\/(?:ps|dcups|political-science|dcu-ps)\/notices\/[^/?#]+/i) ||
+        window.location.search.includes('notice=')
+      ) {
+        return;
+      }
+
       const sections: PSTab[] = ['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'];
       const scrollPos = window.scrollY + 140;
 
@@ -590,7 +666,7 @@ export function PoliticalSciencePage() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [selectedNoticeModal, isNoticeLoading]);
 
   // Class sessions for today
   const todaySessions = useMemo(() => {
@@ -677,9 +753,10 @@ export function PoliticalSciencePage() {
       {/* ========================================================================= */}
       {/* TOP APP BAR (Compact Logo on Left, Desktop Nav, Single Download Button)   */}
       {/* ========================================================================= */}
-      {/* TOP APP BAR: PINNED APP-LIKE HEADER (UNIVERSITY ON TOP, PS ON BOTTOM)     */}
+      {/* TOP APP BAR: PINNED APP-LIKE HEADER ON MOBILE ONLY                        */}
+      {/* (PINNED ON MOBILE, NORMAL/RELATIVE ON DESKTOP)                            */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-zinc-200/90 dark:border-zinc-800/90 shadow-xs">
+      <header className="fixed top-0 inset-x-0 z-40 md:relative md:top-auto md:inset-auto bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-zinc-200/90 dark:border-zinc-800/90 shadow-xs">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2">
           
           {/* Left: University Logo + Title (University Name ON TOP, Department ON BOTTOM) */}
@@ -798,6 +875,9 @@ export function PoliticalSciencePage() {
 
         </div>
       </header>
+
+      {/* Mobile Top Spacer (only on mobile because top header is fixed pinned on mobile) */}
+      <div className="h-14 md:hidden" />
 
       {/* ========================================================================= */}
       {/* MOBILE APP MENU DRAWER (Slide-out Sheet)                                 */}
@@ -1843,6 +1923,27 @@ export function PoliticalSciencePage() {
 
         </div>
       </nav>
+
+      {/* ========================================================================= */}
+      {/* NOTICE LOADING MODAL (WHEN ACCESSED VIA DIRECT LINK)                      */}
+      {/* ========================================================================= */}
+      {isNoticeLoading && !selectedNoticeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#121826] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
+              <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-white">
+                নোটিশ লোড হচ্ছে...
+              </h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                ঢাকা সেন্ট্রাল ইউনিভার্সিটি নোটিশ বোর্ড থেকে তথ্য সংগ্রহ করা হচ্ছে
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* NOTICE DETAIL / SHARE MODAL (WITH NOINDEX PRESERVED & SAFE SEO)           */}

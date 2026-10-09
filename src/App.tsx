@@ -32,9 +32,20 @@ export default function App() {
     if (typeof window === 'undefined') return '/';
     // Check if GitHub Pages 404 stored intended SPA redirect path
     try {
-      const spaRedirect = sessionStorage.getItem('spa_redirect');
+      let spaRedirect = sessionStorage.getItem('spa_redirect');
+      if (!spaRedirect && window.location.search) {
+        const params = new URLSearchParams(window.location.search);
+        const qParam = params.get('spa_redirect');
+        if (qParam) {
+          spaRedirect = decodeURIComponent(qParam);
+        }
+      }
       if (spaRedirect) {
-        sessionStorage.removeItem('spa_redirect');
+        try {
+          sessionStorage.removeItem('spa_redirect');
+        } catch {
+          // ignore
+        }
         const cleanRedirect = spaRedirect.replace(/\/+$/, '') || '/';
         if (window.history.replaceState) {
           window.history.replaceState(null, '', cleanRedirect);

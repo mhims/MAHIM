@@ -2457,6 +2457,26 @@ const routeData = {
       "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
     }
   },
+  'ps/notices': {
+    title: "নোটিশ বোর্ড | রাষ্ট্রবিজ্ঞান বিভাগ — ঢাকা সেন্ট্রাল ইউনিভার্সিটি",
+    metaTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ নোটিশ বোর্ড",
+    description: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল নোটিশ বোর্ড। সকল জরুরি একাডেমিক নোটিশ, পরীক্ষার সময়সূচি ও ক্লাস আপডেট।",
+    keywords: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি, রাষ্ট্রবিজ্ঞান বিভাগ নোটিশ, DCU Political Science Notice, ঢাকা কলেজ ক্যাম্পাস, নোটিশ বোর্ড",
+    canonical: `${siteUrl}/ps/notices/`,
+    ogTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    ogDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল — জরুরি নোটিশ বোর্ড ও ক্লাস রুটিন।",
+    ogImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
+    twitterTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
+    twitterDescription: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি রাষ্ট্রবিজ্ঞান বিভাগ অফিসিয়াল ডিজিটাল পোর্টাল — জরুরি নোটিশ বোর্ড ও ক্লাস রুটিন।",
+    twitterImage: "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ নোটিশ বোর্ড",
+      "url": "https://mahims.com/ps/notices/",
+      "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
+    }
+  },
   dcups: {
     title: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি | রাষ্ট্রবিজ্ঞান বিভাগ",
     metaTitle: "ঢাকা সেন্ট্রাল ইউনিভার্সিটি — রাষ্ট্রবিজ্ঞান বিভাগ",

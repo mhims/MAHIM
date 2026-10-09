@@ -21,9 +21,12 @@
           return;
         }
 
-        // Store intended path in sessionStorage so index.html restores it seamlessly
-        sessionStorage.setItem('spa_redirect', cleanPath + (search ? search : '') + (hash ? hash : ''));
-        window.location.replace('/' + (search ? search : '') + (hash ? hash : ''));
+        // Store intended path in sessionStorage and fallback query parameter so SPA restores it seamlessly
+        var fullTarget = cleanPath + (search ? search : '') + (hash ? hash : '');
+        try {
+          sessionStorage.setItem('spa_redirect', fullTarget);
+        } catch(e) {}
+        window.location.replace('/?spa_redirect=' + encodeURIComponent(fullTarget));
       })();
     </script>
   </head>

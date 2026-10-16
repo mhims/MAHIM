@@ -36,6 +36,35 @@
         if (redirect) {
           window.history.replaceState(null, null, redirect);
         }
+
+        // Dedicated Preview Tags for /khujbe
+        var p = (window.location.pathname || '').replace(/\/+$/, '') || '';
+        if (p === '/khujbe' || (window.location.hash && window.location.hash.indexOf('khujbe') !== -1) || (redirect && redirect.indexOf('khujbe') !== -1)) {
+          document.title = 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)';
+          var khujbeImg = 'https://mahims.com/assets/og-khujbe.jpg';
+          var khujbeCloudinary = 'https://res.cloudinary.com/drvyjj7td/image/upload/w_1200,h_630,c_pad,b_rgb:e6f4fe,q_auto:best,f_jpg/v1792156699/Khujbedotcom_db5yqu.jpg';
+          var metas = [
+            ['property', 'og:title', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)'],
+            ['property', 'og:description', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com'],
+            ['property', 'og:image', khujbeImg],
+            ['property', 'og:image:secure_url', khujbeCloudinary],
+            ['property', 'og:image:type', 'image/jpeg'],
+            ['property', 'og:image:width', '1200'],
+            ['property', 'og:image:height', '630'],
+            ['property', 'og:site_name', 'খুঁজবে (khujbe.com)'],
+            ['name', 'twitter:title', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)'],
+            ['name', 'twitter:description', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com'],
+            ['name', 'twitter:image', khujbeImg],
+            ['name', 'description', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com']
+          ];
+          for (var i = 0; i < metas.length; i++) {
+            var item = metas[i];
+            var el = document.querySelector('meta[' + item[0] + '="' + item[1] + '"]');
+            if (el) {
+              el.setAttribute('content', item[2]);
+            }
+          }
+        }
       })();
     </script>
     
@@ -70,7 +99,7 @@
     <meta property="og:description" content="এইচএসসি ও এডমিশন প্রস্তুতির প্রিমিয়াম ব্যাচসমূহ, লাইভ সলভিং ও মেন্টরশীপ।" />
     <meta property="og:image" content="https://mahims.com/assets/og-classroom.jpg" />
     <meta property="og:image:secure_url" content="https://mahims.com/assets/og-classroom.jpg" />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Mahims - Official Luxury Monogram Logo & Platform" />

@@ -48,7 +48,7 @@ export const DynamicSEO: React.FC = () => {
 
     if (isKhujbe) {
       activeDescription = 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com';
-      activeImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1792156699/Khujbedotcom_db5yqu.jpg';
+      activeImage = `https://${settings.domain || 'mahims.com'}/assets/og-khujbe.jpg`;
       activeUrl = `https://${settings.domain || 'mahims.com'}/khujbe`;
     } else if (isClassroom) {
       activeDescription = "Mahim's Classroom (also known as Mahims Classroom or Mahim Classroom) is an online academic learning and competitive exam platform by Mahim Ibne Khudi. এইচএসসি, বিশ্ববিদ্যালয় ভর্তি প্রস্তুতি ও এসএসসি শিক্ষার্থীদের জন্য কনসেপ্ট ক্লাস, মডেল টেস্ট ও মেন্টরশিপ।";

@@ -54,7 +54,8 @@ const routes = [
   'ps',
   'ps/notices',
   'dcups',
-  'political-science'
+  'political-science',
+  'khujbe'
 ];
 
 const siteUrl = 'https://mahims.com';
@@ -63,6 +64,7 @@ const classroomOgImage = `${siteUrl}/assets/og-classroom.jpg`;
 const chithiOgImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789445680/MAHIM_CHITHI_xxkl9p.png';
 const salamiOgImage = `${siteUrl}/assets/og-salami.jpg`;
 const thoughtsOgImage = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1789574512/think-with-mahim_yku7br.jpg';
+const khujbeOgImage = `${siteUrl}/assets/og-khujbe.jpg`;
 
 const routeData = {
   classroom: {
@@ -2514,6 +2516,57 @@ const routeData = {
       "url": "https://mahims.com/political-science/",
       "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1791540199/logo_df1onj.png"
     }
+  },
+  khujbe: {
+    title: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)",
+    metaTitle: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে",
+    description: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com",
+    keywords: "খুঁজবে, khujbe, khujbe.com, ই-কমার্স সাইট খুঁজবে, খুঁজবে ফেসবুক পেজ, facebook.com/khujbe, mahims.com/khujbe",
+    canonical: `${siteUrl}/khujbe/`,
+    ogTitle: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)",
+    ogDescription: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com",
+    ogImage: khujbeOgImage,
+    ogImageFallback: "https://res.cloudinary.com/drvyjj7td/image/upload/w_1200,h_630,c_pad,b_rgb:e6f4fe,q_auto:best,f_jpg/v1792156699/Khujbedotcom_db5yqu.jpg",
+    ogSiteName: "খুঁজবে (khujbe.com)",
+    imageType: "image/jpeg",
+    imageWidth: "1200",
+    imageHeight: "630",
+    twitterTitle: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)",
+    twitterDescription: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com",
+    twitterImage: khujbeOgImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://mahims.com/khujbe/#website",
+          "url": "https://mahims.com/khujbe/",
+          "name": "খুঁজবে (khujbe.com)",
+          "description": "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে"
+        },
+        {
+          "@type": "Organization",
+          "name": "খুঁজবে",
+          "url": "https://khujbe.com",
+          "sameAs": [
+            "https://facebook.com/khujbe"
+          ],
+          "logo": "https://res.cloudinary.com/drvyjj7td/image/upload/v1792156671/Khujbe-logo-ghorooa-style_a21qva.png"
+        }
+      ]
+    },
+    prerenderHtml: `
+      <div style="background-color:#e6f4fe;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:sans-serif;padding:24px;">
+        <h1 style="color:#033b66;font-size:28px;margin-bottom:16px;">যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট,</h1>
+        <a href="https://facebook.com/khujbe" style="margin-bottom:24px;">
+          <img src="https://res.cloudinary.com/drvyjj7td/image/upload/v1792156671/Khujbe-logo-ghorooa-style_a21qva.png" alt="খুঁজবে" style="max-width:320px;height:auto;" />
+        </a>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="https://khujbe.com" style="background:#0284c7;color:#fff;padding:10px 24px;border-radius:9999px;text-decoration:none;font-weight:bold;">ভিজিট করুন khujbe.com</a>
+          <a href="https://facebook.com/khujbe" style="background:#fff;color:#1877F2;border:2px solid #1877F2;padding:10px 20px;border-radius:9999px;text-decoration:none;font-weight:bold;">facebook.com/khujbe</a>
+        </div>
+      </div>
+    `
   }
 };
 
@@ -2593,12 +2646,22 @@ if (fs.existsSync(distDir)) {
       );
 
       // 5. OpenGraph Tags
+      const secureImg = data.ogImageFallback || data.ogImage;
+      const imgType = data.imageType || (data.ogImage && data.ogImage.endsWith('.png') ? 'image/png' : 'image/jpeg');
+      const imgWidth = data.imageWidth || '1200';
+      const imgHeight = data.imageHeight || '630';
+      const siteName = data.ogSiteName || "Mahims (mahims.com)";
+
       htmlContent = htmlContent
         .replace(/<meta property="og:title" content=".*?" \/>/, `<meta property="og:title" content="${data.ogTitle}" />`)
         .replace(/<meta property="og:description" content=".*?" \/>/, `<meta property="og:description" content="${data.ogDescription}" />`)
         .replace(/<meta property="og:url" content=".*?" \/>/, `<meta property="og:url" content="${data.canonical}" />`)
         .replace(/<meta property="og:image" content=".*?" \/>/, `<meta property="og:image" content="${data.ogImage}" />`)
-        .replace(/<meta property="og:image:secure_url" content=".*?" \/>/, `<meta property="og:image:secure_url" content="${data.ogImage}" />`)
+        .replace(/<meta property="og:image:secure_url" content=".*?" \/>/, `<meta property="og:image:secure_url" content="${secureImg}" />`)
+        .replace(/<meta property="og:image:type" content=".*?" \/>/, `<meta property="og:image:type" content="${imgType}" />`)
+        .replace(/<meta property="og:image:width" content=".*?" \/>/, `<meta property="og:image:width" content="${imgWidth}" />`)
+        .replace(/<meta property="og:image:height" content=".*?" \/>/, `<meta property="og:image:height" content="${imgHeight}" />`)
+        .replace(/<meta property="og:site_name" content=".*?" \/>/, `<meta property="og:site_name" content="${siteName}" />`)
         .replace(/<link rel="image_src" href=".*?" \/>/, `<link rel="image_src" href="${data.ogImage}" />`);
 
       // 6. Twitter Tags

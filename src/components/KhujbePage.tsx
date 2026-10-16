@@ -19,15 +19,20 @@ export const KhujbePage: React.FC = () => {
       return el;
     };
 
-    const previewJpg = 'https://res.cloudinary.com/drvyjj7td/image/upload/v1792156699/Khujbedotcom_db5yqu.jpg';
-    const pageUrl = window.location.origin + '/khujbe';
+    // High-resolution lightweight image optimized specifically for WhatsApp (<300KB) and Facebook crawlers
+    const previewJpg = 'https://mahims.com/assets/og-khujbe.jpg';
+    const fallbackCloudinaryJpg = 'https://res.cloudinary.com/drvyjj7td/image/upload/w_1200,h_630,c_pad,b_rgb:e6f4fe,q_auto:best,f_jpg/v1792156699/Khujbedotcom_db5yqu.jpg';
+    const pageUrl = 'https://mahims.com/khujbe';
     const description = 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট - খুঁজবে (khujbe.com)। ভিজিট করুন khujbe.com';
 
     setMeta('property', 'og:title', 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)');
     setMeta('property', 'og:description', description);
     setMeta('property', 'og:image', previewJpg);
-    setMeta('property', 'og:image:secure_url', previewJpg);
+    setMeta('property', 'og:image:secure_url', fallbackCloudinaryJpg);
     setMeta('property', 'og:image:type', 'image/jpeg');
+    setMeta('property', 'og:image:width', '1200');
+    setMeta('property', 'og:image:height', '630');
+    setMeta('property', 'og:image:alt', 'খুঁজবে — khujbe.com');
     setMeta('property', 'og:url', pageUrl);
     setMeta('property', 'og:type', 'website');
     setMeta('property', 'og:site_name', 'খুঁজবে (khujbe.com)');

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ExternalLink, Sparkles, Facebook } from 'lucide-react';
+import { ExternalLink, Facebook } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const KhujbePage: React.FC = () => {
@@ -38,7 +38,6 @@ export const KhujbePage: React.FC = () => {
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', previewJpg);
 
-    // Also update link[rel="image_src"] for older scrapers (WhatsApp legacy)
     let linkImg = document.querySelector('link[rel="image_src"]') as HTMLLinkElement | null;
     if (!linkImg) {
       linkImg = document.createElement('link');
@@ -54,7 +53,7 @@ export const KhujbePage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen w-full relative flex flex-col items-center justify-center px-4 py-6 sm:py-8 overflow-x-hidden font-['Hind_Siliguri',sans-serif] selection:bg-sky-500 selection:text-white"
+      className="min-h-screen sm:h-screen w-full relative flex flex-col items-center justify-center px-4 py-6 sm:py-5 overflow-y-auto sm:overflow-hidden font-['Hind_Siliguri',sans-serif] selection:bg-sky-500 selection:text-white"
       style={{
         backgroundColor: '#e6f4fe',
         backgroundImage: 'radial-gradient(#0284c7 1.6px, transparent 1.6px)',
@@ -63,86 +62,70 @@ export const KhujbePage: React.FC = () => {
     >
       {/* Soft Ambient Radial Glow Behind the Center Logo */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[500px] lg:w-[650px] h-[320px] sm:h-[500px] lg:h-[650px] rounded-full pointer-events-none blur-3xl opacity-60"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[480px] lg:w-[600px] h-[340px] sm:h-[480px] lg:h-[600px] rounded-full pointer-events-none blur-3xl opacity-60"
         style={{
           background: 'radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(2, 132, 199, 0.15) 50%, transparent 75%)',
         }}
       />
 
-      {/* Main Standalone Container with tighter vertical rhythm */}
-      <main className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center text-center space-y-4 sm:space-y-5 md:space-y-6 my-auto">
+      {/* Main Standalone Container - Big and prominent on mobile, perfectly fitted on PC */}
+      <main className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center justify-center my-auto space-y-4 sm:space-y-3 md:space-y-4">
         
         {/* Top Text: "যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট," */}
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-1 sm:space-y-1.5"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md border border-sky-300/80 shadow-xs text-sky-800 text-xs sm:text-sm font-semibold mb-0.5">
-            <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-            <Sparkles size={13} className="text-sky-600" />
-            <span>শীঘ্রই আসছে • Coming Soon</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#033b66] tracking-tight leading-tight drop-shadow-xs">
+          <h1 className="text-2xl xs:text-[28px] sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#033b66] tracking-tight leading-snug drop-shadow-xs">
             যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট,
           </h1>
         </motion.div>
 
-        {/* Center Large PNG Logo - Clickable directly to facebook.com/khujbe */}
+        {/* Center PNG Logo - Big & prominent in mobile view (like before), constrained for PC single-screen view */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          initial={{ opacity: 0, scale: 0.92, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative flex flex-col items-center justify-center w-full"
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative flex items-center justify-center w-full py-1 sm:py-0.5"
         >
           <a
             href="https://facebook.com/khujbe"
             target="_blank"
             rel="noopener noreferrer"
-            title="খুঁজবে ফেসবুক পেজ দেখুন (facebook.com/khujbe)"
+            title="খুঁজবে ফেসবুক পেজ (facebook.com/khujbe)"
             className="relative inline-flex items-center justify-center group cursor-pointer transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
           >
             {/* Subtle logo backplate glow */}
-            <div className="absolute inset-0 bg-white/45 rounded-3xl blur-xl -z-10 transform group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-white/60 rounded-3xl blur-2xl -z-10 transform group-hover:scale-105 transition-transform duration-500" />
             
             <img
               src="https://res.cloudinary.com/drvyjj7td/image/upload/v1792156671/Khujbe-logo-ghorooa-style_a21qva.png"
               alt="খুঁজবে - facebook.com/khujbe"
-              className="w-[280px] sm:w-[380px] md:w-[460px] lg:w-[520px] xl:w-[560px] h-auto object-contain drop-shadow-[0_12px_28px_rgba(2,132,199,0.28)]"
+              className="w-[88vw] max-w-[340px] xs:max-w-[380px] sm:w-auto sm:max-w-[390px] md:max-w-[430px] h-auto max-h-[40vh] sm:max-h-[33vh] md:max-h-[36vh] object-contain drop-shadow-[0_12px_28px_rgba(2,132,199,0.28)]"
               loading="eager"
             />
           </a>
-
-          <a
-            href="https://facebook.com/khujbe"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 text-[11px] sm:text-xs text-sky-800/80 hover:text-sky-900 font-medium flex items-center gap-1 transition-colors group"
-          >
-            <span>ফেসবুক পেজে যেতে লোগোতে ক্লিক করুন</span>
-            <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
-          </a>
         </motion.div>
 
-        {/* Action Buttons: khujbe.com and facebook.com/khujbe */}
+        {/* Action Buttons: khujbe.com & facebook.com/khujbe - Big & bold on mobile */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="pt-1 sm:pt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5 w-full max-w-[300px] xs:max-w-[320px] sm:max-w-none pt-1"
         >
           {/* Website Visit Button */}
           <a
             href="https://khujbe.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 px-7 py-3 sm:px-9 sm:py-3.5 rounded-full bg-gradient-to-r from-[#0284c7] via-[#0369a1] to-[#1d4ed8] text-white font-bold text-sm sm:text-base md:text-lg shadow-[0_8px_20px_-4px_rgba(2,132,199,0.5),0_6px_8px_-4px_rgba(2,132,199,0.4)] hover:shadow-[0_14px_28px_-4px_rgba(2,132,199,0.65)] hover:from-[#0369a1] hover:to-[#1e40af] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer group"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 sm:px-7 sm:py-2.5 rounded-full bg-gradient-to-r from-[#0284c7] via-[#0369a1] to-[#1d4ed8] text-white font-bold text-base sm:text-sm md:text-base shadow-[0_8px_20px_-4px_rgba(2,132,199,0.45)] hover:shadow-[0_12px_24px_-4px_rgba(2,132,199,0.6)] hover:from-[#0369a1] hover:to-[#1e40af] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
           >
             <span>ভিজিট করুন khujbe.com</span>
             <ExternalLink
-              size={18}
+              size={17}
               className="text-sky-200 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
             />
           </a>
@@ -152,7 +135,7 @@ export const KhujbePage: React.FC = () => {
             href="https://facebook.com/khujbe"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-full bg-white/95 hover:bg-white text-[#1877F2] hover:text-[#0c63d4] border-2 border-[#1877F2]/30 hover:border-[#1877F2] font-bold text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] cursor-pointer group"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-6 sm:py-2.5 rounded-full bg-white/95 hover:bg-white text-[#1877F2] hover:text-[#0c63d4] border-2 border-[#1877F2]/30 hover:border-[#1877F2] font-bold text-base sm:text-sm md:text-base shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
           >
             <Facebook size={18} className="text-[#1877F2] fill-[#1877F2]" />
             <span>facebook.com/khujbe</span>
@@ -163,8 +146,8 @@ export const KhujbePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="pt-2 text-xs text-sky-800/70 font-medium"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-xs text-sky-800/70 font-medium pt-1"
         >
           <p>© {new Date().getFullYear()} khujbe.com • সকল অধিকার সংরক্ষিত</p>
         </motion.div>

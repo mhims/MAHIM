@@ -8,6 +8,7 @@ import { SiteProvider } from './context/SiteContext';
 import { SalamiPage } from './components/SalamiPage';
 import { WalletPage } from './components/WalletPage';
 import { ChithiPage } from './components/ChithiPage';
+import { KhujbePage } from './components/KhujbePage';
 import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { ClassroomPage } from './components/ClassroomPage';
 import { ClassroomCoursesPage } from './components/ClassroomCoursesPage';
@@ -86,6 +87,7 @@ export default function App() {
   const isSalami = currentPath === '/salami';
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
+  const isKhujbe = currentPath === '/khujbe' || currentPath.startsWith('/khujbe/');
   const isPoliticalScience =
     currentPath === '/ps' ||
     currentPath.startsWith('/ps/') ||
@@ -234,7 +236,7 @@ export default function App() {
 
   // Clean scroll spy to keep browser URL in sync without hashes
   useEffect(() => {
-    if (isSalami || isWallet || isChithi || isPoliticalScience) return;
+    if (isSalami || isWallet || isChithi || isKhujbe || isPoliticalScience) return;
 
     let timeoutId: number;
     const sections = ['home', 'about', 'skills', 'experience', 'education', 'blog', 'contact'];
@@ -253,6 +255,7 @@ export default function App() {
               window.location.pathname !== '/salami' &&
               window.location.pathname !== '/wallet' &&
               window.location.pathname !== '/chithi' &&
+              window.location.pathname !== '/khujbe' &&
               window.location.pathname !== '/ps' &&
               window.location.pathname !== '/dcups' &&
               window.location.pathname !== '/political-science'
@@ -274,6 +277,7 @@ export default function App() {
     isSalami,
     isWallet,
     isChithi,
+    isKhujbe,
     isPoliticalScience,
     isAllF,
     isAllU,
@@ -310,6 +314,10 @@ export default function App() {
 
   if (isChithi) {
     return <ChithiPage />;
+  }
+
+  if (isKhujbe) {
+    return <KhujbePage />;
   }
 
   if (isAllF) {

@@ -27,7 +27,7 @@ import {
   PSTeacher,
   PSCourse
 } from '../../data/dcuPoliticalScienceData';
-import { fetchNoticesFromGoogleSheet } from '../../utils/googleSheetsNotices';
+import { fetchNoticesFromGoogleSheet, sendMaterialToGoogleSheet } from '../../utils/googleSheetsNotices';
 import { GOOGLE_APPS_SCRIPT_CODE } from '../../utils/googleAppsScriptTemplate';
 
 interface DCUAdminModalProps {
@@ -99,12 +99,12 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
   const [newNoticeFileUrl, setNewNoticeFileUrl] = useState('');
   const [newNoticePinned, setNewNoticePinned] = useState(false);
 
-  // Form states for adding new book
-  const [isAddingBook, setIsAddingBook] = useState(false);
+  // Form states for adding new book (default to open so user immediately sees the form)
+  const [isAddingBook, setIsAddingBook] = useState(true);
   const [newBookCourseCode, setNewBookCourseCode] = useState('PS-101');
   const [newBookTitle, setNewBookTitle] = useState('');
   const [newBookAuthor, setNewBookAuthor] = useState('');
-  const [newBookCategory, setNewBookCategory] = useState<PSBookResource['category']>('মূল বই');
+  const [newBookCategory, setNewBookCategory] = useState<PSBookResource['category']>('হ্যান্ডনোট');
   const [newBookDriveUrl, setNewBookDriveUrl] = useState('');
   const [newBookSize, setNewBookSize] = useState('');
 
@@ -210,6 +210,21 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
     };
 
     setBooks(prev => [book, ...prev]);
+
+    // Google Apps Script Web App সিঙ্ক
+    if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+      sendMaterialToGoogleSheet(googleSheetUrl, {
+        id: book.id,
+        courseCode: book.courseCode,
+        courseTitle: book.courseTitle,
+        title: book.title,
+        author: book.author,
+        category: book.category,
+        driveUrl: book.driveUrl,
+        fileSize: book.fileSize
+      });
+    }
+
     setIsAddingBook(false);
     setNewBookTitle('');
     setNewBookAuthor('');
@@ -316,6 +331,33 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
               নোটিশ, গুগল শিট ও রুটিন সম্পাদনা করতে লগইন করুন
             </p>
 
+            {/* Quick Credentials Box */}
+            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left text-xs text-zinc-800 dark:text-zinc-200 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-bold flex items-center gap-1 text-amber-700 dark:text-amber-400">
+                  <Lock className="w-3.5 h-3.5" /> এডমিন লগইন তথ্য:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername('dcudcps');
+                    setPassword('@@Dcudcps11223300@@');
+                    const ok = onLogin('dcudcps', '@@Dcudcps11223300@@');
+                    if (ok) setLoginError('');
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-amber-500 hover:bg-amber-600 text-black font-bold text-[11px] transition cursor-pointer"
+                >
+                  ⚡ অটো-লগইন
+                </button>
+              </div>
+              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-mono">
+                ইউজারনেম: <strong className="text-zinc-900 dark:text-white">dcudcps</strong>
+              </p>
+              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-mono">
+                পাসওয়ার্ড: <strong className="text-zinc-900 dark:text-white">@@Dcudcps11223300@@</strong>
+              </p>
+            </div>
+
             {loginError && (
               <div className="mb-4 p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs flex items-center gap-2 text-left">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -375,7 +417,7 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                 }`}
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" />
-                গুগল শিট ও ওয়েব অ্যাপ
+                📢 নোটিশ গুগল শিট
               </button>
 
               <button
@@ -388,7 +430,7 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                 }`}
               >
                 <Bell className="w-3.5 h-3.5" />
-                ম্যানুয়াল নোটিশ ({notices.length})
+                📢 নোটিশ তালিকা ({notices.length})
               </button>
 
               <button
@@ -401,7 +443,7 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                বই ও লেকচার শিট ({books.length})
+                📚 পিডিএফ ও নোট যোগ ({books.length})
               </button>
 
               <button
@@ -705,12 +747,12 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                           <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                            কোর্স
+                            কোর্স *
                           </label>
                           <select
                             value={newBookCourseCode}
                             onChange={e => setNewBookCourseCode(e.target.value)}
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
                           >
                             {courses.map(c => (
                               <option key={c.code} value={c.code}>
@@ -721,18 +763,63 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                            বই/ফাইলের নাম *
+                            নোট বা ফাইলের নাম *
                           </label>
                           <input
                             type="text"
                             value={newBookTitle}
                             onChange={e => setNewBookTitle(e.target.value)}
-                            placeholder="বই বা হ্যান্ডনোটের নাম"
+                            placeholder="যেমন: প্লেটোর আদর্শ রাষ্ট্র হ্যান্ডনোট"
                             required
-                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
                           />
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            ক্যাটাগরি
+                          </label>
+                          <select
+                            value={newBookCategory}
+                            onChange={e => setNewBookCategory(e.target.value as any)}
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                          >
+                            <option value="হ্যান্ডনোট">হ্যান্ডনোট</option>
+                            <option value="লেকচার শিট">লেকচার শিট</option>
+                            <option value="মূল বই">মূল বই</option>
+                            <option value="সিলেবাস ও প্রশ্ন">সিলেবাস ও প্রশ্ন</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            সংগ্রাহক / লেখক
+                          </label>
+                          <input
+                            type="text"
+                            value={newBookAuthor}
+                            onChange={e => setNewBookAuthor(e.target.value)}
+                            placeholder="যেমন: হিমেল (CR)"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            ফাইল সাইজ (ঐচ্ছিক)
+                          </label>
+                          <input
+                            type="text"
+                            value={newBookSize}
+                            onChange={e => setNewBookSize(e.target.value)}
+                            placeholder="যেমন: 3.5 MB"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                          />
+                        </div>
+                      </div>
+
                       <div>
                         <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                           গুগল ড্রাইভ / ডাউনলোড লিংক *
@@ -741,23 +828,33 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                           type="url"
                           value={newBookDriveUrl}
                           onChange={e => setNewBookDriveUrl(e.target.value)}
-                          placeholder="https://drive.google.com/..."
+                          placeholder="https://drive.google.com/file/d/..."
                           required
-                          className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900"
+                          className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
                         />
                       </div>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-600 text-black cursor-pointer"
-                      >
-                        সংরক্ষণ করুন
-                      </button>
+
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          type="submit"
+                          className="px-4 py-2 text-xs font-semibold rounded-xl bg-amber-500 hover:bg-amber-600 text-black cursor-pointer shadow-xs"
+                        >
+                          সংরক্ষণ করুন
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingBook(false)}
+                          className="px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 cursor-pointer"
+                        >
+                          বাতিল
+                        </button>
+                      </div>
                     </form>
                   )}
 
                   {books.length === 0 ? (
                     <div className="p-6 text-center rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 text-zinc-500 text-xs">
-                      এখনো কোনো বই বা শিট যুক্ত করা হয়নি। প্রয়োজন অনুযায়ী পরে ড্রাইভ লিংক যুক্ত করতে পারবেন।
+                      আপাতত কোনো বই বা শিট যুক্ত করা নেই। উপরে '+ বই বা শিট যোগ' বাটনে ক্লিক করে নতুন লিংক যুক্ত করুন।
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -766,14 +863,32 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                           key={book.id}
                           className="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs"
                         >
-                          <div>
-                            <span className="font-semibold text-zinc-900 dark:text-white">{book.title}</span>
-                            <span className="text-zinc-500 ml-2">({book.courseCode})</span>
+                          <div className="flex-1 min-w-0 pr-2">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                {book.courseCode}
+                              </span>
+                              <span className="text-[10px] text-zinc-400">
+                                {book.category}
+                              </span>
+                              {book.fileSize && (
+                                <span className="text-[10px] text-zinc-400 font-mono">
+                                  {book.fileSize}
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="font-semibold text-zinc-900 dark:text-white truncate">
+                              {book.title}
+                            </h4>
+                            <p className="text-[11px] text-zinc-500 truncate mt-0.5">
+                              সংগ্রাহক: {book.author || 'বিভাগীয় সংগ্রহ'}
+                            </p>
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDeleteBook(book.id)}
-                            className="p-1 text-zinc-400 hover:text-red-500"
+                            className="p-1.5 text-zinc-400 hover:text-red-500 transition cursor-pointer shrink-0"
+                            title="মুছে ফেলুন"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

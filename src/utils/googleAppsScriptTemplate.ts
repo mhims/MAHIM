@@ -27,6 +27,22 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // API: ওয়েবসাইট থেকে পিডিএফ নোট ও বইয়ের তালিকা চাওয়া
+  if (action === 'getMaterials') {
+    var materials = getMaterialsList();
+    return ContentService
+      .createTextOutput(JSON.stringify(materials))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // API: ওয়েবসাইট বা এডমিন থেকে নতুন স্টাডি মেটেরিয়াল / পিডিএফ যোগ করা
+  if (action === 'addMaterial') {
+    var matRes = addMaterialFromApi(e.parameter);
+    return ContentService
+      .createTextOutput(JSON.stringify(matRes))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   // API: ওয়েবসাইট থেকে শিক্ষার্থী সাবস্ক্রাইব করার রিকোয়েস্ট
   if (action === 'addSubscriber') {
     var name = e.parameter.name || 'শিক্ষার্থী';
@@ -41,7 +57,7 @@ function doGet(e) {
   // ব্রাউজার ভিজিটরদের জন্য সম্পূর্ণ স্বয়ংসম্পূর্ণ ওয়েব অ্যাপ ড্যাশবোর্ড
   return HtmlService
     .createHtmlOutput(getDashboardHtml())
-    .setTitle('নোটিশ ড্যাশবোর্ড - রাষ্ট্রবিজ্ঞান বিভাগ (DCU)')
+    .setTitle('নোটিশ ও নোট ড্যাশবোর্ড - রাষ্ট্রবিজ্ঞান বিভাগ (DCU)')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 }
@@ -69,6 +85,27 @@ function autoSetupSheets() {
     noticeSheet.setColumnWidth(4, 120);
     noticeSheet.setColumnWidth(5, 380);
     noticeSheet.setColumnWidth(6, 180);
+  }
+
+  // Materials (পিডিএফ নোট ও বই) শিট তৈরি
+  var matSheet = ss.getSheetByName('Materials');
+  if (!matSheet) {
+    matSheet = ss.insertSheet('Materials');
+    var matHeaders = [['ID', 'কোর্স কোড', 'শিরোনাম', 'ক্যাটাগরি', 'লেখক/সংগ্রাহক', 'ড্রাইভ লিংক', 'সাইজ']];
+    matSheet.getRange(1, 1, 1, 7).setValues(matHeaders);
+    matSheet.getRange(1, 1, 1, 7)
+      .setBackground('#064e3b')
+      .setFontColor('#34d399')
+      .setFontWeight('bold')
+      .setHorizontalAlignment('center');
+    matSheet.setFrozenRows(1);
+    matSheet.setColumnWidth(1, 120);
+    matSheet.setColumnWidth(2, 100);
+    matSheet.setColumnWidth(3, 260);
+    matSheet.setColumnWidth(4, 120);
+    matSheet.setColumnWidth(5, 140);
+    matSheet.setColumnWidth(6, 320);
+    matSheet.setColumnWidth(7, 90);
   }
 
   // Subscribers শিট তৈরি
@@ -144,6 +181,111 @@ function getNoticesList() {
   } catch (err) {
     Logger.log('getNoticesList error: ' + err.toString());
     return [];
+  }
+}
+
+// ৩.২. বর্তমান পিডিএফ নোট ও বইয়ের তালিকা রিটার্ন করা
+function getMaterialsList() {
+  try {
+    autoSetupSheets();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return [];
+    var sheet = ss.getSheetByName('Materials');
+    if (!sheet) return [];
+    var lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return [];
+
+    var data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    var materials = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i];
+      var title = row[2] ? String(row[2]).trim() : '';
+      var driveUrl = row[5] ? String(row[5]).trim() : '';
+      if (title || driveUrl) {
+        materials.push({
+          rowIndex: i + 2,
+          id: String(row[0] || ('mat-' + (i + 1))),
+          courseCode: String(row[1] || 'PS-101').trim(),
+          title: title || 'নোট / শিট',
+          category: String(row[3] || 'হ্যান্ডনোট').trim(),
+          author: String(row[4] || 'বিভাগীয় সংগ্রহ').trim(),
+          driveUrl: driveUrl,
+          fileSize: String(row[6] || '').trim()
+        });
+      }
+    }
+
+    return materials.reverse();
+  } catch (err) {
+    Logger.log('getMaterialsList error: ' + err.toString());
+    return [];
+  }
+}
+
+// ৩.৩. নতুন পিডিএফ নোট বা বই যোগ করা (API & Web App)
+function addMaterialFromApi(p) {
+  try {
+    autoSetupSheets();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { success: false, message: 'গুগল শিট পাওয়া যায়নি।' };
+    var sheet = ss.getSheetByName('Materials');
+    if (!sheet) return { success: false, message: 'Materials শিট পাওয়া যায়নি।' };
+
+    var id = 'mat-' + new Date().getTime();
+    var code = (p && p.courseCode) ? String(p.courseCode).trim() : 'PS-101';
+    var title = (p && p.title) ? String(p.title).trim() : 'নোট';
+    var cat = (p && p.category) ? String(p.category).trim() : 'হ্যান্ডনোট';
+    var author = (p && p.author) ? String(p.author).trim() : 'বিভাগীয় সংগ্রহ';
+    var url = (p && p.driveUrl) ? String(p.driveUrl).trim() : '';
+    var size = (p && p.fileSize) ? String(p.fileSize).trim() : '';
+
+    if (!title || !url) {
+      return { success: false, message: 'শিরোনাম এবং ড্রাইভ লিংক আবশ্যক।' };
+    }
+
+    sheet.appendRow([id, code, title, cat, author, url, size]);
+    return { success: true, message: 'নোট/পিডিএফ সফলভাবে যুক্ত হয়েছে!' };
+  } catch (err) {
+    Logger.log('addMaterialFromApi error: ' + err.toString());
+    return { success: false, message: 'ত্রুটি: ' + err.toString() };
+  }
+}
+
+// ৩.৪. ড্যাশবোর্ড থেকে নোট মুছে ফেলা
+function deleteMaterial(idOrRow) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { success: false, message: 'গুগল শিট পাওয়া যায়নি।' };
+    var sheet = ss.getSheetByName('Materials');
+    if (!sheet) return { success: false, message: 'Materials শিট পাওয়া যায়নি।' };
+    var lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return { success: false, message: 'কোনো নোট নেই।' };
+
+    var data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    var targetRow = -1;
+
+    for (var i = 0; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(idOrRow).trim()) {
+        targetRow = i + 2;
+        break;
+      }
+    }
+
+    if (targetRow === -1 && !isNaN(Number(idOrRow))) {
+      var num = Number(idOrRow);
+      if (num >= 2 && num <= lastRow) {
+        targetRow = num;
+      }
+    }
+
+    if (targetRow >= 2 && targetRow <= lastRow) {
+      sheet.deleteRow(targetRow);
+      return { success: true, message: 'নোটটি সফলভাবে মুছে ফেলা হয়েছে।' };
+    }
+    return { success: false, message: 'নোটটি খুঁজে পাওয়া যায়নি।' };
+  } catch (err) {
+    return { success: false, message: err.toString() };
   }
 }
 
@@ -338,9 +480,10 @@ function getDashboardStats() {
   try {
     autoSetupSheets();
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    if (!ss) return { noticesCount: 0, subscribersCount: 0 };
+    if (!ss) return { noticesCount: 0, subscribersCount: 0, materialsCount: 0 };
     var noticeSheet = ss.getSheetByName('Notices');
     var subSheet = ss.getSheetByName('Subscribers');
+    var matSheet = ss.getSheetByName('Materials');
 
     var noticeCount = 0;
     if (noticeSheet) {
@@ -354,13 +497,20 @@ function getDashboardStats() {
       if (sLast > 1) subCount = sLast - 1;
     }
 
+    var matCount = 0;
+    if (matSheet) {
+      var mLast = matSheet.getLastRow();
+      if (mLast > 1) matCount = mLast - 1;
+    }
+
     return {
       noticesCount: Number(noticeCount),
-      subscribersCount: Number(subCount)
+      subscribersCount: Number(subCount),
+      materialsCount: Number(matCount)
     };
   } catch (err) {
     Logger.log('getDashboardStats error: ' + err.toString());
-    return { noticesCount: 0, subscribersCount: 0 };
+    return { noticesCount: 0, subscribersCount: 0, materialsCount: 0 };
   }
 }
 

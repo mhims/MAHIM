@@ -21,6 +21,7 @@ export const STANDALONE_ROUTES = new Set([
   '/wallet',
   '/admin',
   '/chithi',
+  '/khujbe',
   '/allf',
   '/allu',
   '/alll',

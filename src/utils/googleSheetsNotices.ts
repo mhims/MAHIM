@@ -330,3 +330,192 @@ export async function sendSubscriberToGoogleSheet(
   }
 }
 
+export interface SheetMaterial {
+  id: string;
+  courseCode: string;
+  courseTitle?: string;
+  title: string;
+  author: string;
+  edition?: string;
+  category: 'মূল বই' | 'লেকচার শিট' | 'হ্যান্ডনোট' | 'সিলেবাস ও প্রশ্ন';
+  driveUrl: string;
+  fileSize?: string;
+}
+
+// Fetch study materials from Google Apps Script Web App or Sheet CSV
+export async function fetchMaterialsFromSource(url: string): Promise<SheetMaterial[]> {
+  const trimmed = url.trim();
+  if (!trimmed) return [];
+
+  // 1. Google Apps Script Web App
+  if (trimmed.includes('script.google.com')) {
+    try {
+      const separator = trimmed.includes('?') ? '&' : '?';
+      const targetUrl = `${trimmed}${separator}action=getMaterials`;
+      const response = await fetch(targetUrl, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json, text/plain, */*' }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          return data.map((item: any, idx: number) => ({
+            id: item.id || `sheet-mat-${idx}`,
+            courseCode: item.courseCode || item.code || 'PS-101',
+            courseTitle: item.courseTitle || '',
+            title: item.title || item.name || 'নোট',
+            author: item.author || item.uploader || 'বিভাগীয় সংগ্রহ',
+            category: item.category || 'হ্যান্ডনোট',
+            driveUrl: item.driveUrl || item.url || item.link || '',
+            fileSize: item.fileSize || item.size || ''
+          }));
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch materials from Apps Script:', err);
+    }
+  }
+
+  // 2. Direct Google Sheets CSV / gviz
+  // 2. Direct Google Sheets CSV / gviz / published links
+  if (trimmed.includes('docs.google.com/spreadsheets')) {
+    try {
+      const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+      if (match && match[1]) {
+        const sheetId = match[1];
+        const gidMatch = trimmed.match(/[#&?]gid=([0-9]+)/);
+        const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
+
+        // Attempt 1: Default/First sheet or specified gid
+        try {
+          const gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv${gidParam}`;
+          const res = await fetch(gvizUrl);
+          if (res.ok) {
+            const csv = await res.text();
+            const list = parseCsvToMaterials(csv);
+            if (list.length > 0) return list;
+          }
+        } catch {
+          // continue to attempt 2
+        }
+
+        // Attempt 2: sheet=Materials
+        try {
+          const matGvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Materials`;
+          const matRes = await fetch(matGvizUrl);
+          if (matRes.ok) {
+            const csv = await matRes.text();
+            const list = parseCsvToMaterials(csv);
+            if (list.length > 0) return list;
+          }
+        } catch {
+          // ignore
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch materials from Google Sheet CSV:', err);
+    }
+  }
+
+  // 3. Direct CSV or other export links
+  if (trimmed.includes('output=csv') || trimmed.includes('.csv') || trimmed.includes('gviz/tq')) {
+    try {
+      const res = await fetch(trimmed);
+      if (res.ok) {
+        const csv = await res.text();
+        const list = parseCsvToMaterials(csv);
+        if (list.length > 0) return list;
+      }
+    } catch (err) {
+      console.warn('Failed to fetch materials from direct CSV link:', err);
+    }
+  }
+
+  return [];
+}
+
+// Helper to parse CSV rows into study materials with smart column header detection
+export function parseCsvToMaterials(csvText: string): SheetMaterial[] {
+  const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (lines.length <= 1) return [];
+
+  const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(p => p.replace(/^"|"$/g, '').trim().toLowerCase());
+  
+  let courseIdx = headers.findIndex(h => h.includes('কোর্স') || h.includes('course') || h.includes('code') || h.includes('কোড'));
+  let titleIdx = headers.findIndex(h => h.includes('শিরোনাম') || h.includes('title') || h.includes('নাম') || h.includes('name'));
+  let catIdx = headers.findIndex(h => h.includes('ক্যাটাগরি') || h.includes('category') || h.includes('টাইপ') || h.includes('type'));
+  let authorIdx = headers.findIndex(h => h.includes('লেখক') || h.includes('সংগ্রাহক') || h.includes('author') || h.includes('uploader') || h.includes('cr'));
+  let linkIdx = headers.findIndex(h => h.includes('লিংক') || h.includes('link') || h.includes('drive') || h.includes('url') || h.includes('ড্রাইভ'));
+  let sizeIdx = headers.findIndex(h => h.includes('সাইজ') || h.includes('size'));
+
+  // Default fallbacks if header names differ
+  if (courseIdx === -1) courseIdx = 0;
+  if (titleIdx === -1) titleIdx = 1;
+  if (catIdx === -1) catIdx = 2;
+  if (authorIdx === -1) authorIdx = 3;
+  if (linkIdx === -1) linkIdx = 4;
+  if (sizeIdx === -1) sizeIdx = 5;
+
+  const list: SheetMaterial[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(p => p.replace(/^"|"$/g, '').trim());
+    if (parts.length < 2) continue;
+
+    // Smart fallback if link is in another column (search for http/https)
+    let driveUrl = parts[linkIdx] || '';
+    if (!driveUrl || !driveUrl.startsWith('http')) {
+      const foundUrl = parts.find(p => p.startsWith('http'));
+      if (foundUrl) driveUrl = foundUrl;
+    }
+
+    const title = parts[titleIdx] || parts[0] || 'নোট';
+    const courseCode = parts[courseIdx] || 'PS-101';
+    const category = (parts[catIdx] as any) || 'হ্যান্ডনোট';
+    const author = parts[authorIdx] || 'বিভাগীয় সংগ্রহ';
+    const fileSize = parts[sizeIdx] || '';
+
+    if (title || driveUrl) {
+      list.push({
+        id: `csv-mat-${i}-${Date.now()}`,
+        courseCode: courseCode.trim(),
+        title: title.trim(),
+        category: category.trim(),
+        author: author.trim(),
+        driveUrl: driveUrl.trim(),
+        fileSize: fileSize.trim()
+      });
+    }
+  }
+
+  return list;
+}
+
+// Send newly added study material to Apps Script Web App
+export async function sendMaterialToGoogleSheet(
+  webAppUrl: string,
+  material: SheetMaterial
+): Promise<boolean> {
+  const trimmed = webAppUrl.trim();
+  if (!trimmed || !trimmed.includes('script.google.com')) return false;
+
+  const urlObj = new URL(trimmed);
+  urlObj.searchParams.set('action', 'addMaterial');
+  urlObj.searchParams.set('courseCode', material.courseCode);
+  urlObj.searchParams.set('title', material.title);
+  urlObj.searchParams.set('category', material.category);
+  urlObj.searchParams.set('author', material.author);
+  urlObj.searchParams.set('driveUrl', material.driveUrl);
+  if (material.fileSize) urlObj.searchParams.set('fileSize', material.fileSize);
+
+  try {
+    await fetch(urlObj.toString(), {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    return true;
+  } catch (err) {
+    console.error('Failed to send material to Google Sheet:', err);
+    return false;
+  }
+}
+

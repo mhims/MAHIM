@@ -49,6 +49,15 @@ import {
 import { DCUAdminModal } from './dcu-ps/DCUAdminModal';
 import { DCUPdfManageModal } from './dcu-ps/DCUPdfManageModal';
 import { DCUWhatsAppWidget } from './dcu-ps/DCUWhatsAppWidget';
+import { DCUAcademicCalendar } from './dcu-ps/DCUAcademicCalendar';
+import { CalendarConfig, CalendarHolidayItem } from '../types/dcuCalendar';
+import {
+  getCachedCalendarConfig,
+  getCachedHolidays,
+  saveCachedCalendarConfig,
+  saveCachedHolidays,
+  fetchCalendarFromSource
+} from '../utils/dcuCalendarService';
 import {
   TickerNotice,
   DEFAULT_TICKER_NOTICES,
@@ -65,7 +74,7 @@ import {
 import { downloadRoutineImage, downloadRoutinePDF } from '../utils/routineExport';
 import { navigateTo } from '../utils/navigation';
 
-export type PSTab = 'today' | 'routine' | 'courses' | 'notices' | 'materials' | 'email' | 'teachers';
+export type PSTab = 'today' | 'routine' | 'calendar' | 'courses' | 'notices' | 'materials' | 'email' | 'teachers';
 
 const DAY_NAMES_BN = [
   'রবিবার',
@@ -240,10 +249,15 @@ export function PoliticalSciencePage() {
   };
 
   // Google Apps Script Web App / Sheet URL state (defaulted to user's live Web App)
-  const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxCTkqiq--KwNzefsunGPZayldyo5Eo6cSx7wcG0hFGPBr93tCdbzJB7F5xK2ygBrFI/exec';
+  const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyfcQiURefOSZzdddVWADa03lE05rSYd9TotpC3Nd_OKBqz4fzF2vMO6C6PmXY-EHvjwg/exec';
 
   const [googleSheetUrl, setGoogleSheetUrl] = useState<string>(() => {
-    return localStorage.getItem('dcu_ps_sheets_url') || DEFAULT_WEB_APP_URL;
+    const saved = localStorage.getItem('dcu_ps_sheets_url');
+    if (!saved || saved.includes('AKfycbxCTkqiq')) {
+      localStorage.setItem('dcu_ps_sheets_url', DEFAULT_WEB_APP_URL);
+      return DEFAULT_WEB_APP_URL;
+    }
+    return saved;
   });
 
   // Dedicated Google Sheet URL specifically for PDFs & Study Materials
@@ -253,6 +267,11 @@ export function PoliticalSciencePage() {
 
   // Dedicated PDF & Notes Management Modal
   const [isPdfManageOpen, setIsPdfManageOpen] = useState(false);
+
+  // Academic Calendar & Holidays State (Instant load from localStorage + SWR live Google Sheet sync)
+  const [calendarConfig, setCalendarConfig] = useState<CalendarConfig>(() => getCachedCalendarConfig());
+  const [holidays, setHolidays] = useState<CalendarHolidayItem[]>(() => getCachedHolidays());
+  const [isCalendarSyncing, setIsCalendarSyncing] = useState<boolean>(false);
 
   const [tickerNotices, setTickerNotices] = useState<TickerNotice[]>(DEFAULT_TICKER_NOTICES);
 
@@ -644,6 +663,34 @@ export function PoliticalSciencePage() {
     });
   }, [books, selectedMaterialCourse, selectedMaterialCategory, materialSearchQuery]);
 
+  // Load Academic Calendar & Holiday data from Google Apps Script Web App / Sheet
+  const loadCalendarData = async (sheetUrl?: string) => {
+    const targetUrl = (sheetUrl !== undefined ? sheetUrl : googleSheetUrl).trim();
+    if (!targetUrl) return;
+
+    setIsCalendarSyncing(true);
+    try {
+      const result = await fetchCalendarFromSource(targetUrl);
+      if (result) {
+        if (result.holidays && result.holidays.length > 0) {
+          setHolidays(result.holidays);
+          saveCachedHolidays(result.holidays);
+        }
+        if (result.config) {
+          setCalendarConfig(prev => {
+            const merged: CalendarConfig = { ...prev, ...result.config };
+            saveCachedCalendarConfig(merged);
+            return merged;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load academic calendar from source:', err);
+    } finally {
+      setIsCalendarSyncing(false);
+    }
+  };
+
   useEffect(() => {
     loadTickerNotices();
   }, [googleSheetUrl]);
@@ -651,6 +698,10 @@ export function PoliticalSciencePage() {
   useEffect(() => {
     loadMaterials();
   }, [pdfSheetUrl, googleSheetUrl]);
+
+  useEffect(() => {
+    loadCalendarData();
+  }, [googleSheetUrl]);
 
   // Secret 5-tap trigger on the university logo to open Admin
   const handleLogoClick = () => {
@@ -736,11 +787,11 @@ export function PoliticalSciencePage() {
       const segments = pathname.split('/').filter(Boolean);
       
       let targetTab: PSTab | null = null;
-      if (segments.length >= 2 && ['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(segments[1])) {
+      if (segments.length >= 2 && ['today', 'routine', 'calendar', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(segments[1])) {
         targetTab = segments[1] as PSTab;
       } else if (window.location.hash) {
         const hash = window.location.hash.replace(/^#\/?/, '');
-        if (['today', 'routine', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(hash)) {
+        if (['today', 'routine', 'calendar', 'courses', 'notices', 'materials', 'email', 'teachers'].includes(hash)) {
           targetTab = hash as PSTab;
         }
       }
@@ -772,7 +823,7 @@ export function PoliticalSciencePage() {
         return;
       }
 
-      const sections: PSTab[] = ['today', 'materials', 'routine', 'notices', 'courses', 'email', 'teachers'];
+      const sections: PSTab[] = ['today', 'materials', 'routine', 'calendar', 'notices', 'courses', 'email', 'teachers'];
       const scrollPos = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -857,6 +908,7 @@ export function PoliticalSciencePage() {
   const navMenuItems = [
     { id: 'materials' as PSTab, label: 'পিডিএফ নোট', icon: BookOpen },
     { id: 'routine' as PSTab, label: 'রুটিন', icon: Calendar },
+    { id: 'calendar' as PSTab, label: 'ক্যালেন্ডার ও ছুটি', icon: Calendar },
     { id: 'notices' as PSTab, label: 'নোটিশ', icon: Bell },
     { id: 'courses' as PSTab, label: 'কোর্স', icon: GraduationCap },
     { id: 'teachers' as PSTab, label: 'শিক্ষক', icon: Users },
@@ -1799,6 +1851,20 @@ export function PoliticalSciencePage() {
         </section>
 
         {/* ======================================================================= */}
+        {/* SECTION: ACADEMIC HOLIDAY & OFF-DAYS CALENDAR (#section-calendar)       */}
+        {/* ======================================================================= */}
+        <section id="section-calendar" className="space-y-3.5 scroll-mt-20">
+          <DCUAcademicCalendar
+            config={calendarConfig}
+            holidays={holidays}
+            onRefresh={() => loadCalendarData(googleSheetUrl)}
+            isRefreshing={isCalendarSyncing}
+            onOpenAdmin={() => setIsAdminOpen(true)}
+            onNavigateToRoutine={() => scrollToSection('routine')}
+          />
+        </section>
+
+        {/* ======================================================================= */}
         {/* SECTION 4: NOTICES BOARD (#section-notices) - RIGHT BELOW PDF SECTION    */}
         {/* ======================================================================= */}
         <section id="section-notices" className="space-y-3 scroll-mt-20">
@@ -2456,6 +2522,10 @@ export function PoliticalSciencePage() {
         googleSheetUrl={googleSheetUrl}
         setGoogleSheetUrl={setGoogleSheetUrl}
         onRefreshGoogleSheet={loadTickerNotices}
+        calendarConfig={calendarConfig}
+        setCalendarConfig={setCalendarConfig}
+        holidays={holidays}
+        setHolidays={setHolidays}
       />
 
       {/* ========================================================================= */}

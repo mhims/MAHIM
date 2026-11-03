@@ -11,11 +11,14 @@ export const DynamicSEO: React.FC = () => {
     const isChithi = path.includes('chithi');
     const isSalami = path.includes('salami');
     const isKhujbe = path.includes('khujbe');
+    const isKolomKolom = path.includes('kolom-kolom');
     const isClassroom = path.includes('classroom');
     const isPortfolio = path.includes('portfolio');
 
     // 1. Dynamic Document Title
-    if (isKhujbe) {
+    if (isKolomKolom) {
+      document.title = 'কলম-কলম (Pen Fight) — ছোটবেলার স্কুলের বেঞ্চের খেলা';
+    } else if (isKhujbe) {
       document.title = 'যাত্রা শুরুর অপেক্ষায় ই-কমার্স সাইট — খুঁজবে (khujbe.com)';
     } else if (isClassroom) {
       document.title = "Mahims Classroom | Mahim's Classroom (মাহিম ক্লাসরুম) — একাডেমি ও এডমিশন প্ল্যাটফর্ম";
@@ -77,6 +80,11 @@ export const DynamicSEO: React.FC = () => {
     }
 
     // 2. Update Primary Meta Tags
+    if (isKolomKolom) {
+      setMetaTag('meta[name="robots"]', 'name', 'robots', 'noindex, nofollow');
+    } else {
+      setMetaTag('meta[name="robots"]', 'name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    }
     setMetaTag('meta[name="description"]', 'name', 'description', activeDescription);
     if (settings.seoKeywords && settings.seoKeywords.length > 0) {
       setMetaTag('meta[name="keywords"]', 'name', 'keywords', settings.seoKeywords.join(', '));

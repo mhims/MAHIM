@@ -9,6 +9,7 @@ import { SalamiPage } from './components/SalamiPage';
 import { WalletPage } from './components/WalletPage';
 import { ChithiPage } from './components/ChithiPage';
 import { KhujbePage } from './components/KhujbePage';
+import { KolomKolomPage } from './components/KolomKolomPage';
 import { DriveGatewayPage } from './components/DriveGatewayPage';
 import { ClassroomPage } from './components/ClassroomPage';
 import { ClassroomCoursesPage } from './components/ClassroomCoursesPage';
@@ -88,6 +89,7 @@ export default function App() {
   const isWallet = currentPath === '/wallet';
   const isChithi = currentPath === '/chithi';
   const isKhujbe = currentPath === '/khujbe' || currentPath.startsWith('/khujbe/');
+  const isKolomKolom = currentPath === '/kolom-kolom' || currentPath.startsWith('/kolom-kolom/');
   const isPoliticalScience =
     currentPath === '/ps' ||
     currentPath.startsWith('/ps/') ||
@@ -236,7 +238,7 @@ export default function App() {
 
   // Clean scroll spy to keep browser URL in sync without hashes
   useEffect(() => {
-    if (isSalami || isWallet || isChithi || isKhujbe || isPoliticalScience) return;
+    if (isSalami || isWallet || isChithi || isKhujbe || isKolomKolom || isPoliticalScience) return;
 
     let timeoutId: number;
     const sections = ['home', 'about', 'skills', 'experience', 'education', 'blog', 'contact'];
@@ -256,6 +258,7 @@ export default function App() {
               window.location.pathname !== '/wallet' &&
               window.location.pathname !== '/chithi' &&
               window.location.pathname !== '/khujbe' &&
+              window.location.pathname !== '/kolom-kolom' &&
               window.location.pathname !== '/ps' &&
               window.location.pathname !== '/dcups' &&
               window.location.pathname !== '/political-science'
@@ -278,6 +281,7 @@ export default function App() {
     isWallet,
     isChithi,
     isKhujbe,
+    isKolomKolom,
     isPoliticalScience,
     isAllF,
     isAllU,
@@ -318,6 +322,10 @@ export default function App() {
 
   if (isKhujbe) {
     return <KhujbePage />;
+  }
+
+  if (isKolomKolom) {
+    return <KolomKolomPage />;
   }
 
   if (isAllF) {

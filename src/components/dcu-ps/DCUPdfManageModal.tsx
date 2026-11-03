@@ -13,7 +13,6 @@ import {
   Copy,
   RefreshCw,
   FileText,
-  KeyRound,
   ShieldCheck,
   FolderOpen
 } from 'lucide-react';
@@ -143,11 +142,10 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
   setPdfSheetUrl,
   onRefreshMaterials
 }) => {
-  // Login credentials state
-  const [username, setUsername] = useState('dcudcps');
-  const [password, setPassword] = useState('@@Dcudcps11223300@@');
+  // Login credentials state (strictly kept blank & secure)
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [showPasswordHint, setShowPasswordHint] = useState(false);
 
   // Tabs inside modal: 'add' (form) | 'sheet' (google sheet setup) | 'manage' (list & delete)
   const [activeTab, setActiveTab] = useState<'add' | 'sheet' | 'manage'>('add');
@@ -175,21 +173,13 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = onLogin(username, password);
+    const ok = onLogin(username.trim(), password);
     if (!ok) {
       setLoginError('ইউজার নেম বা পাসওয়ার্ড সঠিক নয়!');
     } else {
       setLoginError('');
-      setActiveTab('add');
-    }
-  };
-
-  const handleQuickLoginFill = () => {
-    setUsername('dcudcps');
-    setPassword('@@Dcudcps11223300@@');
-    const ok = onLogin('dcudcps', '@@Dcudcps11223300@@');
-    if (ok) {
-      setLoginError('');
+      setUsername('');
+      setPassword('');
       setActiveTab('add');
     }
   };
@@ -355,28 +345,6 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
               নতুন পিডিএফ নোট যুক্ত করতে বা এডিট করতে সিআর/এডমিন হিসেবে প্রবেশ করুন
             </p>
 
-            {/* Clear Credentials Helper Box */}
-            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left text-xs text-zinc-800 dark:text-zinc-200 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-bold flex items-center gap-1 text-amber-700 dark:text-amber-400">
-                  <KeyRound className="w-3.5 h-3.5" /> এডমিন লগইন তথ্য:
-                </span>
-                <button
-                  type="button"
-                  onClick={handleQuickLoginFill}
-                  className="px-2 py-0.5 rounded-md bg-amber-500 hover:bg-amber-600 text-black font-bold text-[11px] transition cursor-pointer"
-                >
-                  ⚡ এক ক্লিকে লগইন
-                </button>
-              </div>
-              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-mono">
-                ইউজারনেম: <strong className="text-zinc-900 dark:text-white">dcudcps</strong>
-              </p>
-              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 font-mono">
-                পাসওয়ার্ড: <strong className="text-zinc-900 dark:text-white">@@Dcudcps11223300@@</strong>
-              </p>
-            </div>
-
             {loginError && (
               <div className="mb-4 p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs flex items-center gap-2 text-left">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -384,7 +352,7 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
               </div>
             )}
 
-            <form onSubmit={handleLoginSubmit} className="space-y-3 text-left">
+            <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-left">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   ইউজার নেম
@@ -393,7 +361,8 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
                   type="text"
                   value={username}
                   onChange={e => setUsername(e.target.value)}
-                  placeholder="dcudcps"
+                  placeholder="ইউজার নেম লিখুন"
+                  autoComplete="username"
                   required
                   className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500"
                 />
@@ -407,7 +376,8 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="@@Dcudcps11223300@@"
+                  placeholder="পাসওয়ার্ড লিখুন"
+                  autoComplete="current-password"
                   required
                   className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-amber-500"
                 />

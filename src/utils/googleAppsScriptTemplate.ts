@@ -35,6 +35,22 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // API: ওয়েবসাইট থেকে ছুটির ক্যালেন্ডার ও কনফিগারেশন চাওয়া
+  if (action === 'getCalendar') {
+    var calData = getCalendarData();
+    return ContentService
+      .createTextOutput(JSON.stringify(calData))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // API: ওয়েবসাইট বা এডমিন থেকে ছুটির তারিখ যোগ করা
+  if (action === 'addHoliday') {
+    var holRes = addHolidayFromApi(e.parameter);
+    return ContentService
+      .createTextOutput(JSON.stringify(holRes))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   // API: ওয়েবসাইট বা এডমিন থেকে নতুন স্টাডি মেটেরিয়াল / পিডিএফ যোগ করা
   if (action === 'addMaterial') {
     var matRes = addMaterialFromApi(e.parameter);
@@ -124,6 +140,26 @@ function autoSetupSheets() {
     subSheet.setColumnWidth(2, 250);
     subSheet.setColumnWidth(3, 120);
     subSheet.setColumnWidth(4, 120);
+  }
+
+  // Calendar (ছুটি ও একাডেমিক ক্যালেন্ডার) শিট তৈরি
+  var calSheet = ss.getSheetByName('Calendar');
+  if (!calSheet) {
+    calSheet = ss.insertSheet('Calendar');
+    var calHeaders = [['শুরুর তারিখ (YYYY-MM-DD)', 'শেষের তারিখ (ঐচ্ছিক)', 'স্ট্যাটাস (ছুটি/খোলা/পরীক্ষা)', 'ছুটি বা উপলক্ষের বিবরণ']];
+    calSheet.getRange(1, 1, 1, 4).setValues(calHeaders);
+    calSheet.getRange(1, 1, 1, 4)
+      .setBackground('#7f1d1d')
+      .setFontColor('#fecaca')
+      .setFontWeight('bold')
+      .setHorizontalAlignment('center');
+    calSheet.setFrozenRows(1);
+    calSheet.setColumnWidth(1, 160);
+    calSheet.setColumnWidth(2, 160);
+    calSheet.setColumnWidth(3, 160);
+    calSheet.setColumnWidth(4, 300);
+
+    // Sheet is initialized clean with headers only - user will add custom holidays from sheet
   }
 }
 
@@ -252,7 +288,116 @@ function addMaterialFromApi(p) {
   }
 }
 
-// ৩.৪. ড্যাশবোর্ড থেকে নোট মুছে ফেলা
+// ৩.৪. একাডেমিক ছুটির ক্যালেন্ডার তালিকা রিটার্ন করা
+function getCalendarData() {
+  try {
+    autoSetupSheets();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { config: { defaultOffDays: [3, 5, 6], allowFutureMonths: false }, holidays: [] };
+    var sheet = ss.getSheetByName('Calendar');
+    if (!sheet) return { config: { defaultOffDays: [3, 5, 6], allowFutureMonths: false }, holidays: [] };
+
+    var lastRow = sheet.getLastRow();
+    var holidays = [];
+
+    if (lastRow > 1) {
+      var data = sheet.getRange(2, 1, lastRow - 1, 4).getValues();
+      for (var i = 0; i < data.length; i++) {
+        var rawStart = data[i][0];
+        if (!rawStart) continue;
+        var startYmd = formatToYmdString(rawStart);
+        if (!startYmd) continue;
+
+        var rawEnd = data[i][1];
+        var endYmd = rawEnd ? formatToYmdString(rawEnd) : '';
+
+        var rawStatus = String(data[i][2] || 'ছুটি').toLowerCase();
+        var status = 'holiday';
+        if (rawStatus.indexOf('খোলা') !== -1 || rawStatus.indexOf('open') !== -1 || rawStatus.indexOf('ক্লাস') !== -1) {
+          status = 'open';
+        } else if (rawStatus.indexOf('পরীক্ষা') !== -1 || rawStatus.indexOf('exam') !== -1) {
+          status = 'exam';
+        }
+
+        var title = String(data[i][3] || (status === 'open' ? 'ক্লাস চালু' : 'ছুটি')).trim();
+
+        holidays.push({
+          id: 'cal-' + (i + 1),
+          startDate: startYmd,
+          endDate: endYmd || undefined,
+          status: status,
+          title: title
+        });
+      }
+    }
+
+    return {
+      config: {
+        defaultOffDays: [3, 5, 6], // বুধবার, শুক্রবার, শনিবার
+        allowFutureMonths: false,
+        academicYear: '২০২৬'
+      },
+      holidays: holidays
+    };
+  } catch (err) {
+    Logger.log('getCalendarData error: ' + err.toString());
+    return { config: { defaultOffDays: [3, 5, 6], allowFutureMonths: false }, holidays: [] };
+  }
+}
+
+// ৩.৫. নতুন ছুটির দিন যুক্ত করা
+function addHolidayFromApi(p) {
+  try {
+    autoSetupSheets();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { success: false, message: 'গুগল শিট পাওয়া যায়নি।' };
+    var sheet = ss.getSheetByName('Calendar');
+    if (!sheet) return { success: false, message: 'Calendar শিট পাওয়া যায়নি।' };
+
+    var startDate = (p && p.startDate) ? String(p.startDate).trim() : '';
+    var endDate = (p && p.endDate) ? String(p.endDate).trim() : '';
+    var status = (p && p.status) ? String(p.status).trim() : 'ছুটি';
+    var title = (p && p.title) ? String(p.title).trim() : 'ছুটি';
+
+    if (!startDate) {
+      return { success: false, message: 'শুরুর তারিখ আবশ্যক।' };
+    }
+
+    sheet.appendRow([startDate, endDate, status, title]);
+    return { success: true, message: 'ছুটির তথ্য সফলভাবে যুক্ত হয়েছে!' };
+  } catch (err) {
+    Logger.log('addHolidayFromApi error: ' + err.toString());
+    return { success: false, message: 'ত্রুটি: ' + err.toString() };
+  }
+}
+
+function formatToYmdString(val) {
+  if (!val) return '';
+  if (val instanceof Date) {
+    var y = val.getFullYear();
+    var m = ('0' + (val.getMonth() + 1)).slice(-2);
+    var d = ('0' + val.getDate()).slice(-2);
+    return y + '-' + m + '-' + d;
+  }
+  var s = String(val).trim();
+  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(s)) return s;
+  var dmyMatch = s.match(/^(\\d{1,2})[-/.](\\d{1,2})[-/.](\\d{4})$/);
+  if (dmyMatch) {
+    var day = ('0' + dmyMatch[1]).slice(-2);
+    var mon = ('0' + dmyMatch[2]).slice(-2);
+    return dmyMatch[3] + '-' + mon + '-' + day;
+  }
+  var parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) {
+    var py = parsed.getFullYear();
+    var pm = ('0' + (parsed.getMonth() + 1)).slice(-2);
+    var pd = ('0' + parsed.getDate()).slice(-2);
+    return py + '-' + pm + '-' + pd;
+  }
+  return s;
+}
+
+// ৩.৬. ড্যাশবোর্ড থেকে নোট মুছে ফেলা
 function deleteMaterial(idOrRow) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();

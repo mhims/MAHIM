@@ -55,7 +55,8 @@ const routes = [
   'ps/notices',
   'dcups',
   'political-science',
-  'khujbe'
+  'khujbe',
+  'kolom-kolom'
 ];
 
 const siteUrl = 'https://mahims.com';
@@ -2567,6 +2568,26 @@ const routeData = {
         </div>
       </div>
     `
+  },
+  'kolom-kolom': {
+    title: "কলম-কলম (Pen Fight) — ছোটবেলার স্কুলের বেঞ্চের খেলা",
+    metaTitle: "কলম-কলম (Pen Fight) — স্কুলের স্মৃতি",
+    description: "কলম-কলম (Pen Fight) — ছোটবেলার ক্লাসরুমের কাঠের বেঞ্চে খেলা আকর্ষণীয় নস্টালজিক খেলা।",
+    keywords: "কলম কলম, pen fight, kolom kolom, স্কুলের খেলা, mahims.com/kolom-kolom",
+    canonical: `${siteUrl}/kolom-kolom/`,
+    robots: "noindex, nofollow",
+    ogTitle: "কলম-কলম (Pen Fight) — ছোটবেলার স্কুলের বেঞ্চের খেলা",
+    ogDescription: "কলম-কলম (Pen Fight) — ছোটবেলার ক্লাসরুমের কাঠের বেঞ্চে খেলা আকর্ষণীয় নস্টালজিক খেলা।",
+    ogImage: `${siteUrl}/assets/og-main.png`,
+    twitterTitle: "কলম-কলম (Pen Fight) — ছোটবেলার স্কুলের বেঞ্চের খেলা",
+    twitterDescription: "কলম-কলম (Pen Fight) — ছোটবেলার ক্লাসরুমের কাঠের বেঞ্চে খেলা আকর্ষণীয় নস্টালজিক খেলা।",
+    twitterImage: `${siteUrl}/assets/og-main.png`,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "কলম-কলম (Pen Fight)",
+      "url": "https://mahims.com/kolom-kolom/"
+    }
   }
 };
 
@@ -2632,6 +2653,14 @@ if (fs.existsSync(distDir)) {
         /<meta name="description" content=".*?" \/>/,
         `<meta name="description" content="${data.description}" />`
       );
+
+      // Robots Meta Tag (e.g. noindex, nofollow)
+      if (data.robots) {
+        htmlContent = htmlContent.replace(
+          /<meta name="robots" content=".*?" \/>/,
+          `<meta name="robots" content="${data.robots}" />`
+        );
+      }
 
       // 3. Replace Keywords
       htmlContent = htmlContent.replace(

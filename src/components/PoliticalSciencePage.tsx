@@ -515,33 +515,35 @@ export function PoliticalSciencePage() {
   // Load Ticker & Main Notices from Google Sheet or fallback
   const loadTickerNotices = async (sheetUrl?: string) => {
     const targetUrl = sheetUrl !== undefined ? sheetUrl : googleSheetUrl;
-    let loadedNotices = notices;
+    let currentNotices = notices;
 
     if (targetUrl.trim()) {
       try {
         const result = await fetchFullNoticesFromSource(targetUrl);
-        if (result.ticker.length > 0) {
-          setTickerNotices(result.ticker);
-        }
         if (result.fullNotices.length > 0) {
-          loadedNotices = result.fullNotices;
-          setNotices(result.fullNotices);
+          setNotices(prev => {
+            const remoteMap = new Map(result.fullNotices.map(n => [n.id || n.title, n]));
+            const localOnly = prev.filter(n => !remoteMap.has(n.id || n.title));
+            const combined = [...result.fullNotices, ...localOnly];
+            currentNotices = combined;
+            return combined;
+          });
         }
       } catch (err) {
         console.error('Failed to load Google Sheet notices:', err);
       }
     }
     
-    // Fallback: use pinned notices from loaded notices
-    const pinned = loadedNotices.filter(n => n.pinned).map(n => ({
+    // Compute ticker from current notices (pinned first, then recent)
+    const pinned = currentNotices.filter(n => n.pinned).map(n => ({
       id: n.id,
       text: n.title,
       date: n.date
     }));
     if (pinned.length > 0) {
       setTickerNotices(pinned);
-    } else if (loadedNotices.length > 0) {
-      setTickerNotices(loadedNotices.map(n => ({ id: n.id, text: n.title, date: n.date })));
+    } else if (currentNotices.length > 0) {
+      setTickerNotices(currentNotices.map(n => ({ id: n.id, text: n.title, date: n.date })));
     } else {
       setTickerNotices([]);
     }
@@ -549,7 +551,7 @@ export function PoliticalSciencePage() {
     // Resolve any requested notice slug with newly loaded notices
     const targetSlug = extractTargetNoticeSlug();
     if (targetSlug) {
-      const found = findNoticeBySlugOrId(loadedNotices, targetSlug);
+      const found = findNoticeBySlugOrId(currentNotices, targetSlug);
       if (found) {
         setSelectedNoticeModal(found);
       } else {
@@ -673,8 +675,13 @@ export function PoliticalSciencePage() {
       const result = await fetchCalendarFromSource(targetUrl);
       if (result) {
         if (result.holidays && result.holidays.length > 0) {
-          setHolidays(result.holidays);
-          saveCachedHolidays(result.holidays);
+          setHolidays(prev => {
+            const remoteMap = new Map(result.holidays!.map(h => [h.id || h.startDate, h]));
+            const localOnly = prev.filter(h => !remoteMap.has(h.id || h.startDate));
+            const merged = [...result.holidays!, ...localOnly];
+            saveCachedHolidays(merged);
+            return merged;
+          });
         }
         if (result.config) {
           setCalendarConfig(prev => {
@@ -690,6 +697,17 @@ export function PoliticalSciencePage() {
       setIsCalendarSyncing(false);
     }
   };
+
+  // Master refresh function that reloads Notices, Calendar, and Materials together
+  const handleRefreshAll = async (sheetUrl?: string) => {
+    const url = sheetUrl !== undefined ? sheetUrl : googleSheetUrl;
+    await Promise.allSettled([
+      loadTickerNotices(url),
+      loadCalendarData(url),
+      loadMaterials(url)
+    ]);
+  };
+
 
   useEffect(() => {
     loadTickerNotices();
@@ -2521,8 +2539,9 @@ export function PoliticalSciencePage() {
         courses={INITIAL_PS_COURSES}
         googleSheetUrl={googleSheetUrl}
         setGoogleSheetUrl={setGoogleSheetUrl}
-        onRefreshGoogleSheet={loadTickerNotices}
+        onRefreshGoogleSheet={handleRefreshAll}
         calendarConfig={calendarConfig}
+
         setCalendarConfig={setCalendarConfig}
         holidays={holidays}
         setHolidays={setHolidays}

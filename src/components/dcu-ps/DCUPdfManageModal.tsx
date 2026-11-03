@@ -209,6 +209,7 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
     // Update state & localStorage
     setBooks(prev => {
       const updated = [newBook, ...prev];
+      localStorage.setItem('dcu_ps_books_v5', JSON.stringify(updated));
       localStorage.setItem('dcu_ps_custom_books', JSON.stringify(updated));
       return updated;
     });
@@ -231,6 +232,7 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
       }
     }
 
+    onRefreshMaterials();
     setIsSubmitting(false);
     setSubmitSuccess('নোট সফলভাবে সাইটে যুক্ত হয়েছে!');
     setTitle('');
@@ -247,11 +249,14 @@ export const DCUPdfManageModal: React.FC<DCUPdfManageModalProps> = ({
     if (confirm('আপনি কি এই নোটটি মুছে ফেলতে চান?')) {
       setBooks(prev => {
         const updated = prev.filter(b => b.id !== id);
+        localStorage.setItem('dcu_ps_books_v5', JSON.stringify(updated));
         localStorage.setItem('dcu_ps_custom_books', JSON.stringify(updated));
         return updated;
       });
+      onRefreshMaterials();
     }
   };
+
 
   const handleSaveSheetUrl = async (e: React.FormEvent) => {
     e.preventDefault();

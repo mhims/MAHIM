@@ -43,11 +43,27 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  // API: ওয়েবসাইট বা এডমিন থেকে সরাসরি নোটিশ যোগ করা
+  if (action === 'addNotice') {
+    var noticeRes = addNoticeFromApi(e.parameter);
+    return ContentService
+      .createTextOutput(JSON.stringify(noticeRes))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   // API: ওয়েবসাইট বা এডমিন থেকে ছুটির তারিখ যোগ করা
   if (action === 'addHoliday') {
     var holRes = addHolidayFromApi(e.parameter);
     return ContentService
       .createTextOutput(JSON.stringify(holRes))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // API: ক্যালেন্ডার কনফিগারেশন আপডেট (ছুটির বার ও ভবিষ্যৎ মাস লক)
+  if (action === 'updateConfig') {
+    var cfgRes = updateCalendarConfigFromApi(e.parameter);
+    return ContentService
+      .createTextOutput(JSON.stringify(cfgRes))
       .setMimeType(ContentService.MimeType.JSON);
   }
 
@@ -77,6 +93,52 @@ function doGet(e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 }
+
+// ১.১. POST মেথড হ্যান্ডলার (বিকল্প রিকোয়েস্ট ও ব্রাউজার ফ্যালব্যাক)
+function doPost(e) {
+  try {
+    autoSetupSheets();
+    var params = {};
+    if (e && e.postData && e.postData.contents) {
+      try {
+        params = JSON.parse(e.postData.contents);
+      } catch (err) {
+        params = e.parameter || {};
+      }
+    } else if (e && e.parameter) {
+      params = e.parameter;
+    }
+
+    var action = params.action || '';
+    if (action === 'addNotice') {
+      var nRes = addNoticeFromApi(params);
+      return ContentService.createTextOutput(JSON.stringify(nRes)).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (action === 'addHoliday') {
+      var hRes = addHolidayFromApi(params);
+      return ContentService.createTextOutput(JSON.stringify(hRes)).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (action === 'updateConfig') {
+      var cRes = updateCalendarConfigFromApi(params);
+      return ContentService.createTextOutput(JSON.stringify(cRes)).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (action === 'addMaterial') {
+      var mRes = addMaterialFromApi(params);
+      return ContentService.createTextOutput(JSON.stringify(mRes)).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (action === 'addSubscriber') {
+      var sRes = addSubscriberFromAdmin(params.name, params.email, params.studentId);
+      return ContentService.createTextOutput(JSON.stringify(sRes)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'অনুরোধ গৃহীত হয়েছে।' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (postErr) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: postErr.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 
 // ২. স্বয়ংক্রিয়ভাবে শিট ও কলাম তৈরি (Auto Initialization)
 function autoSetupSheets() {
@@ -331,14 +393,29 @@ function getCalendarData() {
       }
     }
 
+    var defaultOffDays = [3, 5, 6];
+    var allowFutureMonths = false;
+    try {
+      var props = PropertiesService.getScriptProperties();
+      var savedDays = props.getProperty('DEFAULT_OFF_DAYS');
+      if (savedDays) {
+        defaultOffDays = savedDays.split(',').map(Number);
+      }
+      var savedFuture = props.getProperty('ALLOW_FUTURE_MONTHS');
+      if (savedFuture !== null && savedFuture !== undefined) {
+        allowFutureMonths = (savedFuture === 'true');
+      }
+    } catch (pe) {}
+
     return {
       config: {
-        defaultOffDays: [3, 5, 6], // বুধবার, শুক্রবার, শনিবার
-        allowFutureMonths: false,
+        defaultOffDays: defaultOffDays,
+        allowFutureMonths: allowFutureMonths,
         academicYear: '২০২৬'
       },
       holidays: holidays
     };
+
   } catch (err) {
     Logger.log('getCalendarData error: ' + err.toString());
     return { config: { defaultOffDays: [3, 5, 6], allowFutureMonths: false }, holidays: [] };
@@ -370,6 +447,51 @@ function addHolidayFromApi(p) {
     return { success: false, message: 'ত্রুটি: ' + err.toString() };
   }
 }
+
+// ৩.৬. ওয়েবসাইট বা এডমিন থেকে সরাসরি নোটিশ যোগ করা
+function addNoticeFromApi(p) {
+  try {
+    autoSetupSheets();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { success: false, message: 'গুগল শিট পাওয়া যায়নি।' };
+    var sheet = ss.getSheetByName('Notices');
+    if (!sheet) return { success: false, message: 'Notices শিট পাওয়া যায়নি।' };
+
+    var id = (p && p.id) ? String(p.id).trim() : ('notice-' + new Date().getTime());
+    var title = (p && p.title) ? String(p.title).trim() : 'নোটিশ';
+    var cat = (p && p.category) ? String(p.category).trim() : 'সাধারণ';
+    var content = (p && p.content) ? String(p.content).trim() : title;
+    var rawDate = (p && p.date) ? String(p.date).trim() : '';
+
+    var now = new Date();
+    var months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    var dateStr = rawDate || (now.getDate() + ' ' + months[now.getMonth()]);
+
+    sheet.appendRow([id, title, dateStr, cat, content, 'প্রকাশিত (সরাসরি)']);
+    return { success: true, message: 'নোটিশ সফলভাবে শিটে সেভ হয়েছে!' };
+  } catch (err) {
+    Logger.log('addNoticeFromApi error: ' + err.toString());
+    return { success: false, message: 'ত্রুটি: ' + err.toString() };
+  }
+}
+
+// ৩.৭. ক্যালেন্ডার কনফিগারেশন আপডেট
+function updateCalendarConfigFromApi(p) {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    if (p && p.defaultOffDays) {
+      props.setProperty('DEFAULT_OFF_DAYS', String(p.defaultOffDays));
+    }
+    if (p && p.allowFutureMonths !== undefined) {
+      props.setProperty('ALLOW_FUTURE_MONTHS', String(p.allowFutureMonths));
+    }
+    return { success: true, message: 'ক্যালেন্ডার কনফিগারেশন সংরক্ষিত হয়েছে।' };
+  } catch (err) {
+    Logger.log('updateCalendarConfigFromApi error: ' + err.toString());
+    return { success: false, message: err.toString() };
+  }
+}
+
 
 function formatToYmdString(val) {
   if (!val) return '';

@@ -27,10 +27,11 @@ import {
   PSTeacher,
   PSCourse
 } from '../../data/dcuPoliticalScienceData';
-import { fetchNoticesFromGoogleSheet, sendMaterialToGoogleSheet } from '../../utils/googleSheetsNotices';
+import { fetchNoticesFromGoogleSheet, sendMaterialToGoogleSheet, sendNoticeToGoogleSheet } from '../../utils/googleSheetsNotices';
 import { GOOGLE_APPS_SCRIPT_CODE } from '../../utils/googleAppsScriptTemplate';
 import { CalendarConfig, CalendarHolidayItem, CalendarDayStatus } from '../../types/dcuCalendar';
-import { saveCachedCalendarConfig, saveCachedHolidays, sendHolidayToGoogleSheet } from '../../utils/dcuCalendarService';
+import { saveCachedCalendarConfig, saveCachedHolidays, sendHolidayToGoogleSheet, sendCalendarConfigToGoogleSheet } from '../../utils/dcuCalendarService';
+
 
 interface DCUAdminModalProps {
   isOpen: boolean;
@@ -117,6 +118,9 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
   const [newNoticeContent, setNewNoticeContent] = useState('');
   const [newNoticeFileUrl, setNewNoticeFileUrl] = useState('');
   const [newNoticePinned, setNewNoticePinned] = useState(false);
+  const [noticeSuccessMsg, setNoticeSuccessMsg] = useState<string | null>(null);
+  const [globalApplyMsg, setGlobalApplyMsg] = useState<string | null>(null);
+  const [isApplyingLive, setIsApplyingLive] = useState(false);
 
   // Form states for adding new book (default to open so user immediately sees the form)
   const [isAddingBook, setIsAddingBook] = useState(true);
@@ -179,19 +183,32 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
 
   const handleAddNotice = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newNoticeTitle || !newNoticeContent) return;
+    if (!newNoticeTitle.trim()) return;
 
     const notice: PSNotice = {
       id: `notice-${Date.now()}`,
-      title: newNoticeTitle,
+      title: newNoticeTitle.trim(),
       date: new Date().toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }),
       category: newNoticeCategory,
-      content: newNoticeContent,
+      content: newNoticeContent.trim() || newNoticeTitle.trim(),
       fileUrl: newNoticeFileUrl || undefined,
       pinned: newNoticePinned
     };
 
-    setNotices(prev => [notice, ...prev]);
+    setNotices(prev => {
+      const updated = [notice, ...prev];
+      localStorage.setItem('dcu_ps_notices_v5', JSON.stringify(updated));
+      return updated;
+    });
+
+    if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+      sendNoticeToGoogleSheet(googleSheetUrl, notice);
+    }
+
+    onRefreshGoogleSheet();
+    setNoticeSuccessMsg('✅ নোটিশ সফলভাবে মূল সাইটে লাইভ যুক্ত হয়েছে!');
+    setTimeout(() => setNoticeSuccessMsg(null), 3500);
+
     setIsAddingNotice(false);
     setNewNoticeTitle('');
     setNewNoticeContent('');
@@ -201,14 +218,22 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
 
   const handleDeleteNotice = (id: string) => {
     if (window.confirm('আপনি কি এই নোটিশটি মুছে ফেলতে চান?')) {
-      setNotices(prev => prev.filter(n => n.id !== id));
+      setNotices(prev => {
+        const updated = prev.filter(n => n.id !== id);
+        localStorage.setItem('dcu_ps_notices_v5', JSON.stringify(updated));
+        return updated;
+      });
+      onRefreshGoogleSheet();
     }
   };
 
   const handleTogglePinNotice = (id: string) => {
-    setNotices(prev =>
-      prev.map(n => (n.id === id ? { ...n, pinned: !n.pinned } : n))
-    );
+    setNotices(prev => {
+      const updated = prev.map(n => (n.id === id ? { ...n, pinned: !n.pinned } : n));
+      localStorage.setItem('dcu_ps_notices_v5', JSON.stringify(updated));
+      return updated;
+    });
+    onRefreshGoogleSheet();
   };
 
   const handleAddBook = (e: React.FormEvent) => {
@@ -228,7 +253,11 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
       fileSize: newBookSize || undefined
     };
 
-    setBooks(prev => [book, ...prev]);
+    setBooks(prev => {
+      const updated = [book, ...prev];
+      localStorage.setItem('dcu_ps_books_v5', JSON.stringify(updated));
+      return updated;
+    });
 
     // Google Apps Script Web App সিঙ্ক
     if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
@@ -244,6 +273,7 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
       });
     }
 
+    onRefreshGoogleSheet();
     setIsAddingBook(false);
     setNewBookTitle('');
     setNewBookAuthor('');
@@ -253,12 +283,21 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
 
   const handleDeleteBook = (id: string) => {
     if (window.confirm('আপনি কি এই বই/রিসোর্সটি মুছে ফেলতে চান?')) {
-      setBooks(prev => prev.filter(b => b.id !== id));
+      setBooks(prev => {
+        const updated = prev.filter(b => b.id !== id);
+        localStorage.setItem('dcu_ps_books_v5', JSON.stringify(updated));
+        return updated;
+      });
+      onRefreshGoogleSheet();
     }
   };
 
   const handleDeleteSubscriber = (id: string) => {
-    setSubscribers(prev => prev.filter(s => s.id !== id));
+    setSubscribers(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      localStorage.setItem('dcu_ps_subscribers', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const copyAllEmails = () => {
@@ -277,6 +316,10 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
         : [...prev.defaultOffDays, dayIndex].sort();
       const updated: CalendarConfig = { ...prev, defaultOffDays: updatedDays };
       saveCachedCalendarConfig(updated);
+      if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+        sendCalendarConfigToGoogleSheet(googleSheetUrl, updated);
+      }
+      onRefreshGoogleSheet();
       return updated;
     });
   };
@@ -285,23 +328,29 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
     setCalendarConfig(prev => {
       const updated: CalendarConfig = { ...prev, allowFutureMonths: !prev.allowFutureMonths };
       saveCachedCalendarConfig(updated);
+      if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+        sendCalendarConfigToGoogleSheet(googleSheetUrl, updated);
+      }
+      onRefreshGoogleSheet();
       return updated;
     });
   };
 
   const handleAddHoliday = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!holidayStartDate || !holidayTitle.trim()) {
-      alert('অনুগ্রহ করে ছুটির শুরু তারিখ এবং কারণ/বিবরণ লিখুন!');
+    if (!holidayStartDate) {
+      alert('অনুগ্রহ করে ছুটির তারিখ নির্বাচন করুন!');
       return;
     }
+
+    const fallbackTitle = holidayTitle.trim() || (holidayStatus === 'open' ? 'ক্লাস চালু' : holidayStatus === 'exam' ? 'পরীক্ষা' : 'ছুটি');
 
     const newHoliday: CalendarHolidayItem = {
       id: `hol-${Date.now()}`,
       startDate: holidayStartDate,
       endDate: holidayEndDate ? holidayEndDate : undefined,
       status: holidayStatus,
-      title: holidayTitle.trim(),
+      title: fallbackTitle,
       category: holidayCategory
     };
 
@@ -315,7 +364,8 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
       sendHolidayToGoogleSheet(googleSheetUrl, newHoliday);
     }
 
-    setHolidaySuccessMsg('✅ ছুটি বা অফ-ডে সফলভাবে ক্যালেন্ডারে যুক্ত হয়েছে!');
+    onRefreshGoogleSheet();
+    setHolidaySuccessMsg('✅ ছুটি সফলভাবে যুক্ত হয়েছে এবং মূল সাইটে লাইভ কার্যকর হয়েছে!');
     setHolidayTitle('');
     setHolidayEndDate('');
     setTimeout(() => setHolidaySuccessMsg(null), 3500);
@@ -328,8 +378,33 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
         saveCachedHolidays(updated);
         return updated;
       });
+      onRefreshGoogleSheet();
     }
   };
+
+  // Global One-Click Apply & Sync to Live Site
+  const handleApplyAllChangesLive = async () => {
+    setIsApplyingLive(true);
+    try {
+      saveCachedCalendarConfig(calendarConfig);
+      saveCachedHolidays(holidays);
+      localStorage.setItem('dcu_ps_notices_v5', JSON.stringify(notices));
+      localStorage.setItem('dcu_ps_books_v5', JSON.stringify(books));
+      localStorage.setItem('dcu_ps_routine', JSON.stringify(routine));
+      localStorage.setItem('dcu_ps_subscribers', JSON.stringify(subscribers));
+
+      if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+        sendCalendarConfigToGoogleSheet(googleSheetUrl, calendarConfig);
+      }
+
+      await onRefreshGoogleSheet();
+      setGlobalApplyMsg('✅ সমস্ত আপডেট মূল ওয়েবসাইটে অবিলম্বে কার্যকর ও সিঙ্ক হয়েছে!');
+      setTimeout(() => setGlobalApplyMsg(null), 3500);
+    } finally {
+      setIsApplyingLive(false);
+    }
+  };
+
 
   const getFullExportJson = () => {
     return JSON.stringify(
@@ -382,14 +457,26 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
           </div>
           <div className="flex items-center gap-2">
             {isAuthenticated && (
-              <button
-                type="button"
-                onClick={onLogout}
-                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
-              >
-                <LogOut className="w-3 h-3 text-red-400" />
-                লগআউট
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={handleApplyAllChangesLive}
+                  disabled={isApplyingLive}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition cursor-pointer shadow-xs active:scale-95"
+                  title="সমস্ত আপডেট সরাসরি মূল ওয়েবসাইটে কার্যকর করুন"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isApplyingLive ? 'animate-spin' : ''}`} />
+                  <span>{isApplyingLive ? 'আপডেট হচ্ছে...' : '⚡ সাইটে লাইভ আপডেট'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-3 h-3 text-red-400" />
+                  লগআউট
+                </button>
+              </>
             )}
             <button
               type="button"
@@ -400,6 +487,19 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
             </button>
           </div>
         </div>
+
+        {globalApplyMsg && (
+          <div className="px-5 py-2.5 bg-emerald-500 text-white text-xs font-bold flex items-center justify-between animate-fade-in shadow-sm">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 shrink-0" />
+              <span>{globalApplyMsg}</span>
+            </div>
+            <button type="button" onClick={() => setGlobalApplyMsg(null)} className="opacity-80 hover:opacity-100">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
 
         {/* Content */}
         {!isAuthenticated ? (
@@ -707,9 +807,17 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                     </button>
                   </div>
 
+                  {noticeSuccessMsg && (
+                    <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                      <Check className="w-4 h-4 shrink-0" />
+                      <span>{noticeSuccessMsg}</span>
+                    </div>
+                  )}
+
                   {isAddingNotice && (
                     <form
                       onSubmit={handleAddNotice}
+
                       className="p-4 rounded-xl border border-amber-300/40 bg-amber-50/30 dark:bg-amber-950/20 space-y-3"
                     >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

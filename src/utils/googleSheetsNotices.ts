@@ -226,7 +226,9 @@ export async function fetchFullNoticesFromSource(url: string): Promise<{ ticker:
   // If it's Google Apps Script Web App JSON
   if (cleanUrl.includes('script.google.com')) {
     try {
-      const response = await fetch(cleanUrl, {
+      const sep = cleanUrl.includes('?') ? '&' : '?';
+      const targetUrl = cleanUrl.includes('action=') ? cleanUrl : `${cleanUrl}${sep}action=getNotices`;
+      const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
           'Accept': 'application/json, text/plain, */*'
@@ -498,16 +500,16 @@ export async function sendMaterialToGoogleSheet(
   const trimmed = webAppUrl.trim();
   if (!trimmed || !trimmed.includes('script.google.com')) return false;
 
-  const urlObj = new URL(trimmed);
-  urlObj.searchParams.set('action', 'addMaterial');
-  urlObj.searchParams.set('courseCode', material.courseCode);
-  urlObj.searchParams.set('title', material.title);
-  urlObj.searchParams.set('category', material.category);
-  urlObj.searchParams.set('author', material.author);
-  urlObj.searchParams.set('driveUrl', material.driveUrl);
-  if (material.fileSize) urlObj.searchParams.set('fileSize', material.fileSize);
-
   try {
+    const urlObj = new URL(trimmed);
+    urlObj.searchParams.set('action', 'addMaterial');
+    urlObj.searchParams.set('courseCode', material.courseCode);
+    urlObj.searchParams.set('title', material.title);
+    urlObj.searchParams.set('category', material.category);
+    urlObj.searchParams.set('author', material.author);
+    urlObj.searchParams.set('driveUrl', material.driveUrl);
+    if (material.fileSize) urlObj.searchParams.set('fileSize', material.fileSize);
+
     await fetch(urlObj.toString(), {
       method: 'GET',
       mode: 'no-cors'
@@ -518,4 +520,33 @@ export async function sendMaterialToGoogleSheet(
     return false;
   }
 }
+
+// Send newly added notice to Apps Script Web App & Google Sheet
+export async function sendNoticeToGoogleSheet(
+  webAppUrl: string,
+  notice: { id?: string; title: string; category?: string; content?: string; date?: string; pinned?: boolean }
+): Promise<boolean> {
+  const trimmed = webAppUrl.trim();
+  if (!trimmed || !trimmed.includes('script.google.com')) return false;
+
+  try {
+    const urlObj = new URL(trimmed);
+    urlObj.searchParams.set('action', 'addNotice');
+    urlObj.searchParams.set('id', notice.id || `notice-${Date.now()}`);
+    urlObj.searchParams.set('title', notice.title);
+    urlObj.searchParams.set('category', notice.category || 'সাধারণ');
+    urlObj.searchParams.set('content', notice.content || notice.title);
+    if (notice.date) urlObj.searchParams.set('date', notice.date);
+
+    await fetch(urlObj.toString(), {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    return true;
+  } catch (err) {
+    console.error('Failed to send notice to Google Sheet:', err);
+    return false;
+  }
+}
+
 

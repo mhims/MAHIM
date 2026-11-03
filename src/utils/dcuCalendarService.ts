@@ -223,27 +223,17 @@ export async function sendHolidayToGoogleSheet(
   if (!trimmed || !trimmed.includes('script.google.com')) return false;
 
   try {
-    const payload = JSON.stringify({
-      action: 'addHoliday',
-      id: holiday.id,
-      startDate: holiday.startDate,
-      endDate: holiday.endDate || '',
-      status: holiday.status,
-      title: holiday.title,
-      category: holiday.category || 'বিশ্ববিদ্যালয় ছুটি'
-    });
+    const urlObj = new URL(trimmed);
+    urlObj.searchParams.set('action', 'addHoliday');
+    urlObj.searchParams.set('startDate', holiday.startDate);
+    if (holiday.endDate) urlObj.searchParams.set('endDate', holiday.endDate);
+    urlObj.searchParams.set('status', holiday.status || 'holiday');
+    urlObj.searchParams.set('title', holiday.title || 'ছুটি');
+    if (holiday.category) urlObj.searchParams.set('category', holiday.category);
 
-    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: 'text/plain;charset=utf-8' });
-      navigator.sendBeacon(trimmed, blob);
-      return true;
-    }
-
-    await fetch(trimmed, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: payload
+    await fetch(urlObj.toString(), {
+      method: 'GET',
+      mode: 'no-cors'
     });
     return true;
   } catch (err) {
@@ -251,6 +241,35 @@ export async function sendHolidayToGoogleSheet(
     return false;
   }
 }
+
+/**
+ * Send updated calendar config (off days, allowFutureMonths) to Google Apps Script Web App
+ */
+export async function sendCalendarConfigToGoogleSheet(
+  webAppUrl: string,
+  config: CalendarConfig
+): Promise<boolean> {
+  const trimmed = webAppUrl.trim();
+  if (!trimmed || !trimmed.includes('script.google.com')) return false;
+
+  try {
+    const urlObj = new URL(trimmed);
+    urlObj.searchParams.set('action', 'updateConfig');
+    urlObj.searchParams.set('defaultOffDays', (config.defaultOffDays || [3, 5, 6]).join(','));
+    urlObj.searchParams.set('allowFutureMonths', config.allowFutureMonths ? 'true' : 'false');
+    urlObj.searchParams.set('academicYear', config.academicYear || '২০২৬');
+
+    await fetch(urlObj.toString(), {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    return true;
+  } catch (err) {
+    console.warn('sendCalendarConfigToGoogleSheet error:', err);
+    return false;
+  }
+}
+
 
 export function parseCalendarCsv(csvText: string): CalendarHolidayItem[] {
   const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);

@@ -58,6 +58,11 @@ interface DCUAdminModalProps {
   setHolidays: React.Dispatch<React.SetStateAction<CalendarHolidayItem[]>>;
 }
 
+const MONTH_NAMES_BN = [
+  'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+  'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+];
+
 export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
   isOpen,
   onClose,
@@ -99,6 +104,81 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
   const [holidayTitle, setHolidayTitle] = useState('');
   const [holidayCategory, setHolidayCategory] = useState<NonNullable<CalendarHolidayItem['category']>>('বিশ্ববিদ্যালয় ছুটি');
   const [holidaySuccessMsg, setHolidaySuccessMsg] = useState<string | null>(null);
+
+  // Multi-Date Interactive Holiday Picker State
+  const [multiPickYear, setMultiPickYear] = useState<number>(() => 2026);
+  const [multiPickMonth, setMultiPickMonth] = useState<number>(() => 10); // 10 = November
+  const [selectedMultiDates, setSelectedMultiDates] = useState<string[]>([]);
+  const [multiHolidayTitle, setMultiHolidayTitle] = useState('');
+  const [multiHolidayStatus, setMultiHolidayStatus] = useState<CalendarDayStatus>('holiday');
+  const [multiHolidayCategory, setMultiHolidayCategory] = useState<NonNullable<CalendarHolidayItem['category']>>('বিশ্ববিদ্যালয় ছুটি');
+  const [copiedSheetTsv, setCopiedSheetTsv] = useState(false);
+
+  const toggleMultiDate = (dateStr: string) => {
+    setSelectedMultiDates(prev =>
+      prev.includes(dateStr) ? prev.filter(d => d !== dateStr) : [...prev, dateStr].sort()
+    );
+  };
+
+  const handleAddMultiHolidays = () => {
+    if (selectedMultiDates.length === 0) {
+      alert('অনুগ্রহ করে ক্যালেন্ডার গ্রিড থেকে এক বা একাধিক তারিখ সিলেক্ট করুন!');
+      return;
+    }
+    const fallbackTitle = multiHolidayTitle.trim() || (multiHolidayStatus === 'open' ? 'ক্লাস চালু' : multiHolidayStatus === 'exam' ? 'পরীক্ষা' : 'ছুটি');
+    const newItems: CalendarHolidayItem[] = selectedMultiDates.map((dateStr, idx) => ({
+      id: `hol-${Date.now()}-${idx}`,
+      startDate: dateStr,
+      status: multiHolidayStatus,
+      title: fallbackTitle,
+      category: multiHolidayCategory
+    }));
+
+    setHolidays(prev => {
+      const selectedSet = new Set(selectedMultiDates);
+      const filtered = prev.filter(h => !selectedSet.has(h.startDate));
+      const updated = [...newItems, ...filtered];
+      saveCachedHolidays(updated);
+      return updated;
+    });
+
+    if (googleSheetUrl && googleSheetUrl.includes('script.google.com')) {
+      newItems.forEach(item => {
+        sendHolidayToGoogleSheet(googleSheetUrl, item);
+      });
+    }
+
+    onRefreshGoogleSheet();
+    setHolidaySuccessMsg(`✅ সফলভাবে ${selectedMultiDates.length}টি তারিখের ছুটি যুক্ত হয়েছে!`);
+    setSelectedMultiDates([]);
+    setTimeout(() => setHolidaySuccessMsg(null), 4000);
+  };
+
+  const handleCopySheetTsv = (onlySelected: boolean) => {
+    const targetItems = onlySelected
+      ? selectedMultiDates.map(d => ({
+          startDate: d,
+          endDate: d,
+          status: multiHolidayStatus,
+          title: multiHolidayTitle.trim() || 'ছুটি'
+        }))
+      : holidays;
+
+    if (targetItems.length === 0) {
+      alert('কপি করার জন্য কোনো ছুটির দিন নেই!');
+      return;
+    }
+
+    const tsv = targetItems
+      .map(item => `${item.startDate}\t${item.endDate || item.startDate}\t${item.status === 'open' ? 'খোলা' : item.status === 'exam' ? 'পরীক্ষা' : 'ছুটি'}\t${item.title}`)
+      .join('\n');
+
+    navigator.clipboard.writeText(tsv).then(() => {
+      setCopiedSheetTsv(true);
+      setTimeout(() => setCopiedSheetTsv(false), 2500);
+    });
+  };
+
 
   const handleCopyScript = () => {
     navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_CODE).then(() => {
@@ -774,13 +854,23 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                     </div>
                   </form>
 
-                  <div className="p-4 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
+                  <div className="p-4 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/40 text-xs text-zinc-600 dark:text-zinc-400 space-y-2.5">
                     <p className="font-semibold text-zinc-800 dark:text-zinc-200">
                       🚀 ওয়েব অ্যাপ সেটআপ করার ৩টি সহজ ধাপ:
                     </p>
                     <p>১. আপনার যেকোনো ফাঁকা গুগল শিট ওপেন করে উপরের মেনু থেকে <strong>Extensions ➜ Apps Script</strong> এ ক্লিক করুন।</p>
                     <p>২. পূর্বের সব লেখা মুছে উপরের <strong>Apps Script কোড কপি</strong> বাটনে ক্লিক করে পুরো কোডটি পেস্ট করুন এবং 💾 Save আইকনে চাপ দিন।</p>
                     <p>৩. এরপর উপরে ডানদিকে <strong>Deploy ➜ New deployment</strong> ➜ গিয়ার আইকন থেকে <strong>Web app</strong> সিলেক্ট করে <em>Execute as: Me</em> এবং <em>Who has access: Anyone</em> দিয়ে Deploy করুন। এরপর পাওয়া লিংকটি এখানে বসিয়ে সেভ করুন।</p>
+
+                    <div className="mt-3 p-3 rounded-lg border border-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-200 space-y-1">
+                      <p className="font-bold flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-300">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>⚠️ জরুরি: শিটে ডাটা জমা না হলে বা অন্য ব্রাউজারে আপডেট না দেখালে:</span>
+                      </p>
+                      <p className="text-[11px] leading-relaxed">
+                        গুগল অ্যাপস্ক্রিপ্ট এ কোড আপডেট করার পর শুধু Save করলে লাইভ লিংকে নতুন কোড কার্যকর হয় না। নতুন কোড কার্যকর করতে উপরে <strong>Deploy ➜ Manage deployments ➜ Edit (পেন্সিল আইকন) ➜ Version ড্রপডাউনে 'New version' সিলেক্ট করুন ➜ Deploy</strong> বাটনে ক্লিক করুন। তাহলেই সব আপডেট তাৎক্ষণিক শিটে সেভ হবে এবং সবার ফোনে চলে যাবে!
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1167,80 +1257,288 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                     </button>
                   </div>
 
-                  {/* 3. BULK / SINGLE HOLIDAY ADD FORM */}
-                  <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-bold text-xs text-zinc-900 dark:text-white flex items-center gap-1.5">
-                        <Plus className="w-3.5 h-3.5 text-amber-500" />
-                        একক বা বাল্ক আকারে ছুটির দিন যুক্ত করুন
-                      </h4>
-                      <button
-                        type="button"
-                        onClick={() => setIsAddingHoliday(!isAddingHoliday)}
-                        className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
-                      >
-                        {isAddingHoliday ? 'লুকান' : 'ফর্ম খুলুন'}
-                      </button>
+                  {/* 3. INTERACTIVE MULTI-DATE MINI-CALENDAR GRID */}
+                  <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+                      <div>
+                        <h4 className="font-bold text-xs text-zinc-900 dark:text-white flex items-center gap-1.5">
+                          <Calendar className="w-4 h-4 text-red-500" />
+                          ক্যালেন্ডার গ্রিড থেকে এলোমেলো একাধিক দিন সিলেক্ট করে এক ক্লিকে ছুটি দিন
+                        </h4>
+                        <p className="text-[11px] text-zinc-500 mt-0.5">
+                          যেমন: ৩, ৯, ১০, ১২, ২৬ তারিখে ক্লিক করে একসাথেই সিলেক্ট করুন এবং নিচের বাটনে চাপ দিন।
+                        </p>
+                      </div>
+
+                      {/* Month & Year Controls */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <select
+                          value={multiPickMonth}
+                          onChange={e => setMultiPickMonth(Number(e.target.value))}
+                          className="px-2 py-1 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white font-medium"
+                        >
+                          {MONTH_NAMES_BN.map((name, idx) => (
+                            <option key={idx} value={idx}>{name}</option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={multiPickYear}
+                          onChange={e => setMultiPickYear(Number(e.target.value))}
+                          className="px-2 py-1 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white font-medium"
+                        >
+                          <option value={2025}>২০২৫</option>
+                          <option value={2026}>২০২৬</option>
+                          <option value={2027}>২০২৭</option>
+                        </select>
+                      </div>
                     </div>
 
                     {holidaySuccessMsg && (
-                      <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs">
-                        {holidaySuccessMsg}
+                      <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                        <Check className="w-4 h-4 shrink-0" />
+                        <span>{holidaySuccessMsg}</span>
                       </div>
                     )}
 
-                    {isAddingHoliday && (
-                      <form onSubmit={handleAddHoliday} className="space-y-3 pt-1">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                              ছুটির শুরু তারিখ *
-                            </label>
-                            <input
-                              type="date"
-                              required
-                              value={holidayStartDate}
-                              onChange={e => setHolidayStartDate(e.target.value)}
-                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                              ছুটির শেষ তারিখ (বাল্ক রেঞ্জের জন্য)
-                            </label>
-                            <input
-                              type="date"
-                              value={holidayEndDate}
-                              min={holidayStartDate}
-                              onChange={e => setHolidayEndDate(e.target.value)}
-                              placeholder="একদিনের জন্য খালি রাখুন"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
-                            />
-                            <span className="text-[10px] text-zinc-400 mt-0.5 block">
-                              ১ দিনের ছুটি হলে খালি রাখুন; একাধিক দিন হলে শেষ তারিখ দিন (যেমন: ২০ থেকে ২৮)
+                    {/* Weekday Headers */}
+                    <div className="grid grid-cols-7 gap-1 text-center font-bold text-[11px] text-zinc-500 dark:text-zinc-400">
+                      {['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহঃ', 'শুক্র', 'শনি'].map((d, i) => (
+                        <div
+                          key={d}
+                          className={`py-1 rounded ${
+                            calendarConfig.defaultOffDays.includes(i) ? 'text-red-500 font-bold bg-red-50/50 dark:bg-red-950/20' : ''
+                          }`}
+                        >
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Days Grid */}
+                    {(() => {
+                      const daysInMonth = new Date(multiPickYear, multiPickMonth + 1, 0).getDate();
+                      const firstDay = new Date(multiPickYear, multiPickMonth, 1).getDay();
+                      const emptyCells = Array.from({ length: firstDay });
+                      const dayCells = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+                      return (
+                        <div className="grid grid-cols-7 gap-1.5">
+                          {emptyCells.map((_, i) => (
+                            <div key={`empty-${i}`} className="h-11 rounded-lg bg-zinc-50/40 dark:bg-zinc-800/20 opacity-30" />
+                          ))}
+
+                          {dayCells.map(dayNum => {
+                            const dateStr = `${multiPickYear}-${String(multiPickMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                            const isSelected = selectedMultiDates.includes(dateStr);
+                            const dayOfWeek = (firstDay + dayNum - 1) % 7;
+                            const isDefaultOff = calendarConfig.defaultOffDays.includes(dayOfWeek);
+                            const alreadyHoliday = holidays.find(h => {
+                              const s = h.startDate.trim();
+                              const e = h.endDate ? h.endDate.trim() : s;
+                              return dateStr >= s && dateStr <= e;
+                            });
+
+                            return (
+                              <button
+                                key={dateStr}
+                                type="button"
+                                onClick={() => toggleMultiDate(dateStr)}
+                                className={`h-11 rounded-xl p-1 flex flex-col items-center justify-between transition-all cursor-pointer border text-xs relative ${
+                                  isSelected
+                                    ? 'bg-red-600 text-white font-bold border-red-500 shadow-md ring-2 ring-red-400 scale-[1.03]'
+                                    : alreadyHoliday
+                                    ? 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-300 dark:border-red-800 font-semibold'
+                                    : isDefaultOff
+                                    ? 'bg-rose-50/60 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-200/50 dark:border-rose-900/30 font-medium'
+                                    : 'bg-zinc-50 dark:bg-zinc-800/60 text-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700 hover:border-red-400'
+                                }`}
+                              >
+                                <div className="w-full flex items-center justify-between text-[11px] leading-none px-0.5">
+                                  <span className="font-bold">{dayNum}</span>
+                                  {isSelected && <span className="text-[10px]">✓</span>}
+                                </div>
+                                <span className={`text-[9px] truncate max-w-full px-1 rounded-sm leading-tight ${
+                                  isSelected
+                                    ? 'bg-white/20 text-white'
+                                    : alreadyHoliday
+                                    ? 'text-red-600 dark:text-red-400 font-bold'
+                                    : isDefaultOff
+                                    ? 'text-rose-500/80 text-[8px]'
+                                    : 'text-zinc-400 text-[8px]'
+                                }`}>
+                                  {isSelected
+                                    ? 'সিলেক্টেড'
+                                    : alreadyHoliday
+                                    ? (alreadyHoliday.status === 'exam' ? 'পরীক্ষা' : 'ছুটি')
+                                    : isDefaultOff
+                                    ? 'অফ ডে'
+                                    : 'ক্লাস'}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Bulk Selection Action Bar */}
+                    <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="text-xs">
+                          {selectedMultiDates.length > 0 ? (
+                            <span className="font-semibold text-zinc-900 dark:text-white">
+                              📌 নির্বাচিত {selectedMultiDates.length}টি তারিখ:{' '}
+                              <span className="text-red-600 dark:text-red-400 font-bold">
+                                {selectedMultiDates.map(d => d.split('-')[2].replace(/^0/, '')).join(', ')} {MONTH_NAMES_BN[multiPickMonth]}
+                              </span>
                             </span>
-                          </div>
+                          ) : (
+                            <span className="text-zinc-500 text-[11px]">
+                              👉 উপরের ক্যালেন্ডার থেকে যেকোনো এলোমেলো দিনগুলোতে (যেমন: ৩, ৯, ১০, ১২, ২৬) ক্লিক করুন।
+                            </span>
+                          )}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                              ছুটি বা দিবসের কারণ / বিবরণ *
-                            </label>
-                            <input
-                              type="text"
-                              required
-                              value={holidayTitle}
-                              onChange={e => setHolidayTitle(e.target.value)}
-                              placeholder="যেমন: শীতকালীন অবকাশ, শহীদ বুদ্ধিজীবী দিবস"
-                              className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
-                            />
-                          </div>
+                        {selectedMultiDates.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMultiDates([])}
+                            className="text-[11px] text-zinc-500 hover:text-red-500 underline cursor-pointer shrink-0"
+                          >
+                            সিলেকশন মুছুন
+                          </button>
+                        )}
+                      </div>
 
-                          <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                            ছুটি বা দিবসের নাম (ঐচ্ছিক — খালি রাখলে ডিফল্ট 'ছুটি' প্রদর্শিত হবে)
+                          </label>
+                          <input
+                            type="text"
+                            value={multiHolidayTitle}
+                            onChange={e => setMultiHolidayTitle(e.target.value)}
+                            placeholder="যেমন: শীতকালীন ছুটি, বিশেষ দিবস (না লিখলে শুধু 'ছুটি')"
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                            স্ট্যাটাস
+                          </label>
+                          <select
+                            value={multiHolidayStatus}
+                            onChange={e => setMultiHolidayStatus(e.target.value as CalendarDayStatus)}
+                            className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                          >
+                            <option value="holiday">ছুটি (লাল দাগ)</option>
+                            <option value="exam">পরীক্ষা (সোনালী দাগ)</option>
+                            <option value="open">বিশেষ ক্লাস খোলা (সবুজ)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={handleAddMultiHolidays}
+                          disabled={selectedMultiDates.length === 0}
+                          className={`px-4 py-2 text-xs font-bold rounded-xl transition shadow-xs cursor-pointer flex items-center gap-1.5 ${
+                            selectedMultiDates.length > 0
+                              ? 'bg-red-600 hover:bg-red-700 text-white'
+                              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>নির্বাচিত {selectedMultiDates.length}টি তারিখ ক্যালেন্ডারে কার্যকর করুন</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopySheetTsv(true)}
+                          disabled={selectedMultiDates.length === 0}
+                          className="px-3 py-2 text-xs font-semibold rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer flex items-center gap-1.5"
+                        >
+                          {copiedSheetTsv ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-500" />
+                              <span>কপি হয়েছে!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5 text-zinc-500" />
+                              <span>গুগল শিটে পেস্ট করতে কপি (TSV)</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Continuous Date Range Option (Collapsible) */}
+                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
+                          <span>📅 একটানা দীর্ঘ ছুটির রেঞ্জ যোগ করুন (যেমন: ২০ থেকে ২৮ নভেম্বর)</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingHoliday(!isAddingHoliday)}
+                          className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline cursor-pointer"
+                        >
+                          {isAddingHoliday ? 'লুকান' : '+ রেঞ্জ ফর্ম খুলুন'}
+                        </button>
+                      </div>
+
+                      {isAddingHoliday && (
+                        <form onSubmit={handleAddHoliday} className="space-y-3 pt-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                                ক্যালেন্ডার স্ট্যাটাস
+                                ছুটির শুরু তারিখ *
+                              </label>
+                              <input
+                                type="date"
+                                required
+                                value={holidayStartDate}
+                                onChange={e => setHolidayStartDate(e.target.value)}
+                                className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                                ছুটির শেষ তারিখ (একটানা রেঞ্জের জন্য)
+                              </label>
+                              <input
+                                type="date"
+                                value={holidayEndDate}
+                                min={holidayStartDate}
+                                onChange={e => setHolidayEndDate(e.target.value)}
+                                placeholder="১ দিনের হলে খালি রাখুন"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                                ছুটির কারণ / বিবরণ (ঐচ্ছিক — খালি রাখলে 'ছুটি')
+                              </label>
+                              <input
+                                type="text"
+                                value={holidayTitle}
+                                onChange={e => setHolidayTitle(e.target.value)}
+                                placeholder="যেমন: শীতকালীন অবকাশ (খালি রাখলে 'ছুটি')"
+                                className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                                স্ট্যাটাস
                               </label>
                               <select
                                 value={holidayStatus}
@@ -1252,35 +1550,49 @@ export const DCUAdminModal: React.FC<DCUAdminModalProps> = ({
                                 <option value="open">বিশেষ ক্লাস (সবুজ)</option>
                               </select>
                             </div>
-                            <div>
-                              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                                ক্যাটাগরি
-                              </label>
-                              <select
-                                value={holidayCategory}
-                                onChange={e => setHolidayCategory(e.target.value as any)}
-                                className="w-full px-3 py-1.5 text-xs rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white"
-                              >
-                                <option value="বিশ্ববিদ্যালয় ছুটি">বিশ্ববিদ্যালয় ছুটি</option>
-                                <option value="সরকারি ছুটি">সরকারি ছুটি</option>
-                                <option value="সাপ্তাহিক ছুটি">সাপ্তাহিক ছুটি</option>
-                                <option value="পরীক্ষা">পরীক্ষা</option>
-                                <option value="অন্যান্য">অন্যান্য</option>
-                              </select>
-                            </div>
                           </div>
-                        </div>
 
-                        <div className="pt-1">
-                          <button
-                            type="submit"
-                            className="px-4 py-2 text-xs font-bold rounded-xl bg-red-500 hover:bg-red-600 text-white cursor-pointer shadow-xs transition"
-                          >
-                            + ক্যালেন্ডারে ছুটি যুক্ত করুন
-                          </button>
-                        </div>
-                      </form>
-                    )}
+                          <div className="pt-1">
+                            <button
+                              type="submit"
+                              className="px-4 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-xs transition"
+                            >
+                              + রেঞ্জের ছুটি ক্যালেন্ডারে যুক্ত করুন
+                            </button>
+                          </div>
+                        </form>
+                      )}
+                    </div>
+
+                    {/* Direct Google Sheet Paste Callout */}
+                    <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-50/40 dark:bg-emerald-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                      <div>
+                        <span className="font-bold text-emerald-800 dark:text-emerald-300 block mb-0.5">
+                          💡 সরাসরি গুগল শিটের 'Calendar' ট্যাবে এক ক্লিকে পেস্ট করতে চান?
+                        </span>
+                        <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
+                          নিচের বাটনে ক্লিক করে কপি করুন এবং আপনার গুগল শিটের 'Calendar' ট্যাবে গিয়ে <strong>Cell A2</strong> তে মাউস রেখে Ctrl+V (বা Paste) দিন। মুহূর্তেই সবার জন্য লাইভ হয়ে যাবে!
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleCopySheetTsv(false)}
+                        className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0"
+                      >
+                        {copiedSheetTsv ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>কপি সম্পন্ন!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>সব ছুটির ডাটা শিটের জন্য কপি</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {/* 4. EXISTING HOLIDAYS LIST */}

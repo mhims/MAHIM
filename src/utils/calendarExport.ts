@@ -84,7 +84,8 @@ export async function exportCalendarAsJPG(
   // Department name
   ctx.fillStyle = '#d97706';
   ctx.font = 'bold 22px "Hind Siliguri", "Noto Sans Bengali", sans-serif';
-  ctx.fillText('রাষ্ট্রবিজ্ঞান বিভাগ • সেশন ২০২৪-২৫', width / 2, 108);
+  ctx.fillText('রাষ্ট্রবিজ্ঞান বিভাগ • সেশন ২০২৫-২৬', width / 2, 108);
+
 
   // Subtitle
   ctx.fillStyle = '#71717a';

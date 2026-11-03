@@ -820,8 +820,9 @@ function generatePersonalizedNoticeEmail(studentName, title, category, content, 
   '          রাষ্ট্রবিজ্ঞান বিভাগ' +
   '        </div>' +
   '        <div style="color:#64748b;font-size:12px;margin-top:4px;font-weight:500;">' +
-  '          অফিশিয়াল ক্লাস ও ডিপার্টমেন্ট নোটিশ বোর্ড • সেশন ২০২৪-২৫' +
+  '          অফিশিয়াল ক্লাস ও ডিপার্টমেন্ট নোটিশ বোর্ড • সেশন ২০২৫-২৬' +
   '        </div>' +
+
   '      </td>' +
   '    </tr>' +
   '    <tr>' +
